@@ -16,9 +16,6 @@
 [submodule "vim/bundle/nerdtree.git"]
 	path = vim/bundle/nerdtree.git
 	url = https://github.com/scrooloose/nerdtree.git
-[submodule "vim/bundle/OmniCppComplete.git"]
-	path = vim/bundle/OmniCppComplete.git
-	url = https://github.com/vim-scripts/OmniCppComplete.git
 [submodule "vim/bundle/php.vim"]
 	path = vim/bundle/php.vim
 	url = https://github.com/StanAngeloff/php.vim
@@ -58,3 +55,9 @@
 [submodule "vim/bundle/vim-surround"]
 	path = vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
+[submodule "vim/bundle/AutoComplPop"]
+	path = vim/bundle/AutoComplPop
+	url = https://github.com/vim-scripts/AutoComplPop
+[submodule "vim/bundle/OmniCppComplete"]
+	path = vim/bundle/OmniCppComplete
+	url = https://github.com/vim-scripts/OmniCppComplete

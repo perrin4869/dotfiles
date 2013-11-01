@@ -1,0 +1,4 @@
+# ignore the files created by dolphin
+.directory
+# ignore the files created by the text editors
+*~

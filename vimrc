@@ -95,3 +95,10 @@ snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
 "select omni-autocomplete as default autocompletion method
 let g:SuperTabDefaultCompletionType = "<c-o>"
 let g:SuperTabContextDefaultCompletionType = "<c-o>"
+
+# stop creating annoying tilde files
+set nobackup
+set nowritebackup
+
+# alternatively, you could change the directory in which tilde files are stored
+# set backupdir=~/.vim/backup

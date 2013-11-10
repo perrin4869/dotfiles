@@ -70,10 +70,6 @@
 	path = vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
 	ignore = untracked
-[submodule "vim/bundle/AutoComplPop"]
-	path = vim/bundle/AutoComplPop
-	url = https://github.com/vim-scripts/AutoComplPop
-	ignore = untracked
 [submodule "vim/bundle/OmniCppComplete"]
 	path = vim/bundle/OmniCppComplete
 	url = https://github.com/vim-scripts/OmniCppComplete
@@ -94,3 +90,6 @@
 	path = vim/bundle/vim-addon-mw-utils
 	url = https://github.com/MarcWeber/vim-addon-mw-utils.git
 	ignore = untracked
+[submodule "vim/bundle/vim-snippets"]
+	path = vim/bundle/vim-snippets
+	url = https://github.com/honza/vim-snippets.git

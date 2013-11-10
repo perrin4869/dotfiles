@@ -69,6 +69,7 @@ set omnifunc=syntaxcomplete#Complete
 
 "make sure we don't highlight / search results
 " set nohlsearch
+
 "This unsets the "last search pattern" register by hitting return
 nnoremap <CR> :noh<CR><CR>
 
@@ -76,29 +77,18 @@ nnoremap <CR> :noh<CR><CR>
 "as default
 let g:EasyMotion_leader_key = '<Leader>'
 
-"AutoComplPop options
-"snipMate completion compatibility
-fun! GetSnipsInCurrentScope()
-	let snips = {}
-	for scope in [bufnr('%')] + split(&ft, '\.') + ['_']
-	call extend(snips, get(s:snippets, scope, {}), 'keep')
-	call extend(snips, get(s:multi_snips, scope, {}), 'keep')
-	endfor
-	return snips
-endf
-let g:acp_behaviorSnipmateLength=1
-
+"Snipmate options
 "snipmate remap of tab to <C-j>
-ino <c-j> <c-r>=TriggerSnippet()<cr>
-snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
+imap <C-j> <Plug>snipMateNextOrTrigger
+smap <C-j> <Plug>snipMateNextOrTrigger
 
 "select omni-autocomplete as default autocompletion method
 let g:SuperTabDefaultCompletionType = "<c-o>"
 let g:SuperTabContextDefaultCompletionType = "<c-o>"
 
-# stop creating annoying tilde files
+" stop creating annoying tilde files
 set nobackup
 set nowritebackup
 
-# alternatively, you could change the directory in which tilde files are stored
-# set backupdir=~/.vim/backup
+" alternatively, you could change the directory in which tilde files are stored
+" set backupdir=~/.vim/backup

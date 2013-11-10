@@ -1,3 +1,4 @@
+load ~/.cmus/breaking_bad.pl
 q
 set output_plugin=pulse
 set output_plugin=alsa

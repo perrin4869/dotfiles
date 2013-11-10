@@ -30,10 +30,6 @@
 	path = vim/bundle/phpcomplete.vim
 	url = git://github.com/shawncplus/phpcomplete.vim.git
 	ignore = untracked
-[submodule "vim/bundle/supertab"]
-	path = vim/bundle/supertab
-	url = https://github.com/ervandew/supertab.git
-	ignore = untracked
 [submodule "vim/bundle/tcomment_vim"]
 	path = vim/bundle/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
@@ -70,10 +66,6 @@
 	path = vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
 	ignore = untracked
-[submodule "vim/bundle/OmniCppComplete"]
-	path = vim/bundle/OmniCppComplete
-	url = https://github.com/vim-scripts/OmniCppComplete
-	ignore = untracked
 [submodule "vim/bundle/vim-fugitive"]
 	path = vim/bundle/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
@@ -93,3 +85,15 @@
 [submodule "vim/bundle/vim-snippets"]
 	path = vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets.git
+	ignore = untracked
+[submodule "vim/bundle/skeletons"]
+	path = vim/bundle/skeletons
+	url = https://github.com/tobyS/skeletons.vim
+	ignore = untracked
+[submodule "vim/bundle/command-t"]
+	path = vim/bundle/command-t
+	url = https://github.com/wincent/Command-T
+	ignore = untracked
+[submodule "vim/bundle/youcompleteme"]
+	path = vim/bundle/youcompleteme
+	url = https://github.com/Valloric/YouCompleteMe

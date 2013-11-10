@@ -82,10 +82,6 @@ let g:EasyMotion_leader_key = '<Leader>'
 imap <C-j> <Plug>snipMateNextOrTrigger
 smap <C-j> <Plug>snipMateNextOrTrigger
 
-"select omni-autocomplete as default autocompletion method
-let g:SuperTabDefaultCompletionType = "<c-o>"
-let g:SuperTabContextDefaultCompletionType = "<c-o>"
-
 " stop creating annoying tilde files
 set nobackup
 set nowritebackup

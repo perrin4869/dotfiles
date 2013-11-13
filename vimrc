@@ -14,7 +14,7 @@ Helptags
 
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256
-colo darkblue
+colo jellybeans
 filetype plugin indent on
 
 "make sure airline is opened by default
@@ -64,9 +64,6 @@ set listchars=tab:▸\ ,eol:¬
 "remove vi compatibility
 set nocompatible
 
-"enable autocomplete
-set omnifunc=syntaxcomplete#Complete
-
 "make sure we don't highlight / search results
 " set nohlsearch
 
@@ -88,3 +85,5 @@ set nowritebackup
 
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
+
+"let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'

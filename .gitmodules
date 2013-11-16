@@ -90,3 +90,7 @@
 	path = vim/bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips
 	ignore = untracked
+[submodule "vim/bundle/pdv"]
+	path = vim/bundle/pdv
+	url = https://github.com/tobyS/pdv
+	ignore = untracked

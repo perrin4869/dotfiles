@@ -74,11 +74,6 @@ nnoremap <CR> :noh<CR><CR>
 "as default
 let g:EasyMotion_leader_key = '<Leader>'
 
-"Snipmate options
-"snipmate remap of tab to <C-j>
-imap <C-j> <Plug>snipMateNextOrTrigger
-smap <C-j> <Plug>snipMateNextOrTrigger
-
 " stop creating annoying tilde files
 set nobackup
 set nowritebackup
@@ -92,3 +87,8 @@ let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 "use omnicomplete whenever there's no completion engine in youcompleteme (for
 "example, in the case of PHP)
 set omnifunc=syntaxcomplete#Complete
+
+"make ycm play nice with ultisnips
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"

@@ -94,3 +94,7 @@
 	path = vim/bundle/pdv
 	url = https://github.com/tobyS/pdv
 	ignore = untracked
+[submodule "vim/bundle/sudoedit"]
+	path = vim/bundle/sudoedit
+	url = https://github.com/chrisbra/SudoEdit.vim
+	ignore = untracked

@@ -98,3 +98,6 @@
 	path = vim/bundle/sudoedit
 	url = https://github.com/chrisbra/SudoEdit.vim
 	ignore = untracked
+[submodule "vim/bundle/buffkill"]
+	path = vim/bundle/buffkill
+	url = https://github.com/mattdbridges/bufkill.vim

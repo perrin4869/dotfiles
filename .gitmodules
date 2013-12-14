@@ -102,3 +102,6 @@
 	path = vim/bundle/buffkill
 	url = https://github.com/mattdbridges/bufkill.vim
 	ignore = untracked
+[submodule "vim/bundle/ragtag"]
+	path = vim/bundle/ragtag
+	url = https://github.com/tpope/vim-ragtag

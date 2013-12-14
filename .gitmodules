@@ -101,6 +101,4 @@
 [submodule "vim/bundle/buffkill"]
 	path = vim/bundle/buffkill
 	url = https://github.com/mattdbridges/bufkill.vim
-[submodule "vim/bundle/php-indenting"]
-	path = vim/bundle/php-indenting
-	url = https://github.com/2072/PHP-Indenting-for-VIm
+	ignore = untracked

@@ -5,6 +5,7 @@ execute pathogen#infect()
 "syntax highlightning
 syntax on
 set nu
+" set rnu
 
 "make it so that vim doesn't warn us about moving from an unchanged buffer
 set hidden
@@ -57,6 +58,30 @@ nmap <C-4> g$
 nmap <C-6> g^
 nmap <C-0> g^
 
+"solve the conflict between easymotion and the buffer navigation shortcuts
+let g:EasyMotion_mapping_n = '_n'
+
+"close current buffer with bufkill
+nmap <Leader>c :BD<CR>
+
+"move easily between buffers
+nnoremap <Leader>n :bn<CR>
+nnoremap <Leader>p :bp<CR>
+
+"move back to NERDTree easily (assuming it's the top left window)
+nnoremap gn <C-w>t
+
+"make moving between splits easier
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+"allow deleting characters in insert mode (simulating <Del>)
+"<C-o> allows you to execute one command in normal mode before returning to
+"insert mode
+imap <C-D> <C-O>x
+
 "make tabs and newlines visible
 set list
 set listchars=tab:▸\ ,eol:¬
@@ -77,7 +102,6 @@ let g:EasyMotion_leader_key = '<Leader>'
 " stop creating annoying tilde files
 set nobackup
 set nowritebackup
-
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
 
@@ -92,3 +116,8 @@ set omnifunc=syntaxcomplete#Complete
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+" Support normal copy of text into clipboard in gui mode
+vmap <C-c> "+y<Esc>i
+vmap <C-x> "+d<Esc>i
+imap <C-v> <Esc>"+pi

@@ -3,6 +3,7 @@ set altformat_current= %F
 set altformat_playlist= %f%= %d 
 set altformat_title=%f
 set altformat_trackwin= %f%= %d 
+set auto_expand_albums=true
 set auto_reshuffle=true
 set buffer_seconds=10
 set color_cmdline_attr=default
@@ -48,6 +49,7 @@ set dsp.ao.driver=
 set dsp.ao.wav_counter=1
 set dsp.ao.wav_dir=/home/perrin4869
 set dsp.oss.device=
+set follow=false
 set format_current= %a - %l -%3n. %t%= %y 
 set format_playlist= %-25%a %3n. %t%= %y %d 
 set format_playlist_va= %-25%A %3n. %t (%a)%= %y %d 
@@ -74,10 +76,13 @@ set replaygain=disabled
 set replaygain_limit=true
 set replaygain_preamp=6.000000
 set resume=false
+set rewind_offset=5
 set scroll_offset=2
 set set_term_title=true
+set show_all_tracks=true
 set show_current_bitrate=false
 set show_hidden=false
+set show_playback_position=true
 set show_remaining_time=false
 set shuffle=false
 set skip_track_info=false

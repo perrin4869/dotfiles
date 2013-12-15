@@ -1851,8 +1851,8 @@
 /media/ssj3_son_goku/music/compilations/Top 500 Rock And Roll Songs/400 - Bruce Springsteen - Pink Cadillac.mp3
 /media/ssj3_son_goku/music/compilations/BEST OF ROCK the 50 biggest songs of HISTORY/Bruce Springsteen - Born In The Usa.mp3
 /media/ssj3_son_goku/music/compilations/VA - 101 Classical Greats (2005)/Vol. 1/05- Bruch - Violin Concerto No 1 In G Minor Op 26 Adagio.mp3
-/media/ssj3_son_goku/music/anime_songs/Shiki_-_Gekka_Reijin.mp3
 /media/ssj3_son_goku/music/anime_songs/Shiki_-_Kuchizuke.mp3
+/media/ssj3_son_goku/music/anime_songs/Shiki_-_Gekka_Reijin.mp3
 /media/ssj3_son_goku/music/artists/Jimi Hendrix/Stone Free - A Tribute To Jimi Hendrix (1993)/04.BUDDY GUY - Red House.mp3
 /media/ssj3_son_goku/music/soundtracks/Breaking Bad - Original Soundtrack/Season 3/[4] In the Valley of the Sun.mp3
 /media/ssj3_son_goku/music/soundtracks/Breaking Bad - Original Soundtrack/Season 3/[6] Sun Shine On Me.mp3

@@ -108,6 +108,7 @@ set nowritebackup
 "youcompleteme options
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 
+
 "use omnicomplete whenever there's no completion engine in youcompleteme (for
 "example, in the case of PHP)
 set omnifunc=syntaxcomplete#Complete

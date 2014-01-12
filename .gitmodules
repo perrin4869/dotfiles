@@ -106,3 +106,11 @@
 	path = vim/bundle/ragtag
 	url = https://github.com/tpope/vim-ragtag
 	ignore = untracked
+[submodule "vim/bundle/vmustache"]
+	path = vim/bundle/vmustache
+	url = https://github.com/tobyS/vmustache
+	ignore = untracked
+[submodule "vim/bundle/skittles_berry"]
+	path = vim/bundle/skittles_berry
+	url = https://github.com/shawncplus/skittles_berry
+	ignore = untracked

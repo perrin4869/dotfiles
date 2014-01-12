@@ -1,0 +1,11 @@
+[user]
+	email = juliangrinblat@gmail.com
+	name = Julian Grinblat
+[diff]
+	external = git_diff_wrapper
+[pager]
+	diff = 
+[core]
+	editor = vim
+[color]
+	ui = true

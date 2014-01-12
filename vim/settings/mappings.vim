@@ -1,5 +1,6 @@
 "Here go all my mappings:
 
+let mapleader=','
 
 " Unmap the arrow keys
 no <down> ddp
@@ -63,9 +64,14 @@ nmap <C-a> <Esc>ggVGi
 "automatically start editing bracket blocks
 imap <C-l> {}<Esc>i<CR><Esc>O
 
+"folding
+nnoremap <Space> za
+vnoremap <Space> zf
+
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <CR> :noh<CR>
 
+" ycm
 " let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
 " because C-s freezes the command line
 let g:ycm_key_invoke_completion = '<C-h>'
@@ -85,3 +91,4 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 "make sure the key to trigger easy motion is <leader> and not <leader><leader>
 "as default
 let g:EasyMotion_leader_key = '<Leader>'
+

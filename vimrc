@@ -12,7 +12,10 @@ filetype plugin indent on
 "show the line numbers
 set nu
 " set rnu
-"
+
+" get the current line highlighed
+set cul " set cursorline
+
 "remove vi compatibility
 set nocompatible
 

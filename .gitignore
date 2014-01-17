@@ -2,5 +2,11 @@
 .directory
 # ignore the files created by the text editors
 ./**/*~
-# ignore vim/.netrwhist 
-vim/.netrwhist
+
+# ignore vim related file
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~

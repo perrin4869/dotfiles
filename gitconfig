@@ -1,5 +1,5 @@
 [user]
-	email = juliangrinblat@gmail.com
+	email = julian@dotcore.co.il
 	name = Julian Grinblat
 [diff]
 	external = git_diff_wrapper
@@ -7,5 +7,6 @@
 	diff = 
 [core]
 	editor = vim
+	excludesfile = /home/perrin4869/.gitignore_global
 [color]
 	ui = true

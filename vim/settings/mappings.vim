@@ -39,6 +39,19 @@ nmap N Nzz
 nmap } }zz
 nmap { {zz
 
+"make mappings for display lines
+"These mappings make it easy to move along long lines
+vmap <C-j> gj
+vmap <C-k> gk
+vmap <C-4> g$
+vmap <C-6> g^
+vmap <C-0> g^
+nmap <C-j> gj
+nmap <C-k> gk
+nmap <C-4> g$
+nmap <C-6> g^
+nmap <C-0> g^
+
 "make moving between buffers easier
 nnoremap <Tab> :bn<CR>
 nnoremap <S-Tab> :bp<CR>

@@ -35,6 +35,9 @@ set nowritebackup
 set list
 set listchars=tab:▸\ ,eol:¬
 
+" width of a tab
+set tabstop=5
+
 "completion hint in command mode
 set wildmenu
 set wildmode=list:longest,full

@@ -84,6 +84,9 @@ vnoremap <Space> zf
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <CR> :noh<CR>
 
+"Make it easier to restart Ycm
+nnoremap <F2> :YcmRestartServer<CR>
+
 " ycm
 " let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
 " because C-s freezes the command line

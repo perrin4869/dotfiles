@@ -5,6 +5,10 @@ if [ -f ~/.git-completion.bash ]; then
 . ~/.git-completion.bash
 fi
 
+# enable colors in less
+# -R or --RAW-CONTROL-CHARS
+export LESS=-R
+
 # project opening shortcuts
 alias coddress='gvim -vc "Sauce coddress"'
 alias dotcore='gvim -vc "Sauce dotcore"'

@@ -10,3 +10,6 @@
 Session.vim
 .netrwhist
 *~
+
+# ignore tag files
+*.tags

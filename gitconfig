@@ -10,3 +10,5 @@
 	excludesfile = /home/perrin4869/.gitignore_global
 [color]
 	ui = true
+[merge]
+	tool = vimdiff

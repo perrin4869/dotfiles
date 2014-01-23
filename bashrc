@@ -1,5 +1,30 @@
+# enable colors in less
+# -R or --RAW-CONTROL-CHARS
+export LESS=-R
+
 #enable 256color for terminal multiplexs
 alias tmux="tmux -2"
+alias vim="gvim -v"
+
+# project opening shortcuts
+alias coddress='gvim -vc "Sauce coddress"'
+alias dotcore='gvim -vc "Sauce dotcore"'
+alias berale='gvim -vc "Sauce berale"'
+
+#mining software shortcut
+alias ltc_cpu='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://hk2.wemineltc.com:3333 --userpass=perrin4869.home_cpu:conan4869'
+alias ltc_cpu_backup='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://gigahash.wemineltc.com:3334 --userpass=perrin4869.home_cpu:conan4869'
+
+# in order to use only one device, pass the -d option, as in -d 0,1 to use devices 0 and 1
+alias ltc_gpu='DISPLAY=:0 GPU_MAX_ALLOC_PERCENT=100 GPU_USE_SYNC_OBJECTS=1 ~/crypto/miners/cgminer-829f0687bfd0ddb0cf12a9a8588ae2478dfe8d99/cgminer -I 10,19  --vectors 2 -g 1 --gpu-engine 750,910 --gpu-memclock 850,1375 --temp-target 80 --auto-fan -w 128,256 --thread-concurrency 6144,8500 --shaders 960,1536 --scrypt -o stratum+tcp://gigahash.wemineltc.com:3334 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://hk2.wemineltc.com:3333 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://usa2.wemineltc.com:3334 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://easymining.eu:3333 -u perrin4869.home_gpu -p conan4869'
+
+alias doge_cpu='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://stratum.netcodepool.org:4093 --userpass=perrin4869.home_cpu:conan4869'
+
+alias doge_gpu='DISPLAY=:0 GPU_MAX_ALLOC_PERCENT=100 GPU_USE_SYNC_OBJECTS=1 ~/crypto/miners/cgminer-829f0687bfd0ddb0cf12a9a8588ae2478dfe8d99/cgminer -I 10,19  --vectors 2 -g 1 --gpu-engine 750,910 --gpu-memclock 850,1375 --temp-target 80 --auto-fan -w 128,256 --thread-concurrency 6144,8500 --shaders 960,1536 --scrypt -o stratum+tcp://stratum.netcodepool.org:4093 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://doge.poolerino.com:3333 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://doge.poolminers.com:3333 -u perrin4869.home_gpu -p conan4869'
+
+alias min_cpu='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://mnc.vircurpool.com:3333 --userpass=perrin4869.home_cpu:conan4869'
+
+alias min_gpu='DISPLAY=:0 GPU_MAX_ALLOC_PERCENT=100 GPU_USE_SYNC_OBJECTS=1 ~/crypto/miners/cgminer-829f0687bfd0ddb0cf12a9a8588ae2478dfe8d99/cgminer -I 10,19  --vectors 2 -g 1 --gpu-engine 750,910 --gpu-memclock 850,1375 --temp-target 80 --auto-fan -w 128,256 --thread-concurrency 6144,8500 --shaders 960,1536 --scrypt -o stratum+tcp://mnc.vircurpool.com:3333 -u perrin4869.home_gpu -p conan4869'
 
 if [ -f ~/.git-completion.bash ]; then
 . ~/.git-completion.bash
@@ -98,37 +123,20 @@ Jobs="\j"
 
 export PS1=$BICyan$Time12h$Color_Off'$(git branch &>/dev/null;\
 if [ $? -eq 0 ]; then \
+  [[ "$(type -t __git_ps1)" == "function" ]]; \
+  __git_ps1_defined=$?; \
   echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
+  if [ "$__git_ps1_defined" == "0" ]; then \
   if [ "$?" -eq "0" ]; then \
     # @4 - Clean repository - nothing to commit
     echo "'$Green'"$(__git_ps1 " (%s)"); \
   else \
     # @5 - Changes to working tree
     echo "'$IRed'"$(__git_ps1 " {%s}"); \
+  fi
   fi) '$BYellow$PathShort$Color_Off'\$ "; \
 else \
   # @2 - Prompt when not in GIT repo
   echo " '$BIYellow$PathShort$Color_Off'\$ "; \
 fi)'
 fi
-
-# enable colors in less
-# -R or --RAW-CONTROL-CHARS
-export LESS=-R
-
-# project opening shortcuts
-alias coddress='gvim -vc "Sauce coddress"'
-alias dotcore='gvim -vc "Sauce dotcore"'
-alias berale='gvim -vc "Sauce berale"'
-
-#mining software shortcut
-alias ltc_cpu='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://hk2.wemineltc.com:3333 --userpass=perrin4869.home_cpu:conan4869'
-alias ltc_cpu_backup='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://gigahash.wemineltc.com:3334 --userpass=perrin4869.home_cpu:conan4869'
-
-# in order to use only one device, pass the -d option, as in -d 0,1 to use devices 0 and 1
-alias ltc_gpu='DISPLAY=:0 GPU_MAX_ALLOC_PERCENT=100 GPU_USE_SYNC_OBJECTS=1 ~/crypto/miners/cgminer-829f0687bfd0ddb0cf12a9a8588ae2478dfe8d99/cgminer -I 10,19  --vectors 2 -g 1 --gpu-engine 750,910 --gpu-memclock 850,1375 --temp-target 80 --auto-fan -w 128,256 --thread-concurrency 6144,8500 --shaders 960,1536 --scrypt -o stratum+tcp://gigahash.wemineltc.com:3334 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://hk2.wemineltc.com:3333 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://usa2.wemineltc.com:3334 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://easymining.eu:3333 -u perrin4869.home_gpu -p conan4869'
-
-alias doge_cpu='~/crypto/miners/cpuminer-2.3.2/minerd --url=stratum+tcp://stratum.netcodepool.org:4093 --userpass=perrin4869.home_cpu:conan4869'
-
-alias doge_gpu='DISPLAY=:0 GPU_MAX_ALLOC_PERCENT=100 GPU_USE_SYNC_OBJECTS=1 ~/crypto/miners/cgminer-829f0687bfd0ddb0cf12a9a8588ae2478dfe8d99/cgminer -I 10,19  --vectors 2 -g 1 --gpu-engine 750,910 --gpu-memclock 850,1375 --temp-target 80 --auto-fan -w 128,256 --thread-concurrency 6144,8500 --shaders 960,1536 --scrypt -o stratum+tcp://stratum.netcodepool.org:4093 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://doge.poolerino.com:3333 -u perrin4869.home_gpu -p conan4869 --failover-only -o stratum+tcp://doge.poolminers.com:3333 -u perrin4869.home_gpu -p conan4869'
-

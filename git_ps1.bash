@@ -97,10 +97,9 @@ Jobs="\j"
 
 export PS1=$BICyan$Time12h$Color_Off'$(git branch &>/dev/null;\
 if [ $? -eq 0 ]; then \
-  [[ "$(type -t __git_ps1)" == "function" ]]; \
-  __git_ps1_defined=$?; \
-  echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
-  if [ "$__git_ps1_defined" == "0" ]; then \
+  echo "$( \
+  if [ "$(type -t __git_ps1)" == "function" ]; then \
+  echo `git status` | grep "nothing to commit" > /dev/null 2>&1; 
   if [ "$?" -eq "0" ]; then \
     # @4 - Clean repository - nothing to commit
     echo "'$Green'"$(__git_ps1 " (%s)"); \

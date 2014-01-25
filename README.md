@@ -12,6 +12,8 @@ Install `git_diff_wrapper` into `/usr/bin`
 
 	sudo cp git_diff_wrapper /usr/bin
 
+Update the font cache - `fc-cache` (from `fontconfig`). Currently I am using `Inconsolata Medium 11`.
+
 Source the `bashrc` in the repo inside the local `~/.bashrc`:
 
 	echo "source ~/dotfiles/bashrc" >> ~/.bashrc

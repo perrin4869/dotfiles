@@ -62,5 +62,9 @@ let g:airline_theme="badwolf"
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 " let g:ycm_path_to_python_interpreter='/usr/bin/python/'
 
+" By default taggatron will be disabled, you can enable taggatron from Sauce
+" files
+let g:taggatron_enabled=0
+
 " Load custom settings
 source ~/.vim/settings/mappings.vim

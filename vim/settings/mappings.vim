@@ -23,8 +23,8 @@ nmap <Leader>c :BD<CR>
 nnoremap <Leader>n :bn<CR>
 nnoremap <Leader>p :bp<CR>
 
-"move back to NERDTree easily (assuming it's the top left window)
-nnoremap gn <C-w>t
+" Bring up NERDTree on the current working directory (the current project)
+nnoremap gn :NERDTreeFocus<CR> 
 
 "make moving between splits easier
 nnoremap <C-j> <C-w>j

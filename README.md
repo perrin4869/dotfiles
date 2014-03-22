@@ -22,6 +22,8 @@ There are 2 submodules with compiled elements: `tern_for_vim` and `YouCompleteMe
 
 For `tern_for_vim`, install `node` from `sbopkg` and then just run `npm install` in the directory of the plugin.
 
+	sbopkg -b node && installpkg /var/cache/sbopkg/node*.tar.gz && cd ~/.vim/bundle/tern_for_vim && nmp install
+
 For `YouCompleteMe`, according to the github `README.md`, run the following:
 
 	cd ~

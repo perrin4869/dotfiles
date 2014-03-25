@@ -12,3 +12,6 @@
 	ui = true
 [merge]
 	tool = vimdiff
+[alias]
+	subup = submodule foreach git fetch && git merge origin/master
+	st = status

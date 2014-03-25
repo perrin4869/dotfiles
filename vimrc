@@ -49,7 +49,6 @@ set omnifunc=syntaxcomplete#Complete
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256
 colo skittles_berry
-" colo jellybeans
 
 "make sure airline is opened by default
 set laststatus=2
@@ -68,3 +67,4 @@ let g:taggatron_enabled=0
 
 " Load custom settings
 source ~/.vim/settings/mappings.vim
+source ~/.vim/settings/colors.vim

@@ -65,6 +65,16 @@ let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 " files
 let g:taggatron_enabled=0
 
+" easymotion configuration
+" enable japanese search
+
+" easymotion style search
+" Gif config
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
+
 " Load custom settings
 source ~/.vim/settings/mappings.vim
 source ~/.vim/settings/colors.vim

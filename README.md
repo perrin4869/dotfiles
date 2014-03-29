@@ -34,3 +34,8 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 	make ycm_support_libs
 	cd ~/.vim/bundle/youcompleteme && git submodule init && git submodule update
 
+For the conky_seamod rings to work, conky must be compiled with lua support, and for the mpd conky to work, exiftool and mpc must be installed
+Run the scripts with:
+
+	conky --config=$HOME/.conky/conkyrc_seamod
+	conky --config=$HOME/.conky/mpd.conf

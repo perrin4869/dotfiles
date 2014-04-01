@@ -37,5 +37,6 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 For the conky_seamod rings to work, conky must be compiled with lua support, and for the mpd conky to work, exiftool and mpc must be installed
 Run the scripts with:
 
-	conky --config=$HOME/.conky/conkyrc_seamod
-	conky --config=$HOME/.conky/mpd.conf
+	bash -c "~/.conky_startup"
+
+On XFCE, remember to uncheck "Save session for future logins" when logging out

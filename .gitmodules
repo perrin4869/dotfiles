@@ -114,3 +114,7 @@
 	path = vim/bundle/skittles_berry
 	url = https://github.com/shawncplus/skittles_berry
 	ignore = untracked
+[submodule "vim/bundle/vim-latex"]
+	path = vim/bundle/vim-latex
+	url = http://git.code.sf.net/p/vim-latex/vim-latex
+	   ignore = untracked

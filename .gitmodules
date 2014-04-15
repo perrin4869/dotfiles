@@ -117,4 +117,4 @@
 [submodule "vim/bundle/vim-latex"]
 	path = vim/bundle/vim-latex
 	url = http://git.code.sf.net/p/vim-latex/vim-latex
-	   ignore = untracked
+	ignore = untracked

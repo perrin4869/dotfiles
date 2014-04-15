@@ -1,4 +1,0 @@
-#!/bin/bash
-
-sleep 5 && conky --config=$HOME/.conky/mpd.conf &
-sleep 5 && conky --config=$HOME/.conky/conkyrc_seamod &

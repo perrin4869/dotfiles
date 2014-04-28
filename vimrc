@@ -49,6 +49,8 @@ set omnifunc=syntaxcomplete#Complete
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256
 colo skittles_berry
+" Override with custom colors
+source ~/.vim/settings/colors.vim
 
 "make sure airline is opened by default
 set laststatus=2
@@ -75,6 +77,11 @@ omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
-" Load custom settings
+" Load custom mappings
 source ~/.vim/settings/mappings.vim
-source ~/.vim/settings/colors.vim
+
+" fix the mapping of imap.vim in latex-suite which remaps <c-j>
+nnoremap <Leader>j <Plug>IMAP_JumpForward
+" If you take a look at the code of imaps.vim you’ll see that it won’t create a mapping if there is a mapping to <Plug>IMAP_JumpForward ({rhs}), not if there is a <C-j> mapping ({lhs}). Thus you should use
+" nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
+

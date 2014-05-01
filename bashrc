@@ -14,3 +14,6 @@ fi
 #enable 256color for terminal multiplexs
 alias tmux="TERM=xterm-256color tmux"
 alias vim="gvim -v"
+
+export HISTCONTROL="ignoredups"
+export HISTIGNORE="clear:history"

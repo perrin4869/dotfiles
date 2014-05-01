@@ -78,6 +78,16 @@ set nobackup
 set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
+" Fugitive options
+" all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
+" For navigating trees
+autocmd User fugitive 
+  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \   nnoremap <buffer> .. :edit %:h<CR> |
+  \ endif
+
+" For autocleaning of fugitive buffers
+autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " By default taggatron will be disabled, you can enable taggatron from Sauce
 " files

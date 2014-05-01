@@ -63,16 +63,6 @@ set foldcolumn=3
 
 " Save and load folds automatically
 set viewoptions-=options
-augroup vimrc
-    autocmd BufWritePost *
-    \   if expand('%') != '' && &buftype !~ 'nofile'
-    \|      mkview
-    \|  endif
-    autocmd BufRead *
-    \   if expand('%') != '' && &buftype !~ 'nofile'
-    \|      silent loadview
-    \|  endif
-augroup END
 " stop creating annoying tilde files
 set nobackup
 set nowritebackup

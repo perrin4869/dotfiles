@@ -25,12 +25,6 @@ set hidden
 "make sure we don't highlight / search results
 " set nohlsearch
 
-" stop creating annoying tilde files
-set nobackup
-set nowritebackup
-" alternatively, you could change the directory in which tilde files are stored
-" set backupdir=~/.vim/backup
-
 "make tabs and newlines visible
 set list
 set listchars=tab:▸\ ,eol:¬
@@ -38,33 +32,52 @@ set listchars=tab:▸\ ,eol:¬
 " width of a tab
 set tabstop=5
 
-" get folding signs space
-set foldcolumn=3
 
 "completion hint in command mode
 set wildmenu
 set wildmode=list:longest,full
 
-"use omnicomplete whenever there's no completion engine in youcompleteme (for
-"example, in the case of PHP)
-set omnifunc=syntaxcomplete#Complete
-
+" Coloring options
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256
 colo skittles_berry
 " Override with custom colors
 source ~/.vim/settings/colors.vim
-
+" Airline options
 "make sure airline is opened by default
 set laststatus=2
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"
-
 "youcompleteme options
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 " let g:ycm_path_to_python_interpreter='/usr/bin/python/'
+
+"use omnicomplete whenever there's no completion engine in youcompleteme (for
+"example, in the case of PHP)
+set omnifunc=syntaxcomplete#Complete
+" Folding options
+" get folding signs space
+set foldcolumn=3
+
+" Save and load folds automatically
+set viewoptions-=options
+augroup vimrc
+    autocmd BufWritePost *
+    \   if expand('%') != '' && &buftype !~ 'nofile'
+    \|      mkview
+    \|  endif
+    autocmd BufRead *
+    \   if expand('%') != '' && &buftype !~ 'nofile'
+    \|      silent loadview
+    \|  endif
+augroup END
+" stop creating annoying tilde files
+set nobackup
+set nowritebackup
+" alternatively, you could change the directory in which tilde files are stored
+" set backupdir=~/.vim/backup
 
 " By default taggatron will be disabled, you can enable taggatron from Sauce
 " files

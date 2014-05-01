@@ -38,6 +38,9 @@ set listchars=tab:▸\ ,eol:¬
 " width of a tab
 set tabstop=5
 
+" get folding signs space
+set foldcolumn=3
+
 "completion hint in command mode
 set wildmenu
 set wildmode=list:longest,full

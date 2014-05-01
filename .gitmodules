@@ -118,3 +118,7 @@
 	path = vim/bundle/vim-latex
 	url = http://git.code.sf.net/p/vim-latex/vim-latex
 	ignore = untracked
+[submodule "vim/bundle/phpfolding"]
+	path = vim/bundle/phpfolding
+	url = https://github.com/rayburgemeestre/phpfolding.vim
+	ignore = untracked

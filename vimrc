@@ -32,7 +32,6 @@ set listchars=tab:▸\ ,eol:¬
 " width of a tab
 set tabstop=5
 
-
 "completion hint in command mode
 set wildmenu
 set wildmode=list:longest,full
@@ -43,6 +42,7 @@ set t_Co=256
 colo skittles_berry
 " Override with custom colors
 source ~/.vim/settings/colors.vim
+
 " Airline options
 "make sure airline is opened by default
 set laststatus=2
@@ -50,6 +50,7 @@ set laststatus=2
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"
+
 "youcompleteme options
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 " let g:ycm_path_to_python_interpreter='/usr/bin/python/'
@@ -57,17 +58,20 @@ let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 "use omnicomplete whenever there's no completion engine in youcompleteme (for
 "example, in the case of PHP)
 set omnifunc=syntaxcomplete#Complete
+
 " Folding options
 " get folding signs space
 set foldcolumn=3
 
 " Save and load folds automatically
 set viewoptions-=options
+
 " stop creating annoying tilde files
 set nobackup
 set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
+
 " Fugitive options
 " all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
 " For navigating trees
@@ -78,11 +82,22 @@ autocmd User fugitive
 
 " For autocleaning of fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
+" Latex-suite options
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+set grepprg=grep\ -nH\ $*
 
-" By default taggatron will be disabled, you can enable taggatron from Sauce
-" files
-let g:taggatron_enabled=0
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+let g:tex_flavor='latex'
 
+" fix the mapping of imap.vim in latex-suite which remaps <c-j>
+nnoremap <Leader>j <Plug>IMAP_JumpForward
+" If you take a look at the code of imaps.vim you’ll see that it won’t create a mapping if there is a mapping to <Plug>IMAP_JumpForward ({rhs}), not if there is a <C-j> mapping ({lhs}). Thus you should use
+" nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
+" 
 " easymotion configuration
 " enable japanese search
 
@@ -93,11 +108,12 @@ omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
+
+" By default taggatron will be disabled, you can enable taggatron from Sauce
+" files
+let g:taggatron_enabled=0
+
+
 " Load custom mappings
 source ~/.vim/settings/mappings.vim
-
-" fix the mapping of imap.vim in latex-suite which remaps <c-j>
-nnoremap <Leader>j <Plug>IMAP_JumpForward
-" If you take a look at the code of imaps.vim you’ll see that it won’t create a mapping if there is a mapping to <Plug>IMAP_JumpForward ({rhs}), not if there is a <C-j> mapping ({lhs}). Thus you should use
-" nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
 

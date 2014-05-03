@@ -130,3 +130,7 @@
 	path = vim/bundle/restore_view
 	url = https://github.com/perrin4869/restore_view.vim
 	ignore = untracked
+[submodule "vim/bundle/vim-snippets"]
+	path = vim/bundle/vim-snippets
+	url = https://github.com/honza/vim-snippets
+	ignore = untracked

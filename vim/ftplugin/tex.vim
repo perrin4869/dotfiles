@@ -5,3 +5,6 @@ set sw=2
 " type in \ref{fig: and press <C-n> you will automatically cycle through
 " all the figure labels. Very useful!
 set iskeyword+=:
+
+" Remap Latex-Suite mappings so as not to create conflicts with Ultisnips
+imap <C-f> <Plug>IMAP_JumpForward

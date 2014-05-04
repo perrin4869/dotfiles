@@ -1,6 +1,8 @@
-"Here go all my mappings:
+" Easily exit insert mode
+inoremap <C-l> <Esc>
 
-let mapleader=','
+" Convenience
+nnoremap ; :
 
 " Unmap the arrow keys
 no <down> ddp
@@ -74,9 +76,6 @@ imap <C-v> <Esc>"+pa
 " ctrl-a selects all the text
 nmap <C-a> <Esc>ggVGi
 
-"automatically start editing bracket blocks
-imap <C-l> {}<Esc>i<CR><Esc>O
-
 "folding
 nnoremap <Space> za
 vnoremap <Space> zf
@@ -86,25 +85,4 @@ nnoremap <silent> <CR> :noh<CR>
 
 "Make it easier to restart Ycm
 nnoremap <F2> :YcmRestartServer<CR>
-
-" ycm
-" let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
-" because C-s freezes the command line
-let g:ycm_key_invoke_completion = '<C-h>'
-" let g:ycm_key_list_select_completion = ['<C-j>']
-" let g:ycm_key_list_previous_completion = ['<C-k>']
-let g:ycm_key_list_select_completion = ['<Tab>']
-let g:ycm_key_list_previous_completion = ['<S-Tab>']
-
-"make ycm play nice with ultisnips
-" let g:UltiSnipsExpandTrigger="<Tab>"
-" let g:UltiSnipsJumpForwardTrigger="<Tab>"
-" let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-let g:UltiSnipsExpandTrigger="<c-j>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-
-"make sure the key to trigger easy motion is <leader> and not <leader><leader>
-"as default
-let g:EasyMotion_leader_key = '<Leader>'
 

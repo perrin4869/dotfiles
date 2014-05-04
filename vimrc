@@ -59,6 +59,22 @@ let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 "example, in the case of PHP)
 set omnifunc=syntaxcomplete#Complete
 
+" let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
+" because C-s freezes the command line
+let g:ycm_key_invoke_completion = '<C-h>'
+" let g:ycm_key_list_select_completion = ['<C-j>']
+" let g:ycm_key_list_previous_completion = ['<C-k>']
+let g:ycm_key_list_select_completion = ['<Tab>']
+let g:ycm_key_list_previous_completion = ['<S-Tab>']
+
+" Ultisnips
+" let g:UltiSnipsExpandTrigger="<Tab>"
+" let g:UltiSnipsJumpForwardTrigger="<Tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
 " Folding options
 " get folding signs space
 set foldcolumn=3
@@ -82,6 +98,7 @@ autocmd User fugitive
 
 " For autocleaning of fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
+
 " Latex-suite options
 " IMPORTANT: grep will sometimes skip displaying the file name if you
 " search in a singe file. This will confuse Latex-Suite. Set your grep
@@ -94,12 +111,17 @@ set grepprg=grep\ -nH\ $*
 let g:tex_flavor='latex'
 
 " fix the mapping of imap.vim in latex-suite which remaps <c-j>
-nnoremap <Leader>j <Plug>IMAP_JumpForward
+nnoremap <Leader><Leader>j <Plug>IMAP_JumpForward
 " If you take a look at the code of imaps.vim you’ll see that it won’t create a mapping if there is a mapping to <Plug>IMAP_JumpForward ({rhs}), not if there is a <C-j> mapping ({lhs}). Thus you should use
 " nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
-" 
+ 
 " easymotion configuration
 " enable japanese search
+
+" Easymotion
+"make sure the key to trigger easy motion is <leader> and not <leader><leader>
+"as default
+let g:EasyMotion_leader_key = '<Leader>'
 
 " easymotion style search
 " Gif config
@@ -108,12 +130,13 @@ omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
-
+" Taggatron
 " By default taggatron will be disabled, you can enable taggatron from Sauce
 " files
 let g:taggatron_enabled=0
 
 
 " Load custom mappings
+let mapleader=','
 source ~/.vim/settings/mappings.vim
 

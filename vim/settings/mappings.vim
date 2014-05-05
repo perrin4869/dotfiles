@@ -58,19 +58,8 @@ nmap <M-0> g^
 nnoremap <Tab> :bn<CR>
 nnoremap <S-Tab> :bp<CR>
 
-"allow deleting characters in insert mode (simulating <Del>)
-"<C-o> allows you to execute one command in normal mode before returning to
-"insert mode
-imap <C-d> <C-o>x
-
-" easier motions in insert-mode
-" imap <C-j> <C-o>j
-" imap <C-k> <C-o>k
-" imap <C-h> <C-o>h
-" imap <C-l> <C-o>l
 " Support normal copy of text into clipboard in gui mode
 vmap <C-c> "+y<Esc>l
-vmap <C-x> "+d<Esc>l
 imap <C-v> <Esc>"+pa
 
 " ctrl-a selects all the text

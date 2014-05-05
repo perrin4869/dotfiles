@@ -99,25 +99,6 @@ autocmd User fugitive
 " For autocleaning of fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
-" Latex-suite options
-" IMPORTANT: grep will sometimes skip displaying the file name if you
-" search in a singe file. This will confuse Latex-Suite. Set your grep
-" program to always generate a file-name.
-set grepprg=grep\ -nH\ $*
-
-" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
-" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
-" The following changes the default filetype back to 'tex':
-let g:tex_flavor='latex'
-
-" fix the mapping of imap.vim in latex-suite which remaps <c-j>
-nnoremap <Leader><Leader>j <Plug>IMAP_JumpForward
-" If you take a look at the code of imaps.vim you’ll see that it won’t create a mapping if there is a mapping to <Plug>IMAP_JumpForward ({rhs}), not if there is a <C-j> mapping ({lhs}). Thus you should use
-" nnoremap <SID>I_won’t_ever_type_this <Plug>IMAP_JumpForward
- 
-" easymotion configuration
-" enable japanese search
-
 " Easymotion
 "make sure the key to trigger easy motion is <leader> and not <leader><leader>
 "as default

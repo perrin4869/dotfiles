@@ -114,10 +114,6 @@
 	path = vim/bundle/skittles_berry
 	url = https://github.com/shawncplus/skittles_berry
 	ignore = untracked
-[submodule "vim/bundle/vim-latex"]
-	path = vim/bundle/vim-latex
-	url = http://git.code.sf.net/p/vim-latex/vim-latex
-	ignore = untracked
 [submodule "vim/bundle/phpfolding"]
 	path = vim/bundle/phpfolding
 	url = https://github.com/rayburgemeestre/phpfolding.vim
@@ -133,4 +129,8 @@
 [submodule "vim/bundle/vim-snippets"]
 	path = vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets
+	ignore = untracked
+[submodule "vim/bundle/LaTeX-Box"]
+	path = vim/bundle/LaTeX-Box
+	url = https://github.com/LaTeX-Box-Team/LaTeX-Box
 	ignore = untracked

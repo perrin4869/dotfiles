@@ -30,7 +30,7 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 	mkdir ycm_build
 	cd ycm_build
 
-	cmake -G "Unix Makefiles" -DUSE_SYSTEM_LIBCLANG=ON . ~/.vim/bundle/youcompleteme/cpp
+	cmake -G "Unix Makefiles" -DUSE_SYSTEM_LIBCLANG=ON . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp
 	make ycm_support_libs
 	cd ~/.vim/bundle/youcompleteme && git submodule init && git submodule update
 

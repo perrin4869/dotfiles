@@ -82,10 +82,6 @@
 	path = vim/bundle/vim-sauce
 	url = https://github.com/joonty/vim-sauce
 	ignore = untracked
-[submodule "vim/bundle/youcompleteme"]
-	path = vim/bundle/youcompleteme
-	url = https://github.com/Valloric/YouCompleteMe
-	ignore = untracked
 [submodule "vim/bundle/ultisnips"]
 	path = vim/bundle/ultisnips
 	url = https://github.com/SirVer/ultisnips
@@ -133,4 +129,8 @@
 [submodule "vim/bundle/LaTeX-Box"]
 	path = vim/bundle/LaTeX-Box
 	url = https://github.com/LaTeX-Box-Team/LaTeX-Box
+	ignore = untracked
+[submodule "vim/bundle/YouCompleteMe"]
+	path = vim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
 	ignore = untracked

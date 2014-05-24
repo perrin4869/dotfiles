@@ -8,7 +8,7 @@
 
 dir=~/dotfiles # dotfiles directory
 olddir=~/dotfiles_old # old dotfiles backup directory
-files="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts vim tmux.conf bash_profile screenrc conky mpdconf ncmpcpp latexmkrc" # list of files/folders to symlink in homedir
+files="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
 
 ##########
 
@@ -35,6 +35,16 @@ mkdir -p $olddir/.config
 for file in config/*; do
 echo "Moving any existing config files from ~/.config to $olddir/.config"
     # Here $file looks like: $file=config/foo
+    mv ~/.$file ~/dotfiles_old/.$file
+    echo "Creating symlink to $file in .config directory."
+    ln -s $dir/$file ~/.$file
+done
+
+#install fonts
+mkdir -p $olddir/.fonts
+for file in fonts/*; do
+echo "Moving any existing fonts from ~/.fonts to $olddir/.fonts"
+    # Here $file looks like: $file=fonts/foo
     mv ~/.$file ~/dotfiles_old/.$file
     echo "Creating symlink to $file in .config directory."
     ln -s $dir/$file ~/.$file

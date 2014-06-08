@@ -121,3 +121,5 @@ let g:taggatron_enabled=0
 let mapleader=','
 source ~/.vim/settings/mappings.vim
 
+"Custom commads
+command -nargs=? W SudoWrite <args>

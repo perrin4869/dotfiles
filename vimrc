@@ -127,3 +127,4 @@ source ~/.vim/settings/mappings.vim
 
 "Custom commads
 command -nargs=? W SudoWrite <args>
+command Q qall

@@ -117,7 +117,7 @@ map  N <Plug>(easymotion-prev)
 let g:taggatron_enabled=0
 
 " Ctrlp options
-let g:ctrlp_map = '<c-[>'
+let g:ctrlp_map = '<c-p>'
 
 
 

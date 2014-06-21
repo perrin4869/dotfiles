@@ -1,6 +1,9 @@
 " Easily exit insert mode
 inoremap <C-l> <Esc>
 
+" Easy access to command history
+nmap <C-p> :<C-p>
+
 " Convenience
 nnoremap ; :
 

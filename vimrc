@@ -116,6 +116,10 @@ map  N <Plug>(easymotion-prev)
 " files
 let g:taggatron_enabled=0
 
+" Ctrlp options
+let g:ctrlp_map = '<c-[>'
+
+
 
 " Load custom mappings
 let mapleader=','

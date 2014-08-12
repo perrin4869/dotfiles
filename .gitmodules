@@ -134,3 +134,7 @@
 	path = vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
 	ignore = untracked
+[submodule "opp.zsh"]
+	path = opp.zsh
+	url = https://github.com/hchbaw/opp.zsh
+	ignore = untracked

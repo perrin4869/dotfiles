@@ -83,8 +83,9 @@ export EDITOR='vim'
 # Example aliases
 alias zshconfig="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
-alias tmux="TERM=xterm-256color tmux"
 alias vim="gvim -v --servername vimserver"
+alias tmux="tmux -2"
+alias tmuxinator="TERM=xterm-256color tmuxinator"
 alias mux="tmuxinator"
 
 # use vi keybindings

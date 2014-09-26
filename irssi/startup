@@ -1,0 +1,7 @@
+# since scripts in scripts/autoload are loaded after startup gets executed, nicklist must be loaded manually from here
+script load scripts.irssi.org/scripts/nicklist.pl
+nicklist fifo
+
+/window new split
+/window name hilight
+/window size 6

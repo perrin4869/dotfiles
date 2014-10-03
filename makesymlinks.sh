@@ -8,7 +8,8 @@
 
 dir=~/dotfiles # dotfiles directory
 olddir=~/dotfiles_old # old dotfiles backup directory
-files="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
+files="opp.zsh"
+dotfiles="git-completion.bash gitconfig zshrc git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
 
 ##########
 
@@ -23,11 +24,19 @@ cd $dir
 echo "done"
 
 # move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks from the homedir to any files in the ~/dotfiles directory specified in $files
-for file in $files; do
+for file in $dotfiles; do
 echo "Moving any existing dotfiles from ~ to $olddir"
     mv ~/.$file ~/dotfiles_old/
     echo "Creating symlink to $file in home directory."
     ln -s $dir/$file ~/.$file
+done
+
+# move any existing files in homedir to dotfiles_old directory, then create symlinks from the homedir to any files in the ~/dotfiles directory specified in $files
+for file in $files; do
+echo "Moving any existing files from ~ to $olddir"
+    mv ~/.$file ~/dotfiles_old/
+    echo "Creating symlink to $file in home directory."
+    ln -s $dir/$file ~/$file
 done
 
 #install config files

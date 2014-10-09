@@ -295,6 +295,8 @@ settings = {
     awl_shared_sbar = "OFF";
     awl_viewer = "no";
     awl_block = "-14";
+    dccstat_refresh = "1";
+    dccstat_auto_short_limit = "1";
   };
 };
 keyboard = (

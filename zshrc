@@ -101,8 +101,8 @@ bindkey '^B' backward-char
 bindkey '^F' forward-char
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
-bindkey '^K' backward-kill-line
-bindkey '^U' kill-line
+bindkey '^U' backward-kill-line
+bindkey '^K' kill-line
 
 function zle-line-init zle-keymap-select {
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"

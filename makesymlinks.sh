@@ -9,7 +9,7 @@
 dir=~/dotfiles # dotfiles directory
 olddir=~/dotfiles_old # old dotfiles backup directory
 files="opp.zsh"
-dotfiles="git-completion.bash gitconfig zshrc git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
+dotfiles="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
 
 ##########
 

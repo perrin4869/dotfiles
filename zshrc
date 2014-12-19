@@ -83,7 +83,7 @@ export EDITOR='vim'
 # Example aliases
 alias zshconfig="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
-alias vim="gvim -v --servername vimserver"
+[[ -x $(which gvim) ]] && alias vim="gvim -v --servername vimserver"
 alias tmux="tmux -2"
 alias tmuxinator="TERM=xterm-256color tmuxinator"
 alias mux="tmuxinator"

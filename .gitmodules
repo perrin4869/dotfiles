@@ -142,3 +142,11 @@
 	path = irssi/scripts/scripts.irssi.org
 	url = https://github.com/irssi/scripts.irssi.org
 	ignore = untracked
+[submodule "vim/bundle/vim-jade"]
+	path = vim/bundle/vim-jade
+	url = https://github.com/digitaltoad/vim-jade
+	ignore = untracked
+[submodule "vim/bundle/vim-javascript"]
+	path = vim/bundle/vim-javascript
+	url = https://github.com/pangloss/vim-javascript
+	ignore = untracked

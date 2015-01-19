@@ -150,3 +150,15 @@
 	path = vim/bundle/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
 	ignore = untracked
+[submodule "vim/bundle/delimitMate"]
+	path = vim/bundle/delimitMate
+	url = https://github.com/Raimondi/delimitMate
+	ignore = untracked
+[submodule "vim/bundle/vim-javascript-syntax"]
+	path = vim/bundle/vim-javascript-syntax
+	url = https://github.com/jelera/vim-javascript-syntax
+	ignore = untracked
+[submodule "vim/bundle/vim-node"]
+	path = vim/bundle/vim-node
+	url = https://github.com/moll/vim-node
+	ignore = untracked

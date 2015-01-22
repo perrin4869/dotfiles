@@ -29,3 +29,11 @@ let g:LatexBox_latexmk_preview_continuously=1
 let g:LatexBox_quickfix=2
 let g:LatexBox_latexmk_options='-pdfdvi'
 
+" Add custom surrounds
+" Maps to u for underscore and o for overscore
+let g:surround_117="_{\r}"
+let g:surround_111="_{\r}"
+let g:surround_101="\\begin{\1environment: \1}\r\\end{\1\1}"
+let g:surround_99="\\\1command: \1{\r}"
+
+

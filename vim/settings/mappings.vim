@@ -20,6 +20,7 @@ vno <up> <Nop>
 
 "close current buffer with bufkill
 nmap <Leader>c :BD<CR>
+nnoremap <C-c> :BD<CR> 
 
 "move easily between buffers
 nnoremap <Leader>n :bn<CR>

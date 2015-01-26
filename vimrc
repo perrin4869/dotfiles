@@ -120,6 +120,11 @@ let g:taggatron_enabled=0
 " Ctrlp options
 let g:ctrlp_map = '<c-p>'
 
+" Delimitmate options
+let delimitMate_expand_cr = 1
+let delimitMate_expand_space = 1
+let delimitMate_jump_expansion = 1
+
 
 
 " Load custom mappings

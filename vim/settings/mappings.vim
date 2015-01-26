@@ -76,23 +76,6 @@ nnoremap <silent> <CR> :noh<CR>
 nnoremap <F2> :YcmRestartServer<CR>
 
 " DelimitMate mappings
-"BreakLine: Return TRUE if in the middle of {} or () in INSERT mode
-fun BreakLine()
-  if (mode() == 'i')
-    return ((getline(".")[col(".")-2] == '{' && getline(".")[col(".")-1] == '}') ||
-          \(getline(".")[col(".")-2] == '(' && getline(".")[col(".")-1] == ')') ||
-          \(getline(".")[col(".")-2] == '[' && getline(".")[col(".")-1] == ']'))
-  else
-    return 0
-  endif
-endfun
-
-" Remap <Enter> to split the line and insert a new line in between if
-" BreakLine return True
-inoremap <expr> <CR> BreakLine() ? "<CR><ESC>O" : "<CR>"
-
-" Remap space to add two spaces when in between parenthesis
-inoremap <expr> <Space> BreakLine() ? "<Space><Space><Esc>i" : "<Space>"
 
 " Since S-Tab is not recognized in console mode map to another key
-silent! imap <unique> <C-a> <Plug>delimitMateS-Tab
+silent! imap <unique> <C-n> <Plug>delimitMateS-Tab

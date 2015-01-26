@@ -120,7 +120,7 @@
 	ignore = untracked
 [submodule "vim/bundle/restore_view"]
 	path = vim/bundle/restore_view
-	url = https://github.com/perrin4869/restore_view.vim
+	url = https://github.com/vim-scripts/restore_view.vim
 	ignore = untracked
 [submodule "vim/bundle/vim-snippets"]
 	path = vim/bundle/vim-snippets

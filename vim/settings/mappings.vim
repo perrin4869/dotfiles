@@ -27,6 +27,7 @@ nnoremap <Leader>p :bp<CR>
 
 " Bring up NERDTree on the current working directory (the current project)
 nnoremap gn :NERDTreeFocus<CR> 
+nnoremap <C-n> :NERDTreeFocus<CR> 
 
 "make moving between splits easier
 nnoremap <C-j> <C-w>j

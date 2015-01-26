@@ -124,6 +124,9 @@ let g:ctrlp_map = '<c-p>'
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
 let delimitMate_jump_expansion = 1
+" Nerdtree options
+" Close vim automatically if nerdtree is the only pane left
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 
 

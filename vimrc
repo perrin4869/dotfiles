@@ -136,4 +136,11 @@ source ~/.vim/settings/mappings.vim
 
 "Custom commads
 command -nargs=? W SudoWrite <args>
-command Q qall
+command -bang Q call CloseAll(<bang>0);
+
+function CloseAll (bang) 
+	if a:bang == 1
+		qall!
+	endif
+	qall
+endfunction

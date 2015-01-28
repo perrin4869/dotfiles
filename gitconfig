@@ -13,5 +13,5 @@
 [merge]
 	tool = vimdiff
 [alias]
-	subup = submodule foreach 'git fetch && [[ $name != "irssi/scripts/scripts.irssi.org" ]] && git merge origin/master || git merge origin/gh-pages'
+	subup = submodule update --remote --merge
 	st = status

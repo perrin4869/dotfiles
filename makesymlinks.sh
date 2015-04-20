@@ -50,6 +50,9 @@ echo "Moving any existing config files from ~/.config to $olddir/.config"
 done
 
 #install fonts
+if [ ! -d ~/.fonts ]; then
+   mkdir ~/.fonts
+fi
 mkdir -p $olddir/.fonts
 for file in fonts/*; do
 echo "Moving any existing fonts from ~/.fonts to $olddir/.fonts"

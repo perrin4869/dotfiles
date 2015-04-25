@@ -48,6 +48,10 @@ source ~/.vim/settings/colors.vim
 "make sure airline is opened by default
 set laststatus=2
 
+" Undo can't be left in the same dir as the edited file because we may not
+" have writing permission there
+set undodir=$HOME/.vim/undo
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"

@@ -4,7 +4,7 @@
 	ignore = untracked
 [submodule "vim/bundle/jellybeans.vim"]
 	path = vim/bundle/jellybeans.vim
-	url = git://github.com/nanotech/jellybeans.vim
+	url = https://github.com/nanotech/jellybeans.vim
 	ignore = untracked
 [submodule "vim/bundle/matchit"]
 	path = vim/bundle/matchit
@@ -20,7 +20,7 @@
 	ignore = untracked
 [submodule "vim/bundle/phpcomplete.vim"]
 	path = vim/bundle/phpcomplete.vim
-	url = git://github.com/shawncplus/phpcomplete.vim.git
+	url = https://github.com/shawncplus/phpcomplete.vim.git
 	ignore = untracked
 [submodule "vim/bundle/tcomment_vim"]
 	path = vim/bundle/tcomment_vim
@@ -36,7 +36,7 @@
 	ignore = untracked
 [submodule "vim/bundle/vim-easymotion"]
 	path = vim/bundle/vim-easymotion
-	url = git://github.com/Lokaltog/vim-easymotion.git
+	url = https://github.com/Lokaltog/vim-easymotion.git
 	ignore = untracked
 [submodule "vim/bundle/vim-pathogen"]
 	path = vim/bundle/vim-pathogen
@@ -44,7 +44,7 @@
 	ignore = untracked
 [submodule "vim/bundle/vim-repeat"]
 	path = vim/bundle/vim-repeat
-	url = git://github.com/tpope/vim-repeat.git
+	url = https://github.com/tpope/vim-repeat.git
 	ignore = untracked
 [submodule "vim/bundle/vim-sparkup"]
 	path = vim/bundle/vim-sparkup

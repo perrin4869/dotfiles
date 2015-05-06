@@ -80,4 +80,7 @@ nnoremap <F2> :YcmRestartServer<CR>
 " DelimitMate mappings
 
 " Since S-Tab is not recognized in console mode map to another key
-silent! imap <unique> <C-n> <Plug>delimitMateS-Tab
+" <C-n> and <C-p> are used for navigating the pum forwards and backwards so
+" they are not available
+silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
+

@@ -139,12 +139,7 @@ let mapleader=','
 source ~/.vim/settings/mappings.vim
 
 "Custom commads
-command -nargs=? W SudoWrite <args>
-command -bang Q call CloseAll(<bang>0);
+command -bang -nargs=? W SudoWrite<bang> <args>
+command -bang -nargs=? E SudoRead<bang> <args>
+command -bang Q qall<bang>
 
-function CloseAll (bang) 
-	if a:bang == 1
-		qall!
-	endif
-	qall
-endfunction

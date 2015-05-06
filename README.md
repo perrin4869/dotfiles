@@ -24,6 +24,10 @@ For `tern_for_vim`, install `node` from `sbopkg` and then just run `npm install`
 
 	su -c "sbopkg -i node" && cd ~/.vim/bundle/tern_for_vim && nmp install
 
+For node express autocompletion support (as of this writing it's quite buggy), install tern-node-express in the tern module
+
+	cd vim/bundle/tern_for_vim/node_modules/tern && npm install --save tern-node-express
+
 For `YouCompleteMe`, according to the github `README.md`, run the following:
 
 	cd ~

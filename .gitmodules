@@ -167,3 +167,14 @@
 	path = vim/bundle/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin
 	ignore = untracked
+[submodule "vim/bundle/vim-exchange"]
+	path = vim/bundle/vim-exchange
+	url = https://github.com/tommcdo/vim-exchange
+	ignore = untracked
+[submodule "vim/bundle/ReplaceWithRegister"]
+	path = vim/bundle/ReplaceWithRegister
+	url = https://github.com/vim-scripts/ReplaceWithRegister
+	ignore = untracked
+[submodule "vim/bundle/vim-jsdoc"]
+	path = vim/bundle/vim-jsdoc
+	url = https://github.com/heavenshell/vim-jsdoc

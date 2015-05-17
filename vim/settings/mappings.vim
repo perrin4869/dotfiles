@@ -71,9 +71,15 @@ silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
 " Additional Ctrlp mapping
 nmap <Leader>p <C-p>
 
+" easy-align mappings
+" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
+vmap <Enter> <Plug>(EasyAlign)
+"
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 " Toggles
 imap <C-r> <c-o>:call ToggleRl()<cr>
-map <C-r> :call ToggleRl()<cr>
  
 func! ToggleRl()
 	if &rl
@@ -87,3 +93,16 @@ endfunc
 nnoremap <Leader>n :NERDTreeToggle<CR> 
 nnoremap <C-n> :NERDTreeFocus<CR> 
 
+" Toggle relative numbers
+nmap <Leader>r :call ToggleRnu()<CR>
+
+func! ToggleRnu()
+	if &rnu
+		set nornu
+	else
+		set rnu
+	end
+endfunc
+
+" Toggle undo tree
+nmap <Leader>u :UndotreeToggle<cr>

@@ -19,16 +19,7 @@ vno <right> <Nop>
 vno <up> <Nop>
 
 "close current buffer with bufkill
-nmap <Leader>c :BD<CR>
 nnoremap <C-c> :BD<CR> 
-
-"move easily between buffers
-nnoremap <Leader>n :bn<CR>
-nnoremap <Leader>p :bp<CR>
-
-" Bring up NERDTree on the current working directory (the current project)
-nnoremap gn :NERDTreeFocus<CR> 
-nnoremap <C-n> :NERDTreeFocus<CR> 
 
 "make moving between splits easier
 nnoremap <C-j> <C-w>j
@@ -60,13 +51,6 @@ nmap <M-0> g^
 nnoremap <Tab> :bn<CR>
 nnoremap <S-Tab> :bp<CR>
 
-" Support normal copy of text into clipboard in gui mode
-vmap <C-c> "+y<Esc>l
-imap <C-v> <Esc>"+pa
-
-" ctrl-a selects all the text
-nmap <C-a> <Esc>ggVGi
-
 "folding
 nnoremap <Space> za
 vnoremap <Space> zf
@@ -83,4 +67,23 @@ nnoremap <F2> :YcmRestartServer<CR>
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
 silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
+
+" Additional Ctrlp mapping
+nmap <Leader>p <C-p>
+
+" Toggles
+imap <C-r> <c-o>:call ToggleRl()<cr>
+map <C-r> :call ToggleRl()<cr>
+ 
+func! ToggleRl()
+	if &rl
+		set norl
+	else
+		set rl
+	end
+endfunc
+
+" Bring up NERDTree on the current working directory (the current project)
+nnoremap <Leader>n :NERDTreeToggle<CR> 
+nnoremap <C-n> :NERDTreeFocus<CR> 
 

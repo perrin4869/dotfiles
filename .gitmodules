@@ -191,3 +191,11 @@
 	path = vim/bundle/vim-speeddating
 	url = https://github.com/tpope/vim-speeddating
 	ignore = untracked
+[submodule "vim/bundle/undotree"]
+	path = vim/bundle/undotree
+	url = https://github.com/mbbill/undotree
+	ignore = untracked
+[submodule "vim/bundle/vim-easy-align"]
+	path = vim/bundle/vim-easy-align
+	url = https://github.com/junegunn/vim-easy-align
+	ignore = untracked

@@ -78,6 +78,9 @@ vmap <Enter> <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+" Simple Ag mapping
+nmap <Leader>a :Ag 
+
 " Toggles
 imap <C-r> <c-o>:call ToggleRl()<cr>
  

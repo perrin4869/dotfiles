@@ -56,7 +56,7 @@ nnoremap <Space> za
 vnoremap <Space> zf
 
 "This unsets the "last search pattern" register by hitting return
-nnoremap <silent> <CR> :noh<CR>
+nnoremap <silent> <backspace> :noh<CR>
 
 "Make it easier to restart Ycm
 nnoremap <F2> :YcmRestartServer<CR>

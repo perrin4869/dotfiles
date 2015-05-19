@@ -207,3 +207,7 @@
 	path = vim/bundle/ack.vim
 	url = https://github.com/mileszs/ack.vim
 	ignore = untracked
+[submodule "vim/bundle/tagbar"]
+	path = vim/bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
+	ignore = untracked

@@ -109,3 +109,6 @@ endfunc
 
 " Toggle undo tree
 nmap <Leader>u :UndotreeToggle<cr>
+
+" Toggle tagbar
+nmap <Leader>t :TagbarToggle<CR>

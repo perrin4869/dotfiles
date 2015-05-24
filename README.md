@@ -38,3 +38,7 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 	make ycm_support_libs
 	cd ~/.vim/bundle/youcompleteme && git submodule init && git submodule update
 
+In order for the java autocompletion to work (with javacomplete), nailgun must be installed (at the point of this writing, the autocompletion tends to break still)
+
+	git clone https://github.com/martylamb/nailgun && cd nailgun && make && sudo make install
+

@@ -36,6 +36,7 @@ set shiftwidth=4
 "completion hint in command mode
 set wildmenu
 set wildmode=list:longest,full
+set wildignore=*.o,*.obj,*.la,*.lo,*.so,*.pyc,*.pyo,*.jpg,*.png,*.gif
 
 " Coloring options
 "make sure that vimrc is initiated in 256 colors mode
@@ -124,6 +125,16 @@ let g:taggatron_enabled=0
 " Ctrlp options
 let g:ctrlp_map = '<c-p>'
 
+" PyMatcher for CtrlP
+if has('python')
+	let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+endif
+" If ag is available use it as filename list generator instead of 'find'
+if executable("ag")
+	set grepprg=ag\ --nogroup\ --nocolor
+	let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden -g ""'
+endif
+
 " Delimitmate options
 let delimitMate_expand_cr = 1
 let delimitMate_expand_space = 1
@@ -132,6 +143,20 @@ let delimitMate_jump_expansion = 1
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
+" Unite
+" Use ag for search
+if executable('ag')
+	let g:unite_source_rec_async_command = 'ag --follow --nocolor --nogroup --hidden -g ""'
+	let g:unite_source_grep_command = 'ag'
+	let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+	let g:unite_source_grep_recursive_opt = ''
+endif
+
+call unite#custom#source('file_rec/async', 'ignore_pattern', '(png\|gif\|jpeg\|jpg)$')
+" Allow for searches without having to put spaces
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#custom#source('file_rec/async', 'ignore_globs',
+			\ split(&wildignore, ','))
 
 
 " Load custom mappings

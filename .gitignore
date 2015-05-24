@@ -3,3 +3,5 @@
 
 vim/view/*
 # !vim/view/~=+dotfiles=+vimrc=
+
+vim/javacomplete*

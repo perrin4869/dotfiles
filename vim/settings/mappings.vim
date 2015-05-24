@@ -78,11 +78,11 @@ vmap <Enter> <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-" Simple Ag mapping
-nmap <Leader>a :Ag 
-
 " Toggles
-imap <C-r> <c-o>:call ToggleRl()<cr>
+
+" <C-r> is by default used in insert mode for pasting registers so let's not
+" meddle with that
+imap <C-l> <C-o>:call ToggleRl()<CR>
  
 func! ToggleRl()
 	if &rl
@@ -91,6 +91,9 @@ func! ToggleRl()
 		set rl
 	end
 endfunc
+
+" Simple Ag mapping
+nmap <Leader>a :Ag 
 
 " Bring up NERDTree on the current working directory (the current project)
 nnoremap <Leader>n :NERDTreeToggle<CR> 
@@ -112,3 +115,24 @@ nmap <Leader>u :UndotreeToggle<cr>
 
 " Toggle tagbar
 nmap <Leader>t :TagbarToggle<CR>
+
+" Unite toggle mappings
+
+" The prefix key.
+nnoremap [unite] <Nop>
+nmap <Leader>u [unite]
+" async requires vimproc to be installed
+nnoremap [unite]f :Unite -start-insert file_rec/async<CR>
+nnoremap [unite]g :Unite -start-insert grep:.<cr>
+nnoremap [unite]b :Unite -start-insert buffer<cr>
+nnoremap [unite]m :Unite file_mru<CR>
+" show lines of current file
+nnoremap [unite]l :Unite line<CR>
+" search (like ack.vim/ag.vim)
+nnoremap [unite]/ :Unite grep:.<CR>
+" Yank (like yankring/yankstack)
+let g:unite_source_history_yank_enable = 1
+nnoremap [unite]y :Unite history/yank<CR>
+
+nmap <Leader>f [unite]f
+nmap <Leader>g [unite]g

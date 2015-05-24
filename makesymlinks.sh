@@ -63,4 +63,5 @@ echo "Moving any existing fonts from ~/.fonts to $olddir/.fonts"
 done
 
 echo "Initializing submodules..."
-git submodule init && git submodule update
+git submodule init
+./upgrade.sh

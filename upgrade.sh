@@ -7,3 +7,6 @@ git subup && git submodule foreach git submodule update --recursive
 echo "Upgrade tern-for-vim module";
 ( cd vim/bundle/tern_for_vim/node_modules && npm update )
 
+echo "Upgrade vimproc module";
+( cd vim/bundle/vimproc.vim && make )
+

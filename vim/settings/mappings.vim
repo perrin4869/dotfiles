@@ -92,6 +92,10 @@ func! ToggleRl()
 	end
 endfunc
 
+" Toggle rl
+nmap ]r :set rl<CR>
+nmap [r :set norl<CR>
+
 " Simple Ag mapping
 nmap <Leader>a :Ag 
 

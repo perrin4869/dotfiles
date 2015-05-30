@@ -245,4 +245,5 @@
 	ignore = untracked
 [submodule "vim/bundle/javacomplete"]
 	path = vim/bundle/javacomplete
-	url = https://github.com/paretje/javacomplete
+	url = https://github.com/robertcboll/javacomplete
+	ignore = untracked

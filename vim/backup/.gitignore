@@ -1,0 +1,3 @@
+# This dir contains vim tilde and swap files, ignore them all
+%*
+!.gitignore

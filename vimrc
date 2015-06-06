@@ -53,6 +53,14 @@ set laststatus=2
 " have writing permission there
 set undodir=$HOME/.vim/undo
 
+" Stop cluttering cwd with swap and tilde files
+set backupdir=$HOME/.vim/backup//,/tmp//,. " For tilde files"
+set directory=$HOME/.vim/backup//,/tmp//,. " for swp files"
+" For Unix and Win32, if a directory ends in two path separators, the swap
+" file name will be built from the complete path to the file with all path
+" separators substituted to percent '%' signs. This will ensure file name
+" uniqueness in the preserve directory
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"

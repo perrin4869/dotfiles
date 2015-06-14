@@ -20,6 +20,7 @@ vno <up> <Nop>
 
 "close current buffer with bufkill
 nnoremap <C-c> :BD<CR> 
+nnoremap <Leader>c :BD<CR> 
 
 "make moving between splits easier
 nnoremap <C-j> <C-w>j
@@ -60,6 +61,38 @@ nnoremap <silent> <backspace> :noh<CR>
 
 "Make it easier to restart Ycm
 nnoremap <F2> :YcmRestartServer<CR>
+
+
+" let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
+" because C-s freezes the command line
+let g:ycm_key_invoke_completion = '<C-h>'
+" let g:ycm_key_list_select_completion = ['<C-j>']
+" let g:ycm_key_list_previous_completion = ['<C-k>']
+let g:ycm_key_list_select_completion = ['<Tab>']
+let g:ycm_key_list_previous_completion = ['<S-Tab>']
+
+" Ultisnips
+" let g:UltiSnipsExpandTrigger="<Tab>"
+" let g:UltiSnipsJumpForwardTrigger="<Tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
+let g:UltiSnipsExpandTrigger="<c-e>"
+let g:UltiSnipsJumpForwardTrigger="<c-f>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+
+" Easymotion
+"make sure the key to trigger easy motion is <leader> and not <leader><leader>
+"as default
+let g:EasyMotion_leader_key = '<Leader>'
+
+" easymotion style search
+" Gif config
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
+
+" Ctrlp options
+let g:ctrlp_map = '<c-p>'
 
 " DelimitMate mappings
 

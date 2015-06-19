@@ -247,3 +247,7 @@
 	path = vim/bundle/javacomplete
 	url = https://github.com/robertcboll/javacomplete
 	ignore = untracked
+[submodule "vim/bundle/vim-skipit"]
+	path = vim/bundle/vim-skipit
+	url = https://github.com/habamax/vim-skipit
+	ignore = untracked

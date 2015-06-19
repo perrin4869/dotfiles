@@ -94,12 +94,16 @@ map  N <Plug>(easymotion-prev)
 " Ctrlp options
 let g:ctrlp_map = '<c-p>'
 
-" DelimitMate mappings
+" skipit mappings
 
 " Since S-Tab is not recognized in console mode map to another key
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
-silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
+silent! imap <unique> <C-d> <Plug>SkipIt
+
+" In order to use delimitMate's jump feature instead of skipit, use the
+" mapping below
+" silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
 
 " Additional Ctrlp mapping
 nmap <Leader>p <C-p>

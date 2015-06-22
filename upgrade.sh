@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Fetching new submodules"
+git submodule init
+
 # Update all submodules
 echo "Upgrade all submodules";
 git subup && git submodule foreach git submodule update --recursive

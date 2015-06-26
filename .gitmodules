@@ -251,3 +251,7 @@
 	path = vim/bundle/vim-skipit
 	url = https://github.com/habamax/vim-skipit
 	ignore = untracked
+[submodule "powerline"]
+	path = powerline
+	url = https://github.com/powerline/powerline
+	ignore = untracked

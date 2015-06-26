@@ -9,7 +9,7 @@
 dir=~/dotfiles # dotfiles directory
 olddir=~/dotfiles_old # old dotfiles backup directory
 files="opp.zsh"
-dotfiles="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc" # list of files/folders to symlink in homedir
+dotfiles="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global fonts/Inconsolata.otf vim tmux.conf irssi bash_profile screenrc latexmkrc powerline" # list of files/folders to symlink in homedir
 
 ##########
 
@@ -62,5 +62,16 @@ echo "Moving any existing fonts from ~/.fonts to $olddir/.fonts"
     ln -s $dir/$file ~/.$file
 done
 
+#move executable files to bin
+echo "Moving executable files into ~/bin directory"
+if [[ ! -d ~/bin ]]; then
+	mkdir ~/bin
+fi
+ln -s $dir/git_diff_wrapper ~/bin
+ln -s ~/.powerline/scripts/* ~/bin
+
 echo "Initializing submodules..."
 ./upgrade.sh
+
+echo "Loading fonts..."
+fc-cache

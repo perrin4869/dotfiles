@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Fetching new submodules"
-git submodule init --recursive
+git submodule init
 
 # Update all submodules
 echo "Upgrade all submodules";

@@ -13,6 +13,6 @@
 [merge]
 	tool = vimdiff
 [alias]
-	subup = submodule update --remote --merge
+	subup = submodule update --init --remote --merge
 	st = status
 	aa = add --all

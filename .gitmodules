@@ -255,3 +255,7 @@
 	path = powerline
 	url = https://github.com/powerline/powerline
 	ignore = untracked
+[submodule "vim/bundle/vim-gitgutter"]
+	path = vim/bundle/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
+	ignore = untracked

@@ -302,5 +302,5 @@ settings = {
 keyboard = (
   { key = "^F"; id = "command"; data = "nicklist scroll -10"; },
   { key = "^B"; id = "command"; data = "nicklist scroll +10"; },
-  { key = "^O"; id = "command"; data = "wc "; }
+  { key = "^C"; id = "command"; data = "wc "; }
 );

@@ -243,10 +243,6 @@
 	path = vim/bundle/maven-compiler.vim
 	url = https://github.com/JalaiAmitahl/maven-compiler.vim
 	ignore = untracked
-[submodule "vim/bundle/javacomplete"]
-	path = vim/bundle/javacomplete
-	url = https://github.com/robertcboll/javacomplete
-	ignore = untracked
 [submodule "vim/bundle/vim-skipit"]
 	path = vim/bundle/vim-skipit
 	url = https://github.com/habamax/vim-skipit
@@ -258,4 +254,8 @@
 [submodule "vim/bundle/vim-gitgutter"]
 	path = vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
+	ignore = untracked
+[submodule "vim/bundle/vim-javacomplete2"]
+	path = vim/bundle/vim-javacomplete2
+	url = https://github.com/artur-shaik/vim-javacomplete2
 	ignore = untracked

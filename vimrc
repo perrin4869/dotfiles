@@ -112,11 +112,6 @@ if executable("ag")
 	let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden -g ""'
 endif
 
-" Delimitmate options
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-" Don't jump over multiple lines - use skipit for that
-let delimitMate_jump_expansion = 0
 " Nerdtree options
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif

@@ -101,10 +101,6 @@ let g:ctrlp_map = '<c-p>'
 " they are not available
 silent! imap <unique> <C-d> <Plug>SkipIt
 
-" In order to use delimitMate's jump feature instead of skipit, use the
-" mapping below
-" silent! imap <unique> <C-d> <Plug>delimitMateS-Tab
-
 " Additional Ctrlp mapping
 nmap <Leader>p <C-p>
 

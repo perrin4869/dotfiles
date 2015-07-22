@@ -151,10 +151,6 @@
 	path = vim/bundle/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
 	ignore = untracked
-[submodule "vim/bundle/delimitMate"]
-	path = vim/bundle/delimitMate
-	url = https://github.com/Raimondi/delimitMate
-	ignore = untracked
 [submodule "vim/bundle/vim-javascript-syntax"]
 	path = vim/bundle/vim-javascript-syntax
 	url = https://github.com/jelera/vim-javascript-syntax
@@ -258,4 +254,8 @@
 [submodule "vim/bundle/vim-javacomplete2"]
 	path = vim/bundle/vim-javacomplete2
 	url = https://github.com/artur-shaik/vim-javacomplete2
+	ignore = untracked
+[submodule "vim/bundle/lexima.vim"]
+	path = vim/bundle/lexima.vim
+	url = https://github.com/cohama/lexima.vim
 	ignore = untracked

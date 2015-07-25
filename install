@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################
-# .make.sh
+# install
 # This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
 ############################
 
@@ -71,7 +71,7 @@ ln -s $dir/git_diff_wrapper ~/.local/bin
 ln -s ~/.powerline/scripts/* ~/.local/bin
 
 echo "Initializing submodules..."
-./upgrade.sh
+./upgrade
 
 echo "Loading fonts..."
 fc-cache

@@ -55,8 +55,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# export PATH="/opt/intel/composer_xe_2013_sp1.2.144/bin/intel64:/opt/intel/composer_xe_2013_sp1.2.144/mpirt/bin/intel64:/opt/intel/composer_xe_2013_sp1.2.144/debugger/gdb/intel64_mic/py27/bin:/opt/intel/composer_xe_2013_sp1.2.144/debugger/gdb/intel64/py27/bin:/opt/intel/composer_xe_2013_sp1.2.144/bin/intel64:/opt/intel/composer_xe_2013_sp1.2.144/bin/intel64_mic:/opt/intel/composer_xe_2013_sp1.2.144/debugger/gui/intel64:/usr/local/bin:/usr/bin:/bin:/usr/games:/usr/lib64/java/bin:/usr/lib64/java/jre/bin:/usr/lib64/kde4/libexec:/usr/lib64/qt/bin:/usr/local/texlive/2014/bin/x86_64-linux"
-# export MANPATH="/usr/local/man:$MANPATH"
+export PATH=~/.local/bin:$PATH
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8

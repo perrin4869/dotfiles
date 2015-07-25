@@ -63,12 +63,12 @@ echo "Moving any existing fonts from ~/.fonts to $olddir/.fonts"
 done
 
 #move executable files to bin
-echo "Moving executable files into ~/bin directory"
-if [[ ! -d ~/bin ]]; then
-	mkdir ~/bin
+echo "Moving executable files into ~/.local/bin directory"
+if [[ ! -d ~/.local/bin ]]; then
+	mkdir ~/.local/bin
 fi
-ln -s $dir/git_diff_wrapper ~/bin
-ln -s ~/.powerline/scripts/* ~/bin
+ln -s $dir/git_diff_wrapper ~/.local/bin
+ln -s ~/.powerline/scripts/* ~/.local/bin
 
 echo "Initializing submodules..."
 ./upgrade.sh

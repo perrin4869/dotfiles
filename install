@@ -38,13 +38,13 @@ for file in config/*; do
 done
 
 #install fonts
-if [ ! -d ~/.fonts ]; then
-   mkdir ~/.fonts
+if [ ! -d ~/.local/share/fonts ]; then
+   mkdir ~/.local/share/fonts
 fi
 for file in fonts/*; do
     # Here $file looks like: $file=fonts/foo
     echo "Creating symlink to $file in .config directory."
-    ln -sf $dir/$file ~/.$file
+    ln -sf $dir/$file ~/.local/share/$file
 done
 
 #move executable files to bin

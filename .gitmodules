@@ -259,3 +259,7 @@
 	path = vim/bundle/lexima.vim
 	url = https://github.com/cohama/lexima.vim
 	ignore = untracked
+[submodule "vim/bundle/vim-themis"]
+	path = vim/bundle/vim-themis
+	url = https://github.com/thinca/vim-themis
+	ignore = untracked

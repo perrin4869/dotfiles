@@ -54,6 +54,7 @@ if [[ ! -d ~/.local/bin ]]; then
 fi
 ln -s $dir/git_diff_wrapper ~/.local/bin
 ln -s ~/.powerline/scripts/* ~/.local/bin
+ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Initializing submodules..."
 ./upgrade

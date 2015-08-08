@@ -16,3 +16,5 @@
 	subup = !sh -c 'git submodule update --init --remote --merge && git submodule foreach git submodule update --recursive'
 	st = status
 	aa = add --all
+[push]
+	default = simple

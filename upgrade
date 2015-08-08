@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Get all updates from the server before anything else
+echo "Pulling changes";
 git pull
 
 # Update all submodules

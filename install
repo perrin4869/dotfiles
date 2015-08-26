@@ -7,7 +7,7 @@
 ########## Variables
 
 dir=~/dotfiles # dotfiles directory
-dotfiles="git-completion.bash gitconfig git_ps1.bash vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline" # list of files/folders to symlink in homedir
+dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline" # list of files/folders to symlink in homedir
 files="opp.zsh"
 
 ##########
@@ -57,6 +57,7 @@ ln -s ~/.powerline/scripts/* ~/.local/bin
 ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Initializing submodules..."
+git submodule update --recursive --init
 ./upgrade
 
 echo "Loading fonts..."

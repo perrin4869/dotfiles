@@ -1,6 +1,7 @@
 [user]
 	email = julian@dotcore.co.il
 	name = Julian Grinblat
+	signingkey = 23548720
 [diff]
 	external = git_diff_wrapper
 [pager]

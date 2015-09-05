@@ -73,6 +73,9 @@ let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
 "example, in the case of PHP)
 set omnifunc=syntaxcomplete#Complete
 
+" Don't show preview window on omnifunction
+set completeopt-=preview
+
 " Folding options
 " get folding signs space
 set foldcolumn=3

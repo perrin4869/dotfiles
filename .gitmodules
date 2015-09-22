@@ -94,10 +94,6 @@
 	path = vim/bundle/sudoedit
 	url = https://github.com/chrisbra/SudoEdit.vim
 	ignore = untracked
-[submodule "vim/bundle/buffkill"]
-	path = vim/bundle/buffkill
-	url = https://github.com/mattdbridges/bufkill.vim
-	ignore = untracked
 [submodule "vim/bundle/ragtag"]
 	path = vim/bundle/ragtag
 	url = https://github.com/tpope/vim-ragtag
@@ -262,4 +258,8 @@
 [submodule "vim/bundle/vim-themis"]
 	path = vim/bundle/vim-themis
 	url = https://github.com/thinca/vim-themis
+	ignore = untracked
+[submodule "vim/bundle/vim-bufkill"]
+	path = vim/bundle/vim-bufkill
+	url = https://github.com/qpkorr/vim-bufkill
 	ignore = untracked

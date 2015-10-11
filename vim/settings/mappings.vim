@@ -99,8 +99,8 @@ let g:ctrlp_map = '<c-p>'
 " Since S-Tab is not recognized in console mode map to another key
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
-silent! imap <unique> <C-k> <Plug>SkipIt
-silent! imap <unique> <C-j> <Plug>SkipBack
+silent! imap <unique> <C-k> <Plug>SkipItForward
+silent! imap <unique> <C-j> <Plug>SkipItBack
 silent! imap <unique> <C-g>k <Plug>SkipAllForward
 silent! imap <unique> <C-g>j <Plug>SkipAllBack
 

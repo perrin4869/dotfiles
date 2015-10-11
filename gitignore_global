@@ -13,6 +13,7 @@ Session.vim
 
 # ignore tag files
 *.tags
+doc/tags
 
 # Javascript tools
 .tern-project

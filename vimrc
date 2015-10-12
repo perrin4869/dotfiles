@@ -134,6 +134,10 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#custom#source('file_rec/async', 'ignore_globs',
 			\ split(&wildignore, ','))
 
+"lexima
+call lexima#add_rule({'at': '{\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
+call lexima#add_rule({'at': '[\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
+call lexima#add_rule({'at': '(\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
 
 " Load custom mappings
 let mapleader=','

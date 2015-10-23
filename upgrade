@@ -8,9 +8,5 @@ git pull
 echo "Upgrade all submodules";
 git subup
 
-echo "Upgrade tern-for-vim module";
-( cd vim/bundle/tern_for_vim/node_modules && npm update )
-
-echo "Upgrade vimproc module";
-( cd vim/bundle/vimproc.vim && make )
+./build
 

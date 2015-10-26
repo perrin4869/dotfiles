@@ -58,7 +58,7 @@ ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Initializing submodules..."
 git submodule update --recursive --init
-./upgrade
+./build
 
 echo "Loading fonts..."
 fc-cache -vf

@@ -37,6 +37,9 @@ for file in config/*; do
     ln -sf $dir/$file ~/.$file
 done
 
+ln -sf $dir/vim ~/.config/nvim
+ln -sf $dir/vimrc ~/.config/nvim/init.vim
+
 #install fonts
 if [ ! -d ~/.local/share/fonts ]; then
    mkdir ~/.local/share/fonts

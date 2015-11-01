@@ -115,8 +115,3 @@ export KEYTIMEOUT=1
 
 which gulp &> /dev/null && eval "$(gulp --completion=zsh)"
 
-# load opp.zsh plugin
-SCRIPT_DIR=$(dirname $0)
-source $SCRIPT_DIR/opp.zsh/opp.zsh
-source $SCRIPT_DIR/opp.zsh/opp/*.zsh
-

@@ -263,3 +263,7 @@
 	path = vim/bundle/vim-bufkill
 	url = https://github.com/qpkorr/vim-bufkill
 	ignore = untracked
+[submodule "vim/bundle/vim-jsx"]
+	path = vim/bundle/vim-jsx
+	url = https://github.com/mxw/vim-jsx
+	ignore = untracked

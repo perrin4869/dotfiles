@@ -28,6 +28,8 @@ For node express autocompletion support (as of this writing it's quite buggy), i
 
 	cd vim/bundle/tern_for_vim/node_modules/tern && npm install --save tern-node-express
 
+For markdown autopreview, install grip with `pip install --user grip`
+
 For `YouCompleteMe`, according to the github `README.md`, run the following:
 
 	cd ~

@@ -89,6 +89,9 @@ set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
 
+" Markdown
+let g:vim_markdown_preview_use_xdg_open=1
+
 " Fugitive options
 " all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
 " For navigating trees

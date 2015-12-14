@@ -104,9 +104,6 @@ silent! imap <unique> <C-j> <Plug>SkipItBack
 silent! imap <unique> <C-g>k <Plug>SkipAllForward
 silent! imap <unique> <C-g>j <Plug>SkipAllBack
 
-" Additional Ctrlp mapping
-nmap <Leader>p <C-p>
-
 " easy-align mappings
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
 vmap <Enter> <Plug>(EasyAlign)

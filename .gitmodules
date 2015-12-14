@@ -267,3 +267,11 @@
 	path = vim/bundle/vim-jsx
 	url = https://github.com/mxw/vim-jsx
 	ignore = untracked
+[submodule "vim/bundle/vim-markdown-preview"]
+	path = vim/bundle/vim-markdown-preview
+	url = https://github.com/JamshedVesuna/vim-markdown-preview
+	ignore = untracked
+[submodule "vim/bundle/vim-markdown"]
+	path = vim/bundle/vim-markdown
+	url = https://github.com/tpope/vim-markdown
+	ignore = untracked

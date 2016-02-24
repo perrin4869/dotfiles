@@ -1,7 +1,7 @@
 " this is mostly a matter of taste. but LaTeX looks good with just a bit
 " of indentation.
-set sw=2
-set ts=2
+setlocal sw=2
+setlocal ts=2
 
 " Add triggers to ycm for LaTeX-Box autocompletion
 let g:ycm_semantic_triggers = {

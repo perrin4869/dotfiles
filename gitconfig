@@ -14,7 +14,7 @@
 [merge]
 	tool = vimdiff
 [alias]
-	subup = !sh -c 'git submodule update --init --remote --merge && git submodule foreach git submodule update --recursive'
+	subup = !sh -c 'git submodule update --remote --merge && git submodule foreach git submodule update --init --recursive'
 	st = status
 	aa = add --all
 [push]

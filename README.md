@@ -37,5 +37,4 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 	cd ycm_build
 
 	cmake -G "Unix Makefiles" -DUSE_SYSTEM_LIBCLANG=ON . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp
-	make ycm_support_libs
-
+	cmake --build . --target ycm_core --config Release

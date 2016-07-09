@@ -279,3 +279,7 @@
 	path = vim/bundle/vim-airline-themes
 	url = https://github.com/vim-airline/vim-airline-themes
 	ignore = untracked
+[submodule "vim/bundle/vim-multiple-cursors"]
+	path = vim/bundle/vim-multiple-cursors
+	url = https://github.com/terryma/vim-multiple-cursors
+	ignore = untracked

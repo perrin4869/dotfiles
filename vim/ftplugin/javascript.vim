@@ -10,3 +10,4 @@ let g:jsdoc_input_description=1
 nnoremap <buffer> gd :JsDoc<CR>
 
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exec = 'eslint_d'

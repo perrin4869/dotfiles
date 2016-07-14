@@ -22,7 +22,11 @@ There are 2 submodules with compiled elements: `tern_for_vim` and `YouCompleteMe
 
 For `tern_for_vim`, install `node` from `sbopkg` and then just run `npm install` in the directory of the plugin.
 
-	su -c "sbopkg -i node" && cd ~/.vim/bundle/tern_for_vim && nmp install
+	su -c "sbopkg -i node" && cd ~/.vim/bundle/tern_for_vim && npm install
+
+Uses eslint\_d in syntastic, so you need to install that globally too:
+
+	npm install -g eslint_d
 
 For node express autocompletion support (as of this writing it's quite buggy), install tern-node-express in the tern module
 
@@ -37,5 +41,4 @@ For `YouCompleteMe`, according to the github `README.md`, run the following:
 	cd ycm_build
 
 	cmake -G "Unix Makefiles" -DUSE_SYSTEM_LIBCLANG=ON . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp
-	make ycm_support_libs
-
+	cmake --build . --target ycm_core --config Release

@@ -67,6 +67,7 @@ let g:airline_theme="badwolf"
 
 "youcompleteme options
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
+let g:ycm_auto_trigger = 1
 " let g:ycm_path_to_python_interpreter='/usr/bin/python/'
 
 "use omnicomplete whenever there's no completion engine in youcompleteme (for

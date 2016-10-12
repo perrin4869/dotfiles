@@ -3,14 +3,7 @@ dotfiles
 
 Notes to self on how to install the dotfiles:
 
-After cloning run `makesymlinks.sh` to install all the dotfiles. It'll also automatically initialize and update all submodules.
-
-	chmod +x makesymlinks.sh
-	./makesymlinks.sh
-
-Install `git_diff_wrapper` into `/usr/bin`
-
-	sudo cp git_diff_wrapper /usr/bin
+	./install
 
 Update the font cache - `fc-cache` (from `fontconfig`). Currently I am using `Inconsolata Medium 11`.
 

@@ -54,6 +54,7 @@ ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status
+ln -s $(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)//powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 echo "Initializing submodules..."
 git submodule update --recursive --init

@@ -47,8 +47,10 @@ if [[ ! -d ~/.local/bin ]]; then
 	mkdir ~/.local/bin
 fi
 ln -s $dir/git_diff_wrapper ~/.local/bin
-ln -s ~/.powerline/scripts/* ~/.local/bin
 ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
+
+echo "Install powerline regardless of OS"
+pip install --user --upgrade powerline-status
 
 echo "Initializing submodules..."
 git submodule update --recursive --init

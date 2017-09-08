@@ -129,6 +129,16 @@ endfunc
 nmap ]r :set rl<CR>
 nmap [r :set norl<CR>
 
+nmap gp :call TogglePaste()<CR>
+
+func! TogglePaste()
+	if &paste
+		set nopaste
+	else
+		set paste
+	end
+endfunc
+
 " Simple Ag mapping
 nmap <Leader>a :Ag 
 

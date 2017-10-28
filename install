@@ -22,9 +22,7 @@ for file in $dotfiles; do
 done
 
 #install config files
-if [ ! -d ~/.config ]; then
-   mkdir ~/.config
-fi
+mkdir -p ~/.config
 for file in config/*; do
     # Here $file looks like: $file=config/foo
     echo "Creating symlink to $file in .config directory."
@@ -32,9 +30,7 @@ for file in config/*; do
 done
 
 #install fonts
-if [ ! -d ~/.local/share/fonts ]; then
-   mkdir ~/.local/share/fonts
-fi
+mkdir -p ~/.local/share/fonts
 for file in fonts/*; do
     # Here $file looks like: $file=fonts/foo
     echo "Creating symlink to $file in .config directory."
@@ -43,9 +39,7 @@ done
 
 #move executable files to bin
 echo "Moving executable files into ~/.local/bin directory"
-if [[ ! -d ~/.local/bin ]]; then
-	mkdir ~/.local/bin
-fi
+mkdir -p ~/.local/bin
 ln -s $dir/git_diff_wrapper ~/.local/bin
 ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 

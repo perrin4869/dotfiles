@@ -65,7 +65,7 @@ nnoremap <F2> :YcmRestartServer<CR>
 
 " let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
 " because C-s freezes the command line
-let g:ycm_key_invoke_completion = '<C-h>'
+let g:ycm_key_invoke_completion = '<C-c>'
 " let g:ycm_key_list_select_completion = ['<C-j>']
 " let g:ycm_key_list_previous_completion = ['<C-k>']
 let g:ycm_key_list_select_completion = ['<Tab>']
@@ -104,9 +104,6 @@ silent! imap <unique> <C-j> <Plug>SkipItBack
 silent! imap <unique> <C-g>k <Plug>SkipAllForward
 silent! imap <unique> <C-g>j <Plug>SkipAllBack
 
-" Additional Ctrlp mapping
-nmap <Leader>p <C-p>
-
 " easy-align mappings
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
 vmap <Enter> <Plug>(EasyAlign)
@@ -132,12 +129,21 @@ endfunc
 nmap ]r :set rl<CR>
 nmap [r :set norl<CR>
 
+nmap gp :call TogglePaste()<CR>
+
+func! TogglePaste()
+	if &paste
+		set nopaste
+	else
+		set paste
+	end
+endfunc
+
 " Simple Ag mapping
 nmap <Leader>a :Ag 
 
 " Bring up NERDTree on the current working directory (the current project)
-nnoremap <Leader>n :NERDTreeToggle<CR> 
-nnoremap <C-n> :NERDTreeFocus<CR> 
+nnoremap <Leader>n :NERDTreeToggle<CR>
 
 " Toggle relative numbers
 nmap <Leader>r :call ToggleRnu()<CR>

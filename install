@@ -7,7 +7,7 @@
 ########## Variables
 
 dir=~/dotfiles # dotfiles directory
-dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline eslintrc" # list of files/folders to symlink in homedir
+dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline eslintrc ackrc" # list of files/folders to symlink in homedir
 
 ##########
 
@@ -22,9 +22,7 @@ for file in $dotfiles; do
 done
 
 #install config files
-if [ ! -d ~/.config ]; then
-   mkdir ~/.config
-fi
+mkdir -p ~/.config
 for file in config/*; do
     # Here $file looks like: $file=config/foo
     echo "Creating symlink to $file in .config directory."
@@ -35,9 +33,7 @@ ln -sf $dir/vim ~/.config/nvim
 ln -sf $dir/vimrc ~/.config/nvim/init.vim
 
 #install fonts
-if [ ! -d ~/.local/share/fonts ]; then
-   mkdir ~/.local/share/fonts
-fi
+mkdir -p ~/.local/share/fonts
 for file in fonts/*; do
     # Here $file looks like: $file=fonts/foo
     echo "Creating symlink to $file in .config directory."
@@ -46,12 +42,13 @@ done
 
 #move executable files to bin
 echo "Moving executable files into ~/.local/bin directory"
-if [[ ! -d ~/.local/bin ]]; then
-	mkdir ~/.local/bin
-fi
+mkdir -p ~/.local/bin
 ln -s $dir/git_diff_wrapper ~/.local/bin
-ln -s ~/.powerline/scripts/* ~/.local/bin
 ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
+
+echo "Install powerline regardless of OS"
+pip install --user --upgrade powerline-status
+ln -s $(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)//powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 echo "Initializing submodules..."
 git submodule update --recursive --init

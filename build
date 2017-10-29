@@ -1,8 +1,5 @@
 #!/bin/bash
 
-echo "Build tern-for-vim module";
-( cd vim/bundle/tern_for_vim && npm install && cd node_modules && npm update )
-
 echo "Upgrade vimproc module";
 ( cd vim/bundle/vimproc.vim && make )
 

@@ -26,10 +26,6 @@
 	path = vim/bundle/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
 	ignore = untracked
-[submodule "vim/bundle/tern_for_vim"]
-	path = vim/bundle/tern_for_vim
-	url = https://github.com/marijnh/tern_for_vim
-	ignore = untracked
 [submodule "vim/bundle/vim-airline"]
 	path = vim/bundle/vim-airline
 	url = https://github.com/bling/vim-airline
@@ -134,11 +130,6 @@
 	path = opp.zsh
 	url = https://github.com/hchbaw/opp.zsh
 	ignore = untracked
-[submodule "irssi/scripts/scripts.irssi.org"]
-	path = irssi/scripts/scripts.irssi.org
-	url = https://github.com/irssi/scripts.irssi.org
-	ignore = untracked
-	branch = gh-pages
 [submodule "vim/bundle/vim-jade"]
 	path = vim/bundle/vim-jade
 	url = https://github.com/digitaltoad/vim-jade
@@ -239,10 +230,6 @@
 	path = vim/bundle/vim-skipit
 	url = https://github.com/habamax/vim-skipit
 	ignore = untracked
-[submodule "powerline"]
-	path = powerline
-	url = https://github.com/powerline/powerline
-	ignore = untracked
 [submodule "vim/bundle/vim-gitgutter"]
 	path = vim/bundle/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
@@ -266,4 +253,20 @@
 [submodule "vim/bundle/vim-jsx"]
 	path = vim/bundle/vim-jsx
 	url = https://github.com/mxw/vim-jsx
+	ignore = untracked
+[submodule "vim/bundle/vim-markdown-preview"]
+	path = vim/bundle/vim-markdown-preview
+	url = https://github.com/JamshedVesuna/vim-markdown-preview
+	ignore = untracked
+[submodule "vim/bundle/vim-markdown"]
+	path = vim/bundle/vim-markdown
+	url = https://github.com/tpope/vim-markdown
+	ignore = untracked
+[submodule "vim/bundle/vim-airline-themes"]
+	path = vim/bundle/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes
+	ignore = untracked
+[submodule "vim/bundle/vim-multiple-cursors"]
+	path = vim/bundle/vim-multiple-cursors
+	url = https://github.com/terryma/vim-multiple-cursors
 	ignore = untracked

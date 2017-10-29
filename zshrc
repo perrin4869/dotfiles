@@ -115,3 +115,4 @@ export KEYTIMEOUT=1
 
 which gulp &> /dev/null && eval "$(gulp --completion=zsh)"
 
+unalias gm # git plugin aliases gm to git merge

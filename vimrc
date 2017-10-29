@@ -67,6 +67,7 @@ let g:airline_theme="badwolf"
 
 "youcompleteme options
 let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
+let g:ycm_auto_trigger = 1
 " let g:ycm_path_to_python_interpreter='/usr/bin/python/'
 
 "use omnicomplete whenever there's no completion engine in youcompleteme (for
@@ -88,6 +89,9 @@ set nobackup
 set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
+
+" Markdown
+let g:vim_markdown_preview_use_xdg_open=1
 
 " Fugitive options
 " all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/

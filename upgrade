@@ -8,5 +8,8 @@ git pull
 echo "Upgrade all submodules";
 git subup
 
+echo "Upgrade powerline"
+pip install --user --upgrade powerline-status
+
 ./build
 

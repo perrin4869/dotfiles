@@ -1,1 +1,0 @@
-../scripts.irssi.org/scripts/dccstat.pl

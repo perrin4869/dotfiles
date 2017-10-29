@@ -130,11 +130,6 @@
 	path = opp.zsh
 	url = https://github.com/hchbaw/opp.zsh
 	ignore = untracked
-[submodule "irssi/scripts/scripts.irssi.org"]
-	path = irssi/scripts/scripts.irssi.org
-	url = https://github.com/irssi/scripts.irssi.org
-	ignore = untracked
-	branch = gh-pages
 [submodule "vim/bundle/vim-jade"]
 	path = vim/bundle/vim-jade
 	url = https://github.com/digitaltoad/vim-jade

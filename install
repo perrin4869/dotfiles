@@ -51,5 +51,7 @@ echo "Initializing submodules..."
 git submodule update --recursive --init
 ./build
 
-echo "Loading fonts..."
-fc-cache -vf
+if [[ -x $(which fc-cache) ]]; then
+    echo "Loading fonts..."
+    fc-cache -vf
+fi

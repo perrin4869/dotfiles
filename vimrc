@@ -52,6 +52,7 @@ set laststatus=2
 " Undo can't be left in the same dir as the edited file because we may not
 " have writing permission there
 set undodir=$HOME/.vim/undo
+set undofile
 
 " Stop cluttering cwd with swap and tilde files
 set backupdir=$HOME/.vim/backup//,/tmp//,. " For tilde files"

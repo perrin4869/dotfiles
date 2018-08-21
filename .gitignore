@@ -6,3 +6,5 @@ vim/view/*
 
 vim/javacomplete*
 irssi/config.autosave
+
+vim/init.vim

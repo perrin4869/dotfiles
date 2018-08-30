@@ -118,10 +118,6 @@
 	path = vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets
 	ignore = untracked
-[submodule "vim/bundle/LaTeX-Box"]
-	path = vim/bundle/LaTeX-Box
-	url = https://github.com/LaTeX-Box-Team/LaTeX-Box
-	ignore = untracked
 [submodule "vim/bundle/YouCompleteMe"]
 	path = vim/bundle/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
@@ -269,4 +265,8 @@
 [submodule "vim/bundle/vim-multiple-cursors"]
 	path = vim/bundle/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors
+	ignore = untracked
+[submodule "vim/bundle/vimtex"]
+	path = vim/bundle/vimtex
+	url = https://github.com/lervag/vimtex
 	ignore = untracked

@@ -153,4 +153,4 @@ command -bang -nargs=? W SudoWrite<bang> <args>
 command -bang -nargs=? E SudoRead<bang> <args>
 command -bang Q qall<bang>
 
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save=1

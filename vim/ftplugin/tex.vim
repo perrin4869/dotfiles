@@ -1,18 +1,18 @@
 " this is mostly a matter of taste. but LaTeX looks good with just a bit
 " of indentation.
+setlocal expandtab
 setlocal sw=2
 setlocal ts=2
+
+" vimtex uses <localleader> on their default mappings
+let maplocalleader=',' 
 
 " Add triggers to ycm for LaTeX-Box autocompletion
 let g:ycm_semantic_triggers = {
 \  'tex'  : ['{'],
 \ }
 
-" vimtex uses <localleader> on their default mappings
-let maplocalleader=',' 
-
 let g:vimtex_fold_enabled=1
-let g:vimtex_fold_manual=1
 let g:vimtex_compiler_latexmk={
   \   'callback': 0,
   \   'options': [

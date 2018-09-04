@@ -14,11 +14,11 @@ let g:ycm_semantic_triggers = {
 
 let g:vimtex_fold_enabled=1
 let g:vimtex_compiler_latexmk={
-  \   'callback': 0,
-  \   'options': [
-  \     '-pdfdvi'
-  \   ]
-  \ }
+\   'callback': 0,
+\   'options': [
+\     '-pdfdvi'
+\   ]
+\ }
 
 " Add custom surrounds
 " Maps to u for underscore and o for overscore

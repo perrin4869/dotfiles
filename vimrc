@@ -124,21 +124,6 @@ endif
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" Unite
-" Use ag for search
-if executable('ag')
-	let g:unite_source_rec_async_command = 'ag --follow --nocolor --nogroup --hidden -g ""'
-	let g:unite_source_grep_command = 'ag'
-	let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
-	let g:unite_source_grep_recursive_opt = ''
-endif
-
-call unite#custom#source('file_rec/async', 'ignore_pattern', '(png\|gif\|jpeg\|jpg)$')
-" Allow for searches without having to put spaces
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#custom#source('file_rec/async', 'ignore_globs',
-			\ split(&wildignore, ','))
-
 "lexima
 call lexima#add_rule({'at': '{\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
 call lexima#add_rule({'at': '[\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})

@@ -157,28 +157,7 @@ func! ToggleRnu()
 endfunc
 
 " Toggle undo tree
-nmap <Leader>u :UndotreeToggle<cr>
+nmap <Leader>u :UndotreeToggle<CR>
 
 " Toggle tagbar
 nmap <Leader>t :TagbarToggle<CR>
-
-" Unite toggle mappings
-
-" The prefix key.
-nnoremap [unite] <Nop>
-nmap <Leader>u [unite]
-" async requires vimproc to be installed
-nnoremap [unite]f :Unite -start-insert file_rec/async<CR>
-nnoremap [unite]g :Unite -start-insert grep:.<cr>
-nnoremap [unite]b :Unite -start-insert buffer<cr>
-nnoremap [unite]m :Unite file_mru<CR>
-" show lines of current file
-nnoremap [unite]l :Unite line<CR>
-" search (like ack.vim/ag.vim)
-nnoremap [unite]/ :Unite grep:.<CR>
-" Yank (like yankring/yankstack)
-let g:unite_source_history_yank_enable = 1
-nnoremap [unite]y :Unite history/yank<CR>
-
-nmap <Leader>f [unite]f
-nmap <Leader>g [unite]g

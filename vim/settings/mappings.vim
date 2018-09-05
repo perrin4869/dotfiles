@@ -79,17 +79,13 @@ let g:UltiSnipsExpandTrigger="<c-e>"
 let g:UltiSnipsJumpForwardTrigger="<c-f>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 
-" Easymotion
-"make sure the key to trigger easy motion is <leader> and not <leader><leader>
-"as default
-let g:EasyMotion_leader_key = '<Leader>'
-
 " easymotion style search
 " Gif config
 map  / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
+nmap <Leader>s <Plug>(easymotion-s)
 
 " skipit mappings
 
@@ -165,3 +161,8 @@ xmap <Leader><Tab> <Plug>(fzf-maps-x)
 omap <Leader><Tab> <Plug>(fzf-maps-o)
 
 nmap <C-p> :FZF<CR>
+nmap <Leader>ff :Files<CR>
+nmap <Leader>fb :Buffers<CR>
+nmap <Leader>ft :Tags<CR>
+nmap <Leader>fg :GFiles<CR>
+nmap <Leader>fs :Snippets<CR>

@@ -186,10 +186,6 @@
 	path = vim/bundle/vim-cdo
 	url = https://github.com/Peeja/vim-cdo
 	ignore = untracked
-[submodule "vim/bundle/ctrlp-py-matcher"]
-	path = vim/bundle/ctrlp-py-matcher
-	url = https://github.com/FelikZ/ctrlp-py-matcher
-	ignore = untracked
 [submodule "vim/bundle/vim-dispatch"]
 	path = vim/bundle/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch

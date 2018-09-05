@@ -178,10 +178,6 @@
 	path = vim/bundle/tagbar
 	url = https://github.com/majutsushi/tagbar
 	ignore = untracked
-[submodule "vim/bundle/neomru.vim"]
-	path = vim/bundle/neomru.vim
-	url = https://github.com/Shougo/neomru.vim
-	ignore = untracked
 [submodule "vim/bundle/vimproc.vim"]
 	path = vim/bundle/vimproc.vim
 	url = https://github.com/Shougo/vimproc.vim

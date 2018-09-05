@@ -118,10 +118,6 @@
 	path = opp.zsh
 	url = https://github.com/hchbaw/opp.zsh
 	ignore = untracked
-[submodule "vim/bundle/vim-jade"]
-	path = vim/bundle/vim-jade
-	url = https://github.com/digitaltoad/vim-jade
-	ignore = untracked
 [submodule "vim/bundle/vim-javascript"]
 	path = vim/bundle/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
@@ -257,6 +253,10 @@
 [submodule "vim/bundle/fzf"]
 	path = vim/bundle/fzf
 	url = https://github.com/junegunn/fzf.vim
+	ignore = untracked
+[submodule "vim/bundle/vim-pug"]
+	path = vim/bundle/vim-pug
+	url = https://github.com/digitaltoad/vim-pug
 	ignore = untracked
 [submodule "fzf"]
 	path = fzf

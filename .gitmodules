@@ -170,10 +170,6 @@
 	path = vim/bundle/vim-easy-align
 	url = https://github.com/junegunn/vim-easy-align
 	ignore = untracked
-[submodule "vim/bundle/ag.vim"]
-	path = vim/bundle/ag.vim
-	url = https://github.com/rking/ag.vim
-	ignore = untracked
 [submodule "vim/bundle/ack.vim"]
 	path = vim/bundle/ack.vim
 	url = https://github.com/mileszs/ack.vim

@@ -137,7 +137,7 @@ func! TogglePaste()
 endfunc
 
 " Simple Ag mapping
-nmap <Leader>a :Ag 
+nmap <Leader>a :Ack 
 
 " Bring up NERDTree on the current working directory (the current project)
 nnoremap <Leader>n :NERDTreeToggle<CR>

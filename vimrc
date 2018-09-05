@@ -112,6 +112,13 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " files
 let g:taggatron_enabled=0
 
+" ale
+let g:ale_fix_on_save=1
+
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
 " Nerdtree options
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
@@ -129,5 +136,3 @@ source ~/.vim/settings/mappings.vim
 command -bang -nargs=? W SudoWrite<bang> <args>
 command -bang -nargs=? E SudoRead<bang> <args>
 command -bang Q qall<bang>
-
-let g:ale_fix_on_save=1

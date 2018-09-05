@@ -62,6 +62,8 @@ set directory=$HOME/.vim/backup//,/tmp//,. " for swp files"
 " separators substituted to percent '%' signs. This will ensure file name
 " uniqueness in the preserve directory
 
+set rtp+=~/.fzf
+
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"
@@ -109,16 +111,6 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " By default taggatron will be disabled, you can enable taggatron from Sauce
 " files
 let g:taggatron_enabled=0
-
-" PyMatcher for CtrlP
-if has('python')
-	let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
-endif
-" If ag is available use it as filename list generator instead of 'find'
-if executable("ag")
-	set grepprg=ag\ --nogroup\ --nocolor
-	let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden -g ""'
-endif
 
 " Nerdtree options
 " Close vim automatically if nerdtree is the only pane left

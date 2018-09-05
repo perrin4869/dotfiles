@@ -91,9 +91,6 @@ omap / <Plug>(easymotion-tn)
 map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 
-" Ctrlp options
-let g:ctrlp_map = '<c-p>'
-
 " skipit mappings
 
 " Since S-Tab is not recognized in console mode map to another key
@@ -161,3 +158,10 @@ nmap <Leader>u :UndotreeToggle<CR>
 
 " Toggle tagbar
 nmap <Leader>t :TagbarToggle<CR>
+
+" Mapping selecting mappings
+nmap <Leader><Tab> <Plug>(fzf-maps-n)
+xmap <Leader><Tab> <Plug>(fzf-maps-x)
+omap <Leader><Tab> <Plug>(fzf-maps-o)
+
+nmap <C-p> :FZF<CR>

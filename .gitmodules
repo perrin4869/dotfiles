@@ -58,10 +58,6 @@
 	path = vim/bundle/skeletons
 	url = https://github.com/tobyS/skeletons.vim
 	ignore = untracked
-[submodule "vim/bundle/ctrlp"]
-	path = vim/bundle/ctrlp
-	url = https://github.com/kien/ctrlp.vim
-	ignore = untracked
 [submodule "vim/bundle/taggatron"]
 	path = vim/bundle/taggatron
 	url = https://github.com/joonty/vim-taggatron
@@ -265,4 +261,12 @@
 [submodule "vim/bundle/ale"]
 	path = vim/bundle/ale
 	url = https://github.com/w0rp/ale.git
+	ignore = untracked
+[submodule "vim/bundle/fzf"]
+	path = vim/bundle/fzf
+	url = https://github.com/junegunn/fzf.vim
+	ignore = untracked
+[submodule "fzf"]
+	path = fzf
+	url = https://github.com/junegunn/fzf
 	ignore = untracked

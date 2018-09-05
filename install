@@ -58,3 +58,7 @@ if [[ -x $(which fc-cache) ]]; then
     echo "Loading fonts..."
     fc-cache -vf
 fi
+
+# install fzf
+ln -sf $dir/fzf ~/.fzf
+./fzf/install --all

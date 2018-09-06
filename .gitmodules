@@ -106,10 +106,6 @@
 	path = vim/bundle/vim-snippets
 	url = https://github.com/honza/vim-snippets
 	ignore = untracked
-[submodule "vim/bundle/YouCompleteMe"]
-	path = vim/bundle/YouCompleteMe
-	url = https://github.com/Valloric/YouCompleteMe
-	ignore = untracked
 [submodule "opp.zsh"]
 	path = opp.zsh
 	url = https://github.com/hchbaw/opp.zsh

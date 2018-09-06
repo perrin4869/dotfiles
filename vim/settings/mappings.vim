@@ -62,15 +62,6 @@ nnoremap <silent> <backspace> :noh<CR>
 "Make it easier to restart Ycm
 nnoremap <F2> :YcmRestartServer<CR>
 
-
-" let g:ycm_key_invoke_completion = '<C-s>' " Ctrl-suggest - doesn't work
-" because C-s freezes the command line
-let g:ycm_key_invoke_completion = '<C-c>'
-" let g:ycm_key_list_select_completion = ['<C-j>']
-" let g:ycm_key_list_previous_completion = ['<C-k>']
-let g:ycm_key_list_select_completion = ['<Tab>']
-let g:ycm_key_list_previous_completion = ['<S-Tab>']
-
 " Ultisnips
 " let g:UltiSnipsExpandTrigger="<Tab>"
 " let g:UltiSnipsJumpForwardTrigger="<Tab>"

@@ -70,18 +70,6 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
 let g:airline_theme="badwolf"
 
-"youcompleteme options
-let g:ycm_global_ycm_extra_conf='~/.vim/youcompleteme/.ycm_extra_conf.py'
-let g:ycm_auto_trigger = 1
-" let g:ycm_path_to_python_interpreter='/usr/bin/python/'
-
-"use omnicomplete whenever there's no completion engine in youcompleteme (for
-"example, in the case of PHP)
-set omnifunc=syntaxcomplete#Complete
-
-" Don't show preview window on omnifunction
-set completeopt-=preview
-
 " Folding options
 " get folding signs space
 set foldcolumn=3

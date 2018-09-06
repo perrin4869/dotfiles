@@ -7,7 +7,7 @@
 ########## Variables
 
 dir=~/dotfiles # dotfiles directory
-dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline eslintrc ackrc" # list of files/folders to symlink in homedir
+dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf irssi bash_profile screenrc latexmkrc powerline eslintrc ackrc ctags" # list of files/folders to symlink in homedir
 
 ##########
 

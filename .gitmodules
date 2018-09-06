@@ -58,10 +58,6 @@
 	path = vim/bundle/skeletons
 	url = https://github.com/tobyS/skeletons.vim
 	ignore = untracked
-[submodule "vim/bundle/taggatron"]
-	path = vim/bundle/taggatron
-	url = https://github.com/joonty/vim-taggatron
-	ignore = untracked
 [submodule "vim/bundle/vdebug"]
 	path = vim/bundle/vdebug
 	url = https://github.com/joonty/vdebug
@@ -253,6 +249,10 @@
 [submodule "vim/bundle/vim-pug"]
 	path = vim/bundle/vim-pug
 	url = https://github.com/digitaltoad/vim-pug
+	ignore = untracked
+[submodule "vim/bundle/vim-gutentags"]
+	path = vim/bundle/vim-gutentags
+	url = https://github.com/ludovicchabant/vim-gutentags
 	ignore = untracked
 [submodule "fzf"]
 	path = fzf

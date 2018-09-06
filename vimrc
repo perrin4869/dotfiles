@@ -45,6 +45,8 @@ colo skittles_berry
 " Override with custom colors
 source ~/.vim/settings/colors.vim
 
+set statusline+=%{gutentags#statusline()}
+
 " Airline options
 "make sure airline is opened by default
 set laststatus=2
@@ -106,11 +108,6 @@ autocmd User fugitive
 
 " For autocleaning of fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
-
-" Taggatron
-" By default taggatron will be disabled, you can enable taggatron from Sauce
-" files
-let g:taggatron_enabled=0
 
 " ale
 let g:ale_fix_on_save=1

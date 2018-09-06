@@ -1,7 +1,7 @@
 [user]
-	email = julian.grinblat@rakuten.com
+	email = julian@dotcore.co.il
 	name = Julian Grinblat
-	signingkey = 33AE68D03804354E
+	signingkey = 23548720
 [diff]
 	external = git_diff_wrapper
 [pager]

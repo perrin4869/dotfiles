@@ -8,7 +8,7 @@
 	diff = 
 [core]
 	editor = vim
-	excludesfile = /home/perrin4869/.gitignore_global
+	excludesfile = ~/.gitignore_global
 [color]
 	ui = true
 [merge]

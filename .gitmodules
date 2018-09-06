@@ -258,3 +258,6 @@
 	path = fzf
 	url = https://github.com/junegunn/fzf
 	ignore = untracked
+[submodule "vim/bundle/tern_for_vim"]
+	path = vim/bundle/tern_for_vim
+	url = https://github.com/ternjs/tern_for_vim

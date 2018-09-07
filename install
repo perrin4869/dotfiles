@@ -62,3 +62,7 @@ fi
 # install fzf
 ln -sf $dir/fzf ~/.fzf
 ./fzf/install --all
+
+# support universal ctags
+mkdir ~/.ctags.d
+ln -s $dir/ctags ~/.ctags.d/javascript.ctags

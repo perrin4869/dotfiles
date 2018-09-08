@@ -7,11 +7,6 @@ setlocal ts=2
 " vimtex uses <localleader> on their default mappings
 let maplocalleader=',' 
 
-" Add triggers to ycm for LaTeX-Box autocompletion
-let g:ycm_semantic_triggers = {
-\  'tex'  : ['{'],
-\ }
-
 let g:vimtex_fold_enabled=1
 let g:vimtex_compiler_latexmk={
 \   'callback': 0,

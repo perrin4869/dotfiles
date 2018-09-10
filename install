@@ -48,7 +48,11 @@ ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status
-ln -s $(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)//powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
+ln -s $(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
+
+pip3 install --user --upgrade neovim # Deoplete requirement
+
+sudo npm install -g tern # needed by deoplete-ternjs
 
 echo "Initializing submodules..."
 git submodule update --recursive --init

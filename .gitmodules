@@ -250,10 +250,27 @@
 	path = vim/bundle/vim-gutentags
 	url = https://github.com/ludovicchabant/vim-gutentags
 	ignore = untracked
+[submodule "vim/bundle/tern_for_vim"]
+	path = vim/bundle/tern_for_vim
+	url = https://github.com/ternjs/tern_for_vim
+	ignore = untracked
+[submodule "vim/bundle/deoplete.nvim"]
+	path = vim/bundle/deoplete.nvim
+	url = https://github.com/Shougo/deoplete.nvim
+	ignore = untracked
+[submodule "vim/bundle/nvim-yarp"] # Required by deoplete
+	path = vim/bundle/nvim-yarp
+	url = https://github.com/roxma/nvim-yarp
+	ignore = untracked
+[submodule "vim/bundle/vim-hug-neovim-rpc"] # Required by deoplete
+	path = vim/bundle/vim-hug-neovim-rpc
+	url = https://github.com/roxma/vim-hug-neovim-rpc
+	ignore = untracked
+[submodule "vim/bundle/deoplete-ternjs"]
+	path = vim/bundle/deoplete-ternjs
+	url = https://github.com/carlitux/deoplete-ternjs
+	ignore = untracked
 [submodule "fzf"]
 	path = fzf
 	url = https://github.com/junegunn/fzf
 	ignore = untracked
-[submodule "vim/bundle/tern_for_vim"]
-	path = vim/bundle/tern_for_vim
-	url = https://github.com/ternjs/tern_for_vim

@@ -19,3 +19,4 @@ doc/tags
 
 # Javascript tools
 .tern-project
+.tern-port

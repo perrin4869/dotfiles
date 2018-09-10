@@ -118,7 +118,7 @@ if [[ -e "$(which fd)" ]]; then
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="fd --type directories . $HOME"
 elif [[ -e "$(which ag)" ]]; then
-  export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g'
+  export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g ""'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
 

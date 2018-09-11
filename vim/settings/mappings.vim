@@ -1,6 +1,3 @@
-" Easily exit insert mode
-inoremap <C-l> <Esc>
-
 " Convenience
 nnoremap ; :
 
@@ -100,7 +97,7 @@ nmap ga <Plug>(EasyAlign)
 " <C-r> is by default used in insert mode for pasting registers so let's not
 " meddle with that
 imap <C-l> <C-o>:call ToggleRl()<CR>
- 
+
 func! ToggleRl()
 	if &rl
 		set norl
@@ -113,7 +110,7 @@ endfunc
 nmap ]r :set rl<CR>
 nmap [r :set norl<CR>
 
-nmap gp :call TogglePaste()<CR>
+nmap <Leader>p :call TogglePaste()<CR>
 
 func! TogglePaste()
 	if &paste

@@ -20,3 +20,6 @@ doc/tags
 # Javascript tools
 .tern-project
 .tern-port
+
+# project specific gutentags ctags options
+.gutctags

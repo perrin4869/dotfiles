@@ -1,5 +1,4 @@
 --exclude=node_modules
---exclude=gulp
 --languages=-javascript
 --langdef=js
 --langmap=js:.js

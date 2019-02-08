@@ -38,6 +38,9 @@ set wildmenu
 set wildmode=list:longest,full
 set wildignore=*.o,*.obj,*.la,*.lo,*.so,*.pyc,*.pyo,*.jpg,*.png,*.gif
 
+" On MacOS the default backspace option is messed up
+set backspace=indent,eol,start
+
 " Coloring options
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256

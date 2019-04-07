@@ -1,0 +1,12 @@
+URxvt.cutchars:         `"()'*<>[]{|}"
+
+URxvt.geometry:         100x45
+URxvt.borderLess:       false
+URxvt.transparent:      false
+URxvt.depth:            32
+URxvt.background:       rgba:0000/0000/0000/cccc
+URxvt.foreground:       white
+
+URxvt.font: xft:Inconsolata\ for\ Powerline:medium:size=12:antialias=true
+
+URxvt.scrollBar:      false

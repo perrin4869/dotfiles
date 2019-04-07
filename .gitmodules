@@ -294,3 +294,7 @@
 	path = vim/bundle/vim-graphql
 	url = https://github.com/jparise/vim-graphql
 	ignore = untracked
+[submodule "fonts"]
+	path = fonts
+	url = https://github.com/powerline/fonts
+	ignore = untracked

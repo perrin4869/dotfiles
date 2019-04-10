@@ -80,10 +80,10 @@ nmap <Leader>s <Plug>(easymotion-s)
 " Since S-Tab is not recognized in console mode map to another key
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
-silent! imap <unique> <C-k> <Plug>SkipItForward
-silent! imap <unique> <C-j> <Plug>SkipItBack
-silent! imap <unique> <C-g>k <Plug>SkipAllForward
-silent! imap <unique> <C-g>j <Plug>SkipAllBack
+silent! imap <unique> <C-k> <Plug>(SkipItForward)
+silent! imap <unique> <C-j> <Plug>(SkipItBack)
+silent! imap <unique> <C-g>k <Plug>(SkipAllForward)
+silent! imap <unique> <C-g>j <Plug>(SkipAllBack)
 
 " easy-align mappings
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)

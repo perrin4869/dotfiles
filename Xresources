@@ -1,12 +1,32 @@
+!-------------------------------------------------------------------------------
+! URxvt settings
+! Colours lifted from Solarized (http://ethanschoonover.com/solarized)
+! More info at:
+! http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.1.pod
+!-------------------------------------------------------------------------------
+
+URxvt.termName: rxvt-unicode-256color
+
+URxvt.depth:                32
+URxvt.geometry:             90x30
+URxvt.borderLess:       false
+URxvt.transparent:          false
+URxvt.fading:               0
+! URxvt.urgentOnBell:         true
+! URxvt.visualBell:           true
+URxvt.loginShell:           true
+URxvt.saveLines:            50
+URxvt.internalBorder:       3
+URxvt.lineSpace:            0
+
+URxvt*background:       [75]#000000
+URxvt*foreground:       white
+
 URxvt.cutchars:         `"()'*<>[]{|}"
 
-URxvt.geometry:         100x45
-URxvt.borderLess:       false
-URxvt.transparent:      false
-URxvt.depth:            32
-URxvt.background:       rgba:0000/0000/0000/cccc
-URxvt.foreground:       white
-
 URxvt.font: xft:Inconsolata\ for\ Powerline:medium:size=12:antialias=true
+
+URxvt.inputMethod: ibus
+URxvt.preeditType: OverTheSpot
 
 URxvt.scrollBar:      false

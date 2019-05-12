@@ -89,6 +89,9 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
+bindsym $mod+p exec scrot $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
+bindsym --release $mod+Shift+p exec scrot -s $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
+
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) +5% #increase sound volume
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) -5% #decrease sound volume
 bindsym XF86AudioMute exec pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound

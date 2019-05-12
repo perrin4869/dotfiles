@@ -89,6 +89,10 @@ bindsym $mod+space focus mode_toggle
 # focus the parent container
 bindsym $mod+a focus parent
 
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) +5% #increase sound volume
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) -5% #decrease sound volume
+bindsym XF86AudioMute exec pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
+
 # focus the child container
 #bindsym $mod+d focus child
 

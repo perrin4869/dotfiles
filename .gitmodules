@@ -210,10 +210,6 @@
 	path = vim/bundle/vim-bufkill
 	url = https://github.com/qpkorr/vim-bufkill
 	ignore = untracked
-[submodule "vim/bundle/vim-jsx"]
-	path = vim/bundle/vim-jsx
-	url = https://github.com/mxw/vim-jsx
-	ignore = untracked
 [submodule "vim/bundle/vim-markdown-preview"]
 	path = vim/bundle/vim-markdown-preview
 	url = https://github.com/JamshedVesuna/vim-markdown-preview
@@ -297,4 +293,8 @@
 [submodule "fonts"]
 	path = fonts
 	url = https://github.com/powerline/fonts
+	ignore = untracked
+[submodule "vim/bundle/vim-jsx-pretty"]
+	path = vim/bundle/vim-jsx-pretty
+	url = https://github.com/MaxMEllon/vim-jsx-pretty
 	ignore = untracked

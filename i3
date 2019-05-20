@@ -194,3 +194,6 @@ bar {
 
 bindsym $mod+o exec "rofi -combi-modi window,drun -show combi -modi combi"
 bindsym $mod+t exec i3-sensible-terminal
+
+exec --no-startup-id ibus-daemon --xim -d -r
+exec --no-startup-id compton -b

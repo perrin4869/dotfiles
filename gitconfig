@@ -17,5 +17,6 @@
 	subup = !sh -c 'git submodule update --remote --merge && git submodule foreach git submodule update --init --recursive'
 	st = status
 	aa = add --all
+	delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 [push]
 	default = simple

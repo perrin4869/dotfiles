@@ -93,7 +93,7 @@ let g:vim_markdown_preview_use_xdg_open=1
 " all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
 " For navigating trees
 autocmd User fugitive 
-  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \ if get(b:, 'fugitive_type', '') =~# '^\%(tree\|blob\)$' |
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 

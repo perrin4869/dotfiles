@@ -12,8 +12,8 @@ Session.vim
 *~
 
 # ignore tag files
-tags
-tags.*
+/tags
+/tags.*
 *.tags
 doc/tags
 

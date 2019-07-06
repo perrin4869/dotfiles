@@ -6,7 +6,8 @@
 
 ########## Variables
 
-dir=~/dotfiles # dotfiles directory
+dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+dir="${dir/$HOME/\~}" # usually ~/dotfiles
 
 # list of files/folders to symlink in homedir
 dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources compton.conf xinitrc xprofile"

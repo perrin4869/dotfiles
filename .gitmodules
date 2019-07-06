@@ -298,3 +298,7 @@
 	path = vim/bundle/vim-jsx-pretty
 	url = https://github.com/MaxMEllon/vim-jsx-pretty
 	ignore = untracked
+[submodule "vim/bundle/i3config"]
+	path = vim/bundle/i3config
+	url = https://github.com/mboughaba/i3config.vim
+	ignore = untracked

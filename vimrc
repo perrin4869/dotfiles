@@ -131,3 +131,8 @@ source ~/.vim/settings/mappings.vim
 command -bang -nargs=? W SudoWrite<bang> <args>
 command -bang -nargs=? E SudoRead<bang> <args>
 command -bang Q qall<bang>
+
+aug i3config_ft_detection
+  au!
+  au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
+aug end

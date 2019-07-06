@@ -35,7 +35,7 @@ ln -sf $dir/vim ~/.config/nvim
 ln -sf $dir/vimrc ~/.config/nvim/init.vim
 
 mkdir -p ~/.config/i3
-ln -sf $dir/i3 ~/.config/i3/config
+ln -sf $dir/i3.config ~/.config/i3/config
 ln -sf $dir/i3exit ~/.local/bin/i3exit
 
 mkdir -p ~/.config/sxhkd

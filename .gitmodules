@@ -302,3 +302,7 @@
 	path = vim/bundle/i3config
 	url = https://github.com/mboughaba/i3config.vim
 	ignore = untracked
+[submodule "vim/bundle/vim-sxhkdrc"]
+	path = vim/bundle/vim-sxhkdrc
+	url = https://github.com/baskerville/vim-sxhkdrc
+	ignore = untracked

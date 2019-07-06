@@ -31,13 +31,13 @@ font pango:monospace 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+# bindsym $mod+Return exec i3-sensible-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
+# bindsym $mod+d exec dmenu_run
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
@@ -89,13 +89,6 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
-
-bindsym $mod+p exec scrot $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
-bindsym --release $mod+Shift+p exec scrot -s $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
-
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) -5% #decrease sound volume
-bindsym XF86AudioMute exec pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -192,6 +185,3 @@ bindsym $mod+Shift+s mode "$mode_system"
 bar {
         status_command i3status
 }
-
-bindsym $mod+o exec "rofi -combi-modi window,drun -show combi -modi combi"
-bindsym $mod+t exec i3-sensible-terminal

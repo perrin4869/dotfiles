@@ -1,0 +1,28 @@
+# Basic binds
+super + Return
+	$TERMINAL
+super + d
+	dmenu_run
+super + r
+	$TERMINAL -e $FILE
+super + m
+	$TERMINAL -e ncmpcpp
+super + o
+    rofi -combi-modi window,drun -show combi -modi combi
+super + t
+    $TERMINAL
+super + p
+    scrot $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
+super + shift + p
+    scrot -s $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
+super + shift + w
+	$BROWSER
+super + shift + g
+	gimp
+
+XF86AudioMute
+	pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
+XF86AudioLowerVolume
+    pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) -5% #decrease sound volume
+XF86AudioRaiseVolume
+	pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) +5% #increase sound volume

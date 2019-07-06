@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c || echo urxvt) # in slackware there are two builds of urxvt
+
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
+
+ibus-daemon --xim -d -r
+compton -b --config ~/.compton.conf
+setxkbmap -option compose:ralt

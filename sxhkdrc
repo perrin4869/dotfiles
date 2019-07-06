@@ -2,7 +2,7 @@
 super + Return
 	$TERMINAL
 super + d
-	dmenu_run
+    rofi -combi-modi window,drun -show combi -modi combi
 super + r
 	$TERMINAL -e $FILE
 super + m

@@ -42,6 +42,9 @@ ln -sf $dir/i3exit ~/.local/bin/i3exit
 mkdir -p ~/.config/sxhkd
 ln -sf $dir/sxhkdrc ~/.config/sxhkd
 
+mkdir -p ~/.config/rofi
+ln -sf $dir/config.rasi ~/.config/rofi
+
 #move executable files to bin
 echo "Moving executable files into ~/.local/bin directory"
 mkdir -p ~/.local/bin

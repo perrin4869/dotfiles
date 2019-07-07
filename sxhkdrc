@@ -12,7 +12,7 @@ super + o
 super + t
     $TERMINAL
 super + {_,shift +} p
-    scrot {,-s} $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
+	maim { ,-s} $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
 super + shift + w
 	$BROWSER
 super + shift + g

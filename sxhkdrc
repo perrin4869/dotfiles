@@ -1,24 +1,24 @@
 # Basic binds
 super + Return
-	$TERMINAL
+    $TERMINAL
 super + d
     rofi -combi-modi window,drun -show combi -modi combi
 super + r
-	$TERMINAL -e $FILE
+    $TERMINAL -e $FILE
 super + m
-	$TERMINAL -e ncmpcpp
-super + o
-    rofi -combi-modi window,drun -show combi -modi combi
+    $TERMINAL -e ncmpcpp
 super + t
     $TERMINAL
 super + {_,shift +} p
 	maim { ,-s} $HOME/$(date +%Y-%m-%d_%H:%M:%S).png
 super + shift + w
-	$BROWSER
+    $BROWSER
 super + shift + g
-	gimp
+    gimp
+super + o ; {e,w,m,f}
+    {gvim,firefox,thunderbird,thunar}
 
 XF86AudioMute
-	pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
+    pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
 XF86Audio{Lower,Raise}Volume
     pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) {-,+}5% # decrease sound volume

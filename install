@@ -45,6 +45,9 @@ ln -sf $dir/sxhkdrc ~/.config/sxhkd
 mkdir -p ~/.config/rofi
 ln -sf $dir/config.rasi ~/.config/rofi
 
+mkdir -p ~/.config/zathura
+ln -sf $dir/zathurarc ~/.config/zathura
+
 #move executable files to bin
 echo "Moving executable files into ~/.local/bin directory"
 mkdir -p ~/.local/bin

@@ -306,3 +306,7 @@
 	path = vim/bundle/vim-sxhkdrc
 	url = https://github.com/baskerville/vim-sxhkdrc
 	ignore = untracked
+[submodule "xwinwrap"]
+	path = xwinwrap
+	url = https://github.com/ujjwal96/xwinwrap
+	ignore = untracked

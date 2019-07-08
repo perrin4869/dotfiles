@@ -72,3 +72,6 @@ git submodule update --recursive --init
 # install fzf
 ln -sf $dir/fzf ~/.fzf
 ./fzf/install --all
+
+# install xwinwrap
+( cd xwinwrap && make && mv xwinwrap ~/.local/bin )

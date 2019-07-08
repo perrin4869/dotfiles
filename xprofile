@@ -14,3 +14,12 @@ dunst &
 ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf
 setxkbmap -option compose:ralt
+
+BACKGROUND_VIDEO=~/.config/background.mkv
+
+if [[ -e $BACKGROUND_VIDEO ]]; then
+	while read -r geometry;
+	do
+		xwinwrap -ni -s -b -ov -g $g -d -- mpv "$BACKGROUND_VIDEO" --no-audio --loop inf --wid WID;
+	done < <(xrandr | grep ' connected' | cut -f 3 -d ' ' | uniq)
+fi

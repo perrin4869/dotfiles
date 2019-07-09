@@ -11,6 +11,7 @@ export QT_IM_MODULE=ibus
 sxhkd &
 blueman-applet &
 dunst &
+udiskie --no-automount --tray &
 ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf
 setxkbmap -option compose:ralt

@@ -4,9 +4,9 @@ export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c ||
 export FILE=ranger
 export BROWSER=chromium
 
-export GTK_IM_MODULE=ibus
+export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus
+export QT_IM_MODULE=ibus # makes ibus work with qutebrowser (xim fails)
 
 sxhkd &
 blueman-applet &

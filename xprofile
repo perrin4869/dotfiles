@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c || echo urxvt) # in slackware there are two builds of urxvt
 export FILE=ranger
@@ -21,6 +21,6 @@ BACKGROUND_VIDEO=~/.config/background.mkv
 if [[ -e $BACKGROUND_VIDEO ]]; then
 	while read -r geometry;
 	do
-		xwinwrap -ni -s -b -ov -g $g -d -- mpv "$BACKGROUND_VIDEO" --no-audio --loop inf --wid WID;
-	done < <(xrandr | grep ' connected' | cut -f 3 -d ' ' | uniq)
+		xwinwrap -ni -s -b -ov -g $geometry -d -- mpv "$BACKGROUND_VIDEO" --no-audio --loop inf --wid WID;
+	done < <(xrandr | grep ' connected' | cut -f 3 -d ' ' | uniq) # requries bash over sh
 fi

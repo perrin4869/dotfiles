@@ -37,7 +37,7 @@ ln -sf $dir/vimrc ~/.config/nvim/init.vim
 
 mkdir -p ~/.config/i3
 ln -sf $dir/i3.config ~/.config/i3/config
-ln -sf $dir/i3exit ~/.local/bin/i3exit
+ln -sf $dir/i3exit ~/.local/bin
 
 mkdir -p ~/.config/sxhkd
 ln -sf $dir/sxhkdrc ~/.config/sxhkd
@@ -52,6 +52,7 @@ ln -sf $dir/zathurarc ~/.config/zathura
 echo "Moving executable files into ~/.local/bin directory"
 mkdir -p ~/.local/bin
 ln -s $dir/git_diff_wrapper ~/.local/bin
+ln -s $dir/i3-get-window-criteria- ~/.local/bin
 ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
 
 echo "Install powerline regardless of OS"

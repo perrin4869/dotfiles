@@ -1,0 +1,7 @@
+[general]
+engines-order=['xkb:us::eng', 'anthy']
+preload-engines=['xkb:us::eng', 'anthy']
+version='1.5.16'
+
+[general/hotkey]
+triggers=['<Super>b']

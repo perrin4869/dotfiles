@@ -75,3 +75,5 @@ ln -sf $dir/fzf ~/.fzf
 
 # install xwinwrap
 ( cd xwinwrap && make && mv xwinwrap ~/.local/bin )
+
+dconf load /desktop/ibus/ < $dir/ibus.dconf

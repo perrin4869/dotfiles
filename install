@@ -47,6 +47,9 @@ ln -sf $dir/config.rasi ~/.config/rofi
 mkdir -p ~/.config/zathura
 ln -sf $dir/zathurarc ~/.config/zathura
 
+mkdir -p ~/.config/ranger
+ln -sf $dir/rifle.conf ~/.config/ranger
+
 #move executable files to bin
 echo "Moving executable files into ~/.local/bin directory"
 mkdir -p ~/.local/bin

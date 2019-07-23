@@ -3,8 +3,6 @@ super + Return
     $TERMINAL
 super + d
     rofi -combi-modi window,drun -show combi -modi combi
-super + r
-    $TERMINAL -e $FILE
 super + m
     $TERMINAL -e ncmpcpp
 super + t
@@ -15,8 +13,8 @@ super + shift + w
     $BROWSER
 super + shift + g
     gimp
-super + o ; {e,w,m,f}
-    {gvim,firefox,thunderbird,thunar}
+super + o ; {t,e,w,m,f}
+    {$TERMINAL,$TERMINAL -e $EDITOR,qutebrowser,$TERMINAL -e $MAIL,$TERMINAL -e $FILE}
 
 XF86AudioMute
     pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound

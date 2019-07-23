@@ -310,3 +310,11 @@
 	path = xwinwrap
 	url = https://github.com/ujjwal96/xwinwrap
 	ignore = untracked
+[submodule "urxvt/urxvt-resize-font"]
+	path = urxvt/urxvt-resize-font
+	url = https://github.com/simmel/urxvt-resize-font
+	ignore = untracked
+[submodule "urxvt/urxvt-perls"]
+	path = urxvt/urxvt-perls
+	url = https://github.com/muennich/urxvt-perls
+	ignore = untracked

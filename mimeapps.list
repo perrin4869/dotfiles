@@ -1,0 +1,3 @@
+[Default Applications]
+video/x-matroska=mpv.desktop
+video/mp4=mpv.desktop

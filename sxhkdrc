@@ -16,6 +16,12 @@ super + shift + g
 super + o ; {t,e,w,m,f}
     {$TERMINAL,$TERMINAL -e $EDITOR,qutebrowser,$TERMINAL -e $MAIL,$TERMINAL -e $FILE}
 
+XF86AudioPlay
+    playerctl play-pause
+XF86AudioNext
+    playerctl next
+XF86AudioPrev
+    playerctl previous
 XF86AudioMute
     pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
 XF86Audio{Lower,Raise}Volume

@@ -30,8 +30,9 @@ set list
 set listchars=tab:▸\ ,eol:¬
 
 " width of a tab
-set tabstop=4
-set shiftwidth=4
+set expandtab
+set tabstop=2
+set shiftwidth=2
 
 "completion hint in command mode
 set wildmenu

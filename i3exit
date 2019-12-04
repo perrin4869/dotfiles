@@ -3,22 +3,38 @@ lock() {
     i3lock
 }
 
-$SYSD=$(command -v systemctl)
+SYSD=$(command -v systemctl)
 
 suspend() {
-  $SYSD && systemctl suspend || dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Suspend
+    if [[ $SYSD ]]; then
+        systemctl suspend
+    else
+        dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Suspend
+    fi
 }
 
 hibernate() {
-  $SYSD && systemctl hibernate || dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Hibernate
+    if [[ $SYSD ]]; then
+        systemctl hibernate
+    else
+        dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Hibernate
+    fi
 }
 
 reboot() {
-  $SYSD && systemctl reboot || dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
+    if [[ $SYSD ]]; then
+        systemctl reboot
+    else
+        dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
+    fi
 }
 
 shutdown() {
-  $SYSD && systemctl shutdown || dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
+    if [[ $SYSD ]]; then
+        systemctl poweroff
+    else
+        dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
+    fi
 }
 
 case "$1" in

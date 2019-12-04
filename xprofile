@@ -16,6 +16,8 @@ ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf
 setxkbmap -option compose:ralt
 
+[ -x $HOME/.layout.sh ] && $HOME/.layout.sh
+
 BACKGROUND_VIDEO=~/.config/background.mkv
 
 if [[ -e $BACKGROUND_VIDEO ]]; then

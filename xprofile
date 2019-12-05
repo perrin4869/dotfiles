@@ -11,6 +11,7 @@ export QT_IM_MODULE=ibus # makes ibus work with qutebrowser (xim fails)
 sxhkd &
 blueman-applet &
 dunst &
+xscreensaver &
 udiskie --no-automount --tray &
 ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf

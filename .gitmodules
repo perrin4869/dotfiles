@@ -118,10 +118,6 @@
 	path = vim/bundle/vim-javascript-syntax
 	url = https://github.com/jelera/vim-javascript-syntax
 	ignore = untracked
-[submodule "vim/bundle/vim-node"]
-	path = vim/bundle/vim-node
-	url = https://github.com/moll/vim-node
-	ignore = untracked
 [submodule "vim/bundle/nerdtree-git-plugin"]
 	path = vim/bundle/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin

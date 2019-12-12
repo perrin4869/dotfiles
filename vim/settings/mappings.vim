@@ -121,7 +121,6 @@ func! TogglePaste()
 endfunc
 
 " Simple Ag mapping
-nmap <Leader>a :Ack 
 
 " Bring up NERDTree on the current working directory (the current project)
 nnoremap <Leader>n :NERDTreeToggle<CR>
@@ -149,6 +148,7 @@ xmap <Leader><Tab> <Plug>(fzf-maps-x)
 omap <Leader><Tab> <Plug>(fzf-maps-o)
 
 nmap <C-p> :FZF<CR>
+nmap <Leader>a :Ag<CR>
 nmap <Leader>ff :Files<CR>
 nmap <Leader>fb :Buffers<CR>
 nmap <Leader>ft :Tags<CR>

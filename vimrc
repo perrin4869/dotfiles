@@ -104,10 +104,6 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " ale
 let g:ale_fix_on_save=1
 
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
-
 " deoplete
 let g:deoplete#enable_at_startup = 1
 

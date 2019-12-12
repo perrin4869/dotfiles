@@ -158,10 +158,6 @@
 	path = vim/bundle/tagbar
 	url = https://github.com/majutsushi/tagbar
 	ignore = untracked
-[submodule "vim/bundle/vimproc.vim"]
-	path = vim/bundle/vimproc.vim
-	url = https://github.com/Shougo/vimproc.vim
-	ignore = untracked
 [submodule "vim/bundle/targets.vim"]
 	path = vim/bundle/targets.vim
 	url = https://github.com/wellle/targets.vim
@@ -238,22 +234,6 @@
 	path = vim/bundle/tern_for_vim
 	url = https://github.com/ternjs/tern_for_vim
 	ignore = untracked
-[submodule "vim/bundle/deoplete.nvim"]
-	path = vim/bundle/deoplete.nvim
-	url = https://github.com/Shougo/deoplete.nvim
-	ignore = untracked
-[submodule "vim/bundle/nvim-yarp"] # Required by deoplete
-	path = vim/bundle/nvim-yarp
-	url = https://github.com/roxma/nvim-yarp
-	ignore = untracked
-[submodule "vim/bundle/vim-hug-neovim-rpc"] # Required by deoplete
-	path = vim/bundle/vim-hug-neovim-rpc
-	url = https://github.com/roxma/vim-hug-neovim-rpc
-	ignore = untracked
-[submodule "vim/bundle/deoplete-ternjs"]
-	path = vim/bundle/deoplete-ternjs
-	url = https://github.com/carlitux/deoplete-ternjs
-	ignore = untracked
 [submodule "fzf"]
 	path = fzf
 	url = https://github.com/junegunn/fzf
@@ -314,7 +294,7 @@
 	path = vim/bundle/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim
 	ignore = untracked
-[submodule "vim/bundle/tsuquyomi"]
-	path = vim/bundle/tsuquyomi
-	url = https://github.com/Quramy/tsuquyomi
+[submodule "vim/bundle/coc.nvim"]
+	path = vim/bundle/coc.nvim
+	url = https://github.com/neoclide/coc.nvim
 	ignore = untracked

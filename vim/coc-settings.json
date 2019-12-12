@@ -1,0 +1,4 @@
+{
+  "coc.source.omni.enable": true,
+  "coc.source.omni.filetypes": ["javascript", "php", "java"]
+}

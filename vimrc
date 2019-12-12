@@ -104,9 +104,6 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " ale
 let g:ale_fix_on_save=1
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
-
 " Use tern_for_vim.
 let g:tern#command = ["tern"]
 let g:tern#arguments = ["--persistent"]

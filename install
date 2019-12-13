@@ -53,6 +53,9 @@ ln -sf $dir/zathurarc ~/.config/zathura
 mkdir -p ~/.config/ranger
 ln -sf $dir/rifle.conf ~/.config/ranger
 
+mkdir -p ~/.config/qutebrowser
+ln -sf $dir/qutebrowser/autoconfig.yml ~/.config/qutebrowser
+
 mkdir -p ~/.urxvt/ext
 ln -sf $dir/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
 ln -sf $dir/urxvt/urxvt-perls/keyboard-select ~/.urxvt/ext

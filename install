@@ -81,7 +81,7 @@ echo "Initializing submodules..."
 git submodule update --recursive --init
 ./build
 
-vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-ultisnips coc-omni coc-css|q'
+vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-metals coc-ultisnips coc-omni coc-css|q'
 
 #install fonts
 ./fonts/install.sh
@@ -92,5 +92,15 @@ ln -sf $dir/fzf ~/.fzf
 
 # install xwinwrap
 ( cd xwinwrap && make && mv xwinwrap ~/.local/bin )
+
+# https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
+$dir/coursier/coursier bootstrap \
+  --java-opt -Xss4m \
+  --java-opt -Xms100m \
+  --java-opt -Dmetals.client=vim-lsc \
+  org.scalameta:metals_2.12:0.8.0 \
+  -r bintray:scalacenter/releases \
+  -r sonatype:snapshots \
+  -o ~/.local/bin/metals-vim -f
 
 dconf load /desktop/ibus/ < $dir/ibus.dconf

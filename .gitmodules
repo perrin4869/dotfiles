@@ -305,3 +305,14 @@
 	path = vim/bundle/vim-strip-trailing-whitespace
 	url = https://github.com/axelf4/vim-strip-trailing-whitespace
 	ignore = untracked
+[submodule "vim/bundle/vim-scala"]
+	path = vim/bundle/vim-scala
+	url = https://github.com/derekwyatt/vim-scala
+	ignore = untracked
+[submodule "vim/bundle/vim-sbt"]
+	path = vim/bundle/vim-sbt
+	url = https://github.com/derekwyatt/vim-sbt
+	ignore = untracked
+[submodule "coursier"]
+	path = coursier
+	url = https://github.com/coursier/coursier

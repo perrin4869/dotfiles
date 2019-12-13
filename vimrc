@@ -136,3 +136,6 @@ autocmd BufWritePost *sxhkdrc !pkill -USR1 sxhkd
 
 " Run xrdb whenever Xdefaults or Xresources are updated.
 autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
+
+" Comments on json files syntax
+autocmd FileType json syntax match Comment +\/\/.\+$+

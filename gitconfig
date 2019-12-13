@@ -6,6 +6,7 @@
 	external = git_diff_wrapper
 [pager]
 	diff = 
+	branch = false
 [core]
 	editor = vim
 	excludesfile = ~/.gitignore_global

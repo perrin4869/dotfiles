@@ -81,7 +81,12 @@ echo "Initializing submodules..."
 git submodule update --recursive --init
 ./build
 
-vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-ultisnips coc-omni coc-css|q'
+# Relies on nvm not to use sudo
+# for javascript and typescript autocomplete
+npm install -g typescript typescript-language-server
+
+# ale relies on eslint_d for fastser linting
+npm install -g eslint_d
 
 #install fonts
 ./fonts/install.sh

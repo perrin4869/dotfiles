@@ -56,9 +56,6 @@ vnoremap <Space> zf
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> :noh<CR>
 
-"Make it easier to restart Ycm
-nnoremap <F2> :YcmRestartServer<CR>
-
 " Ultisnips
 " let g:UltiSnipsExpandTrigger="<Tab>"
 " let g:UltiSnipsJumpForwardTrigger="<Tab>"

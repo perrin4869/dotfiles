@@ -16,7 +16,6 @@ vno <right> <Nop>
 vno <up> <Nop>
 
 "close current buffer with bufkill
-nnoremap <C-c> :BD<CR> 
 nnoremap <Leader>c :BD<CR> 
 
 "make moving between splits easier

@@ -152,8 +152,21 @@ nmap <Leader>ft :Tags<CR>
 nmap <Leader>fg :GFiles<CR>
 nmap <Leader>fs :Snippets<CR>
 
+" When you press <C-Space>, the terminal sends an ambiguous signal to Vim
+" which interprets it as <Nul>. Because <Nul> is usually represented as <C-@>,
+" Vim acts as if you actually pressed <C-@> and tries to insert the previously
+" inserted text.
+" http://h-miyako.hatenablog.com/entry/2014/01/20/053327
+if !has('gui_running')
+  augroup term_vim_c_space
+    autocmd!
+    autocmd VimEnter * map <Nul> <C-Space>
+    autocmd VimEnter * map! <Nul> <C-Space>
+  augroup END
+endif
+
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-x><c-r> coc#refresh()
+inoremap <silent><expr> <c-space> coc#refresh()
 
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.

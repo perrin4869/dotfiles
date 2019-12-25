@@ -5,3 +5,7 @@ echo "Upgrade tern_for_vim";
 
 echo "Install coc.nvim";
 ( cd vim/bundle/coc.nvim && npm install )
+
+GITFLOW_INSTALLER=gitflow/contrib/gitflow-installer.sh
+chmod +x $GITFLOW_INSTALLER
+INSTALL_PREFIX=$HOME/.local/bin $GITFLOW_INSTALLER

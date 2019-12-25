@@ -298,3 +298,7 @@
 	path = vim/bundle/coc.nvim
 	url = https://github.com/neoclide/coc.nvim
 	ignore = untracked
+[submodule "gitflow"]
+	path = gitflow
+	url = https://github.com/nvie/gitflow
+  ignore = dirty

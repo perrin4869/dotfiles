@@ -1,11 +1,11 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"   )" >/dev/null 2>&1 && pwd   )"
+
 echo "Upgrade tern_for_vim";
-( cd vim/bundle/tern_for_vim && npm install )
+( cd $DIR/vim/bundle/tern_for_vim && npm install )
 
 echo "Install coc.nvim";
-( cd vim/bundle/coc.nvim && npm install )
+( cd $DIR/vim/bundle/coc.nvim && npm install )
 
-GITFLOW_INSTALLER=gitflow/contrib/gitflow-installer.sh
-chmod +x $GITFLOW_INSTALLER
-INSTALL_PREFIX=$HOME/.local/bin $GITFLOW_INSTALLER
+( cd $DIR/gitflow && make prefix=$HOME/.local install )

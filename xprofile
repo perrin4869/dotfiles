@@ -12,7 +12,7 @@ sxhkd &
 blueman-applet &
 dunst &
 xscreensaver -no-splash &
-udiskie --no-automount --tray &
+udiskie --tray &
 ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf
 setxkbmap -option compose:ralt

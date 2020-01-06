@@ -301,3 +301,7 @@
 [submodule "gitflow"]
 	path = gitflow
 	url = https://github.com/petervanderdoes/gitflow-avh
+[submodule "vim/bundle/vim-strip-trailing-whitespace"]
+	path = vim/bundle/vim-strip-trailing-whitespace
+	url = https://github.com/axelf4/vim-strip-trailing-whitespace
+	ignore = untracked

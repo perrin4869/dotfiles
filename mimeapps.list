@@ -1,3 +1,15 @@
 [Default Applications]
 video/x-matroska=mpv.desktop
 video/mp4=mpv.desktop
+video/x-msvideo=mpv.desktop
+application/postscript=zathura.desktop
+x-scheme-handler/viber=viber.desktop
+
+[Added Associations]
+video/x-flv=mpv.desktop;
+video/x-msvideo=mpv.desktop;mplayer.desktop;
+application/x-subrip=gvim.desktop;
+video/x-ms-wmv=mpv.desktop;
+video/x-matroska=smplayer.desktop;mplayer.desktop;
+text/plain=gvim.desktop;
+application/pdf=zathura-pdf-mupdf.desktop;

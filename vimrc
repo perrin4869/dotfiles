@@ -1,9 +1,5 @@
-"pathogen installation
-runtime bundle/vim-pathogen/autoload/pathogen.vim
-execute pathogen#infect()
-
-"generate help tags from all the plugins installed by pathogen
-Helptags
+"https://github.com/vim/vim/issues/5026
+silent! helptags ALL
 
 "syntax highlightning
 syntax on

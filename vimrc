@@ -112,11 +112,6 @@ let g:tern#arguments = ["--persistent"]
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-"lexima
-call lexima#add_rule({'at': '{\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
-call lexima#add_rule({'at': '[\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
-call lexima#add_rule({'at': '(\%#$', 'char': '<CR>', 'input_after': '', 'priority': 1})
-
 " Load custom mappings
 let mapleader=','
 source ~/.vim/settings/mappings.vim

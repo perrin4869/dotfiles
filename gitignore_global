@@ -23,3 +23,5 @@ doc/tags
 
 # project specific gutentags ctags options
 .gutctags
+
+/.metals

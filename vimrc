@@ -42,8 +42,16 @@ set backspace=indent,eol,start
 "make sure that vimrc is initiated in 256 colors mode
 set t_Co=256
 colo skittles_berry
-" Override with custom colors
-source ~/.vim/settings/colors.vim
+" Override default colors
+"
+" make background-color transparent
+hi Normal ctermbg=none
+
+" htmlTagName links to htmlStatement links to Statement
+hi Statement ctermbg=none ctermfg=202
+
+" current line
+hi CursorLine ctermbg=17
 
 set statusline+=%{gutentags#statusline()}
 
@@ -108,10 +116,6 @@ let g:tern#arguments = ["--persistent"]
 " Close vim automatically if nerdtree is the only pane left
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" Load custom mappings
-let mapleader=','
-source ~/.vim/settings/mappings.vim
-
 "Custom commads
 command -bang -nargs=? W SudoWrite<bang> <args>
 command -bang -nargs=? E SudoRead<bang> <args>
@@ -130,3 +134,6 @@ autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
 
 " Comments on json files syntax
 autocmd FileType json syntax match Comment +\/\/.\+$+
+
+" Set lexima mappings manually since they conflict with <CR>
+let g:lexima_no_default_rules = 1

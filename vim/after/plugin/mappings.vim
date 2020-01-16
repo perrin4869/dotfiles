@@ -1,3 +1,6 @@
+" Load custom mappings
+let mapleader=','
+
 " Convenience
 nnoremap ; :
 
@@ -167,9 +170,20 @@ endif
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Manually sets the mappings
+call lexima#set_default_rules()
+" https://github.com/cohama/lexima.vim/issues/65
+call lexima#insmode#map_hook('before', '<CR>', '')
+
+function! s:my_cr_function() abort
+  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+  " Coc only does snippet and additional edit on confirm.
+  " :h complete_CTRL-Y used to accept completion
+  " lexima needs to be triggered manually because it conflicts with <CR>
+  return pumvisible() ? "\<C-y>" : "\<C-g>u" . lexima#expand('<CR>', 'i')
+endfunction
+
+inoremap <CR> <C-r>=<SID>my_cr_function()<CR>
 
 " Remap keys for gotos
 nmap <silent> <Leader>d <Plug>(coc-definition)

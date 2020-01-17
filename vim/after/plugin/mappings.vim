@@ -59,12 +59,10 @@ vnoremap <Space> zf
 nnoremap <silent> <backspace> :noh<CR>
 
 " Ultisnips
-" let g:UltiSnipsExpandTrigger="<Tab>"
-" let g:UltiSnipsJumpForwardTrigger="<Tab>"
-" let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-let g:UltiSnipsExpandTrigger="<c-e>"
-let g:UltiSnipsJumpForwardTrigger="<c-f>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+" By default, mapped to <Tab>,<Tab>,<S-Tab>
+inoremap <silent> <C-e> <C-R>=UltiSnips#ExpandSnippet()<CR>
+inoremap <silent> <C-f> <C-R>=UltiSnips#JumpForwards<CR>
+inoremap <silent> <C-b> <C-R>=UltiSnips#JumpBackwards<CR>
 
 " easymotion style search
 " Gif config

@@ -126,6 +126,11 @@ aug i3config_ft_detection
   au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
 aug end
 
+" Disable default ultisnips mappings, gets mapped on after/plugins/mappinigs.vim
+let g:UltiSnipsExpandTrigger="<Nop>"
+let g:UltiSnipsJumpForwardTrigger="<Nop>"
+let g:UltiSnipsJumpBackwardTrigger="<Nop>"
+
 " Update binds when sxhkdrc is updated.
 autocmd BufWritePost *sxhkdrc !pkill -USR1 sxhkd
 

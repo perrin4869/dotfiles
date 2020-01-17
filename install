@@ -44,6 +44,9 @@ ln -sf $dir/i3blocks-contrib ~/.config/i3blocks/blocks
 mkdir -p ~/.config/sxhkd
 ln -sf $dir/sxhkdrc ~/.config/sxhkd
 
+mkdir -p ~/.config/mpv
+ln -sf $dir/mpv.conf ~/.config/mpv
+
 mkdir -p ~/.config/rofi
 ln -sf $dir/config.rasi ~/.config/rofi
 

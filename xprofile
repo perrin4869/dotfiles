@@ -22,9 +22,9 @@ setxkbmap -option compose:ralt
 BACKGROUND_VIDEO=~/.config/background.mkv
 
 if [[ -e $BACKGROUND_VIDEO ]]; then
-	while read -r geometry;
-	do
-		xwinwrap -ni -s -b -ov -g $geometry -d -- mpv "$BACKGROUND_VIDEO" --no-audio --loop inf --wid WID;
-	done < <(xrandr | sed "s/primary //" | grep -e '[0-9]\{4\}x[0-9]\{4\}' | grep ' connected' | cut -f 3 -d ' ' | sort -u) # requries bash over sh
+  while read -r geometry;
+  do
+    xwinwrap -ni -s -b -ov -g $geometry -d -- mpv "$BACKGROUND_VIDEO" --no-audio --loop inf --wid WID;
+  done < <(xrandr | sed "s/primary //" | grep -e '[0-9]\{4\}x[0-9]\{4\}' | grep ' connected' | cut -f 3 -d ' ' | sort -u) # requries bash over sh
   # normalizes primary screens, which appear in the third column, and filters out invalid dimensions and positions
 fi

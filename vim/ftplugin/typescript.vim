@@ -1,3 +1,6 @@
+" Coc
+setl formatexpr=CocAction('formatSelected')
+
 " airbnb eslint compatible
 setlocal expandtab
 setlocal shiftwidth=4

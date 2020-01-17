@@ -53,6 +53,7 @@ hi Statement ctermbg=none ctermfg=202
 " current line
 hi CursorLine ctermbg=17
 
+"gutentags
 set statusline+=%{gutentags#statusline()}
 
 " Airline options
@@ -90,6 +91,32 @@ set nobackup
 set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
+
+" Coc configurations
+
+" Better display for messages
+set cmdheight=2
+
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+augroup cocgroup
+  autocmd!
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " Markdown
 let g:vim_markdown_preview_use_xdg_open=1

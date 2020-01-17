@@ -71,7 +71,7 @@ echo "Moving executable files into ~/.local/bin directory"
 mkdir -p ~/.local/bin
 ln -s $dir/git_diff_wrapper ~/.local/bin
 ln -s $dir/i3-get-window-criteria- ~/.local/bin
-ln -s ~/.vim/bundle/vim-themis/bin/themis ~/.local/bin
+ln -s ~/.vim/pack/default/start/vim-themis/bin/themis ~/.local/bin
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status

@@ -3,9 +3,9 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"   )" >/dev/null 2>&1 && pwd   )"
 
 echo "Upgrade tern_for_vim";
-( cd $DIR/vim/bundle/tern_for_vim && npm install )
+( cd $DIR/vim/pack/default/start/tern_for_vim && npm install )
 
 echo "Install coc.nvim";
-( cd $DIR/vim/bundle/coc.nvim && npm install )
+( cd $DIR/vim/pack/default/start/coc.nvim && npm install )
 
 ( cd $DIR/gitflow && make prefix=$HOME/.local install )

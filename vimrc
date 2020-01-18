@@ -38,21 +38,6 @@ set wildignore=*.o,*.obj,*.la,*.lo,*.so,*.pyc,*.pyo,*.jpg,*.png,*.gif
 " On MacOS the default backspace option is messed up
 set backspace=indent,eol,start
 
-" Coloring options
-"make sure that vimrc is initiated in 256 colors mode
-set t_Co=256
-colo skittles_berry
-" Override default colors
-"
-" make background-color transparent
-hi Normal ctermbg=none
-
-" htmlTagName links to htmlStatement links to Statement
-hi Statement ctermbg=none ctermfg=202
-
-" current line
-hi CursorLine ctermbg=17
-
 "gutentags
 set statusline+=%{gutentags#statusline()}
 

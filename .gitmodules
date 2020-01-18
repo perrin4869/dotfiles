@@ -82,10 +82,6 @@
 	path = vim/pack/default/start/vmustache
 	url = https://github.com/tobyS/vmustache
 	ignore = untracked
-[submodule "vim/bundle/skittles_berry"]
-	path = vim/pack/default/start/skittles_berry
-	url = https://github.com/shawncplus/skittles_berry
-	ignore = untracked
 [submodule "vim/bundle/phpfolding"]
 	path = vim/pack/default/start/phpfolding
 	url = https://github.com/rayburgemeestre/phpfolding.vim
@@ -312,3 +308,6 @@
 [submodule "coursier"]
 	path = coursier
 	url = https://github.com/coursier/coursier
+[submodule "vim/pack/default/start/gruvbox"]
+	path = vim/pack/default/start/gruvbox
+	url = https://github.com/morhetz/gruvbox

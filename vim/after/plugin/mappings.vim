@@ -64,7 +64,12 @@ map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 nmap <Leader>s <Plug>(easymotion-s)
 
-" skipit mappings
+" ReplaceWithRegister
+nmap <Leader>r  <Plug>ReplaceWithRegisterOperator
+nmap <Leader>rr <Plug>ReplaceWithRegisterLine
+xmap <Leader>r  <Plug>ReplaceWithRegisterVisual
+
+" SkipIr mappings
 
 " Since S-Tab is not recognized in console mode map to another key
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
@@ -114,17 +119,6 @@ endfunc
 " Bring up NERDTree on the current working directory (the current project)
 nnoremap gn :NERDTreeToggle<CR>
 
-" Toggle relative numbers
-nmap <Leader>r :call ToggleRnu()<CR>
-
-func! ToggleRnu()
-	if &rnu
-		set nornu
-	else
-		set rnu
-	end
-endfunc
-
 " Toggle undo tree
 nmap gu :UndotreeToggle<CR>
 
@@ -137,12 +131,12 @@ xmap <Leader><Tab> <Plug>(fzf-maps-x)
 omap <Leader><Tab> <Plug>(fzf-maps-o)
 
 nmap <C-p> :FZF<CR>
-nmap <Leader>a :Ag<CR>
-nmap <Leader>ff :Files<CR>
-nmap <Leader>fb :Buffers<CR>
-nmap <Leader>ft :Tags<CR>
-nmap <Leader>fg :GFiles<CR>
-nmap <Leader>fs :Snippets<CR>
+nmap gfa :Ag<CR>
+nmap gff :Files<CR>
+nmap gfb :Buffers<CR>
+nmap gft :Tags<CR>
+nmap gfg :GFiles<CR>
+nmap gfs :Snippets<CR>
 
 " When you press <C-Space>, the terminal sends an ambiguous signal to Vim
 " which interprets it as <Nul>. Because <Nul> is usually represented as <C-@>,

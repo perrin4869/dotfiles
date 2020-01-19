@@ -154,3 +154,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 
 " Set lexima mappings manually since they conflict with <CR>
 let g:lexima_no_default_rules = 1
+
+nmap <Nop> <Plug>ReplaceWithRegisterOperator
+nmap <Nop> <Plug>ReplaceWithRegisterLine
+xmap <Nop> <Plug>ReplaceWithRegisterVisual

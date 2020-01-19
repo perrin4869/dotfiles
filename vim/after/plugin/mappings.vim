@@ -53,8 +53,8 @@ nnoremap <silent> <backspace> :noh<CR>
 " Ultisnips
 " By default, mapped to <Tab>,<Tab>,<S-Tab>
 inoremap <silent> <C-e> <C-R>=UltiSnips#ExpandSnippet()<CR>
-inoremap <silent> <C-f> <C-R>=UltiSnips#JumpForwards<CR>
-inoremap <silent> <C-b> <C-R>=UltiSnips#JumpBackwards<CR>
+inoremap <silent> <C-f> <C-R>=UltiSnips#JumpForwards()<CR>
+inoremap <silent> <C-b> <C-R>=UltiSnips#JumpBackwards()<CR>
 
 " easymotion style search
 " Gif config

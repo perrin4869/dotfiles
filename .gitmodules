@@ -122,10 +122,6 @@
 	path = vim/pack/default/start/vim-exchange
 	url = https://github.com/tommcdo/vim-exchange
 	ignore = untracked
-[submodule "vim/bundle/ReplaceWithRegister"]
-	path = vim/pack/default/start/ReplaceWithRegister
-	url = https://github.com/vim-scripts/ReplaceWithRegister
-	ignore = untracked
 [submodule "vim/bundle/bufexplorer"]
 	path = vim/pack/default/start/bufexplorer
 	url = https://github.com/jlanzarotta/bufexplorer
@@ -311,3 +307,8 @@
 [submodule "vim/pack/default/start/gruvbox"]
 	path = vim/pack/default/start/gruvbox
 	url = https://github.com/morhetz/gruvbox
+	ignore = untracked
+[submodule "vim/pack/default/start/vim-subversive"]
+	path = vim/pack/default/start/vim-subversive
+	url = https://github.com/svermeulen/vim-subversive
+	ignore = untracked

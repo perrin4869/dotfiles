@@ -64,10 +64,10 @@ map  n <Plug>(easymotion-next)
 map  N <Plug>(easymotion-prev)
 nmap <Leader>s <Plug>(easymotion-s)
 
-" ReplaceWithRegister
-nmap <Leader>r  <Plug>ReplaceWithRegisterOperator
-nmap <Leader>rr <Plug>ReplaceWithRegisterLine
-xmap <Leader>r  <Plug>ReplaceWithRegisterVisual
+" Replace operator operator
+nmap <Leader>r <plug>(SubversiveSubstitute)
+nmap <Leader>rr <plug>(SubversiveSubstituteLine)
+nmap <Leader>R <plug>(SubversiveSubstituteToEndOfLine)
 
 " SkipIr mappings
 

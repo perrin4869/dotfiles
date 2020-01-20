@@ -13,6 +13,7 @@ blueman-applet &
 dunst &
 xscreensaver -no-splash &
 udiskie --tray &
+redshift-gtk &
 ibus-daemon --xim -d -r
 compton -b --config ~/.compton.conf
 setxkbmap -option compose:ralt

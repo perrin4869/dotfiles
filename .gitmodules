@@ -304,6 +304,7 @@
 [submodule "coursier"]
 	path = coursier
 	url = https://github.com/coursier/coursier
+	ignore = untracked
 [submodule "vim/pack/default/start/gruvbox"]
 	path = vim/pack/default/start/gruvbox
 	url = https://github.com/morhetz/gruvbox

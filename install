@@ -93,6 +93,11 @@ vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-metals coc-ultisnips
 ln -sf $dir/fzf ~/.fzf
 ./fzf/install --all
 
+# sbt configuration
+SBT_CONFIG_DIR=~/.sbt/1.0
+mkdir -p $SBT_CONFIG_DIR
+ln -sf $dir/sbt/global.sbt $SBT_CONFIG_DIR
+
 # install xwinwrap
 ( cd xwinwrap && make && mv xwinwrap ~/.local/bin )
 

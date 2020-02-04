@@ -25,3 +25,4 @@ doc/tags
 .gutctags
 
 /.metals
+metals.sbt

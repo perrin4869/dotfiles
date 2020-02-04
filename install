@@ -6,75 +6,78 @@
 
 ########## Variables
 
-dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+LOCAL_BIN_DIR=~/.local/bin
 
 # list of files/folders to symlink in homedir
-dotfiles="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources compton.conf xinitrc xprofile"
+DOTFILE="git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources compton.conf xinitrc xprofile"
 
 ##########
 
 # change to the dotfiles directory
-echo -n "Changing to the $dir directory ..."
-cd $dir
+echo -n "Changing to the $DIR directory ..."
+cd $DIR
 echo "done"
 
-for file in $dotfiles; do
-    echo "Creating symlink to $file in home directory."
-    ln -sf $dir/$file ~/.$file
+for FILE in $DOTFILES; do
+    echo "Creating symlink to $FILE in home directory."
+    ln -sf $DIR/$FILE ~/.$FILE
 done
 
 #install config files
 mkdir -p ~/.config
 for file in config/*; do
-    # Here $file looks like: $file=config/foo
-    echo "Creating symlink to $file in .config directory."
-    ln -sf $dir/$file ~/.$file
+    # Here $FILE looks like: $FILE=config/foo
+    echo "Creating symlink to $FILE in .config directory."
+    ln -sf $DIR/$FILE ~/.$FILE
 done
 
-ln -sf $dir/vim ~/.config/nvim
-ln -sf $dir/vimrc ~/.config/nvim/init.vim
+ln -sf $DIR/vim ~/.config/nvim
+ln -sf $DIR/vimrc ~/.config/nvim/init.vim
+
+mkdir -p $LOCAL_BIN_DIR
 
 mkdir -p ~/.config/i3
-ln -sf $dir/i3.config ~/.config/i3/config
-ln -sf $dir/i3exit ~/.local/bin
+ln -sf $DIR/i3.config ~/.config/i3/config
+ln -sf $DIR/i3exit $LOCAL_BIN_DIR
 
 mkdir -p ~/.config/i3blocks
-ln -sf $dir/i3blocks-contrib ~/.config/i3blocks/blocks
+ln -sf $DIR/i3blocks-contrib ~/.config/i3blocks/blocks
 
 mkdir -p ~/.config/sxhkd
-ln -sf $dir/sxhkdrc ~/.config/sxhkd
+ln -sf $DIR/sxhkdrc ~/.config/sxhkd
 
 mkdir -p ~/.config/mpv
-ln -sf $dir/mpv.conf ~/.config/mpv
+ln -sf $DIR/mpv.conf ~/.config/mpv
 
 mkdir -p ~/.config/rofi
-ln -sf $dir/config.rasi ~/.config/rofi
+ln -sf $DIR/config.rasi ~/.config/rofi
 
 mkdir -p ~/.config/zathura
-ln -sf $dir/zathurarc ~/.config/zathura
+ln -sf $DIR/zathurarc ~/.config/zathura
 
 mkdir -p ~/.config/ranger
-ln -sf $dir/rifle.conf ~/.config/ranger
+ln -sf $DIR/rifle.conf ~/.config/ranger
 
 mkdir -p ~/.config/qutebrowser
-ln -sf $dir/qutebrowser/autoconfig.yml ~/.config/qutebrowser
+ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser
 
 mkdir -p ~/.urxvt/ext
-ln -sf $dir/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
-ln -sf $dir/urxvt/urxvt-perls/keyboard-select ~/.urxvt/ext
-ln -sf $dir/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
+ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
+ln -sf $DIR/urxvt/urxvt-perls/keyboard-select ~/.urxvt/ext
+ln -sf $DIR/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
 
 # modify using these commands
 # xdg-mime default mpv.desktop video/x-matroska
 # xdg-mime query filetype foo.mkv
-ln -sf $dir/mimeapps.list ~/.config
+ln -sf $DIR/mimeapps.list ~/.config
 
 #move executable files to bin
-echo "Moving executable files into ~/.local/bin directory"
-mkdir -p ~/.local/bin
-ln -s $dir/git_diff_wrapper ~/.local/bin
-ln -s $dir/i3-get-window-criteria- ~/.local/bin
-ln -s ~/.vim/pack/default/start/vim-themis/bin/themis ~/.local/bin
+echo "Moving executable files into $LOCAL_BIN_DIR directory"
+mkdir -p $LOCAL_BIN_DIR
+ln -s $DIR/git_diff_wrapper $LOCAL_BIN_DIR
+ln -s $DIR/i3-get-window-criteria- $LOCAL_BIN_DIR
+ln -s ~/.vim/pack/default/start/vim-themis/bin/themis $LOCAL_BIN_DIR
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status
@@ -90,25 +93,28 @@ vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-metals coc-ultisnips
 ./fonts/install.sh
 
 # install fzf
-ln -sf $dir/fzf ~/.fzf
+ln -sf $DIR/fzf ~/.fzf
 ./fzf/install --all
 
 # sbt configuration
 SBT_CONFIG_DIR=~/.sbt/1.0
 mkdir -p $SBT_CONFIG_DIR
-ln -sf $dir/sbt/global.sbt $SBT_CONFIG_DIR
+ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 
 # install xwinwrap
-( cd xwinwrap && make && mv xwinwrap ~/.local/bin )
+( cd xwinwrap && make && mv xwinwrap $LOCAL_BIN_DIR )
+
+# install coursier
+ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
 
 # https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
-$dir/coursier/coursier bootstrap \
+$DIR/coursier/coursier bootstrap \
   --java-opt -Xss4m \
   --java-opt -Xms100m \
   --java-opt -Dmetals.client=vim-lsc \
   org.scalameta:metals_2.12:0.8.0 \
   -r bintray:scalacenter/releases \
   -r sonatype:snapshots \
-  -o ~/.local/bin/metals-vim -f
+  -o $LOCAL_BIN_DIR/metals-vim -f
 
-dconf load /desktop/ibus/ < $dir/ibus.dconf
+dconf load /desktop/ibus/ < $DIR/ibus.dconf

@@ -15,8 +15,8 @@ xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
 ibus-daemon --xim -d -r
-compton -b --config ~/.compton.conf
-setxkbmap -option compose:ralt
+picom -b --config ~/.picom.conf
+setxkbmap -layout us -option compose:ralt
 
 [ -x $HOME/.layout.sh ] && $HOME/.layout.sh
 

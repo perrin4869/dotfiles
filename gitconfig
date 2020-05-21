@@ -1,23 +1,27 @@
 [user]
-	email = julian@dotcore.co.il
-	name = Julian Grinblat
-	signingkey = 23548720
+  email = julian@dotcore.co.il
+  name = Julian Grinblat
+  signingkey = FA44A7452FEDC17B
+[commit]
+  gpgsign = true
 [diff]
-	external = git_diff_wrapper
+  external = git_diff_wrapper
 [pager]
-	diff = 
-	branch = false
+  diff =
+  branch = false
 [core]
-	editor = vim
-	excludesfile = ~/.gitignore_global
+  editor = vim
+  excludesfile = ~/.gitignore_global
 [color]
-	ui = true
+  ui = true
 [merge]
-	tool = vimdiff
+  tool = vimdiff
 [alias]
-	subup = !sh -c 'git submodule update --remote --merge && git submodule foreach git submodule update --init --recursive'
-	st = status
-	aa = add --all
-	delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+  subup = !sh -c 'git submodule update --remote --merge && git submodule foreach git submodule update --init --recursive'
+  st = status
+  aa = add --all
+  delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 [push]
-	default = simple
+  default = simple
+[include]
+  path = ~/.gitconfig.overrides # local overrides for email, name, signingkey, etc

@@ -50,9 +50,6 @@ ln -sf $DIR/sxhkdrc ~/.config/sxhkd
 mkdir -p ~/.config/mpv
 ln -sf $DIR/mpv.conf ~/.config/mpv
 
-mkdir -p ~/.config/rofi
-ln -sf $DIR/config.rasi ~/.config/rofi
-
 mkdir -p ~/.config/zathura
 ln -sf $DIR/zathurarc ~/.config/zathura
 
@@ -61,6 +58,8 @@ ln -sf $DIR/rifle.conf ~/.config/ranger
 
 mkdir -p ~/.config/qutebrowser
 ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser
+
+ln -sf $DIR/rofi ~/.config
 
 mkdir -p ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
@@ -105,14 +104,15 @@ ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 ( cd xwinwrap && make && mv xwinwrap $LOCAL_BIN_DIR )
 
 # install coursier
-ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
+ln -sf $DIR/coursier/cs-x86_64-pc-linux $LOCAL_BIN_DIR/cs
+ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR/coursier
 
 # https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
-$DIR/coursier/coursier bootstrap \
+cs bootstrap \
   --java-opt -Xss4m \
   --java-opt -Xms100m \
   --java-opt -Dmetals.client=vim-lsc \
-  org.scalameta:metals_2.12:0.8.0 \
+  org.scalameta:metals_2.12:0.9.0 \
   -r bintray:scalacenter/releases \
   -r sonatype:snapshots \
   -o $LOCAL_BIN_DIR/metals-vim -f

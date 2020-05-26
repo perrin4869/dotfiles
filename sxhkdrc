@@ -2,7 +2,9 @@
 super + Return
     $TERMINAL
 super + d
-    rofi -combi-modi window,drun -show combi -modi combi
+    rofi -show combi
+super + shift + d
+    rofi-pass
 super + m
     $TERMINAL -e ncmpcpp
 super + t

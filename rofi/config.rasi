@@ -1,0 +1,6 @@
+configuration {
+  modi: [combi,"pass:~/.config/rofi/modi/rofi-pass-modi/rofi-pass-modi"];
+  combi-modi: [window, drun, pass];
+}
+
+@import "theme"

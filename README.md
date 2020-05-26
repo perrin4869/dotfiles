@@ -15,7 +15,7 @@ For node express autocompletion support (as of this writing it's quite buggy), i
 
 	cd vim/bundle/tern_for_vim/node_modules/tern && npm install --save tern-node-express
 
-Uses eslint\_d in syntastic, so you need to install that globally too:
+Uses eslint\_d in ale, so you need to install that globally too:
 
 	npm install -g eslint_d
 

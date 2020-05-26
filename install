@@ -60,6 +60,7 @@ mkdir -p ~/.config/qutebrowser
 ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser
 
 ln -sf $DIR/rofi ~/.config
+ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi ~/.local/bin
 
 mkdir -p ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext

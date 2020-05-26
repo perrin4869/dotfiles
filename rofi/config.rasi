@@ -1,5 +1,5 @@
 configuration {
-  modi: [combi,"pass:~/.config/rofi/modi/rofi-pass-modi/rofi-pass-modi"];
+  modi: [combi,"pass:rofi-pass-modi"];
   combi-modi: [window, drun, pass];
 }
 

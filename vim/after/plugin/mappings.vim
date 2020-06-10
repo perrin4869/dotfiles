@@ -50,6 +50,8 @@ nmap <M-0> g^
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> :noh<CR>
 
+nmap =j :%!python -m json.tool<CR>
+
 " Ultisnips
 " By default, mapped to <Tab>,<Tab>,<S-Tab>
 inoremap <silent> <C-e> <C-R>=UltiSnips#ExpandSnippet()<CR>

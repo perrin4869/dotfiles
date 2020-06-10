@@ -129,9 +129,10 @@ let g:tern#arguments = ["--persistent"]
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "Custom commads
-command -bang -nargs=? W SudoWrite<bang> <args>
-command -bang -nargs=? E SudoRead<bang> <args>
 command -bang Q qall<bang>
+
+" Automatically save with sudo when lacking permissions
+let g:suda_smart_edit = 1
 
 aug i3config_ft_detection
   au!

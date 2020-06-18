@@ -51,6 +51,7 @@ nmap <M-0> g^
 nnoremap <silent> <backspace> :noh<CR>
 
 nmap =j :%!python -m json.tool<CR>
+nmap =x :%!xmllint --format -<CR>
 
 " Ultisnips
 " By default, mapped to <Tab>,<Tab>,<S-Tab>

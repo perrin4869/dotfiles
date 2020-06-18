@@ -74,6 +74,15 @@ export EDITOR='vim'
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
+# https://wiki.archlinux.org/index.php/GnuPG#SSH_agent
+unset SSH_AGENT_PID
+if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+  export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+fi
+
+export GPG_TTY=$(tty)
+gpg-connect-agent updatestartuptty /bye >/dev/null
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -86,6 +95,7 @@ alias gvim="gvim -v --servername vimserver"
 alias tmux="tmux -2"
 alias tmuxinator="TERM=xterm-256color tmuxinator"
 alias mux="tmuxinator"
+alias gpg="gpg2"
 
 # use vi keybindings
 bindkey -v

@@ -1,7 +1,7 @@
 [user]
   email = julian@dotcore.co.il
   name = Julian Grinblat
-  signingkey = FA44A7452FEDC17B
+  signingkey = 11D4D7E68EAB77E1!
 [commit]
   gpgsign = true
 [diff]
@@ -25,3 +25,7 @@
   default = simple
 [include]
   path = ~/.gitconfig.overrides # local overrides for email, name, signingkey, etc
+[pull]
+	ff = only
+[gpg]
+	program = gpg2

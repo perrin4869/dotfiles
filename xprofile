@@ -18,6 +18,10 @@ ibus-daemon --xim -d -r
 picom -b --config ~/.picom.conf
 setxkbmap -layout us -option compose:ralt
 
+if [[ -e "/etc/slackware-version" ]]; then
+  sun_gtk &
+fi
+
 [ -x $HOME/.layout.sh ] && $HOME/.layout.sh
 
 BACKGROUND_VIDEO=~/.config/background.mkv

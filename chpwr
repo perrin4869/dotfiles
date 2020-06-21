@@ -37,28 +37,38 @@ shutdown() {
     fi
 }
 
-case "$1" in
-    lock)
-        lock
-        ;;
-    logout)
-        i3-msg exit
-        ;;
-    suspend)
-        lock && suspend
-        ;;
-    hibernate)
-        lock && hibernate
-        ;;
-    reboot)
-        reboot
-        ;;
-    shutdown)
-        shutdown
-        ;;
-    *)
-        echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"
-        exit 2
-esac
+run() {
+    case "$1" in
+        lock)
+            lock
+            ;;
+        logout)
+            i3-msg exit
+            ;;
+        suspend)
+            lock && suspend
+            ;;
+        hibernate)
+            lock && hibernate
+            ;;
+        reboot)
+            reboot
+            ;;
+        shutdown)
+            shutdown
+            ;;
+        *)
+          echo "Usage: $0 {$(echo -en $OPTIONS | tr -s '\n' '|')}"
+            exit 2
+    esac
+}
+
+OPTIONS="lock\nlogout\nsuspend\nhibernate\nreboot\nshutdown"
+CMD=$1
+if [[ -z "$CMD" ]]; then
+  CMD=$(printf $OPTIONS | dmenu -i -p "What would you like to do?" -nb darkred -sb red -sf white -nf gray )
+fi
+
+run $CMD
 
 exit 0

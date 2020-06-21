@@ -39,7 +39,7 @@ mkdir -p $LOCAL_BIN_DIR
 
 mkdir -p ~/.config/i3
 ln -sf $DIR/i3.config ~/.config/i3/config
-ln -sf $DIR/i3exit $LOCAL_BIN_DIR
+ln -sf $DIR/chpwr $LOCAL_BIN_DIR
 
 mkdir -p ~/.config/i3blocks
 ln -sf $DIR/i3blocks-contrib ~/.config/i3blocks/blocks

@@ -24,7 +24,7 @@ for FILE in $DOTFILES; do
     ln -sf $DIR/$FILE ~/.$FILE
 done
 
-#install config files
+# install config files
 mkdir -p ~/.config
 for file in config/*; do
     # Here $FILE looks like: $FILE=config/foo
@@ -60,7 +60,7 @@ mkdir -p ~/.config/qutebrowser
 ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser
 
 ln -sf $DIR/rofi ~/.config
-ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi ~/.local/bin
+ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi $LOCAL_BIN_DIR
 
 mkdir -p ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
@@ -72,12 +72,15 @@ ln -sf $DIR/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
 # xdg-mime query filetype foo.mkv
 ln -sf $DIR/mimeapps.list ~/.config
 
-#move executable files to bin
+# move executable files to bin
 echo "Moving executable files into $LOCAL_BIN_DIR directory"
 mkdir -p $LOCAL_BIN_DIR
 ln -s $DIR/git_diff_wrapper $LOCAL_BIN_DIR
 ln -s $DIR/i3-get-window-criteria- $LOCAL_BIN_DIR
 ln -s ~/.vim/pack/default/start/vim-themis/bin/themis $LOCAL_BIN_DIR
+
+# pulsemixer
+ln -sf $DIR/pulsemixer/pulsemixer ~/.local/bin
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status

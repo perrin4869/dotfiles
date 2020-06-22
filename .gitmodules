@@ -314,3 +314,6 @@
 [submodule "vim/pack/default/start/suda.vim"]
 	path = vim/pack/default/start/suda.vim
 	url = https://github.com/lambdalisue/suda.vim
+[submodule "pulsemixer"]
+	path = pulsemixer
+	url = https://github.com/GeorgeFilipkin/pulsemixer

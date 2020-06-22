@@ -278,10 +278,6 @@
 	path = vim/pack/default/start/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim
 	ignore = untracked
-[submodule "vim/bundle/coc.nvim"]
-	path = vim/pack/default/start/coc.nvim
-	url = https://github.com/neoclide/coc.nvim
-	ignore = untracked
 [submodule "gitflow"]
 	path = gitflow
 	url = https://github.com/petervanderdoes/gitflow-avh
@@ -314,6 +310,10 @@
 [submodule "vim/pack/default/start/suda.vim"]
 	path = vim/pack/default/start/suda.vim
 	url = https://github.com/lambdalisue/suda.vim
+[submodule "vim/pack/default/start/coc.nvim"]
+	path = vim/pack/default/start/coc.nvim
+	url = https://github.com/neoclide/coc.nvim
+  branch = release
 [submodule "pulsemixer"]
 	path = pulsemixer
 	url = https://github.com/GeorgeFilipkin/pulsemixer

@@ -1,10 +1,6 @@
-# ignore compiled python files like vim/youcompleteme/.ycm_extra_conf.pyc
-*.pyc
-
 vim/view/*
 # !vim/view/~=+dotfiles=+vimrc=
 
-vim/javacomplete*
 irssi/config.autosave
 
 vim/init.vim

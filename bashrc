@@ -17,3 +17,5 @@ alias vim="gvim -v --servername vimserver"
 
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="clear:history"
+
+[ -e "$HOME/.bashrc.local" ] && source "$HOME/.bashrc.local"

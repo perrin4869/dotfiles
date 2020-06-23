@@ -53,6 +53,9 @@ plugins=(git tmux tmuxinator web-search vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
+# git plugin aliases gm to git merge
+unalias gm
+
 # User configuration
 
 export PATH=./node_modules/.bin:~/.local/bin:$PATH
@@ -142,6 +145,7 @@ zle -N zle-line-init
 zle -N zle-keymap-select
 export KEYTIMEOUT=1
 
-which gulp &> /dev/null && eval "$(gulp --completion=zsh)"
+[ -e "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
-unalias gm # git plugin aliases gm to git merge
+# Execute after node.js is in env, in case env runs inside .zshrc.local
+which gulp &> /dev/null && eval "$(gulp --completion=zsh)"

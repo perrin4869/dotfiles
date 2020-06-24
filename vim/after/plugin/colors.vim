@@ -26,5 +26,11 @@ hi Normal ctermbg=none
 " htmlTagName links to htmlStatement links to Statement
 hi Statement ctermbg=none ctermfg=202
 
+" Settinigs for vim in the terminal with truecolor, but not on gvim
+if !has("gui_running")
+  hi Normal guibg=NONE
+  hi Statement guibg=NONE
+endif
+
 " current line
 hi CursorLine ctermbg=17

@@ -1,5 +1,20 @@
 {
   "coc.source.omni.enable": true,
   "coc.source.omni.filetypes": ["javascript", "php", "java", "tex"],
-  "coc.preferences.formatOnSaveFiletypes": ["scala"]
+  "coc.preferences.formatOnSaveFiletypes": ["scala"],
+  "languageserver": {
+    "ccls": {
+      "command": "ccls",
+      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "rootPatterns": [".ccls-root", "compile_commands.json"],
+      "initializationOptions": {
+        "cache": {
+          "directory": ".ccls-cache"
+        },
+        "client": {
+          "snippetSupport": true
+        }
+      }
+    }
+  }
 }

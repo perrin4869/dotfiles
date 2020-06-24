@@ -317,3 +317,6 @@
 [submodule "pulsemixer"]
 	path = pulsemixer
 	url = https://github.com/GeorgeFilipkin/pulsemixer
+[submodule "ccls"]
+	path = ccls
+	url = https://github.com/MaskRay/ccls.git

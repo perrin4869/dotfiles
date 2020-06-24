@@ -24,5 +24,8 @@ doc/tags
 # project specific gutentags ctags options
 .gutctags
 
+# c/c++
+.ccls
+
 /.metals
 metals.sbt

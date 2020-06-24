@@ -76,7 +76,7 @@ ln -sf $DIR/mimeapps.list ~/.config
 echo "Moving executable files into $LOCAL_BIN_DIR directory"
 mkdir -p $LOCAL_BIN_DIR
 ln -s $DIR/git_diff_wrapper $LOCAL_BIN_DIR
-ln -s $DIR/i3-get-window-criteria- $LOCAL_BIN_DIR
+ln -s $DIR/i3-get-window-criteria $LOCAL_BIN_DIR
 ln -s ~/.vim/pack/default/start/vim-themis/bin/themis $LOCAL_BIN_DIR
 
 # pulsemixer
@@ -106,6 +106,12 @@ ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 
 # install xwinwrap
 ( cd xwinwrap && make && mv xwinwrap $LOCAL_BIN_DIR )
+
+# install ccls
+( cd ccls && \
+  cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
+  cmake --build Release && \
+  ln -sf "$(pwd)/Release/ccls" $LOCAL_BIN_DIR )
 
 # install coursier
 ln -sf $DIR/coursier/cs-x86_64-pc-linux $LOCAL_BIN_DIR/cs

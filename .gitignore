@@ -4,3 +4,5 @@ vim/view/*
 irssi/config.autosave
 
 vim/init.vim
+
+.ccls-cache

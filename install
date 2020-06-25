@@ -105,7 +105,7 @@ mkdir -p $SBT_CONFIG_DIR
 ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 
 # install xwinwrap
-( cd xwinwrap && make && mv xwinwrap $LOCAL_BIN_DIR )
+( cd xwinwrap && make && ln -sf "$(pwd)/xwinwrap" $LOCAL_BIN_DIR )
 
 # install ccls
 ( cd ccls && \

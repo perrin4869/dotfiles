@@ -8,15 +8,15 @@ if $COLORTERM =~? 'truecolor$' || $COLORTERM =~? '24bit$'
   set termguicolors
 endif
 
-" Disabled by default for terminals without italics support
-" In slackware, rxvt-unicode-256color supports italics
-let g:gruvbox_italic=1
-colo gruvbox
-
 " https://groups.google.com/forum/#!msg/vim_dev/afPqwAFNdrU/nqh6tOM87QUJ
 " TODO: investigate why this setting is required to come before the
 " colorscheme in terminal vim
 set background=dark
+
+" Disabled by default for terminals without italics support
+" In slackware, rxvt-unicode-256color supports italics
+let g:gruvbox_italic=1
+colo gruvbox
 
 " Override default colors
 

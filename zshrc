@@ -54,7 +54,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux vi-mode node sandboxd)
+plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting)
 
 # export ZSH_TMUX_AUTOSTART=true
 # export ZSH_TMUX_AUTOQUIT=false

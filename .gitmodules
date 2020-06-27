@@ -26,10 +26,6 @@
 	path = vim/pack/default/start/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
 	ignore = untracked
-[submodule "vim/bundle/vim-airline"]
-	path = vim/pack/default/start/vim-airline
-	url = https://github.com/bling/vim-airline
-	ignore = untracked
 [submodule "vim/bundle/vim-easymotion"]
 	path = vim/pack/default/start/vim-easymotion
 	url = https://github.com/Lokaltog/vim-easymotion.git
@@ -329,3 +325,15 @@
 [submodule "vim/pack/default/start/vim-devicons"]
 	path = vim/pack/default/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons
+[submodule "zsh-syntax-highlighting"]
+	path = zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting
+[submodule "vim/pack/default/start/lightline.vim"]
+	path = vim/pack/default/start/lightline.vim
+	url = https://github.com/itchyny/lightline.vim
+[submodule "vim/pack/default/start/lightline-bufferline"]
+	path = vim/pack/default/start/lightline-bufferline
+	url = https://github.com/mengelbrecht/lightline-bufferline
+[submodule "vim/pack/default/start/lightline-ale"]
+	path = vim/pack/default/start/lightline-ale
+	url = https://github.com/maximbaz/lightline-ale

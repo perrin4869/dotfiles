@@ -242,10 +242,6 @@
 	path = vim/pack/default/start/vim-graphql
 	url = https://github.com/jparise/vim-graphql
 	ignore = untracked
-[submodule "fonts"]
-	path = fonts
-	url = https://github.com/powerline/fonts
-	ignore = untracked
 [submodule "vim/bundle/vim-jsx-pretty"]
 	path = vim/pack/default/start/vim-jsx-pretty
 	url = https://github.com/MaxMEllon/vim-jsx-pretty
@@ -320,3 +316,16 @@
 [submodule "ccls"]
 	path = ccls
 	url = https://github.com/MaskRay/ccls.git
+[submodule "sandboxd"]
+	path = sandboxd
+	url = https://github.com/benvan/sandboxd
+[submodule "powerlevel10k"]
+	path = powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "ohmyzsh"]
+	path = ohmyzsh
+	url = https://github.com/ohmyzsh/ohmyzsh
+	ignore = untracked
+[submodule "vim/pack/default/start/vim-devicons"]
+	path = vim/pack/default/start/vim-devicons
+	url = https://github.com/ryanoasis/vim-devicons

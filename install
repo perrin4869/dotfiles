@@ -10,7 +10,7 @@ DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 LOCAL_BIN_DIR=~/.local/bin
 
 # list of files/folders to symlink in homedir
-DOTFILE="bashrc zshrc git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources picom.conf xinitrc xprofile"
+DOTFILE="bashrc zshrc sandboxrc git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources picom.conf xinitrc xprofile p10k.zsh"
 
 ##########
 
@@ -93,7 +93,8 @@ git submodule update --recursive --init
 vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-metals coc-ultisnips coc-omni coc-css|q'
 
 #install fonts
-./fonts/install.sh
+ln -sf $DIR/fonts/*.ttf ~/.local/share/fonts
+fc-cache -f
 
 # install fzf
 ln -sf $DIR/fzf ~/.fzf
@@ -104,8 +105,14 @@ SBT_CONFIG_DIR=~/.sbt/1.0
 mkdir -p $SBT_CONFIG_DIR
 ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 
+ln -sf /bin/dash $LOCAL_BIN_DIR
+
 # install xwinwrap
 ( cd xwinwrap && make && ln -sf "$(pwd)/xwinwrap" $LOCAL_BIN_DIR )
+
+ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
+ln -sf $DIR/sandbox ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 
 # install ccls
 ( cd ccls && \

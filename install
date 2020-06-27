@@ -112,6 +112,7 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 
 ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
 ln -sf $DIR/sandbox ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
 ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 
 # install ccls

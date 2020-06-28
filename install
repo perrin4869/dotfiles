@@ -8,6 +8,7 @@
 
 DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 LOCAL_BIN_DIR=~/.local/bin
+LOCAL_CONFIG_DIR=~/.config
 
 # list of files/folders to symlink in homedir
 DOTFILE="bashrc zshrc sandboxrc git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources picom.conf xinitrc xprofile p10k.zsh"
@@ -17,7 +18,6 @@ DOTFILE="bashrc zshrc sandboxrc git-completion.bash gitconfig git_ps1.bash vim v
 # change to the dotfiles directory
 echo -n "Changing to the $DIR directory ..."
 cd $DIR
-echo "done"
 
 for FILE in $DOTFILES; do
     echo "Creating symlink to $FILE in home directory."
@@ -25,38 +25,34 @@ for FILE in $DOTFILES; do
 done
 
 # install config files
-mkdir -p ~/.config
-for file in config/*; do
-    # Here $FILE looks like: $FILE=config/foo
-    echo "Creating symlink to $FILE in .config directory."
-    ln -sf $DIR/$FILE ~/.$FILE
-done
+mkdir -p $LOCAL_CONFIG_DIR
 
-ln -sf $DIR/vim ~/.config/nvim
-ln -sf $DIR/vimrc ~/.config/nvim/init.vim
+ln -sf $DIR/vim $LOCAL_CONFIG_DIR/nvim
+ln -sf $DIR/vimrc $LOCAL_CONFIG_DIR/nvim/init.vim
 
 mkdir -p $LOCAL_BIN_DIR
 
-mkdir -p ~/.config/i3
-ln -sf $DIR/i3.config ~/.config/i3/config
+mkdir -p $LOCAL_CONFIG_DIR/i3
+ln -sf $DIR/i3.config $LOCAL_CONFIG_DIR/i3/config
 ln -sf $DIR/chpwr $LOCAL_BIN_DIR
 
-mkdir -p ~/.config/i3blocks
+mkdir -p $LOCAL_CONFIG_DIR/i3blocks
 ln -sf $DIR/i3blocks-contrib ~/.config/i3blocks/blocks
 
-mkdir -p ~/.config/sxhkd
-ln -sf $DIR/sxhkdrc ~/.config/sxhkd
+mkdir -p $LOCAL_CONFIG_DIR/sxhkd
+ln -sf $DIR/sxhkdrc $LOCAL_CONFIG_DIR/sxhkd
 
-mkdir -p ~/.config/mpv
-ln -sf $DIR/mpv.conf ~/.config/mpv
+mkdir -p $LOCAL_CONFIG_DIR/mpv
+ln -sf $DIR/mpv.conf $LOCAL_CONFIG_DIR/mpv
 
-mkdir -p ~/.config/zathura
-ln -sf $DIR/zathurarc ~/.config/zathura
+mkdir -p $LOCAL_CONFIG_DIR/zathura
+ln -sf $DIR/zathurarc $LOCAL_CONFIG_DIR/zathura
 
-ln -sf $DIR/ranger ~/.config/ranger
+ln -sf $DIR/ranger $LOCAL_CONFIG_DIR
+ln -sf $DIR/fontconfig $LOCAL_CONFIG_DIR
 
-mkdir -p ~/.config/qutebrowser
-ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser
+mkdir -p $LOCAL_CONFIG_DIR/qutebrowser
+ln -sf $DIR/qutebrowser/autoconfig.yml $LOCAL_CONFIG_DIR/qutebrowser
 
 ln -sf $DIR/rofi ~/.config
 ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi $LOCAL_BIN_DIR
@@ -79,7 +75,7 @@ ln -s $DIR/i3-get-window-criteria $LOCAL_BIN_DIR
 ln -s ~/.vim/pack/default/start/vim-themis/bin/themis $LOCAL_BIN_DIR
 
 # pulsemixer
-ln -sf $DIR/pulsemixer/pulsemixer ~/.local/bin
+ln -sf $DIR/pulsemixer/pulsemixer $LOCAL_BIN_DIR
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status

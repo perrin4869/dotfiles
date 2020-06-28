@@ -58,6 +58,7 @@ set directory=$HOME/.vim/backup//,/tmp//,. " for swp files"
 " separators substituted to percent '%' signs. This will ensure file name
 " uniqueness in the preserve directory
 
+" This is needed for the separate fzf.vim plugin to work
 set rtp+=~/.fzf
 
 " lightline-bufferline requires this
@@ -158,7 +159,7 @@ let g:lexima_no_default_rules = 1
 let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
 
 let g:lightline = {}
-let g:lightline.colorscheme = 'solarized'
+let g:lightline.colorscheme = 'gruvbox'
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],

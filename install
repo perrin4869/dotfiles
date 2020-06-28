@@ -53,8 +53,7 @@ ln -sf $DIR/mpv.conf ~/.config/mpv
 mkdir -p ~/.config/zathura
 ln -sf $DIR/zathurarc ~/.config/zathura
 
-mkdir -p ~/.config/ranger
-ln -sf $DIR/rifle.conf ~/.config/ranger
+ln -sf $DIR/ranger ~/.config/ranger
 
 mkdir -p ~/.config/qutebrowser
 ln -sf $DIR/qutebrowser/autoconfig.yml ~/.config/qutebrowser

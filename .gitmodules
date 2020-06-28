@@ -337,3 +337,9 @@
 [submodule "vim/pack/default/start/lightline-ale"]
 	path = vim/pack/default/start/lightline-ale
 	url = https://github.com/maximbaz/lightline-ale
+[submodule "ranger/plugins/devicons2"]
+	path = ranger/plugins/devicons2
+	url = https://github.com/cdump/ranger-devicons2
+[submodule "ranger/plugins/fzf"]
+	path = ranger/plugins/fzf
+	url = https://github.com/cjbassi/ranger-fzf

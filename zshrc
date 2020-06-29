@@ -124,6 +124,16 @@ bindkey '^E' end-of-line
 bindkey '^U' backward-kill-line
 bindkey '^K' kill-line
 
+autoload edit-commoand-line; zle -N edit-command-line
+bindkey '^V' edit-command-line
+
+# Use vim keys in tab complet menu:
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -v '^?' backward-delete-char
+
 # fzf configuration
 
 if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then

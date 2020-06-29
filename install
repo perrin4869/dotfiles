@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ############################
 # install
 # This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
@@ -6,7 +6,7 @@
 
 ########## Variables
 
-DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+DIR=$( cd "$(dirname "$0")" ; pwd -P )
 LOCAL_BIN_DIR=~/.local/bin
 LOCAL_CONFIG_DIR=~/.config
 

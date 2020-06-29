@@ -133,7 +133,15 @@ nmap <Leader><Tab> <Plug>(fzf-maps-n)
 xmap <Leader><Tab> <Plug>(fzf-maps-x)
 omap <Leader><Tab> <Plug>(fzf-maps-o)
 
-nmap <C-p> :FZF<CR>
+if isdirectory('.git')
+  nmap <C-p> :GFiles<CR>
+else
+  nmap <C-p> :Files<CR> 
+endif
+
+" command from ~/.fzf
+nmap gfz :FZF<CR>
+
 nmap gfa :Ag<CR>
 nmap gff :Files<CR>
 nmap gfb :Buffers<CR>

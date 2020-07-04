@@ -65,7 +65,7 @@ run() {
 
 OPTIONS="lock\nlogout\nsuspend\nhibernate\nreboot\nshutdown"
 CMD=$1
-if [[ -z "$CMD" ]]; then
+if [ -z "$CMD" ]; then
   CMD=$(printf $OPTIONS | dmenu -i -p "What would you like to do?" -nb darkred -sb red -sf white -nf gray )
 fi
 

@@ -5,6 +5,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"   )" >/dev/null 2>&1 && pwd   )"
 echo "Upgrade tern_for_vim";
 ( cd $DIR/vim/pack/default/start/tern_for_vim && npm install )
 
+echo "Upgrade vim-import-size";
+( cd $DIR/vim/pack/default/start/vim-import-size && npm install )
+
 echo "Install coc.nvim";
 ( cd $DIR/vim/pack/default/start/coc.nvim && npm install )
 

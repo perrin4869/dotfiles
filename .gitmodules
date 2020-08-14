@@ -343,3 +343,6 @@
 [submodule "ranger/plugins/fzf"]
 	path = ranger/plugins/fzf
 	url = https://github.com/cjbassi/ranger-fzf
+[submodule "vim/pack/default/start/vim-import-cost"]
+	path = vim/pack/default/start/vim-import-cost
+	url = https://github.com/yardnsm/vim-import-cost

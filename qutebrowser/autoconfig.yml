@@ -8,3 +8,12 @@ config_version: 2
 settings:
   auto_save.session:
     global: true
+  bindings.commands:
+    global:
+      command:
+        <Ctrl+j>: completion-item-focus next
+        <Ctrl+k>: completion-item-focus prev
+      normal:
+        <Ctrl+Alt+t>: set-cmd-text -s :tab-focus
+  qt.highdpi:
+    global: true

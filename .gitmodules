@@ -26,10 +26,6 @@
 	path = vim/pack/default/start/tcomment_vim
 	url = https://github.com/tomtom/tcomment_vim
 	ignore = untracked
-[submodule "vim/bundle/vim-easymotion"]
-	path = vim/pack/default/start/vim-easymotion
-	url = https://github.com/Lokaltog/vim-easymotion.git
-	ignore = untracked
 [submodule "vim/bundle/vim-repeat"]
 	path = vim/pack/default/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
@@ -346,3 +342,7 @@
 [submodule "vim/pack/default/start/vim-import-cost"]
 	path = vim/pack/default/start/vim-import-cost
 	url = https://github.com/yardnsm/vim-import-cost
+[submodule "vim/pack/default/start/vim-easymotion"]
+	path = vim/pack/default/start/vim-easymotion
+	url = https://github.com/easymotion/vim-easymotion
+	ignore = untracked

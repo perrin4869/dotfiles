@@ -91,6 +91,10 @@ set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
 
+if has('nvim')
+  set mouse=a
+endif
+
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 

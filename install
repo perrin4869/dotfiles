@@ -29,6 +29,7 @@ mkdir -p $LOCAL_CONFIG_DIR
 
 ln -sf $DIR/vim $LOCAL_CONFIG_DIR/nvim
 ln -sf $DIR/vimrc $LOCAL_CONFIG_DIR/nvim/init.vim
+ln -sf $DIR/git $LOCAL_CONFIG_DIR/git
 
 mkdir -p $LOCAL_BIN_DIR
 
@@ -37,7 +38,7 @@ ln -sf $DIR/i3.config $LOCAL_CONFIG_DIR/i3/config
 ln -sf $DIR/chpwr $LOCAL_BIN_DIR
 
 mkdir -p $LOCAL_CONFIG_DIR/i3blocks
-ln -sf $DIR/i3blocks-contrib ~/.config/i3blocks/blocks
+ln -sf $DIR/i3blocks-contrib $LOCAL_CONFIG_DIR/i3blocks/blocks
 
 mkdir -p $LOCAL_CONFIG_DIR/sxhkd
 ln -sf $DIR/sxhkdrc $LOCAL_CONFIG_DIR/sxhkd
@@ -54,7 +55,7 @@ ln -sf $DIR/fontconfig $LOCAL_CONFIG_DIR
 mkdir -p $LOCAL_CONFIG_DIR/qutebrowser
 ln -sf $DIR/qutebrowser/autoconfig.yml $LOCAL_CONFIG_DIR/qutebrowser
 
-ln -sf $DIR/rofi ~/.config
+ln -sf $DIR/rofi $LOCAL_CONFIG_DIR
 ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi $LOCAL_BIN_DIR
 
 mkdir -p ~/.urxvt/ext
@@ -65,7 +66,7 @@ ln -sf $DIR/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
 # modify using these commands
 # xdg-mime default mpv.desktop video/x-matroska
 # xdg-mime query filetype foo.mkv
-ln -sf $DIR/mimeapps.list ~/.config
+ln -sf $DIR/mimeapps.list $LOCAL_CONFIG_DIR
 
 # move executable files to bin
 echo "Moving executable files into $LOCAL_BIN_DIR directory"

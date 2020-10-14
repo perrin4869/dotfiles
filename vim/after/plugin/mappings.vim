@@ -3,6 +3,9 @@ let mapleader=','
 
 " Convenience
 nnoremap ; :
+" https://github.com/neovim/neovim/issues/13086
+" If you type <ESC>; quickly enough, the key sequence generated will be <M-;>
+inoremap <M-;> <ESC>:
 
 " Unmap the arrow keys
 no <down> ddp

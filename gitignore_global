@@ -27,5 +27,8 @@ doc/tags
 # c/c++
 .ccls
 
+# scala
 /.metals
 metals.sbt
+.bloop
+.bsp

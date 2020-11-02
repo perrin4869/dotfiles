@@ -134,25 +134,6 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
-# fzf configuration
-
-if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
-  source /usr/share/fzf/key-bindings.zsh
-fi
-
-if [[ -f /usr/share/fzf/completion.zsh ]]; then
-  source /usr/share/fzf/completion.zsh
-fi
-
-if [[ -e "$(which fd)" ]]; then
-  export FZF_DEFAULT_COMMAND='fd --type file'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND="fd --type directories . $HOME"
-elif [[ -e "$(which ag)" ]]; then
-  export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g ""'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-fi
-
 function zle-line-init zle-keymap-select {
     VIM_PROMPT="%{$fg_bold[yellow]%} [% NORMAL]%  %{$reset_color%}"
     RPS1="${${KEYMAP/vicmd/$VIM_PROMPT}/(main|viins)/} $EPS1"
@@ -167,3 +148,16 @@ export KEYTIMEOUT=1
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -e "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+# fzf
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+if [[ -e "$(which fd)" ]]; then
+  export FZF_DEFAULT_COMMAND='fd --type file'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="fd --type directories . $HOME"
+elif [[ -e "$(which ag)" ]]; then
+  export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g ""'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi

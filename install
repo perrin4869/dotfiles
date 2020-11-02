@@ -93,8 +93,7 @@ ln -sf $DIR/fonts/*.ttf ~/.local/share/fonts
 fc-cache -f
 
 # install fzf
-ln -sf $DIR/fzf ~/.fzf
-./fzf/install --all
+$DIR/fzf/install --all
 
 # sbt configuration
 SBT_CONFIG_DIR=~/.sbt/1.0

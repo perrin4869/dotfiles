@@ -346,3 +346,6 @@
 	path = vim/pack/default/start/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion
 	ignore = untracked
+[submodule "vim/pack/default/start/vim-fat-finger"]
+	path = vim/pack/default/start/vim-fat-finger
+	url = https://github.com/chip/vim-fat-finger

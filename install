@@ -63,6 +63,9 @@ ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-perls/keyboard-select ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
 
+mkdir -p ~/.gnupg
+ln -sf $DIR/gpg-agent.conf ~/.gnupg
+
 # modify using these commands
 # xdg-mime default mpv.desktop video/x-matroska
 # xdg-mime query filetype foo.mkv

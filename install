@@ -94,6 +94,8 @@ fc-cache -f
 
 # install fzf
 $DIR/fzf/install --all
+# vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
+ln -sf $DIR/fzf ~/.fzf
 
 # sbt configuration
 SBT_CONFIG_DIR=~/.sbt/1.0

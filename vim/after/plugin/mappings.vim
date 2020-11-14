@@ -23,6 +23,7 @@ vno <up> <Nop>
 
 "close current buffer with bufkill
 nnoremap <Leader>c :BD<CR>
+nnoremap <Leader>C :%bd\|e#<CR>
 
 "make moving between splits easier
 nnoremap <C-j> <C-w>j

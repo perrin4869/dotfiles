@@ -2,6 +2,8 @@
   "coc.source.omni.enable": true,
   "coc.source.omni.filetypes": ["javascript", "php", "java", "tex"],
   "coc.preferences.formatOnSaveFiletypes": ["scala"],
+  "metals.showImplicitArguments": true,
+  "metals.showInferredType": true,
   "languageserver": {
     "ccls": {
       "command": "ccls",

@@ -92,7 +92,8 @@ git submodule update --recursive --init
 # coc.nvim
 mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
 ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
-vim -c 'CocInstall -sync|q'
+# TODO: add an upstream native command: vim -c 'CocInstall -sync|q'
+( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
 
 #install fonts
 ln -sf $DIR/fonts/*.ttf ~/.local/share/fonts

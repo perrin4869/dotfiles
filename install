@@ -89,7 +89,10 @@ echo "Initializing submodules..."
 git submodule update --recursive --init
 ./build
 
-vim -c 'CocInstall -sync coc-json coc-html coc-tsserver coc-metals coc-ultisnips coc-omni coc-css|q'
+# coc.nvim
+mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
+ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
+vim -c 'CocInstall -sync|q'
 
 #install fonts
 ln -sf $DIR/fonts/*.ttf ~/.local/share/fonts

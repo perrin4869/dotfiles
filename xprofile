@@ -26,7 +26,7 @@ if [[ -e "/etc/slackware-version" ]]; then
 fi
 
 # bashism
-if [[ "$(xrandr | grep primary)" =~ [0-9]{1,4}x([0-9]{1,4})\+[0-9]{1,4}\+[0-9]{1,4} && "${BASH_REMATCH[1]}" -gt "1080" ]];
+if [[ "$(xrandr | grep " connected" | head -n 1)" =~ [0-9]{1,4}x([0-9]{1,4})\+[0-9]{1,4}\+[0-9]{1,4} && "${BASH_REMATCH[1]}" -gt "1080" ]];
 then
   xrdb -merge $HOME/.Xresources.hidpi
 fi

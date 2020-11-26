@@ -7,6 +7,7 @@
 ########## Variables
 
 DIR=$( cd "$(dirname "$0")" ; pwd -P )
+LOCAL_SHARE_DIR=~/.local/share
 LOCAL_BIN_DIR=~/.local/bin
 LOCAL_CONFIG_DIR=~/.config
 
@@ -96,7 +97,8 @@ ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
 ( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
 
 #install fonts
-ln -sf $DIR/fonts/*.ttf ~/.local/share/fonts
+mkdir -p $LOCAL_SHARE_DIR/fonts
+ln -sf $DIR/fonts/*.ttf $LOCAL_SHARE_DIR/fonts
 fc-cache -f
 
 # install fzf

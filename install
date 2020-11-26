@@ -11,7 +11,7 @@ LOCAL_BIN_DIR=~/.local/bin
 LOCAL_CONFIG_DIR=~/.config
 
 # list of files/folders to symlink in homedir
-DOTFILE="bashrc zshrc sandboxrc git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources Xresources.hidpi picom.conf xinitrc xprofile p10k.zsh"
+DOTFILES="bashrc zshrc sandboxrc git-completion.bash gitconfig git_ps1.bash vim vimrc gvimrc gitignore_global tmux.conf bash_profile screenrc latexmkrc powerline ctags ctags.d Xresources Xresources.hidpi picom.conf xinitrc xprofile p10k.zsh"
 
 ##########
 
@@ -115,7 +115,7 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 ( cd xwinwrap && make && ln -sf "$(pwd)/xwinwrap" $LOCAL_BIN_DIR )
 
 ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
-ln -sf $DIR/sandbox ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
 ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
 ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 

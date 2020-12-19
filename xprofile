@@ -2,7 +2,7 @@
 
 export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c || echo urxvt) # in slackware there are two builds of urxvt
 export FILE=ranger
-export BROWSER=brave-browser-stable
+export BROWSER=chromium
 
 export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus

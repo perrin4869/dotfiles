@@ -38,9 +38,6 @@ mkdir -p $LOCAL_CONFIG_DIR/i3
 ln -sf $DIR/i3.config $LOCAL_CONFIG_DIR/i3/config
 ln -sf $DIR/chpwr $LOCAL_BIN_DIR
 
-mkdir -p $LOCAL_CONFIG_DIR/i3blocks
-ln -sf $DIR/i3blocks-contrib $LOCAL_CONFIG_DIR/i3blocks/blocks
-
 mkdir -p $LOCAL_CONFIG_DIR/sxhkd
 ln -sf $DIR/sxhkdrc $LOCAL_CONFIG_DIR/sxhkd
 

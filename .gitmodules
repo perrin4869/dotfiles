@@ -258,10 +258,6 @@
 	path = urxvt/urxvt-perls
 	url = https://github.com/muennich/urxvt-perls
 	ignore = untracked
-[submodule "i3blocks-contrib"]
-	path = i3blocks-contrib
-	url = https://github.com/vivien/i3blocks-contrib
-	ignore = untracked
 [submodule "vim/bundle/typescript-vim"]
 	path = vim/pack/default/start/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim

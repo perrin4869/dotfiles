@@ -13,6 +13,7 @@ Other 3rd party dependencies:
 - `i3-bars`
 - `ranger`
 - `rofi`
+- `rofi-pass`
 - `pinentry-dmenu`
 - `sxhkd`
 - `blueman`

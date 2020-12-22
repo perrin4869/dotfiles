@@ -4,7 +4,7 @@ video/mp4=mpv.desktop
 video/x-msvideo=mpv.desktop
 application/postscript=zathura.desktop
 x-scheme-handler/viber=viber.desktop
-inode/desktop=thunar.desktop
+inode/directory=thunar.desktop
 
 [Added Associations]
 video/x-flv=mpv.desktop;

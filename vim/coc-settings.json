@@ -3,6 +3,7 @@
   "coc.preferences.formatOnSaveFiletypes": ["scala"],
   "metals.showImplicitArguments": true,
   "metals.showInferredType": true,
+  "metals.showImplicitConversionsAndClasses": true,
   "languageserver": {
     "ccls": {
       "command": "ccls",

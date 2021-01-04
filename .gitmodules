@@ -206,10 +206,6 @@
 	path = vim/pack/default/start/vim-gutentags
 	url = https://github.com/ludovicchabant/vim-gutentags
 	ignore = untracked
-[submodule "vim/bundle/tern_for_vim"]
-	path = vim/pack/default/start/tern_for_vim
-	url = https://github.com/ternjs/tern_for_vim
-	ignore = untracked
 [submodule "fzf"]
 	path = fzf
 	url = https://github.com/junegunn/fzf

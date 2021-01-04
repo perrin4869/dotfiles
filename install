@@ -101,8 +101,18 @@ mkdir -p $LOCAL_SHARE_DIR/fonts
 ln -sf $DIR/fonts/*.ttf $LOCAL_SHARE_DIR/fonts
 fc-cache -f
 
+ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
+ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
+
 # install fzf
-$DIR/fzf/install --all
+# Officially:
+# $DIR/fzf/install --all
+# Manually
+ln -sf $DIR/fzf/bin/fzf $LOCAL_BIN_DIR
+ln -sf $DIR/fzf/shell/completion.zsh ~/.oh-my-zsh/custom
+ln -sf $DIR/fzf/shell/key-bindings.zsh ~/.oh-my-zsh/custom
 # vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
 ln -sf $DIR/fzf ~/.fzf
 
@@ -116,11 +126,6 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 # install xwinwrap
 ( cd xwinwrap && make && ln -sf "$(pwd)/xwinwrap" $LOCAL_BIN_DIR )
 
-ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
-ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
-
 # install ccls
 ( cd ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
@@ -129,7 +134,7 @@ ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 
 # install coursier
 ln -sf $DIR/coursier/cs-x86_64-pc-linux $LOCAL_BIN_DIR/cs
-ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR/coursier
+ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
 
 # https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
 cs bootstrap \

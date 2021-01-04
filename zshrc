@@ -149,10 +149,6 @@ export KEYTIMEOUT=1
 
 [ -e "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
 
-# fzf
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 if [[ -e "$(which fd)" ]]; then
   export FZF_DEFAULT_COMMAND='fd --type file'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

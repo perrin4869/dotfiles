@@ -19,5 +19,3 @@ export HISTCONTROL="ignoredups"
 export HISTIGNORE="clear:history"
 
 [ -e "$HOME/.bashrc.local" ] && source "$HOME/.bashrc.local"
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

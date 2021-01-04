@@ -110,6 +110,12 @@ augroup end
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
+" https://github.com/neoclide/coc.nvim/issues/1026
+" https://github.com/neoclide/coc.nvim/issues/1054
+" Enables jumping to definition using <C-]> and jumping back with <C-t>
+" Jumping back to the previous location can also happen using <C-o> and <C-i>
+if exists('+tagfunc') | setlocal tagfunc=CocTagFunc | endif
+
 " Markdown
 let g:vim_markdown_preview_use_xdg_open=1
 

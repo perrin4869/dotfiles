@@ -70,6 +70,9 @@ set foldcolumn=3
 
 " Save and load folds automatically
 set viewoptions-=options
+" https://vi.stackexchange.com/questions/11903/working-directory-different-than-current-file-directory
+" restore_view plugin related - prevent unnecessary pwd changes
+set viewoptions-=curdir
 
 " stop creating annoying tilde files
 set nobackup

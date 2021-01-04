@@ -23,6 +23,7 @@ Other 3rd party dependencies:
 - `redshift-gtk`
 - `ibus`
 - `picom`
+- `noto-emoji`
 
 In Slackware:
 - `sun-gtk`

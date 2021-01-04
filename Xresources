@@ -49,7 +49,8 @@ URxvt*foreground:       white
 
 URxvt.cutchars:         `"()'*<>[]{|}"
 
-URxvt.font: xft:MesloLGS\ NF:medium:size=10:antialias=true
+! Urxvt does not support Noto Emoji and may never do... but lets add this for now
+URxvt.font: xft:MesloLGS\ NF:medium:size=10:antialias=true, xft:Noto Color Emoji
 
 URxvt.inputMethod: ibus
 URxvt.preeditType: OverTheSpot

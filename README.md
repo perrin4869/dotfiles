@@ -10,8 +10,11 @@ Uses eslint\_d in ale, so you need to install that globally too:
 For markdown autopreview, install grip with `pip install --user grip`
 
 Other 3rd party dependencies:
-- `i3-bars`
+- `i3-gaps`
+- `i3-status`
 - `ranger`
+- `pass`
+- `pass-otp`
 - `rofi`
 - `rofi-pass`
 - `pinentry-dmenu`

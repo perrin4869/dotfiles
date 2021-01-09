@@ -26,6 +26,7 @@ doc/tags
 
 # c/c++
 .ccls
+.ccls-cache
 
 # scala
 /.metals

@@ -70,6 +70,9 @@ ln -sf $DIR/urxvt/urxvt-perls/deprecated/url-select ~/.urxvt/ext
 mkdir -p ~/.gnupg
 ln -sf $DIR/gpg-agent.conf ~/.gnupg
 
+mkdir -p ~/.anthy
+ln -sf $DIR/private_words_default ~/.anthy
+
 # modify using these commands
 # xdg-mime default mpv.desktop video/x-matroska
 # xdg-mime query filetype foo.mkv

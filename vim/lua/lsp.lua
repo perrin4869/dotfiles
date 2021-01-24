@@ -65,6 +65,18 @@ local on_attach = function(client, bufnr)
   lsp_status.on_attach(client)
 end
 
+function _G.lsp_safe_formatting()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.buf_get_clients(bufnr)
+  for _, client in ipairs(clients) do
+    if (client.resolved_capabilities.document_formatting or client.resolved_capabilities.document_range_formatting) then
+      -- formatting_async will require to save twice
+      vim.lsp.buf.formatting_sync()
+      break
+    end
+  end
+end
+
 lspconfig.tsserver.setup{on_attach=on_attach}
 lspconfig.ccls.setup{on_attach=on_attach}
 lspconfig.html.setup{

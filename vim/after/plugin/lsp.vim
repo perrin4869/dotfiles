@@ -17,22 +17,8 @@ if has('nvim')
   " possible value: 'UltiSnips', 'Neosnippet', 'vim-vsnip', 'snippets.nvim'
   let g:completion_enable_snippet = 'UltiSnips'
 
-  " calling formatting without this check results in an error
-  function! LspFormat()
-lua << EOF
-local bufnr = vim.api.nvim_get_current_buf()
-local clients = vim.lsp.buf_get_clients(bufnr)
-for _, client in ipairs(clients) do
-  if (client.resolved_capabilities.document_formatting or client.resolved_capabilities.document_range_formatting) then
-    vim.lsp.buf.formatting()
-    break
-  end
-end
-EOF
-  endfunction
-
   " Format on save
-  autocmd BufWritePre *.scala call LspFormat()
+  autocmd BufWritePre *.scala call v:lua.lsp_safe_formatting()
 
   " Better display for messages
   set cmdheight=2

@@ -80,41 +80,9 @@ set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
 
-" Coc configurations
-
-" Better display for messages
-set cmdheight=2
-
-" You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=300
-
-" don't give |ins-completion-menu| messages.
-set shortmess+=c
-
-" always show signcolumns
-set signcolumn=yes
-
 if has('nvim')
   set mouse=a
 endif
-
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-augroup cocgroup
-  autocmd!
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-" https://github.com/neoclide/coc.nvim/issues/1026
-" https://github.com/neoclide/coc.nvim/issues/1054
-" Enables jumping to definition using <C-]> and jumping back with <C-t>
-" Jumping back to the previous location can also happen using <C-o> and <C-i>
-if exists('+tagfunc') | setlocal tagfunc=CocTagFunc | endif
 
 " Markdown
 let g:vim_markdown_preview_use_xdg_open=1
@@ -179,7 +147,7 @@ let g:lightline.colorscheme = 'gruvbox'
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],
-      \             [ 'cocstatus', 'currentfunction'],
+      \             [ 'lsp', 'metals' ],
       \             [ 'vimtex' ],
       \             [ 'readonly', 'filename', 'modified' ] ],
       \   'right': [ [ 'lineinfo' ],
@@ -190,13 +158,12 @@ let g:lightline.active = {
 let g:lightline.component = {
       \   'lineinfo': ' %3l:%-2v'
       \ }
-" overrides default readonly, fileformat, fileencoding and filetype components
 let g:lightline.component_function = {
       \   'gitbranch': 'LightLineFugitive',
       \   'gitgutter': 'LightLineGitGutter',
+      \   'lsp': 'LightLineLsp',
+      \   'metals': 'LightLineMetals',
       \   'vimtex': 'LightLineVimTex',
-      \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'CocCurrentFunction',
       \   'readonly': 'LightLineReadonly',
       \   'fileformat': 'LightlineFileformat',
       \   'fileencoding': 'LightlineFileencoding',
@@ -252,6 +219,22 @@ function! LightLineGitGutter()
     let [ added, modified, removed ] = GitGutterGetHunkSummary()
     return printf('+%d ~%d -%d', added, modified, removed)
   endif
+  return ''
+endfunction
+
+function! LightLineLsp()
+  if exists('*LspStatus')
+    return LspStatus()
+  endif
+
+  return ''
+endfunction
+
+function! LightLineMetals()
+  if exists('*MetalsStatus')
+    return MetalsStatus()
+  endif
+
   return ''
 endfunction
 

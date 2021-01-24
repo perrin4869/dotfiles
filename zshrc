@@ -56,6 +56,11 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf)
 
+# export ZSH_TMUX_AUTOSTART=true
+# export ZSH_TMUX_AUTOQUIT=false
+
+source $ZSH/oh-my-zsh.sh
+
 # git plugin aliases gm to git merge
 unalias gm
 

@@ -54,12 +54,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting)
-
-# export ZSH_TMUX_AUTOSTART=true
-# export ZSH_TMUX_AUTOQUIT=false
-
-source $ZSH/oh-my-zsh.sh
+plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf)
 
 # git plugin aliases gm to git merge
 unalias gm
@@ -116,7 +111,8 @@ bindkey '^N' down-history
 bindkey '^?' backward-delete-char
 bindkey '^H' backward-delete-char
 bindkey '^W' backward-kill-word
-bindkey '^R' history-incremental-search-backward
+# uses fzf keybinings instead
+# bindkey '^R' history-incremental-search-backward
 bindkey '^B' backward-char
 bindkey '^F' forward-char
 bindkey '^A' beginning-of-line
@@ -157,3 +153,13 @@ elif [[ -e "$(which ag)" ]]; then
   export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g ""'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/sls.zsh ]] && . /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/slss.zsh ]] && . /home/perrin4869/univapay/serverless-plugin-split-stacks/node_modules/tabtab/.completions/slss.zsh

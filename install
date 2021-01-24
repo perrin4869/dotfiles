@@ -117,8 +117,10 @@ ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 # $DIR/fzf/install --all
 # Manually
 ln -sf $DIR/fzf/bin/fzf $LOCAL_BIN_DIR
-ln -sf $DIR/fzf/shell/completion.zsh ~/.oh-my-zsh/custom
-ln -sf $DIR/fzf/shell/key-bindings.zsh ~/.oh-my-zsh/custom
+# zsh bindings
+mkdir -p ~/.oh-my-zsh/custom/plugins/fzf
+ln -sf $DIR/fzf/shell/completion.zsh ~/.oh-my-zsh/custom/plugins/fzf
+ln -sf $DIR/fzf/shell/key-bindings.zsh ~/.oh-my-zsh/custom/plugins/fzf
 # vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
 ln -sf $DIR/fzf ~/.fzf
 

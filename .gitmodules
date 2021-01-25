@@ -352,3 +352,6 @@
 [submodule "vim/pack/default/opt/lsp-status"]
 	path = vim/pack/default/opt/lsp-status
 	url = https://github.com/nvim-lua/lsp-status.nvim
+[submodule "vim/pack/default/opt/completion-buffers"]
+	path = vim/pack/default/opt/completion-buffers
+	url = https://github.com/steelsojka/completion-buffers

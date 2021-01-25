@@ -1,6 +1,7 @@
 if has('nvim')
   packadd nvim-lspconfig
   packadd completion-nvim
+  packadd completion-buffers
   packadd nvim-metals
   packadd lsp-status
   " coc equivalent

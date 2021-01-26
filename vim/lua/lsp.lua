@@ -88,6 +88,14 @@ M.lsp_safe_formatting = function()
   end
 end
 
+M.get_status = function()
+  if #vim.lsp.buf_get_clients() > 0 then
+    return require('lsp-status').status()
+  end
+
+  return ''
+end
+
 lspconfig.tsserver.setup{on_attach=on_attach}
 lspconfig.ccls.setup{on_attach=on_attach}
 lspconfig.html.setup{on_attach=on_attach}

@@ -39,11 +39,7 @@ if has('nvim')
         \ "\<Plug>(completion_confirm_completion)"  : "\<c-e>\<CR>" :  "\<CR>"
 
   function! LspStatus() abort
-    if luaeval('#vim.lsp.buf_get_clients() > 0')
-      return luaeval("require('lsp-status').status()")
-    endif
-
-    return ''
+    return luaeval("require('lsp').get_status()")
   endfunction
 
   function! MetalsStatus() abort

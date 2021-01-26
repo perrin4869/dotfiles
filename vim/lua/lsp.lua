@@ -23,8 +23,8 @@ local on_attach = function(client, bufnr)
   local opts = { noremap=true, silent=true }
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  -- set differently in lsp.vim
   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua show_documentation()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -63,6 +63,15 @@ local on_attach = function(client, bufnr)
 
   completion.on_attach(client, bufnr)
   lsp_status.on_attach(client)
+end
+
+local ignore_lsp_documentation = {vim=true,help=true}
+function _G.show_documentation()
+  if ignore_lsp_documentation[vim.bo.filetype] then
+    vim.cmd("execute 'h '.expand('<cword>')")
+  else
+    vim.lsp.buf.hover()
+  end
 end
 
 function _G.lsp_safe_formatting()

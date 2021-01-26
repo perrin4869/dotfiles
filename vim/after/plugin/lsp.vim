@@ -33,17 +33,6 @@ if has('nvim')
   " always show signcolumns
   set signcolumn=yes
 
-  " Use K to show documentation in preview window
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    else
-      lua vim.lsp.buf.hover()
-    endif
-  endfunction
-
   " Avoids conflict with lexima lexima#expand('<CR>', 'i')
   let g:completion_confirm_key = ""
   imap <expr> <cr>  pumvisible() ? complete_info()["selected"] != "-1" ?

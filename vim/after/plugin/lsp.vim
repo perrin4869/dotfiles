@@ -19,7 +19,7 @@ if has('nvim')
   let g:completion_enable_snippet = 'UltiSnips'
 
   " Format on save
-  autocmd BufWritePre *.scala call v:lua.lsp_safe_formatting()
+  autocmd BufWritePre *.scala lua require('lsp').lsp_safe_formatting()
 
   " Better display for messages
   set cmdheight=2

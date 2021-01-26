@@ -24,7 +24,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua show_documentation()<CR>', opts)
+  buf_set_keymap('n', 'K', "<Cmd>lua require('lsp').show_documentation()<CR>", opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -65,8 +65,10 @@ local on_attach = function(client, bufnr)
   lsp_status.on_attach(client)
 end
 
+local M = {}
+
 local ignore_lsp_documentation = {vim=true,help=true}
-function _G.show_documentation()
+M.show_documentation = function()
   if ignore_lsp_documentation[vim.bo.filetype] then
     vim.cmd("execute 'h '.expand('<cword>')")
   else
@@ -74,7 +76,7 @@ function _G.show_documentation()
   end
 end
 
-function _G.lsp_safe_formatting()
+M.lsp_safe_formatting = function()
   local bufnr = vim.api.nvim_get_current_buf()
   local clients = vim.lsp.buf_get_clients(bufnr)
   for _, client in ipairs(clients) do
@@ -116,3 +118,5 @@ vim.cmd [[augroup lsp]]
 vim.cmd [[au!]]
 vim.cmd [[au FileType scala,sbt lua require("metals").initialize_or_attach(metals_config)]]
 vim.cmd [[augroup end]]
+
+return M

@@ -51,9 +51,9 @@ local on_attach = function(client, bufnr)
   -- bufnr and client.resolved_capabilities are often null, so we can't do <buffer=bufnr>
   -- one day I want to do:
   -- if client.resolved_capabilities.document_formatting then
-  --   vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[>,*.scala lua vim.lsp.buf.formatting_sync()]])
+  --   vim.cmd([[autocmd BufWritePre *.scala,<buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync()]])
   -- end
-  vim.cmd [[autocmd BufWritePre <buffer>,*.scala lua lsp_safe_formatting()]]
+  vim.cmd [[autocmd BufWritePre *.scala,<buffer> lua lsp_safe_formatting()]]
 
   -- Set autocommands conditional on server_capabilities
   if client ~= nil and client.resolved_capabilities.document_highlight then

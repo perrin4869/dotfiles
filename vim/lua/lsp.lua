@@ -41,14 +41,22 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>ac', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
 
   -- Set some keybinds conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
+  if client ~= nil and client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  elseif client.resolved_capabilities.document_range_formatting then
+  elseif client ~= nil and client.resolved_capabilities.document_range_formatting then
     buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
 
+  -- Format on save
+  -- bufnr and client.resolved_capabilities are often null, so we can't do <buffer=bufnr>
+  -- one day I want to do:
+  -- if client.resolved_capabilities.document_formatting then
+  --   vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[>,*.scala lua vim.lsp.buf.formatting_sync()]])
+  -- end
+  vim.cmd [[autocmd BufWritePre <buffer>,*.scala lua lsp_safe_formatting()]]
+
   -- Set autocommands conditional on server_capabilities
-  if client.resolved_capabilities.document_highlight then
+  if client ~= nil and client.resolved_capabilities.document_highlight then
     vim.api.nvim_exec([[
       hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
       hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
@@ -65,18 +73,7 @@ local on_attach = function(client, bufnr)
   lsp_status.on_attach(client)
 end
 
-local M = {}
-
-local ignore_lsp_documentation = {vim=true,help=true}
-M.show_documentation = function()
-  if ignore_lsp_documentation[vim.bo.filetype] then
-    vim.cmd("execute 'h '.expand('<cword>')")
-  else
-    vim.lsp.buf.hover()
-  end
-end
-
-M.lsp_safe_formatting = function()
+function lsp_safe_formatting()
   local bufnr = vim.api.nvim_get_current_buf()
   local clients = vim.lsp.buf_get_clients(bufnr)
   for _, client in ipairs(clients) do
@@ -85,6 +82,17 @@ M.lsp_safe_formatting = function()
       vim.lsp.buf.formatting_sync()
       break
     end
+  end
+end
+
+local M = {}
+
+local ignore_lsp_documentation = {vim=true,help=true}
+M.show_documentation = function()
+  if ignore_lsp_documentation[vim.bo.filetype] then
+    vim.cmd("execute 'h '.expand('<cword>')")
+  else
+    vim.lsp.buf.hover()
   end
 end
 

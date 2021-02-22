@@ -178,10 +178,6 @@
 	path = vim/pack/default/start/vim-markdown
 	url = https://github.com/tpope/vim-markdown
 	ignore = untracked
-[submodule "vim/bundle/vim-airline-themes"]
-	path = vim/pack/default/start/vim-airline-themes
-	url = https://github.com/vim-airline/vim-airline-themes
-	ignore = untracked
 [submodule "vim/bundle/vim-multiple-cursors"]
 	path = vim/pack/default/start/vim-multiple-cursors
 	url = https://github.com/terryma/vim-multiple-cursors

@@ -13,6 +13,8 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
+local autoformat_fts = {"scala"}
+
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -48,12 +50,17 @@ local on_attach = function(client, bufnr)
   end
 
   -- Format on save
-  -- bufnr and client.resolved_capabilities are often null, so we can't do <buffer=bufnr>
-  -- one day I want to do:
-  -- if client.resolved_capabilities.document_formatting then
-  --   vim.cmd([[autocmd BufWritePre *.scala,<buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync()]])
-  -- end
-  vim.cmd [[autocmd BufWritePre *.scala,<buffer> lua lsp_safe_formatting()]]
+  if
+    bufnr ~= nil and
+    client ~= nil and
+    client.resolved_capabilities.document_formatting and
+    vim.tbl_contains(autoformat_fts, vim.api.nvim_buf_get_option(bufnr, "filetype"))
+  then
+    vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync()]])
+    -- This doesn't work:
+    -- vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[>,*.scala lua print("FORMATATING")]])
+    -- This is because the comma is an "or" operator, and it will add the autocmd to both scala files and the current buffer
+  end
 
   -- Set autocommands conditional on server_capabilities
   if client ~= nil and client.resolved_capabilities.document_highlight then

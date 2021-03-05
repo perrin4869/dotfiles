@@ -351,3 +351,7 @@
 [submodule "vim/pack/default/opt/completion-buffers"]
 	path = vim/pack/default/opt/completion-buffers
 	url = https://github.com/steelsojka/completion-buffers
+[submodule "vim/pack/default/opt/coc.nvim"]
+	path = vim/pack/default/opt/coc.nvim
+	url = https://github.com/neoclide/coc.nvim
+	branch = release

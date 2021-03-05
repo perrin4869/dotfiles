@@ -18,6 +18,7 @@ let g:lightline.component_function = {
       \   'gitbranch': 'LightLineFugitive',
       \   'gitgutter': 'LightLineGitGutter',
       \   'lsp': 'LightLineLsp',
+      \   'currentfunction': 'LightLineLspCurrentFunction',
       \   'metals': 'LightLineMetals',
       \   'vimtex': 'LightLineVimTex',
       \   'readonly': 'LightLineReadonly',
@@ -81,6 +82,14 @@ endfunction
 function! LightLineLsp()
   if exists('*LspStatus')
     return LspStatus()
+  endif
+
+  return ''
+endfunction
+
+function! LightLineLspCurrentFunction()
+  if exists('*LspCurrentFunction')
+    return LspCurrentFunction()
   endif
 
   return ''

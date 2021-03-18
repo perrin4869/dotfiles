@@ -4,6 +4,7 @@
   "metals.showImplicitArguments": true,
   "metals.showInferredType": true,
   "metals.showImplicitConversionsAndClasses": true,
+  "metals.serverVersion": "0.10.0",
   "languageserver": {
     "ccls": {
       "command": "ccls",

@@ -2,7 +2,7 @@
 
 export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c || echo urxvt) # in slackware there are two builds of urxvt
 export FILE=ranger
-export BROWSER=chromium
+export BROWSER=firefox
 
 export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus
@@ -15,7 +15,7 @@ xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
 ibus-daemon --xim -d -r
-picom -b --config ~/.picom.conf
+# picom -b --config ~/.picom.conf
 setxkbmap -layout us -option compose:ralt
 
 # If autorandr-launcher is installed (presumably because udev was not) then daemonize
@@ -26,7 +26,9 @@ if [[ -e "/etc/slackware-version" ]]; then
 fi
 
 # bashism
-if [[ "$(xrandr | grep " connected" | head -n 1)" =~ [0-9]{1,4}x([0-9]{1,4})\+[0-9]{1,4}\+[0-9]{1,4} && "${BASH_REMATCH[1]}" -gt "1080" ]];
+# a monitor may be connected but not have a resolution
+# match the resultion format with grep to ensure we check a monitor that is being used
+if [[ "$(xrandr | grep " connected" | grep -E '[0-9]{1,4}x([0-9]{1,4})' | head -n 1)" =~ [0-9]{1,4}x([0-9]{1,4})\+[0-9]{1,4}\+[0-9]{1,4} && "${BASH_REMATCH[1]}" -gt "1080" ]];
 then
   xrdb -merge $HOME/.Xresources.hidpi
 fi

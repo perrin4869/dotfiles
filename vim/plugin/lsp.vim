@@ -59,6 +59,8 @@ else
 
   augroup cocgroup
     autocmd!
+      " Setup formatexpr specified filetype(s).
+      autocmd FileType typescript,scala,json setl formatexpr=CocAction('formatSelected')
     " Update signature help on jump placeholder
     autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
   augroup end

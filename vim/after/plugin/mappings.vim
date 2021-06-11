@@ -233,6 +233,10 @@ else
   xmap af <Plug>(coc-funcobj-a)
   omap if <Plug>(coc-funcobj-i)
   omap af <Plug>(coc-funcobj-a)
+  xmap ic <Plug>(coc-classobj-i)
+  omap ic <Plug>(coc-classobj-i)
+  xmap ac <Plug>(coc-classobj-a)
+  omap ac <Plug>(coc-classobj-a)
 
   " Use <TAB> for select selections ranges, needs server support, like: coc-tsserver, coc-python
   nmap <silent> <TAB> <Plug>(coc-range-select)

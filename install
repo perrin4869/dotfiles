@@ -116,6 +116,7 @@ ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 # Officially:
 # $DIR/fzf/install --all
 # Manually
+$DIR/fzf/install --no-update-rc --no-completion --no-keybindings # download executable
 ln -sf $DIR/fzf/bin/fzf $LOCAL_BIN_DIR
 # zsh bindings
 mkdir -p ~/.oh-my-zsh/custom/plugins/fzf

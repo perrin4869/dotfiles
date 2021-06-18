@@ -145,6 +145,11 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 ln -sf $DIR/coursier/cs-x86_64-pc-linux $LOCAL_BIN_DIR/cs
 ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
 
+# dconf dump /destop/ibus > ibus.dconf
+dconf load /desktop/ibus/ < $DIR/ibus.dconf
+# dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
+dconf load /org/freedesktop/ibus/ < $DIR/ibus-engine.dconf # anthy should input hiragana by default
+
 # https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
 cs bootstrap \
   --java-opt -Xss4m \
@@ -154,5 +159,3 @@ cs bootstrap \
   -r bintray:scalacenter/releases \
   -r sonatype:snapshots \
   -o $LOCAL_BIN_DIR/metals-vim -f
-
-dconf load /desktop/ibus/ < $DIR/ibus.dconf

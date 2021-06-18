@@ -149,13 +149,3 @@ ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
 dconf load /desktop/ibus/ < $DIR/ibus.dconf
 # dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
 dconf load /org/freedesktop/ibus/ < $DIR/ibus-engine.dconf # anthy should input hiragana by default
-
-# https://scalameta.org/metals/docs/editors/vim.html#generating-metals-binary
-cs bootstrap \
-  --java-opt -Xss4m \
-  --java-opt -Xms100m \
-  --java-opt -Dmetals.client=vim-lsc \
-  org.scalameta:metals_2.12:0.10.3 \
-  -r bintray:scalacenter/releases \
-  -r sonatype:snapshots \
-  -o $LOCAL_BIN_DIR/metals-vim -f

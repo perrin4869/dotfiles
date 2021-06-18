@@ -4,10 +4,13 @@ lock() {
 }
 
 SYSD=$(command -v systemctl)
+ELOGIND=$(command -v loginctl)
 
 suspend() {
     if [[ $SYSD ]]; then
         systemctl suspend
+    elif [[ $ELOGIND ]]; then
+      loginctl suspend
     else
         dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Suspend
     fi
@@ -16,6 +19,8 @@ suspend() {
 hibernate() {
     if [[ $SYSD ]]; then
         systemctl hibernate
+    elif [[ $ELOGIND ]]; then
+      loginctl hibernate
     else
         dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Hibernate
     fi
@@ -24,6 +29,8 @@ hibernate() {
 reboot() {
     if [[ $SYSD ]]; then
         systemctl reboot
+    elif [[ $ELOGIND ]]; then
+      loginctl reboot
     else
         dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
     fi
@@ -32,6 +39,8 @@ reboot() {
 shutdown() {
     if [[ $SYSD ]]; then
         systemctl poweroff
+    elif [[ $ELOGIND ]]; then
+      loginctl poweroff
     else
         dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
     fi

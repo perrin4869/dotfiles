@@ -14,7 +14,7 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 ~/.xprofile
 
 # Start i3
-if [ -z "$DESKTOP_SESSION" -a -x /usr/bin/dbus-launch ]; then
+if [ -z "$DESKTOP_SESSION" ]; then
     exec dbus-launch --exit-with-session /usr/bin/i3
 else
     exec /usr/bin/i3

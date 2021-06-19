@@ -25,6 +25,8 @@ for FILE in $DOTFILES; do
     ln -sf $DIR/$FILE ~/.$FILE
 done
 
+ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
+
 # install config files
 mkdir -p $LOCAL_CONFIG_DIR
 

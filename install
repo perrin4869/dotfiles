@@ -17,10 +17,17 @@ cd $DIR
 
 for f in $DIR/home/*; do
   b=$(basename $f)
+  echo "Installing .$b"
   ln -sf ~/dotfiles/home/$b ~/.$b
 done
 
+# move executable files to bin
+echo "Moving executable files into $LOCAL_BIN_DIR directory"
+mkdir -p $LOCAL_BIN_DIR
+ln -sf $DIR/bin/* $LOCAL_BIN_DIR
+
 # install config files
+echo "Moving config files into $LOCAL_CONFIG_DIR directory"
 mkdir -p $LOCAL_CONFIG_DIR
 ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
 
@@ -35,14 +42,10 @@ ln -sf $DIR/gpg-agent.conf ~/.gnupg
 mkdir -p ~/.anthy
 ln -sf $DIR/private_words_default ~/.anthy
 
-# move executable files to bin
-echo "Moving executable files into $LOCAL_BIN_DIR directory"
-mkdir -p $LOCAL_BIN_DIR
-ln -sf $DIR/bin/* $LOCAL_BIN_DIR
-
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status
-ln -s $(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
+POWERLINE_DIR=$(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)
+ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 echo "Initializing submodules..."
 git submodule update --recursive --init
@@ -59,43 +62,39 @@ mkdir -p $LOCAL_SHARE_DIR/fonts
 ln -sf $DIR/fonts/*.ttf $LOCAL_SHARE_DIR/fonts
 fc-cache -f
 
-ln -sf $DIR/ohmyzsh ~/.oh-my-zsh
-ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
-
+# vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
+# therefore it has to be installed in the home directory
+FZF_DIR=$DIR/home/fzf
 # install fzf
 # Officially:
 # $DIR/fzf/install --all
 # Manually
-$DIR/fzf/install --no-update-rc --no-completion --no-keybindings # download executable
-ln -sf $DIR/fzf/bin/fzf $LOCAL_BIN_DIR
+$FZF_DIR/install --no-update-rc --no-completion --no-keybindings # download executable
 # zsh bindings
 mkdir -p ~/.oh-my-zsh/custom/plugins/fzf
-ln -sf $DIR/fzf/shell/completion.zsh ~/.oh-my-zsh/custom/plugins/fzf
-ln -sf $DIR/fzf/shell/key-bindings.zsh ~/.oh-my-zsh/custom/plugins/fzf
-# vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
-ln -sf $DIR/fzf ~/.fzf
+ln -sf $FZF_DIR/shell/completion.zsh ~/.oh-my-zsh/custom/plugins/fzf
+ln -sf $FZF_DIR/shell/key-bindings.zsh ~/.oh-my-zsh/custom/plugins/fzf
+
+# Additional oh-my-zsh plugins
+ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
+ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
 
 # sbt configuration
 SBT_CONFIG_DIR=~/.sbt/1.0
 mkdir -p $SBT_CONFIG_DIR
 ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
 
+# TODO: ln -sf /bin/dash bin/sh
 ln -sf /bin/dash $LOCAL_BIN_DIR
 
 # install xwinwrap
-( cd xwinwrap && make && ln -sf "$(pwd)/xwinwrap" $LOCAL_BIN_DIR )
+( cd xwinwrap && make )
 
 # install ccls
 ( cd ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
-  cmake --build Release && \
-  ln -sf "$(pwd)/Release/ccls" $LOCAL_BIN_DIR )
-
-# install coursier
-ln -sf $DIR/coursier/cs-x86_64-pc-linux $LOCAL_BIN_DIR/cs
-ln -sf $DIR/coursier/coursier $LOCAL_BIN_DIR
+  cmake --build Release )
 
 # dconf dump /destop/ibus > ibus.dconf
 dconf load /desktop/ibus/ < $DIR/ibus.dconf

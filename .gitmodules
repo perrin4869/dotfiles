@@ -203,7 +203,7 @@
 	url = https://github.com/ludovicchabant/vim-gutentags
 	ignore = untracked
 [submodule "fzf"]
-	path = fzf
+	path = home/fzf
 	url = https://github.com/junegunn/fzf
 	ignore = untracked
 [submodule "vim/bundle/vim-textobj-function-javascript"]
@@ -299,7 +299,7 @@
 	path = powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
 [submodule "ohmyzsh"]
-	path = ohmyzsh
+	path = home/oh-my-zsh
 	url = https://github.com/ohmyzsh/ohmyzsh
 	ignore = untracked
 [submodule "vim/pack/default/start/vim-devicons"]

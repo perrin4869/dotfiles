@@ -25,44 +25,12 @@ for FILE in $DOTFILES; do
     ln -sf $DIR/$FILE ~/.$FILE
 done
 
-ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
-
 # install config files
 mkdir -p $LOCAL_CONFIG_DIR
+ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
 
 ln -sf $DIR/vim $LOCAL_CONFIG_DIR/nvim
 ln -sf $DIR/vimrc $LOCAL_CONFIG_DIR/nvim/init.vim
-ln -sf $DIR/git $LOCAL_CONFIG_DIR/git
-
-mkdir -p $LOCAL_BIN_DIR
-
-mkdir -p $LOCAL_CONFIG_DIR/i3
-ln -sf $DIR/i3.config $LOCAL_CONFIG_DIR/i3/config
-ln -sf $DIR/chpwr $LOCAL_BIN_DIR
-
-mkdir -p $LOCAL_CONFIG_DIR/i3status
-ln -sf $DIR/i3status.config $LOCAL_CONFIG_DIR/i3status/config
-
-mkdir -p $LOCAL_CONFIG_DIR/sxhkd
-ln -sf $DIR/sxhkdrc $LOCAL_CONFIG_DIR/sxhkd
-
-mkdir -p $LOCAL_CONFIG_DIR/dunst
-ln -sf $DIR/dunstrc $LOCAL_CONFIG_DIR/dunst
-
-mkdir -p $LOCAL_CONFIG_DIR/mpv
-ln -sf $DIR/mpv.conf $LOCAL_CONFIG_DIR/mpv
-
-mkdir -p $LOCAL_CONFIG_DIR/zathura
-ln -sf $DIR/zathurarc $LOCAL_CONFIG_DIR/zathura
-
-ln -sf $DIR/ranger $LOCAL_CONFIG_DIR
-ln -sf $DIR/fontconfig $LOCAL_CONFIG_DIR
-
-mkdir -p $LOCAL_CONFIG_DIR/qutebrowser
-ln -sf $DIR/qutebrowser/autoconfig.yml $LOCAL_CONFIG_DIR/qutebrowser
-
-ln -sf $DIR/rofi $LOCAL_CONFIG_DIR
-ln -sf $DIR/rofi/modi/rofi-pass-modi/rofi-pass-modi $LOCAL_BIN_DIR
 
 mkdir -p ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
@@ -75,20 +43,10 @@ ln -sf $DIR/gpg-agent.conf ~/.gnupg
 mkdir -p ~/.anthy
 ln -sf $DIR/private_words_default ~/.anthy
 
-# modify using these commands
-# xdg-mime default mpv.desktop video/x-matroska
-# xdg-mime query filetype foo.mkv
-ln -sf $DIR/mimeapps.list $LOCAL_CONFIG_DIR
-
 # move executable files to bin
 echo "Moving executable files into $LOCAL_BIN_DIR directory"
 mkdir -p $LOCAL_BIN_DIR
-ln -s $DIR/git_diff_wrapper $LOCAL_BIN_DIR
-ln -s $DIR/i3-get-window-criteria $LOCAL_BIN_DIR
-ln -s ~/.vim/pack/default/start/vim-themis/bin/themis $LOCAL_BIN_DIR
-
-# pulsemixer
-ln -sf $DIR/pulsemixer/pulsemixer $LOCAL_BIN_DIR
+ln -sf $DIR/bin/* $LOCAL_BIN_DIR
 
 echo "Install powerline regardless of OS"
 pip install --user --upgrade powerline-status

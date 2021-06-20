@@ -1,11 +1,9 @@
-vim/view/*
+home/vim/view/*
 # !vim/view/~=+dotfiles=+vimrc=
+
+config/ranger/plugins/__init__.*
+config/ranger/plugins/__pycache__
 
 irssi/config.autosave
 
-vim/init.vim
-
 .ccls-cache
-
-ranger/plugins/__init__.*
-ranger/plugins/__pycache__

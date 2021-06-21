@@ -34,6 +34,8 @@ Other 3rd party dependencies:
 - `redshift-gtk`
 - `ibus`
 - `picom`
+- `maim`
+- `playerctl`
 - `noto-emoji`
 
 In Slackware:

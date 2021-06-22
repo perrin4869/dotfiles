@@ -91,6 +91,9 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 # install xwinwrap
 ( cd xwinwrap && make )
 
+# install mpv-mpris
+( cd mpv-mpris && make )
+
 # install ccls
 ( cd ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \

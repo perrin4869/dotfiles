@@ -355,3 +355,6 @@
 	path = home/vim/pack/default/opt/coc.nvim
 	url = https://github.com/neoclide/coc.nvim
 	branch = release
+[submodule "mpv-mpris"]
+	path = mpv-mpris
+	url = https://github.com/hoyon/mpv-mpris

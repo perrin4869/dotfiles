@@ -11,11 +11,8 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 [ -f $userresources ] && /usr/bin/xrdb -merge $userresources
 [ -f $usermodmap ] && /usr/bin/xmodmap $usermodmap
 
-~/.xprofile
+# source to export dbus variables
+. ~/.xprofile
 
 # Start i3
-if [ -z "$DESKTOP_SESSION" ]; then
-    exec dbus-launch --exit-with-session /usr/bin/i3
-else
-    exec /usr/bin/i3
-fi
+exec /usr/bin/i3

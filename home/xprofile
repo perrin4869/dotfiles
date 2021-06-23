@@ -8,6 +8,8 @@ export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus # makes ibus work with qutebrowser (xim fails)
 
+export $(dbus-launch --exit-with-x11)
+
 sxhkd &
 blueman-applet &
 dunst &

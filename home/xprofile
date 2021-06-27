@@ -1,12 +1,13 @@
 #!/bin/bash
 
-export TERMINAL=kitty
-export FILE=ranger
-export BROWSER=firefox
+export TERMINAL="${TERMINAL:-kitty}"
+export FILE="${FILE:-ranger}"
+export BROWSER="${BROWSER-firefox}"
 
 export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus # makes ibus work with qutebrowser (xim fails)
+export GLFW_IM_MODULE=ibus # kitty
 
 if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
   export $(dbus-launch --exit-with-x11)

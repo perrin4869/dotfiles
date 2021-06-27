@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TERMINAL=$([[ -x $(which urxvt256c 2> /dev/null)  ]] && echo urxvt256c || echo urxvt) # in slackware there are two builds of urxvt
+export TERMINAL=kitty
 export FILE=ranger
 export BROWSER=firefox
 

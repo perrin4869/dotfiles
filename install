@@ -59,7 +59,7 @@ ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
 
 #install fonts
 mkdir -p $LOCAL_SHARE_DIR/fonts
-ln -sf $DIR/fonts/*.ttf $LOCAL_SHARE_DIR/fonts
+ln -sf $DIR/fonts $LOCAL_SHARE_DIR
 fc-cache -f
 
 # vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md

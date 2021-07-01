@@ -31,6 +31,11 @@ echo "Moving config files into $LOCAL_CONFIG_DIR directory"
 mkdir -p $LOCAL_CONFIG_DIR
 ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
 
+#install fonts
+mkdir -p $LOCAL_SHARE_DIR
+ln -sf $DIR/share/* $LOCAL_SHARE_DIR
+fc-cache -f
+
 mkdir -p ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-resize-font/resize-font ~/.urxvt/ext
 ln -sf $DIR/urxvt/urxvt-perls/keyboard-select ~/.urxvt/ext
@@ -56,11 +61,6 @@ mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
 ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
 # TODO: add an upstream native command: vim -c 'CocInstall -sync|q'
 ( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
-
-#install fonts
-mkdir -p $LOCAL_SHARE_DIR/fonts
-ln -sf $DIR/fonts $LOCAL_SHARE_DIR
-fc-cache -f
 
 # vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
 # therefore it has to be installed in the home directory

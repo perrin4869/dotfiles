@@ -361,3 +361,6 @@
 [submodule "config/alacritty/colors"]
 	path = config/alacritty/colors
 	url = https://github.com/eendroroy/alacritty-theme
+[submodule "gruvbox-material-gtk"]
+	path = gruvbox-material-gtk
+	url = https://github.com/sainnhe/gruvbox-material-gtk

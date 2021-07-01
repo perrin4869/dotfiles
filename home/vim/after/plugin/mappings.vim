@@ -60,8 +60,10 @@ nmap =x :%!xmllint --format -<CR>
 " Ultisnips
 " By default, mapped to <Tab>,<Tab>,<S-Tab>
 inoremap <silent> <C-e> <C-R>=UltiSnips#ExpandSnippet()<CR>
-inoremap <silent> <C-f> <C-R>=UltiSnips#JumpForwards()<CR>
-inoremap <silent> <C-b> <C-R>=UltiSnips#JumpBackwards()<CR>
+" matches g:coc_snippet_next
+inoremap <silent> <C-j> <C-R>=UltiSnips#JumpForwards()<CR>
+" matches g:coc_snippet_prev
+inoremap <silent> <C-k> <C-R>=UltiSnips#JumpBackwards()<CR>
 
 " easymotion style search
 " Gif config
@@ -81,10 +83,10 @@ nmap <Leader>R <plug>(SubversiveSubstituteToEndOfLine)
 " Since S-Tab is not recognized in console mode map to another key
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
-silent! imap <unique> <C-k> <Plug>(SkipItForward)
-silent! imap <unique> <C-j> <Plug>(SkipItBack)
-silent! imap <unique> <C-g>k <Plug>(SkipAllForward)
-silent! imap <unique> <C-g>j <Plug>(SkipAllBack)
+silent! imap <unique> <C-f> <Plug>(SkipItForward)
+silent! imap <unique> <C-b> <Plug>(SkipItBack)
+silent! imap <unique> <C-g>f <Plug>(SkipAllForward)
+silent! imap <unique> <C-g>b <Plug>(SkipAllBack)
 
 " easy-align mappings
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)

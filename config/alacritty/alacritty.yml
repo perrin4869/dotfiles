@@ -1,0 +1,9 @@
+import:
+  - ~/.config/alacritty/colors/themes/gruvbox_dark.yaml
+
+font:
+  normal:
+    family: MesloLGS Nerd Font
+  size: 10.0
+
+background_opacity: 0.8

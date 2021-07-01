@@ -358,3 +358,6 @@
 [submodule "mpv-mpris"]
 	path = mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris
+[submodule "config/alacritty/colors"]
+	path = config/alacritty/colors
+	url = https://github.com/eendroroy/alacritty-theme

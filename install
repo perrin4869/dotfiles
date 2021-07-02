@@ -54,7 +54,6 @@ ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.c
 
 echo "Initializing submodules..."
 git submodule update --recursive --init
-./build
 
 # coc.nvim
 mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
@@ -94,10 +93,14 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 # install mpv-mpris
 ( cd mpv-mpris && make )
 
+( cd $DIR/gitflow && make prefix=$HOME/.local install )
+
 # install ccls
 ( cd ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
   cmake --build Release )
+
+vim -c 'CocUpdateSync|q'
 
 # dconf dump /destop/ibus > ibus.dconf
 dconf load /desktop/ibus/ < $DIR/ibus.dconf

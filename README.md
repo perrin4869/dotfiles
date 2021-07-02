@@ -15,8 +15,6 @@ For `css` and `html` language server:
 
 	npm install -g vscode-css-languageserver-bin vscode-html-languageserver-bin
 
-For markdown autopreview, install grip with `pip install --user grip`
-
 Other 3rd party dependencies:
 - `i3-gaps`
 - `i3-status`

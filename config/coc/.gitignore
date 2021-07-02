@@ -1,0 +1,5 @@
+*
+!.gitignore
+!extensions
+extensions/*
+!extensions/package.json

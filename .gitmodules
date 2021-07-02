@@ -367,3 +367,6 @@
 [submodule "powerline"]
 	path = powerline
 	url = git@github.com:powerline/powerline.git
+[submodule "grip"]
+	path = grip
+	url = git@github.com:joeyespo/grip.git

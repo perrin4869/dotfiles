@@ -60,6 +60,10 @@ ln -s $POWERLINE_DIR/powerline/scripts/powerline-render $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/scripts/powerline-config $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
+# Used by vim-markdown-autopreview
+echo "Installing grip"
+pip install --user --editable=$DIR/grip
+
 # coc.nvim
 echo "Installing coc extensions"
 mkdir -p $LOCAL_CONFIG_DIR/coc/extensions

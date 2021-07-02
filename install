@@ -47,9 +47,13 @@ ln -sf $DIR/gpg-agent.conf ~/.gnupg
 mkdir -p ~/.anthy
 ln -sf $DIR/private_words_default ~/.anthy
 
-echo "Install powerline regardless of OS"
-pip install --user --upgrade powerline-status
-POWERLINE_DIR=$(pip show powerline-status | grep 'Location' | rev | cut -d' ' -f 1 | rev)
+echo "Install powerline"
+pip install --user --editable=$DIR/powerline
+ln -s $POWERLINE_DIR/powerline/scripts/powerline $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/powerline/scripts/powerline-daemon $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/powerline/scripts/powerline-lint $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/powerline/scripts/powerline-render $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/powerline/scripts/powerline-config $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 echo "Initializing submodules..."

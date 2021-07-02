@@ -1,10 +1,4 @@
 #!/bin/sh
-############################
-# install
-# This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
-############################
-
-########## Variables
 
 DIR=$( cd "$(dirname "$0")" ; pwd -P )
 LOCAL_SHARE_DIR=~/.local/share
@@ -47,7 +41,17 @@ ln -sf $DIR/gpg-agent.conf ~/.gnupg
 mkdir -p ~/.anthy
 ln -sf $DIR/private_words_default ~/.anthy
 
-echo "Install powerline"
+# sbt configuration
+SBT_CONFIG_DIR=~/.sbt/1.0
+mkdir -p $SBT_CONFIG_DIR
+ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
+
+ln -sf /bin/dash $LOCAL_BIN_DIR/sh
+
+echo "Initializing submodules..."
+git submodule update --recursive --init
+
+echo "Installing powerline"
 pip install --user --editable=$DIR/powerline
 ln -s $POWERLINE_DIR/powerline/scripts/powerline $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/scripts/powerline-daemon $LOCAL_BIN_DIR
@@ -56,15 +60,14 @@ ln -s $POWERLINE_DIR/powerline/scripts/powerline-render $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/scripts/powerline-config $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
-echo "Initializing submodules..."
-git submodule update --recursive --init
-
 # coc.nvim
+echo "Installing coc extensions"
 mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
 ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
 # TODO: add an upstream native command: vim -c 'CocInstall -sync|q'
 ( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
 
+echo "Installing fzf"
 # vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
 # therefore it has to be installed in the home directory
 FZF_DIR=$DIR/home/fzf
@@ -74,22 +77,16 @@ FZF_DIR=$DIR/home/fzf
 # Manually
 $FZF_DIR/install --no-update-rc --no-completion --no-keybindings # download executable
 # zsh bindings
-mkdir -p ~/.oh-my-zsh/custom/plugins/fzf
-ln -sf $FZF_DIR/shell/completion.zsh ~/.oh-my-zsh/custom/plugins/fzf
-ln -sf $FZF_DIR/shell/key-bindings.zsh ~/.oh-my-zsh/custom/plugins/fzf
+ZSH_PLUGINS_DIR=~/.oh-my-zsh/custom/plugins
+ZSH_THEMES_DIR=~/.oh-my-zsh/custom/themes
+mkdir -p $ZSH_PLUGINS_DIR/fzf
+ln -sf $FZF_DIR/shell/completion.zsh $ZSH_PLUGINS_DIR/fzf
+ln -sf $FZF_DIR/shell/key-bindings.zsh $ZSH_PLUGINS_DIR/fzf
 
 # Additional oh-my-zsh plugins
-ln -sf $DIR/sandboxd ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins
-ln -sf $DIR/powerlevel10k ~/.oh-my-zsh/custom/themes
-
-# sbt configuration
-SBT_CONFIG_DIR=~/.sbt/1.0
-mkdir -p $SBT_CONFIG_DIR
-ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
-
-# TODO: ln -sf /bin/dash bin/sh
-ln -sf /bin/dash $LOCAL_BIN_DIR
+ln -sf $DIR/sandboxd $ZSH_PLUGINS_DIR
+ln -sf $DIR/zsh-syntax-highlighting $ZSH_PLUGINS_DIR
+ln -sf $DIR/powerlevel10k $ZSH_THEMES_DIR
 
 # install xwinwrap
 ( cd xwinwrap && make )
@@ -103,8 +100,6 @@ ln -sf /bin/dash $LOCAL_BIN_DIR
 ( cd ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
   cmake --build Release )
-
-vim -c 'CocUpdateSync|q'
 
 # dconf dump /destop/ibus > ibus.dconf
 dconf load /desktop/ibus/ < $DIR/ibus.dconf

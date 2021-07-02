@@ -1,6 +1,3 @@
-"https://github.com/vim/vim/issues/5026
-silent! helptags ALL
-
 "syntax highlightning
 syntax on
 filetype plugin indent on

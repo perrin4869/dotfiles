@@ -25,12 +25,6 @@ vno <up> <Nop>
 nnoremap <Leader>c :BD<CR>
 nnoremap <Leader>C :%bd\|e#<CR>
 
-"make moving between splits easier
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
 "I really hate that things don't auto-center
 nmap G Gzz
 nmap n nzz
@@ -161,11 +155,11 @@ call lexima#set_default_rules()
 call lexima#insmode#map_hook('before', '<CR>', '')
 
 if has('nvim')
-  imap <expr> <cr>  pumvisible() ? complete_info()["selected"] != "-1" ?
-        \ "\<Plug>(completion_confirm_completion)"  : "\<c-e>\<CR>" :  "\<CR>"
-
-  " Use <c-space> to trigger completion.
-  imap <silent> <c-space> <Plug>(completion_trigger)
+  inoremap <silent><expr> <C-Space> compe#complete()
+  inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<CR>', 'i'))
+  inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+  " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+  " inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 else
   function! s:my_cr_function() abort
     " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.

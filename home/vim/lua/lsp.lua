@@ -1,6 +1,7 @@
 local lspconfig = require('lspconfig')
-local completion = require('completion')
 local lsp_status = require('lsp-status')
+local lsp_signature = require('lsp_signature')
+local compe = require('compe')
 
 lsp_status.register_progress()
 
@@ -12,6 +13,20 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     update_in_insert = false,
   }
 )
+
+compe.setup({
+  enabled = true,
+  autocomplete = true,
+  source = {
+    path = true,
+    buffer = true,
+    calc = true,
+    nvim_lsp = true,
+    nvim_lua = true,
+    ultisnips = true,
+    emoji = true,
+  },
+})
 
 local autoformat_fts = {"scala"}
 
@@ -76,7 +91,12 @@ local on_attach = function(client, bufnr)
     ]], false)
   end
 
-  completion.on_attach(client, bufnr)
+  lsp_signature.on_attach({
+    bind = true, -- This is mandatory, otherwise border config won't get registered.
+    handler_opts = {
+      border = "single"
+    }
+  })
   lsp_status.on_attach(client)
 end
 

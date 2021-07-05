@@ -12,8 +12,8 @@ set signcolumn=yes
 
 if has('nvim')
   packadd nvim-lspconfig
-  packadd completion-nvim
-  packadd completion-buffers
+  packadd nvim-compe
+  packadd lsp_signature
   packadd nvim-metals
   packadd lsp-status
   " coc equivalent
@@ -24,14 +24,7 @@ if has('nvim')
 
   lua require'lsp'
 
-  " Set completeopt to have a better completion experience
-  set completeopt=menuone,noinsert,noselect
-
-  " possible value: 'UltiSnips', 'Neosnippet', 'vim-vsnip', 'snippets.nvim'
-  let g:completion_enable_snippet = 'UltiSnips'
-
-  " Avoids conflict with lexima lexima#expand('<CR>', 'i')
-  let g:completion_confirm_key = ""
+  set completeopt=menuone,noselect
 
   function! LspStatus() abort
     return luaeval("require('lsp').get_status()")

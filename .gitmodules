@@ -336,9 +336,6 @@
 [submodule "vim/pack/default/opt/nvim-lspconfig"]
 	path = home/vim/pack/default/opt/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
-[submodule "vim/pack/default/opt/completion-nvim"]
-	path = home/vim/pack/default/opt/completion-nvim
-	url = https://github.com/nvim-lua/completion-nvim
 [submodule "vim/pack/default/opt/nvim-metals"]
 	path = home/vim/pack/default/opt/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
@@ -348,9 +345,6 @@
 [submodule "vim/pack/default/opt/lsp-status"]
 	path = home/vim/pack/default/opt/lsp-status
 	url = https://github.com/nvim-lua/lsp-status.nvim
-[submodule "vim/pack/default/opt/completion-buffers"]
-	path = home/vim/pack/default/opt/completion-buffers
-	url = https://github.com/steelsojka/completion-buffers
 [submodule "vim/pack/default/opt/coc.nvim"]
 	path = home/vim/pack/default/opt/coc.nvim
 	url = https://github.com/neoclide/coc.nvim
@@ -370,3 +364,9 @@
 [submodule "grip"]
 	path = grip
 	url = git@github.com:joeyespo/grip.git
+[submodule "home/vim/pack/default/opt/nvim-compe"]
+	path = home/vim/pack/default/opt/nvim-compe
+	url = git@github.com:hrsh7th/nvim-compe.git
+[submodule "home/vim/pack/default/opt/lsp_signature"]
+	path = home/vim/pack/default/opt/lsp_signature
+	url = git@github.com:ray-x/lsp_signature.nvim.git

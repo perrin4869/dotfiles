@@ -7,7 +7,7 @@
     "coc-metals": ">=1.0.6",
     "coc-omni": ">=1.2.4",
     "coc-python": ">=1.2.13",
-    "coc-snippets": ">=2.4.2",
+    "coc-snippets": ">=2.4.3",
     "coc-tsserver": ">=1.8.1",
     "coc-ultisnips": ">=1.2.3"
   }

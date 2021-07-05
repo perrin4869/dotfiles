@@ -51,14 +51,6 @@ nnoremap <silent> <backspace> :noh<CR>
 nmap =j :%!python -m json.tool<CR>
 nmap =x :%!xmllint --format -<CR>
 
-" Ultisnips
-" By default, mapped to <Tab>,<Tab>,<S-Tab>
-inoremap <silent> <C-e> <C-R>=UltiSnips#ExpandSnippet()<CR>
-" matches g:coc_snippet_next
-inoremap <silent> <C-j> <C-R>=UltiSnips#JumpForwards()<CR>
-" matches g:coc_snippet_prev
-inoremap <silent> <C-k> <C-R>=UltiSnips#JumpBackwards()<CR>
-
 " easymotion style search
 " Gif config
 map  / <Plug>(easymotion-sn)
@@ -72,9 +64,18 @@ nmap <Leader>r <plug>(SubversiveSubstitute)
 nmap <Leader>rr <plug>(SubversiveSubstituteLine)
 nmap <Leader>R <plug>(SubversiveSubstituteToEndOfLine)
 
+" Ultisnips
+" TODO: figure out why this does not work in nvim
+" By default, mapped to <Tab>,<Tab>,<S-Tab>
+inoremap <silent> <Tab> <C-R>=UltiSnips#ExpandSnippet()<CR>
+" matches g:coc_snippet_next
+inoremap <silent> <Tab> <C-R>=UltiSnips#JumpForwards()<CR>
+" matches g:coc_snippet_prev
+inoremap <silent> <S-Tab> <C-R>=UltiSnips#JumpBackwards()<CR>
+
 " SkipIr mappings
 
-" Since S-Tab is not recognized in console mode map to another key
+" Since S-Tab is not recognized in console mode map to another keyB
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
 silent! imap <unique> <C-f> <Plug>(SkipItForward)
@@ -204,6 +205,12 @@ else
   endfunction
 
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+
+  " The default is <C-j> for jump to next placeholder, let's match ultisnips
+  let g:coc_snippet_next = '<TAB>'
+
+  " The default is <C-k> for jump to previous placeholder, let's match ultisnips
+  let g:coc_snippet_prev = '<S-TAB>'
 
   " When you press <C-Space>, the terminal sends an ambiguous signal to Vim
   " which interprets it as <Nul>. Because <Nul> is usually represented as <C-@>,

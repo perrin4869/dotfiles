@@ -14,6 +14,7 @@ if has('nvim')
   packadd nvim-lspconfig
   packadd nvim-compe
   packadd lsp_signature
+  packadd lspsaga
   packadd nvim-metals
   packadd lsp-status
   " coc equivalent

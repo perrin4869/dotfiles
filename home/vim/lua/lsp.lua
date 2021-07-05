@@ -2,6 +2,7 @@ local lspconfig = require('lspconfig')
 local lsp_status = require('lsp-status')
 local lsp_signature = require('lsp_signature')
 local compe = require('compe')
+local saga = require('lspsaga')
 
 lsp_status.register_progress()
 
@@ -28,6 +29,8 @@ compe.setup({
   },
 })
 
+saga.init_lsp_saga()
+
 local autoformat_fts = {"scala"}
 
 local on_attach = function(client, bufnr)
@@ -41,7 +44,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
   -- buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'K', "<Cmd>lua require('lsp').show_documentation()<CR>", opts)
+  buf_set_keymap('n', 'K', "<Cmd>lua vim.lsp.buf.hoven()<CR>", opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
@@ -84,7 +87,7 @@ local on_attach = function(client, bufnr)
       hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
       hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
       augroup lsp_document_highlight
-        autocmd!
+        autocmd! * <buffer>
         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
       augroup END

@@ -323,9 +323,6 @@
 [submodule "ranger/plugins/fzf"]
 	path = ranger/plugins/fzf
 	url = https://github.com/cjbassi/ranger-fzf
-[submodule "vim/pack/default/start/vim-import-cost"]
-	path = home/vim/pack/default/start/vim-import-cost
-	url = https://github.com/yardnsm/vim-import-cost
 [submodule "vim/pack/default/start/vim-easymotion"]
 	path = home/vim/pack/default/start/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion
@@ -370,3 +367,6 @@
 [submodule "home/vim/pack/default/opt/lsp_signature"]
 	path = home/vim/pack/default/opt/lsp_signature
 	url = git@github.com:ray-x/lsp_signature.nvim.git
+[submodule "home/vim/pack/default/opt/lspsaga"]
+	path = home/vim/pack/default/opt/lspsaga
+	url = git@github.com:glepnir/lspsaga.nvim.git

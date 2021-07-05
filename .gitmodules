@@ -114,10 +114,6 @@
 	path = home/vim/pack/default/start/bufexplorer
 	url = https://github.com/jlanzarotta/bufexplorer
 	ignore = untracked
-[submodule "vim/bundle/vim-togglelist"]
-	path = home/vim/pack/default/start/vim-togglelist
-	url = https://github.com/milkypostman/vim-togglelist
-	ignore = untracked
 [submodule "vim/bundle/vim-speeddating"]
 	path = home/vim/pack/default/start/vim-speeddating
 	url = https://github.com/tpope/vim-speeddating

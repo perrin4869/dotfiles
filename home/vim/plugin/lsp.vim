@@ -17,6 +17,7 @@ if has('nvim')
   packadd lspsaga
   packadd nvim-metals
   packadd lsp-status
+  packadd vim-illuminate
   " coc equivalent
   " if exists('+tagfunc') | setlocal tagfunc=CocTagFunc | endif
   " Enables jumping to definition using <C-]> and jumping back with <C-t>
@@ -37,6 +38,11 @@ if has('nvim')
 
   " This is nicer than having virtual text
   autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+
+  " illuminate
+  hi def link LspReferenceText CursorLine
+  hi def link LspReferenceWrite CursorLine
+  hi def link LspReferenceRead CursorLine
 else
   packadd coc.nvim
 

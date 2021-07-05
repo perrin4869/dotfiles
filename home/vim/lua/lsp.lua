@@ -3,6 +3,7 @@ local lsp_status = require('lsp-status')
 local lsp_signature = require('lsp_signature')
 local compe = require('compe')
 local saga = require('lspsaga')
+local illuminate = require('illuminate')
 
 lsp_status.register_progress()
 
@@ -85,27 +86,14 @@ local on_attach = function(client, bufnr)
     -- This is because the comma is an "or" operator, and it will add the autocmd to both scala files and the current buffer
   end
 
-  -- Set autocommands conditional on server_capabilities
-  if client ~= nil and client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-      hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-      hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]], false)
-  end
-
+  illuminate.on_attach(client)
+  lsp_status.on_attach(client)
   lsp_signature.on_attach({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
       border = "single"
     }
   })
-  lsp_status.on_attach(client)
 end
 
 function lsp_safe_formatting()

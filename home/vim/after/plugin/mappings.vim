@@ -64,24 +64,15 @@ nmap <Leader>r <plug>(SubversiveSubstitute)
 nmap <Leader>rr <plug>(SubversiveSubstituteLine)
 nmap <Leader>R <plug>(SubversiveSubstituteToEndOfLine)
 
-" Ultisnips
-" TODO: figure out why this does not work in nvim
-" By default, mapped to <Tab>,<Tab>,<S-Tab>
-inoremap <silent> <Tab> <C-R>=UltiSnips#ExpandSnippet()<CR>
-" matches g:coc_snippet_next
-inoremap <silent> <Tab> <C-R>=UltiSnips#JumpForwards()<CR>
-" matches g:coc_snippet_prev
-inoremap <silent> <S-Tab> <C-R>=UltiSnips#JumpBackwards()<CR>
-
-" SkipIr mappings
+" SkipIt mappings
 
 " Since S-Tab is not recognized in console mode map to another keyB
 " <C-n> and <C-p> are used for navigating the pum forwards and backwards so
 " they are not available
-silent! imap <unique> <C-f> <Plug>(SkipItForward)
-silent! imap <unique> <C-b> <Plug>(SkipItBack)
-silent! imap <unique> <C-g>f <Plug>(SkipAllForward)
-silent! imap <unique> <C-g>b <Plug>(SkipAllBack)
+silent! imap <unique> <C-j> <Plug>(SkipItForward)
+silent! imap <unique> <C-k> <Plug>(SkipItBack)
+silent! imap <unique> <C-g>j <Plug>(SkipAllForward)
+silent! imap <unique> <C-g>k <Plug>(SkipAllBack)
 
 " easy-align mappings
 " Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
@@ -207,10 +198,10 @@ else
   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 
   " The default is <C-j> for jump to next placeholder, let's match ultisnips
-  let g:coc_snippet_next = '<TAB>'
+  let g:coc_snippet_next = '<Tab>'
 
   " The default is <C-k> for jump to previous placeholder, let's match ultisnips
-  let g:coc_snippet_prev = '<S-TAB>'
+  let g:coc_snippet_prev = '<S-Tab>'
 
   " When you press <C-Space>, the terminal sends an ambiguous signal to Vim
   " which interprets it as <Nul>. Because <Nul> is usually represented as <C-@>,

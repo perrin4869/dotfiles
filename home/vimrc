@@ -110,14 +110,10 @@ aug i3config_ft_detection
   au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
 aug end
 
-" Set to <Nop> to disable the mappings and handle manual mappings in
-" after/plugins/mappings.vim
-let g:UltiSnipsExpandTrigger="<Tab>"
-let g:UltiSnipsJumpForwardTrigger="<Tab>"
-let g:UltiSnipsJumpBackwardTrigger="<S-Tab>"
-" TODO: figure out why this does not work in nvim
-" inoremap <buffer><nowait><silent> <Tab> <C-R>=UltiSnips#ExpandSnippet()<CR>
-" inoremap <buffer><nowait><silent> <S-Tab> <C-R>=UltiSnips#JumpBackwards()<CR>
+" Do not rely on UltiSnips to map, map manually
+let g:UltiSnipsExpandTrigger="<Nop>"
+let g:UltiSnipsJumpForwardTrigger="<Nop>"
+let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 " Suppress warning
 let g:tex_flavor = 'latex'

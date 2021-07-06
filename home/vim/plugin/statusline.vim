@@ -4,7 +4,7 @@ let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],
       \             [ 'lsp', 'metals' ],
-      \             [ 'vimtex' ],
+      \             [ 'vimtex', 'gutentags' ],
       \             [ 'readonly', 'filename', 'modified' ] ],
       \   'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
@@ -21,6 +21,7 @@ let g:lightline.component_function = {
       \   'currentfunction': 'LightLineLspCurrentFunction',
       \   'metals': 'LightLineMetals',
       \   'vimtex': 'LightLineVimTex',
+      \   'gutentags': 'gutentags#statusline',
       \   'readonly': 'LightLineReadonly',
       \   'fileformat': 'LightlineFileformat',
       \   'fileencoding': 'LightlineFileencoding',
@@ -137,6 +138,12 @@ function! LightLineVimTex()
   endif
   return l:status
 endfunction
+
+augroup MyGutentagsStatusLineRefresher
+  autocmd!
+  autocmd User GutentagsUpdating call lightline#update()
+  autocmd User GutentagsUpdated call lightline#update()
+augroup END
 
 function! LightlineFileformat()
   return winwidth(0) > 70 ? &fileformat : ''

@@ -35,9 +35,6 @@ set wildignore=*.o,*.obj,*.la,*.lo,*.so,*.pyc,*.pyo,*.jpg,*.png,*.gif
 " On MacOS the default backspace option is messed up
 set backspace=indent,eol,start
 
-"gutentags
-set statusline+=%{gutentags#statusline()}
-
 " Airline options
 "make sure airline is opened by default
 set laststatus=2
@@ -97,10 +94,6 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " ale
 let g:ale_fix_on_save=1
-
-" Use tern_for_vim.
-let g:tern#command = ["tern"]
-let g:tern#arguments = ["--persistent"]
 
 " Nerdtree options
 " Close vim automatically if nerdtree is the only pane left

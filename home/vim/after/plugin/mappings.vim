@@ -154,7 +154,7 @@ omap <Leader><Tab> <Plug>(fzf-maps-o)
 if isdirectory('.git')
   nmap <C-p> :GFiles<CR>
 else
-  nmap <C-p> :Files<CR> 
+  nmap <C-p> :Files<CR>
 endif
 
 " command from ~/.fzf

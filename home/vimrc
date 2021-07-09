@@ -52,12 +52,6 @@ set directory=$HOME/.vim/backup//,/tmp//,. " for swp files"
 " separators substituted to percent '%' signs. This will ensure file name
 " uniqueness in the preserve directory
 
-" This is needed for the separate fzf.vim plugin to work
-set rtp+=~/.fzf
-
-" lightline-bufferline requires this
-set showtabline=2
-
 " Folding options
 " get folding signs space
 set foldcolumn=3
@@ -78,26 +72,63 @@ if has('nvim')
   set mouse=a
 endif
 
+let mapleader=','
+
+" Convenience
+nnoremap ; :
+" https://github.com/neovim/neovim/issues/13086
+" If you type <ESC>; quickly enough, the key sequence generated will be <M-;>
+inoremap <M-;> <ESC>:
+
+" Unmap the arrow keys
+no <down> ddp
+no <left> <Nop>
+no <right> <Nop>
+no <up> ddkP
+ino <down> <Nop>
+ino <left> <Nop>
+ino <right> <Nop>
+ino <up> <Nop>
+vno <down> <Nop>
+vno <left> <Nop>
+vno <right> <Nop>
+vno <up> <Nop>
+
+"close current buffer with bufkill
+nnoremap <Leader>c :BD<CR>
+nnoremap <Leader>C :%bd\|e#<CR>
+
+"I really hate that things don't auto-center
+nmap G Gzz
+nmap n nzz
+nmap N Nzz
+nmap } }zz
+nmap { {zz
+
+"make mappings for display lines
+"These mappings make it easy to move along long lines
+vmap <M-j> gj
+vmap <M-k> gk
+vmap <M-4> g$
+vmap <M-6> g^
+vmap <M-0> g^
+nmap <M-j> gj
+nmap <M-k> gk
+nmap <M-4> g$
+nmap <M-6> g^
+nmap <M-0> g^
+
+"This unsets the "last search pattern" register by hitting return
+nnoremap <silent> <backspace> :noh<CR>
+
+nmap =j :%!python -m json.tool<CR>
+nmap =x :%!xmllint --format -<CR>
+
 " Markdown
 let g:vim_markdown_preview_use_xdg_open=1
 
-" Fugitive options
-" all snippets are taken from: http://vimcasts.org/episodes/fugitive-vim-browsing-the-git-object-database/
-" For navigating trees
-autocmd User fugitive 
-  \ if get(b:, 'fugitive_type', '') =~# '^\%(tree\|blob\)$' |
-  \   nnoremap <buffer> .. :edit %:h<CR> |
-  \ endif
-
-" For autocleaning of fugitive buffers
-autocmd BufReadPost fugitive://* set bufhidden=delete
-
 " ale
 let g:ale_fix_on_save=1
-
-" Nerdtree options
-" Close vim automatically if nerdtree is the only pane left
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "Custom commads
 command -bang Q qall<bang>
@@ -110,11 +141,6 @@ aug i3config_ft_detection
   au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
 aug end
 
-" Do not rely on UltiSnips to map, map manually
-let g:UltiSnipsExpandTrigger="<Nop>"
-let g:UltiSnipsJumpForwardTrigger="<Nop>"
-let g:UltiSnipsJumpBackwardTrigger="<Nop>"
-
 " Suppress warning
 let g:tex_flavor = 'latex'
 
@@ -126,8 +152,5 @@ autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
 
 " Comments on json files syntax
 autocmd FileType json syntax match Comment +\/\/.\+$+
-
-" Set lexima mappings manually since they conflict with <CR>
-let g:lexima_no_default_rules = 1
 
 let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1

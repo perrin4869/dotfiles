@@ -1,3 +1,6 @@
+" lightline-bufferline requires this
+set showtabline=2
+
 let g:lightline = {}
 let g:lightline.colorscheme = 'gruvbox'
 let g:lightline.active = {

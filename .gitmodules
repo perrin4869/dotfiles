@@ -187,7 +187,7 @@
 	url = https://github.com/w0rp/ale.git
 	ignore = untracked
 [submodule "vim/bundle/fzf"]
-	path = home/vim/pack/default/start/fzf
+	path = home/vim/pack/default/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim
 	ignore = untracked
 [submodule "vim/bundle/vim-pug"]

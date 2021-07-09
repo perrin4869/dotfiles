@@ -6,4 +6,4 @@ source ~/.vimrc
 set mouse=a
 
 " nvim 0.5 undo files are incompatible with vim8
-set undodir=$HOME/.config/nvim/undo
+let &undodir=stdpath("data") . "/undo"

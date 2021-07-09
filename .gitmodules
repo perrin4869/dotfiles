@@ -327,16 +327,16 @@
 	path = home/vim/pack/default/start/vim-fat-finger
 	url = https://github.com/chip/vim-fat-finger
 [submodule "vim/pack/default/opt/nvim-lspconfig"]
-	path = home/vim/pack/default/opt/nvim-lspconfig
+	path = share/nvim/site/pack/default/opt/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
 [submodule "vim/pack/default/opt/nvim-metals"]
-	path = home/vim/pack/default/opt/nvim-metals
+	path = share/nvim/site/pack/default/opt/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
 [submodule "vim/pack/default/opt/nvim-lsp-smag"]
-	path = home/vim/pack/default/opt/nvim-lsp-smag
+	path = share/nvim/site/pack/default/opt/nvim-lsp-smag
 	url = https://github.com/weilbith/nvim-lsp-smag
 [submodule "vim/pack/default/opt/lsp-status"]
-	path = home/vim/pack/default/opt/lsp-status
+	path = share/nvim/site/pack/default/opt/lsp-status
 	url = https://github.com/nvim-lua/lsp-status.nvim
 [submodule "vim/pack/default/opt/coc.nvim"]
 	path = home/vim/pack/default/opt/coc.nvim
@@ -358,14 +358,14 @@
 	path = grip
 	url = git@github.com:joeyespo/grip.git
 [submodule "home/vim/pack/default/opt/nvim-compe"]
-	path = home/vim/pack/default/opt/nvim-compe
+	path = share/nvim/site/pack/default/opt/nvim-compe
 	url = git@github.com:hrsh7th/nvim-compe.git
 [submodule "home/vim/pack/default/opt/lsp_signature"]
-	path = home/vim/pack/default/opt/lsp_signature
+	path = share/nvim/site/pack/default/opt/lsp_signature
 	url = git@github.com:ray-x/lsp_signature.nvim.git
 [submodule "home/vim/pack/default/opt/lspsaga"]
-	path = home/vim/pack/default/opt/lspsaga
+	path = share/nvim/site/pack/default/opt/lspsaga
 	url = git@github.com:glepnir/lspsaga.nvim.git
 [submodule "home/vim/pack/default/opt/vim-illuminate"]
-	path = home/vim/pack/default/opt/vim-illuminate
+	path = share/nvim/site/pack/default/opt/vim-illuminate
 	url = git@github.com:RRethy/vim-illuminate.git

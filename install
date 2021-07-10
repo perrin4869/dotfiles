@@ -59,7 +59,6 @@ ln -s $POWERLINE_DIR/scripts/powerline-daemon $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/scripts/powerline-lint $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/scripts/powerline-render $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/scripts/powerline-config $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 # Used by vim-markdown-autopreview
 echo "Installing grip"

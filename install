@@ -52,12 +52,13 @@ echo "Initializing submodules..."
 git submodule update --recursive --init
 
 echo "Installing powerline"
+POWERLINE_DIR=$DIR/powerline
 pip install --user --editable=$DIR/powerline
-ln -s $POWERLINE_DIR/powerline/scripts/powerline $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/powerline/scripts/powerline-daemon $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/powerline/scripts/powerline-lint $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/powerline/scripts/powerline-render $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/powerline/scripts/powerline-config $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/scripts/powerline $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/scripts/powerline-daemon $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/scripts/powerline-lint $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/scripts/powerline-render $LOCAL_BIN_DIR
+ln -s $POWERLINE_DIR/scripts/powerline-config $LOCAL_BIN_DIR
 ln -s $POWERLINE_DIR/powerline/bindings/tmux/powerline.conf ~/.local/powerline.conf
 
 # Used by vim-markdown-autopreview

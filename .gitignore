@@ -4,6 +4,17 @@ home/vim/view/*
 config/ranger/plugins/__init__.*
 config/ranger/plugins/__pycache__
 
-irssi/config.autosave
+config/coc/*
+!config/coc/extensions
+config/coc/extensions/*
+!config/coc/extensions/package.json
+
+home/gnupg/*
+!home/gnupg/gpg-agent.conf
+
+home/sbt/*
+!home/sbt/1.0
+home/sbt/1.0/*
+!home/sbt/1.0/global.sbt
 
 .ccls-cache

@@ -289,10 +289,10 @@
 	path = ccls
 	url = https://github.com/MaskRay/ccls.git
 [submodule "sandboxd"]
-	path = sandboxd
+	path = share/oh-my-zsh/custom/plugins/sandboxd
 	url = https://github.com/benvan/sandboxd
 [submodule "powerlevel10k"]
-	path = powerlevel10k
+	path = share/oh-my-zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
 [submodule "ohmyzsh"]
 	path = home/oh-my-zsh
@@ -302,7 +302,7 @@
 	path = home/vim/pack/default/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons
 [submodule "zsh-syntax-highlighting"]
-	path = zsh-syntax-highlighting
+	path = share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
 [submodule "vim/pack/default/start/lightline.vim"]
 	path = home/vim/pack/default/start/lightline.vim

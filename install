@@ -1,9 +1,9 @@
 #!/bin/sh
 
 DIR=$( cd "$(dirname "$0")" ; pwd -P )
-LOCAL_SHARE_DIR=~/.local/share
+LOCAL_SHARE_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
+LOCAL_CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}
 LOCAL_BIN_DIR=~/.local/bin
-LOCAL_CONFIG_DIR=~/.config
 
 # change to the dotfiles directory
 echo -n "Changing to the $DIR directory ..."
@@ -25,7 +25,6 @@ echo "Moving config files into $LOCAL_CONFIG_DIR directory"
 mkdir -p $LOCAL_CONFIG_DIR
 ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
 
-#install fonts
 mkdir -p $LOCAL_SHARE_DIR
 ln -sf $DIR/share/* $LOCAL_SHARE_DIR
 fc-cache -f
@@ -67,14 +66,11 @@ ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
 ( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
 
 echo "Installing fzf"
-# vimrc does rtp+=~/.fzf https://github.com/junegunn/fzf/blob/master/README-VIM.md
-# therefore it has to be installed in the home directory
-FZF_DIR=$DIR/home/fzf
 # install fzf
 # Officially:
 # $DIR/fzf/install --all
 # Manually
-$FZF_DIR/install --no-update-rc --no-completion --no-keybindings # download executable
+$DIR/home/fzf/install --no-update-rc --no-completion --no-keybindings # download executable
 
 # install xwinwrap
 ( cd xwinwrap && make )
@@ -82,6 +78,7 @@ $FZF_DIR/install --no-update-rc --no-completion --no-keybindings # download exec
 # install mpv-mpris
 ( cd mpv-mpris && make )
 
+# install gitflow
 ( cd $DIR/gitflow && make prefix=$HOME/.local install )
 
 # install ccls

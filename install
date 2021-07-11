@@ -75,17 +75,6 @@ FZF_DIR=$DIR/home/fzf
 # $DIR/fzf/install --all
 # Manually
 $FZF_DIR/install --no-update-rc --no-completion --no-keybindings # download executable
-# zsh bindings
-ZSH_PLUGINS_DIR=~/.oh-my-zsh/custom/plugins
-ZSH_THEMES_DIR=~/.oh-my-zsh/custom/themes
-mkdir -p $ZSH_PLUGINS_DIR/fzf
-ln -sf $FZF_DIR/shell/completion.zsh $ZSH_PLUGINS_DIR/fzf
-ln -sf $FZF_DIR/shell/key-bindings.zsh $ZSH_PLUGINS_DIR/fzf
-
-# Additional oh-my-zsh plugins
-ln -sf $DIR/sandboxd $ZSH_PLUGINS_DIR
-ln -sf $DIR/zsh-syntax-highlighting $ZSH_PLUGINS_DIR
-ln -sf $DIR/powerlevel10k $ZSH_THEMES_DIR
 
 # install xwinwrap
 ( cd xwinwrap && make )

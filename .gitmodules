@@ -369,3 +369,12 @@
 [submodule "home/vim/pack/default/opt/vim-illuminate"]
 	path = share/nvim/site/pack/default/opt/vim-illuminate
 	url = git@github.com:RRethy/vim-illuminate.git
+[submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
+	path = share/nvim/site/pack/default/start/nvim-treesitter
+	url = git@github.com:nvim-treesitter/nvim-treesitter.git
+[submodule "share/nvim/site/pack/default/opt/nvim-ts-rainbow"]
+	path = share/nvim/site/pack/default/start/nvim-ts-rainbow
+	url = git@github.com:p00f/nvim-ts-rainbow.git
+[submodule "share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
+	path = share/nvim/site/pack/default/start/nvim-treesitter-textobjects
+	url = git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git

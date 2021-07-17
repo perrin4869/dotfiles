@@ -9,6 +9,10 @@ config/coc/*
 config/coc/extensions/*
 !config/coc/extensions/package.json
 
+share/nvim/view/
+share/nvim/undo/
+share/nvim/shada/
+
 home/gnupg/*
 !home/gnupg/gpg-agent.conf
 

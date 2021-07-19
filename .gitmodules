@@ -378,3 +378,6 @@
 [submodule "share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
 	path = share/nvim/site/pack/default/start/nvim-treesitter-textobjects
 	url = git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git
+[submodule "home/vim/pack/default/start/vim-sleuth"]
+	path = home/vim/pack/default/start/vim-sleuth
+	url = git@github.com:tpope/vim-sleuth.git

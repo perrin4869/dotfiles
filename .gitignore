@@ -1,24 +1,25 @@
-home/vim/view/*
+home/.vim/view/*
 # !vim/view/~=+dotfiles=+vimrc=
 
-config/ranger/plugins/__init__.*
-config/ranger/plugins/__pycache__
+home/.config/ranger/plugins/__init__.*
+home/.config/ranger/plugins/__pycache__
 
-config/coc/*
-!config/coc/extensions
-config/coc/extensions/*
-!config/coc/extensions/package.json
+home/.config/coc/*
+!home/.config/coc/extensions
+home/.config/coc/extensions/*
+!home/.config/coc/extensions/package.json
 
-share/nvim/view/
-share/nvim/undo/
-share/nvim/shada/
+home/.local/share/nvim/view/
+home/.local/share/nvim/undo/
+home/.local/share/nvim/shada/
 
-home/gnupg/*
-!home/gnupg/gpg-agent.conf
+home/.gnupg/*
+!home/.gnupg/gpg-agent.conf
 
-home/sbt/*
-!home/sbt/1.0
-home/sbt/1.0/*
-!home/sbt/1.0/global.sbt
+home/.anthy/*
+!home/.anthy/private_words_default
 
-.ccls-cache
+home/.sbt/*
+!home/.sbt/1.0
+home/.sbt/1.0/*
+!home/.sbt/1.0/global.sbt

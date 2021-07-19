@@ -1,92 +1,66 @@
 #!/bin/sh
 
 DIR=$( cd "$(dirname "$0")" ; pwd -P )
-LOCAL_SHARE_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOCAL_CONFIG_DIR=${XDG_CONFIG_HOME:-$HOME/.config}
+LOCAL_SHARE_DIR=${XDG_DATA_HOME:-$HOME/.local/share}
 LOCAL_BIN_DIR=~/.local/bin
+
+DEPS_DIR=$DIR/deps
+DCONF_DIR=$DIR/dconf
+
+# Make sure the expected directory structure is in place
+# Prevent stow from symlink ~/.config -> ~/dotfiles/home/.config
+# And instead bring in the contents
+mkdir -p $LOCAL_CONFIG_DIR
+mkdir -p $LOCAL_SHARE_DIR
+mkdir -p $LOCAL_BIN_DIR
 
 # change to the dotfiles directory
 echo -n "Changing to the $DIR directory ..."
 cd $DIR
 
-for f in $DIR/home/*; do
-  b=$(basename $f)
-  echo "Installing .$b"
-  ln -sf ~/dotfiles/home/$b ~/.$b
-done
+stow -v home
 
-# move executable files to bin
-echo "Moving executable files into $LOCAL_BIN_DIR directory"
-mkdir -p $LOCAL_BIN_DIR
-ln -sf $DIR/bin/* $LOCAL_BIN_DIR
-
-# install config files
-echo "Moving config files into $LOCAL_CONFIG_DIR directory"
-mkdir -p $LOCAL_CONFIG_DIR
-ln -sf $DIR/config/* $LOCAL_CONFIG_DIR
-
-mkdir -p $LOCAL_SHARE_DIR
-ln -sf $DIR/share/* $LOCAL_SHARE_DIR
+# Refresh fonts
 fc-cache -f
-
-mkdir -p ~/.gnupg
-ln -sf $DIR/gpg-agent.conf ~/.gnupg
-
-mkdir -p ~/.anthy
-ln -sf $DIR/private_words_default ~/.anthy
-
-# sbt configuration
-SBT_CONFIG_DIR=~/.sbt/1.0
-mkdir -p $SBT_CONFIG_DIR
-ln -sf $DIR/sbt/global.sbt $SBT_CONFIG_DIR
-
-ln -sf /bin/dash $LOCAL_BIN_DIR/sh
 
 echo "Initializing submodules..."
 git submodule update --recursive --init
 
 echo "Installing powerline"
-POWERLINE_DIR=$DIR/powerline
-pip install --user --editable=$DIR/powerline
-ln -s $POWERLINE_DIR/scripts/powerline $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/scripts/powerline-daemon $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/scripts/powerline-lint $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/scripts/powerline-render $LOCAL_BIN_DIR
-ln -s $POWERLINE_DIR/scripts/powerline-config $LOCAL_BIN_DIR
+pip install --user --editable=$DEPS_DIR/powerline
 
 # Used by vim-markdown-autopreview
 echo "Installing grip"
-pip install --user --editable=$DIR/grip
-
-# coc.nvim
-echo "Installing coc extensions"
-mkdir -p $LOCAL_CONFIG_DIR/coc/extensions
-ln -sf $DIR/coc/extensions/package.json $LOCAL_CONFIG_DIR/coc/extensions
-# TODO: add an upstream native command: vim -c 'CocInstall -sync|q'
-( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
+pip install --user --editable=$DEPS_DIR/grip
 
 echo "Installing fzf"
 # install fzf
 # Officially:
-# $DIR/fzf/install --all
+# $DEPS_DIR/fzf/install --all
 # Manually
-$DIR/home/fzf/install --no-update-rc --no-completion --no-keybindings # download executable
+$DEPS_DIR/fzf/install --no-update-rc --no-completion --no-keybindings # download executable
+
+# coc.nvim
+echo "Installing coc extensions"
+# TODO: add an upstream native command: vim -c 'CocInstall -sync|q'
+( cd $LOCAL_CONFIG_DIR/coc/extensions && npm install )
 
 # install xwinwrap
-( cd xwinwrap && make )
+( cd $DEPS_DIR/xwinwrap && make )
 
 # install mpv-mpris
-( cd mpv-mpris && make )
+( cd $DEPS_DIR/mpv-mpris && make )
 
 # install gitflow
-( cd $DIR/gitflow && make prefix=$HOME/.local install )
+( cd $DEPS_DIR/gitflow && make prefix=$HOME/.local install )
 
 # install ccls
-( cd ccls && \
+( cd $DEPS_DIR/ccls && \
   cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
   cmake --build Release )
 
 # dconf dump /destop/ibus > ibus.dconf
-dconf load /desktop/ibus/ < $DIR/ibus.dconf
+dconf load /desktop/ibus/ < $DCONF_DIR/ibus.dconf
 # dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
-dconf load /org/freedesktop/ibus/ < $DIR/ibus-engine.dconf # anthy should input hiragana by default
+dconf load /org/freedesktop/ibus/ < $DCONF_DIR/ibus-engine.dconf # anthy should input hiragana by default

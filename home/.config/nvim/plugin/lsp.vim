@@ -24,7 +24,8 @@ function! MetalsStatus() abort
 endfunction
 
 " This is nicer than having virtual text
-autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+" https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/
+autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({focusable = false})
 
 " illuminate
 hi def link LspReferenceText CursorLine

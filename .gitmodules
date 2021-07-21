@@ -122,10 +122,6 @@
 	path = home/.vim/pack/default/start/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
 	ignore = untracked
-[submodule "vim/bundle/vim-javacomplete2"]
-	path = home/.vim/pack/default/start/vim-javacomplete2
-	url = https://github.com/artur-shaik/vim-javacomplete2
-	ignore = untracked
 [submodule "vim/bundle/lexima.vim"]
 	path = home/.vim/pack/default/start/lexima.vim
 	url = https://github.com/cohama/lexima.vim

@@ -32,6 +32,10 @@ compe.setup({
 
 saga.init_lsp_saga()
 
+require("trouble").setup {
+  icons=false -- not using nvim-web-devicons
+}
+
 local autoformat_fts = {"scala"}
 
 local on_attach = function(client, bufnr)

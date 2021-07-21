@@ -381,3 +381,6 @@
 [submodule "home/vim/pack/default/start/vim-sleuth"]
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = git@github.com:tpope/vim-sleuth.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
+	url = git@github.com:folke/trouble.nvim.git

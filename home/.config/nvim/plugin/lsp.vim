@@ -5,6 +5,7 @@ packadd lspsaga
 packadd nvim-metals
 packadd lsp-status
 packadd vim-illuminate
+packadd trouble.nvim
 " coc equivalent
 " if exists('+tagfunc') | setlocal tagfunc=CocTagFunc | endif
 " Enables jumping to definition using <C-]> and jumping back with <C-t>
@@ -39,3 +40,10 @@ inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 " inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+"
+nnoremap <leader>xx <cmd>TroubleToggle<cr>
+nnoremap <leader>xw <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+nnoremap <leader>xd <cmd>TroubleToggle lsp_document_diagnostics<cr>
+nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+nnoremap gR <cmd>TroubleToggle lsp_references<cr>

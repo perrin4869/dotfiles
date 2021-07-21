@@ -117,6 +117,9 @@ nmap <M-0> g^
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> :noh<CR>
 
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+vnoremap <Space> zf
+
 nmap =j :%!python -m json.tool<CR>
 nmap =x :%!xmllint --format -<CR>
 

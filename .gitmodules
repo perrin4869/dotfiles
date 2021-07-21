@@ -384,3 +384,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
 	url = git@github.com:folke/trouble.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring
+	url = git@github.com:JoosepAlviste/nvim-ts-context-commentstring.git

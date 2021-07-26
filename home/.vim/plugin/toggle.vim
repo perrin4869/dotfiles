@@ -2,7 +2,7 @@
 nmap gu :UndotreeToggle<CR>
 
 " Toggle tagbar
-nmap gt :TagbarToggle<CR>
+nmap gT :TagbarToggle<CR>
 
 " <C-r> is by default used in insert mode for pasting registers so let's not
 " meddle with that
@@ -20,7 +20,7 @@ endfunc
 nmap ]r :set rl<CR>
 nmap [r :set norl<CR>
 
-nmap <Leader>p :call TogglePaste()<CR>
+nmap gp :call TogglePaste()<CR>
 
 func! TogglePaste()
   if &paste
@@ -30,7 +30,7 @@ func! TogglePaste()
   end
 endfunc
 
-nmap <Leader>q :call ToggleQuickFix()<CR>
+nmap gq :call ToggleQuickFix()<CR>
 
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -40,7 +40,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap <Leader>l :call ToggleLocList()<CR>
+nmap gl :call ToggleLocList()<CR>
 
 function! ToggleLocList()
     if empty(filter(getwininfo(), 'v:val.loclist'))

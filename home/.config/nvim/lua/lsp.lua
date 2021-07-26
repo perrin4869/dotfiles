@@ -16,7 +16,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-compe.setup({
+compe.setup {
   enabled = true,
   autocomplete = true,
   source = {
@@ -28,7 +28,7 @@ compe.setup({
     ultisnips = true,
     emoji = true,
   },
-})
+}
 
 saga.init_lsp_saga()
 
@@ -58,16 +58,28 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   -- lsp saga for vim.lsp.buf.rename()
   buf_set_keymap('n', '<leader>rn', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
-  -- lsp saga for vim.lsp.buf.references()
+  -- lsp saga for vim.lsp.buf.code_action()
+  buf_set_keymap('n', '<leader>ca', "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
+  buf_set_keymap('v', '<leader>ca', "<cmd>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
+  -- vim.lsp.buf.references()
   buf_set_keymap('n', 'gr', "<cmd>lua require'lspsaga.provider'.lsp_finder()<CR>", opts)
   buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
-  -- lsp saga for vim.lsp.buf.code_action()
-  buf_set_keymap('n', '<leader>ac', "<cmd>lua require('lspsaga.codeaction').code_action()<CR>", opts)
-  buf_set_keymap('v', '<leader>ac', "<cmd>lua require('lspsaga.codeaction').range_code_action()<CR>", opts)
+  vim.cmd([[autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()]])
+  buf_set_keymap("n", "<leader>cl", "<Cmd>lua vim.lsp.codelens.run()<CR>", opts)
+
+  buf_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>", opts)
+  buf_set_keymap("n", "<leader>xw", "<cmd>Trouble lsp_workspace_diagnostics<cr>", opts)
+  buf_set_keymap("n", "<leader>xd", "<cmd>Trouble lsp_document_diagnostics<cr>", opts)
+  buf_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>", opts)
+  buf_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", opts)
+  buf_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>", opts)
+
+  buf_set_keymap("n", "gt", "<cmd>TroubleToggle<cr>", opts)
+  buf_set_keymap("n", "<leader>d", "<cmd>Trouble lsp_document_diagnostics<cr>", opts)
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.resolved_capabilities.document_formatting then
@@ -153,7 +165,8 @@ metals_config.init_options.statusBarProvider = 'on'
 metals_config.settings = {
   showImplicitArguments = true,
   showInferredType = true,
-  showImplicitConversionsAndClasses = true
+  showImplicitConversionsAndClasses = true,
+  superMethodLensesEnabled = true,
 }
 metals_config.on_attach = on_attach
 vim.cmd [[augroup lsp]]

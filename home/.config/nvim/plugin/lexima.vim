@@ -1,0 +1,1 @@
+../../../.vim/plugin/lexima.vim

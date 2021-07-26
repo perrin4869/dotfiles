@@ -1,5 +1,3 @@
-set runtimepath^=~/.vim runtimepath+=~/.vim/after
-let &packpath=&runtimepath
 source ~/.vimrc
 
 " This works by default on vim8

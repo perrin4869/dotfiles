@@ -1,0 +1,1 @@
+../../../.vim/plugin/fzf.vim

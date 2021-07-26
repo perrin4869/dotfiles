@@ -295,19 +295,19 @@
 	path = home/.vim/pack/default/start/vim-fat-finger
 	url = https://github.com/chip/vim-fat-finger
 [submodule "vim/pack/default/opt/nvim-lspconfig"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-lspconfig
+	path = home/.local/share/nvim/site/pack/default/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
 [submodule "vim/pack/default/opt/nvim-metals"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-metals
+	path = home/.local/share/nvim/site/pack/default/start/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
 [submodule "vim/pack/default/opt/nvim-lsp-smag"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-lsp-smag
+	path = home/.local/share/nvim/site/pack/default/start/nvim-lsp-smag
 	url = https://github.com/weilbith/nvim-lsp-smag
 [submodule "vim/pack/default/opt/lsp-status"]
-	path = home/.local/share/nvim/site/pack/default/opt/lsp-status
+	path = home/.local/share/nvim/site/pack/default/start/lsp-status
 	url = https://github.com/nvim-lua/lsp-status.nvim
 [submodule "vim/pack/default/opt/coc.nvim"]
-	path = home/.vim/pack/default/opt/coc.nvim
+	path = home/.vim/pack/default/start/coc.nvim
 	url = https://github.com/neoclide/coc.nvim
 	branch = release
 [submodule "mpv-mpris"]
@@ -326,16 +326,16 @@
 	path = deps/grip
 	url = git@github.com:joeyespo/grip.git
 [submodule "home/vim/pack/default/opt/nvim-compe"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-compe
+	path = home/.local/share/nvim/site/pack/default/start/nvim-compe
 	url = git@github.com:hrsh7th/nvim-compe.git
 [submodule "home/vim/pack/default/opt/lsp_signature"]
-	path = home/.local/share/nvim/site/pack/default/opt/lsp_signature
+	path = home/.local/share/nvim/site/pack/default/start/lsp_signature
 	url = git@github.com:ray-x/lsp_signature.nvim.git
 [submodule "home/vim/pack/default/opt/lspsaga"]
-	path = home/.local/share/nvim/site/pack/default/opt/lspsaga
+	path = home/.local/share/nvim/site/pack/default/start/lspsaga
 	url = git@github.com:glepnir/lspsaga.nvim.git
 [submodule "home/vim/pack/default/opt/vim-illuminate"]
-	path = home/.local/share/nvim/site/pack/default/opt/vim-illuminate
+	path = home/.local/share/nvim/site/pack/default/start/vim-illuminate
 	url = git@github.com:RRethy/vim-illuminate.git
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
@@ -350,7 +350,7 @@
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = git@github.com:tpope/vim-sleuth.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
+	path = home/.local/share/nvim/site/pack/default/start/trouble.nvim
 	url = git@github.com:folke/trouble.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring

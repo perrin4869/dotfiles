@@ -32,9 +32,7 @@ compe.setup({
 
 saga.init_lsp_saga()
 
-require("trouble").setup {
-  icons=false -- not using nvim-web-devicons
-}
+require("trouble").setup {}
 
 local autoformat_fts = {"scala"}
 

@@ -355,3 +355,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring
 	url = git@github.com:JoosepAlviste/nvim-ts-context-commentstring.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-web-devicons"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-web-devicons
+	url = git@github.com:kyazdani42/nvim-web-devicons.git

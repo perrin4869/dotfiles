@@ -123,25 +123,8 @@ vnoremap <Space> zf
 nmap =j :%!python -m json.tool<CR>
 nmap =x :%!xmllint --format -<CR>
 
-" Markdown
-let g:vim_markdown_preview_use_xdg_open=1
-
-" ale
-let g:ale_fix_on_save=1
-
 "Custom commads
 command -bang Q qall<bang>
 
-" Automatically save with sudo when lacking permissions
-let g:suda_smart_edit = 1
-
-" Suppress warning
-let g:tex_flavor = 'latex'
-
-" Update binds when sxhkdrc is updated.
-autocmd BufWritePost *sxhkdrc !pkill -USR1 sxhkd
-
 " Run xrdb whenever Xdefaults or Xresources are updated.
 autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
-
-let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1

@@ -135,11 +135,6 @@ command -bang Q qall<bang>
 " Automatically save with sudo when lacking permissions
 let g:suda_smart_edit = 1
 
-aug i3config_ft_detection
-  au!
-  au BufNewFile,BufRead ~/.config/i3/config set filetype=i3config
-aug end
-
 " Suppress warning
 let g:tex_flavor = 'latex'
 
@@ -148,8 +143,5 @@ autocmd BufWritePost *sxhkdrc !pkill -USR1 sxhkd
 
 " Run xrdb whenever Xdefaults or Xresources are updated.
 autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
-
-" Comments on json files syntax
-autocmd FileType json syntax match Comment +\/\/.\+$+
 
 let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1

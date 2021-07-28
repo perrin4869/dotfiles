@@ -1,0 +1,6 @@
+{
+  "tap log": {
+    "prefix": "tl",
+    "body": "tap(console.log.bind(console, ${0}))"
+  }
+}

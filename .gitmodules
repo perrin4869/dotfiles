@@ -42,10 +42,6 @@
 	path = home/.vim/pack/default/start/vim-sauce
 	url = https://github.com/joonty/vim-sauce
 	ignore = untracked
-[submodule "vim/bundle/ultisnips"]
-	path = home/.vim/pack/default/start/ultisnips
-	url = https://github.com/SirVer/ultisnips
-	ignore = untracked
 [submodule "vim/bundle/ragtag"]
 	path = home/.vim/pack/default/start/ragtag
 	url = https://github.com/tpope/vim-ragtag
@@ -358,3 +354,12 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-web-devicons"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-web-devicons
 	url = git@github.com:kyazdani42/nvim-web-devicons.git
+[submodule "home/.vim/pack/default/start/vim-vsnip"]
+	path = home/.vim/pack/default/start/vim-vsnip
+	url = git@github.com:hrsh7th/vim-vsnip.git
+[submodule "home/.vim/pack/default/start/vim-vsnip-integ"]
+	path = home/.vim/pack/default/start/vim-vsnip-integ
+	url = git@github.com:hrsh7th/vim-vsnip-integ.git
+[submodule "home/.vim/pack/default/start/friendly-snippets"]
+	path = home/.vim/pack/default/start/friendly-snippets
+	url = https://github.com/rafamadriz/friendly-snippets

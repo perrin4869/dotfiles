@@ -1,1 +1,0 @@
-../../../.vim/plugin/ultisnips.vim

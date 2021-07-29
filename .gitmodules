@@ -58,10 +58,6 @@
 	path = home/.vim/pack/default/start/vim-snippets
 	url = https://github.com/honza/vim-snippets
 	ignore = untracked
-[submodule "opp.zsh"]
-	path = opp.zsh
-	url = https://github.com/hchbaw/opp.zsh
-	ignore = untracked
 [submodule "vim/bundle/vim-javascript"]
 	path = home/.vim/pack/default/start/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
@@ -238,7 +234,7 @@
 	url = https://github.com/svermeulen/vim-subversive
 	ignore = untracked
 [submodule "rofi/modi/rofi-pass-modi"]
-	path = rofi/modi/rofi-pass-modi
+	path = home/.config/rofi/modi/rofi-pass-modi
 	url = https://github.com/RoshBeed/rofi-pass-modi
 [submodule "coursier"]
 	path = deps/coursier
@@ -278,10 +274,10 @@
 	path = home/.vim/pack/default/start/lightline-ale
 	url = https://github.com/maximbaz/lightline-ale
 [submodule "ranger/plugins/devicons2"]
-	path = ranger/plugins/devicons2
+	path = home/.config/ranger/plugins/devicons2
 	url = https://github.com/cdump/ranger-devicons2
 [submodule "ranger/plugins/fzf"]
-	path = ranger/plugins/fzf
+	path = home/.config/ranger/plugins/fzf
 	url = https://github.com/cjbassi/ranger-fzf
 [submodule "vim/pack/default/start/vim-easymotion"]
 	path = home/.vim/pack/default/start/vim-easymotion

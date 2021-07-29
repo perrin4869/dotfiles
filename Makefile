@@ -20,32 +20,52 @@ FZF_ROOT = $(DEPS)/fzf
 COC_ROOT = $(XDG_CONFIG_HOME)/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
-submodules-deps = $(submodules-paths:=/.git)
+submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-all: mpv-mpris xwinwrap ccls
+# Accept as an argument the submodule relative to .git/modules directory
+# $(call git_submodule,variable_prefix,module_path,repo_path)
+define git_submodule
+	$(eval $1_head = $(shell cat .git/modules/$2/HEAD))
+	$(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
+		.git/modules/$2/$(lastword $($1_head)),\
+		.git/modules/$2/HEAD))
 
-mpv-mpris = $(MPV_MPRIS_ROOT)/mpv-mpris.so
-$(mpv-mpris): $(MPV_MPRIS_ROOT)/.git
+# init submodule if necessary
+$($1_head_file): $3/.git
+endef
+
+all: mpv-mpris xwinwrap ccls fzf coc
+
+$(submodules-deps) &:
+	git submodule update --init --recursive
+# Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
+# $(submodules-deps):
+# 	git submodule update --init --recursive $(@:/.git=)
+submodules: $(submodules-deps)
+
+mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
+$(eval $(call git_submodule,mpv-mpris,mpv-mpris,$(MPV_MPRIS_ROOT)))
+$(mpv-mpris_target): $(mpv-mpris_head_file)
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
-mpv-mpris: $(mpv-mpris)
+mpv-mpris: $(mpv-mpris_target)
 
-xwinwrap = $(XWINWRAP_ROOT)/xwinwrap
-$(xwinwrap): $(XWINWRAP_ROOT)/.git
+xwinwrap_target = $(XWINWRAP_ROOT)/xwinwrap
+$(eval $(call git_submodule,xwinwrap,xwinwrap,$(XWINWRAP_ROOT)))
+$(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
-xwinwrap: $(xwinwrap)
+xwinwrap: $(xwinwrap_target)
 
-ccls = $(CCLS_ROOT)/Release/ccls
-$(ccls): $(CCLS_ROOT)/.git
+ccls_target = $(CCLS_ROOT)/Release/ccls
+$(eval $(call git_submodule,ccls,ccls,$(CCLS_ROOT)))
+$(ccls_target): $(ccls_head_file)
 	cd $(CCLS_ROOT) && \
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
 		$(CMAKE) --build Release
-ccls: $(ccls)
-
-gitflow: $(GITFLOW_ROOT)/.git
-	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
+ccls: $(ccls_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
-$(fzf): $(FZF_ROOT)/.git
+$(eval $(call git_submodule,fzf,fzf,$(FZF_ROOT)))
+$(fzf): $(fzf_head_file)
 	@# Officially:
 	@# $DEPS_DIR/fzf/install --all
 	@# Manually download executable
@@ -57,20 +77,18 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
-$(submodules-deps) &:
-	git submodule update --init --recursive
-# Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
-# $(submodules-deps):
-# 	git submodule update --init --recursive $(@:/.git=)
-submodules: $(submodules-deps)
+gitflow: $(GITFLOW_ROOT)/.git
+	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 
 powerline = $(PYTHON_SITE_PACKAGES)/powerline-status.egg-link
-$(powerline): $(POWERLINE_ROOT)/.git
+$(eval $(call git_submodule,powerline,powerline,$(POWERLINE_ROOT)))
+$(powerline): $(powerline_head_file)
 	pip install --user --editable=$(POWERLINE_ROOT)
 powerline: $(powerline)
 
 grip = $(PYTHON_SITE_PACKAGES)/grip.egg-link
-$(grip): $(GRIP_ROOT)/.git
+$(eval $(call git_submodule,grip,grip,$(GRIP_ROOT)))
+$(grip): $(grip_head_file)
 	pip install --user --editable=$(GRIP_ROOT)
 grip: $(grip)
 
@@ -85,9 +103,13 @@ $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
 
-install: dirs gitflow powerline grip dconf
+home:
 	stow -v home
+
+fonts:
 	# Refresh fonts
 	fc-cache -f
 
-.PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf
+install: dirs gitflow powerline grip dconf home fonts
+
+.PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf home fonts

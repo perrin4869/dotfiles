@@ -5,6 +5,8 @@ video/x-msvideo=mpv.desktop
 application/postscript=zathura.desktop
 x-scheme-handler/viber=viber.desktop
 inode/directory=thunar.desktop
+x-scheme-handler/https=mozilla-firefox.desktop
+x-scheme-handler/http=mozilla-firefox.desktop
 
 [Added Associations]
 video/x-flv=mpv.desktop;

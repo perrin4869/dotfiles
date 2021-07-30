@@ -358,6 +358,6 @@
 [submodule "home/.vim/pack/default/start/close-buffers.vim"]
 	path = home/.vim/pack/default/start/close-buffers.vim
 	url = git@github.com:Asheq/close-buffers.vim.git
-[submodule "home/.vim/pack/default/start/vim-bbye"]
-	path = home/.vim/pack/default/start/vim-bbye
-	url = https://github.com/moll/vim-bbye
+[submodule "home/.vim/pack/default/start/vim-bufkill"]
+	path = home/.vim/pack/default/start/vim-bufkill
+	url = git@github.com:qpkorr/vim-bufkill.git

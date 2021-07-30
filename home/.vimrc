@@ -91,8 +91,8 @@ vno <right> <Nop>
 vno <up> <Nop>
 
 "close current buffer with bufkill
-nnoremap <Leader>c :BD<CR>
-nnoremap <Leader>C :%bd\|e#<CR>
+nnoremap Q :Bdelete<CR>
+nnoremap <Leader>Q :Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
 nmap G Gzz

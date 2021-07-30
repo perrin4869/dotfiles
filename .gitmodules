@@ -122,10 +122,6 @@
 	path = home/.vim/pack/default/start/vim-themis
 	url = https://github.com/thinca/vim-themis
 	ignore = untracked
-[submodule "vim/bundle/vim-bufkill"]
-	path = home/.vim/pack/default/start/vim-bufkill
-	url = https://github.com/qpkorr/vim-bufkill
-	ignore = untracked
 [submodule "vim/bundle/vim-markdown-preview"]
 	path = home/.vim/pack/default/start/vim-markdown-preview
 	url = https://github.com/JamshedVesuna/vim-markdown-preview
@@ -359,3 +355,9 @@
 [submodule "home/.vim/pack/default/start/friendly-snippets"]
 	path = home/.vim/pack/default/start/friendly-snippets
 	url = https://github.com/rafamadriz/friendly-snippets
+[submodule "home/.vim/pack/default/start/close-buffers.vim"]
+	path = home/.vim/pack/default/start/close-buffers.vim
+	url = git@github.com:Asheq/close-buffers.vim.git
+[submodule "home/.vim/pack/default/start/vim-bbye"]
+	path = home/.vim/pack/default/start/vim-bbye
+	url = https://github.com/moll/vim-bbye

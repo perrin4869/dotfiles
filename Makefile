@@ -103,13 +103,13 @@ $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
 
-home:
+home: dirs
 	stow -v home
 
-fonts:
+fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: dirs gitflow powerline grip dconf home fonts
+install: home fonts gitflow powerline grip dconf
 
 .PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf home fonts

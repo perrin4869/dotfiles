@@ -27,6 +27,7 @@ compe.setup {
     nvim_lua = true,
     vsnip = true,
     emoji = true,
+    tmux = true,
   },
 }
 

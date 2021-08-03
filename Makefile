@@ -13,6 +13,7 @@ DCONF = ./dconf
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
+SPOT_ROOT = $(DEPS)/spot
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
@@ -63,6 +64,14 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
 
+spot_target = $(PREFIX)/bin/spot
+$(eval $(call git_submodule,spot,deps/spot,$(SPOT_ROOT)))
+$(spot_target): $(spot_head_file)
+	cd $(SPOT_ROOT) && \
+		meson target -Dbuildtype=release -Doffline=false --prefix=$(PREFIX) && \
+		ninja install -C target
+spot: $(spot_target)
+
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,fzf,$(FZF_ROOT)))
 $(fzf): $(fzf_head_file)
@@ -98,7 +107,7 @@ dconf:
 	@# dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
 	dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
 
-dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(PREFIX)/bin
+dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(PREFIX)/bin
 $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
@@ -110,6 +119,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home fonts gitflow powerline grip dconf
+install: home fonts spot gitflow powerline grip dconf
 
 .PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf home fonts

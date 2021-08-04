@@ -50,6 +50,9 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `alacritty`
 - `kitty`
 - `urxvt`
+- `ripgrep`
+- `bat`
+- `fd`
 
 In Slackware:
 - `sun-gtk`

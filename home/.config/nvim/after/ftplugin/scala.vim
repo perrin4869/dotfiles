@@ -4,3 +4,5 @@ nnoremap <silent> <leader>tv <cmd>lua require("metals").toggle_tree_view()<CR>
 nnoremap <silent> <leader>tf <cmd>lua require("metals").reveal_in_tree()<CR>
 
 command! -nargs=0 OR   MetalsOrganizeImport
+
+lua require('lsp').initialize_metals()

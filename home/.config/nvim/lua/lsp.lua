@@ -4,6 +4,7 @@ local lsp_signature = require('lsp_signature')
 local compe = require('compe')
 local saga = require('lspsaga')
 local illuminate = require('illuminate')
+local metals = require('metals')
 
 lsp_status.register_progress()
 
@@ -36,6 +37,11 @@ saga.init_lsp_saga()
 require("trouble").setup {}
 
 local autoformat_fts = {"scala"}
+
+function formatting_supported(client)
+  return client.resolved_capabilities.document_formatting or
+    client.resolved_capabilities.document_range_formatting
+end
 
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -93,13 +99,13 @@ local on_attach = function(client, bufnr)
   if
     bufnr ~= nil and
     client ~= nil and
-    client.resolved_capabilities.document_formatting and
+    formatting_supported(client) and
     vim.tbl_contains(autoformat_fts, vim.api.nvim_buf_get_option(bufnr, "filetype"))
   then
+    vim.cmd([[aug lsp_autoformat]])
+    vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
     vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync()]])
-    -- This doesn't work:
-    -- vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[>,*.scala lua print("FORMATATING")]])
-    -- This is because the comma is an "or" operator, and it will add the autocmd to both scala files and the current buffer
+    vim.cmd([[aug END]])
   end
 
   illuminate.on_attach(client)
@@ -112,16 +118,23 @@ local on_attach = function(client, bufnr)
   })
 end
 
-function lsp_safe_formatting()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local clients = vim.lsp.buf_get_clients(bufnr)
-  for _, client in ipairs(clients) do
-    if (client.resolved_capabilities.document_formatting or client.resolved_capabilities.document_range_formatting) then
-      -- formatting_async will require to save twice
-      vim.lsp.buf.formatting_sync()
-      break
+-- https://github.com/hrsh7th/nvim-compe/issues/302
+-- Expand function signature as a snippet
+local Helper = require "compe.helper"
+Helper.convert_lsp_orig = Helper.convert_lsp
+Helper.convert_lsp = function(args)
+  local response = args.response or {}
+  local items = response.items or response
+  for _, item in ipairs(items) do
+    -- 2: method
+    -- 3: function
+    -- 4: constructor
+    if item.insertText == nil and (item.kind == 2 or item.kind == 3 or item.kind == 4) then
+      item.insertText = item.label .. "(${1})"
+      item.insertTextFormat = 2
     end
   end
+  return Helper.convert_lsp_orig(args)
 end
 
 local M = {}
@@ -161,7 +174,7 @@ lspconfig.cssls.setup{
   }
 }
 
-metals_config = require'metals'.bare_config
+metals_config = metals.bare_config
 metals_config.init_options.statusBarProvider = 'on'
 metals_config.settings = {
   showImplicitArguments = true,
@@ -170,9 +183,9 @@ metals_config.settings = {
   superMethodLensesEnabled = true,
 }
 metals_config.on_attach = on_attach
-vim.cmd [[augroup lsp]]
-vim.cmd [[au!]]
-vim.cmd [[au FileType scala,sbt lua require("metals").initialize_or_attach(metals_config)]]
-vim.cmd [[augroup end]]
+
+M.initialize_metals = function()
+  metals.initialize_or_attach(metals_config)
+end
 
 return M

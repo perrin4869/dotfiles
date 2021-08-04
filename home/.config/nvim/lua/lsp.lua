@@ -104,7 +104,8 @@ local on_attach = function(client, bufnr)
   then
     vim.cmd([[aug lsp_autoformat]])
     vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
-    vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync()]])
+    -- 5000 is the timeout - metals takes a few seconds to format
+    vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync(nil, 5000)]])
     vim.cmd([[aug END]])
   end
 

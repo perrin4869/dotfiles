@@ -140,15 +140,6 @@ end
 
 local M = {}
 
-local ignore_lsp_documentation = {vim=true,help=true}
-M.show_documentation = function()
-  if ignore_lsp_documentation[vim.bo.filetype] then
-    vim.cmd("execute 'h '.expand('<cword>')")
-  else
-    vim.lsp.buf.hover()
-  end
-end
-
 M.get_status = function()
   if #vim.lsp.buf_get_clients() > 0 then
     return require('lsp-status').status()

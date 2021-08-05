@@ -13,6 +13,10 @@ if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
   export $(dbus-launch --exit-with-x11)
 fi
 
+# set SOFTWARE_VSYNC via .pam_environment, etc as needed
+PICOM_VSYNC=""
+[[ -z $SOFTWARE_VSYNC ]] && PICOM_VSYNC=--vsync
+
 sxhkd &
 blueman-applet &
 dunst &
@@ -20,7 +24,7 @@ xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
 ibus-daemon --xim -d -r
-picom -b --config ~/.picom.conf
+picom -b --config ~/.picom.conf $PICOM_VSYNC
 setxkbmap -layout us -option compose:ralt
 
 # If autorandr-launcher is installed (presumably because udev was not) then daemonize

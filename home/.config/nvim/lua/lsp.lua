@@ -75,7 +75,13 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
-  vim.cmd([[autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()]])
+  buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
+  buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
+
+  vim.cmd([[aug lsp_codelens]])
+  vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
+  vim.cmd([[autocmd BufEnter,CursorHold,InsertLeave <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.codelens.refresh()]])
+  vim.cmd([[aug END]])
   buf_set_keymap("n", "<leader>cl", "<Cmd>lua vim.lsp.codelens.run()<CR>", opts)
 
   buf_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>", opts)

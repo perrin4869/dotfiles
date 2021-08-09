@@ -1,40 +1,9 @@
 local lspconfig = require('lspconfig')
 local lsp_status = require('lsp-status')
 local lsp_signature = require('lsp_signature')
-local compe = require('compe')
 local saga = require('lspsaga')
 local illuminate = require('illuminate')
 local metals = require('metals')
-
-lsp_status.register_progress()
-
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    underline = true,
-    virtual_text = false,
-    signs = true,
-    update_in_insert = false,
-  }
-)
-
-compe.setup {
-  enabled = true,
-  autocomplete = true,
-  source = {
-    path = true,
-    buffer = true,
-    calc = true,
-    nvim_lsp = true,
-    nvim_lua = true,
-    vsnip = true,
-    emoji = true,
-    tmux = true,
-  },
-}
-
-saga.init_lsp_saga()
-
-require("trouble").setup {}
 
 local autoformat_fts = {"scala"}
 
@@ -125,34 +94,19 @@ local on_attach = function(client, bufnr)
   })
 end
 
--- https://github.com/hrsh7th/nvim-compe/issues/302
--- Expand function signature as a snippet
-local Helper = require "compe.helper"
-Helper.convert_lsp_orig = Helper.convert_lsp
-Helper.convert_lsp = function(args)
-  local response = args.response or {}
-  local items = response.items or response
-  for _, item in ipairs(items) do
-    -- 2: method
-    -- 3: function
-    -- 4: constructor
-    if item.insertText == nil and (item.kind == 2 or item.kind == 3 or item.kind == 4) then
-      item.insertText = item.label .. "(${1})"
-      item.insertTextFormat = 2
-    end
-  end
-  return Helper.convert_lsp_orig(args)
-end
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    underline = true,
+    virtual_text = false,
+    signs = true,
+    update_in_insert = false,
+  }
+)
 
-local M = {}
+lsp_status.register_progress()
 
-M.get_status = function()
-  if #vim.lsp.buf_get_clients() > 0 then
-    return require('lsp-status').status()
-  end
-
-  return ''
-end
+require("lspsaga").init_lsp_saga()
+require("trouble").setup {}
 
 lspconfig.tsserver.setup{on_attach=on_attach}
 lspconfig.ccls.setup{on_attach=on_attach}
@@ -172,7 +126,7 @@ lspconfig.cssls.setup{
   }
 }
 
-metals_config = metals.bare_config
+local metals_config = metals.bare_config
 metals_config.init_options.statusBarProvider = 'on'
 metals_config.settings = {
   showImplicitArguments = true,
@@ -181,6 +135,16 @@ metals_config.settings = {
   superMethodLensesEnabled = true,
 }
 metals_config.on_attach = on_attach
+
+local M = {}
+
+M.get_status = function()
+  if #vim.lsp.buf_get_clients() > 0 then
+    return lsp_status.status()
+  end
+
+  return ''
+end
 
 M.initialize_metals = function()
   metals.initialize_or_attach(metals_config)

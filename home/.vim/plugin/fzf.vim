@@ -9,10 +9,13 @@ else
   nmap <C-p> :Files<CR>
 endif
 
+nmap gb :Buffers<CR>
+
 " command from ~/.fzf
 nmap gfz :FZF<CR>
 
 nmap gfa :Ag<CR>
+nmap gfr :Rg<CR>
 nmap gff :Files<CR>
 nmap gfb :Buffers<CR>
 nmap gft :Tags<CR>

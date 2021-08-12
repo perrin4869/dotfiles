@@ -2,7 +2,6 @@ local lspconfig = require('lspconfig')
 local lsp_status = require('lsp-status')
 local lsp_signature = require('lsp_signature')
 local saga = require('lspsaga')
-local illuminate = require('illuminate')
 local metals = require('metals')
 
 local autoformat_fts = {"scala"}
@@ -70,6 +69,14 @@ local on_attach = function(client, bufnr)
     buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   end
 
+  if client ~= nil and client.resolved_capabilities.document_highlight then
+    vim.cmd([[aug lsp_document_highlight]])
+    vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
+    vim.cmd([[autocmd CursorHold,CursorHoldI <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.document_highlight()]])
+    vim.cmd([[autocmd CursorMoved <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.clear_references()]])
+    vim.cmd([[aug END]])
+  end
+
   -- Format on save
   if
     bufnr ~= nil and
@@ -84,7 +91,6 @@ local on_attach = function(client, bufnr)
     vim.cmd([[aug END]])
   end
 
-  illuminate.on_attach(client)
   lsp_status.on_attach(client)
   lsp_signature.on_attach({
     bind = true, -- This is mandatory, otherwise border config won't get registered.

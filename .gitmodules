@@ -322,9 +322,6 @@
 [submodule "home/vim/pack/default/opt/lspsaga"]
 	path = home/.local/share/nvim/site/pack/default/start/lspsaga
 	url = git@github.com:glepnir/lspsaga.nvim.git
-[submodule "home/vim/pack/default/opt/vim-illuminate"]
-	path = home/.local/share/nvim/site/pack/default/start/vim-illuminate
-	url = git@github.com:RRethy/vim-illuminate.git
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = git@github.com:nvim-treesitter/nvim-treesitter.git

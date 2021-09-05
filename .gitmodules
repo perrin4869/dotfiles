@@ -361,3 +361,6 @@
 [submodule "deps/spot"]
 	path = deps/spot
 	url = git@github.com:xou816/spot.git
+[submodule "home/.local/share/nvim/site/pack/default/start/hop.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/hop.nvim
+	url = git@github.com:phaazon/hop.nvim.git

@@ -15,7 +15,7 @@ fi
 
 # set SOFTWARE_VSYNC via .pam_environment, etc as needed
 PICOM_VSYNC=""
-[[ -z $SOFTWARE_VSYNC ]] && PICOM_VSYNC=--vsync
+[[ -n $SOFTWARE_VSYNC ]] && PICOM_VSYNC=--vsync
 
 sxhkd &
 blueman-applet &

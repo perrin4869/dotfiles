@@ -319,9 +319,6 @@
 [submodule "home/vim/pack/default/opt/lsp_signature"]
 	path = home/.local/share/nvim/site/pack/default/start/lsp_signature
 	url = git@github.com:ray-x/lsp_signature.nvim.git
-[submodule "home/vim/pack/default/opt/lspsaga"]
-	path = home/.local/share/nvim/site/pack/default/start/lspsaga
-	url = git@github.com:glepnir/lspsaga.nvim.git
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = git@github.com:nvim-treesitter/nvim-treesitter.git

@@ -1,6 +1,6 @@
-local lspconfig = require('lspconfig')
-local lsp_status = require('lsp-status')
-local lsp_signature = require('lsp_signature')
+local config = require('lspconfig')
+local status = require('lsp-status')
+local signature = require('lsp_signature')
 local metals = require('metals')
 
 local autoformat_fts = {"scala"}
@@ -85,12 +85,13 @@ local on_attach = function(client, bufnr)
     vim.cmd([[aug END]])
   end
 
-  lsp_status.on_attach(client)
-  lsp_signature.on_attach({
+  status.on_attach(client)
+  signature.on_attach({
+    floating_window_above_first = true, -- do not hide pum, etc
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
       border = "single"
-    }
+    },
   })
 end
 
@@ -103,14 +104,14 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-lsp_status.register_progress()
+status.register_progress()
 
 require("trouble").setup {}
 
-lspconfig.tsserver.setup{on_attach=on_attach}
-lspconfig.ccls.setup{on_attach=on_attach}
-lspconfig.html.setup{on_attach=on_attach}
-lspconfig.cssls.setup{
+config.tsserver.setup{on_attach=on_attach}
+config.ccls.setup{on_attach=on_attach}
+config.html.setup{on_attach=on_attach}
+config.cssls.setup{
   on_attach = on_attach,
   settings = {
     css = {
@@ -139,7 +140,7 @@ local M = {}
 
 M.get_status = function()
   if #vim.lsp.buf_get_clients() > 0 then
-    return lsp_status.status()
+    return status.status()
   end
 
   return ''

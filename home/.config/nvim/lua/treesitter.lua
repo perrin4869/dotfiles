@@ -21,7 +21,7 @@ require'nvim-treesitter.configs'.setup {
   },
   highlight = {
     enable = true, -- false will disable the whole extension
-    disable = {} -- list of language that will be disabled
+    disable = {"scala"}, -- terrible performance
   },
   incremental_selection = {
     enable = true,
@@ -29,15 +29,14 @@ require'nvim-treesitter.configs'.setup {
       init_selection = 'gnn',
       node_incremental = 'grn',
       scope_incremental = 'grc',
-      node_decremental = 'grm'
+      node_decremental = 'grm',
     }
   },
-  indent = {enable = true},
+  indent = { enable = true },
   playground = {
     enable = true,
-    disable = {},
     updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-    persist_queries = false -- Whether the query persists across vim sessions
+    persist_queries = false, -- Whether the query persists across vim sessions
   },
   rainbow = {enable = true, extended_mode = true},
   textobjects = {
@@ -53,7 +52,7 @@ require'nvim-treesitter.configs'.setup {
         ["if"] = "@function.inner",
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner"
-      }
+      },
     },
     move = {
       enable = true,
@@ -73,10 +72,8 @@ require'nvim-treesitter.configs'.setup {
       goto_previous_end = {
         ['[M'] = '@function.outer',
         ['[]'] = '@class.outer'
-      }
+      },
     }
   },
-  context_commentstring = {
-    enable = true
-  },
+  context_commentstring = {enable = true},
 }

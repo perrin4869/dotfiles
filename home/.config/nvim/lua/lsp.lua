@@ -38,6 +38,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
   buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 
+  buf_set_keymap('i', '<C-q>', '<cmd>lua require("lsp_signature").toggle_float_win()<CR>', opts)
+
   if client ~= nil and client.resolved_capabilities.code_lens then
     vim.cmd([[aug lsp_codelens]])
     vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
@@ -90,9 +92,9 @@ local on_attach = function(client, bufnr)
     floating_window_above_first = true, -- do not hide pum, etc
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
-      border = "single"
+      border = "shadow"
     },
-  })
+  }, bufnr)
 end
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(

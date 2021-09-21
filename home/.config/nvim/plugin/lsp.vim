@@ -8,7 +8,7 @@ function! LspStatus() abort
 endfunction
 
 function! MetalsStatus() abort
-  return metals#status()
+  return get(g:, 'metals_status', '')
 endfunction
 
 " This is nicer than having virtual text

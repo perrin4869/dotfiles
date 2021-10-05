@@ -5,7 +5,11 @@
 [commit]
   gpgsign = true
 [diff]
-  external = git_diff_wrapper
+  tool = vimdiff
+[difftool]
+  prompt = false
+[difftool "vimdiff"]
+  cmd = vimdiff $LOCAL $REMOTE
 [pager]
   diff =
   branch = false
@@ -20,15 +24,16 @@
   subup = !sh -c 'git submodule update --remote --merge && git submodule foreach git submodule update --init --recursive'
   st = status
   aa = add --all
+  dt = difftool
   delete-merged-branches = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
 [push]
   default = simple
 [include]
   path = ~/.gitconfig.overrides # local overrides for email, name, signingkey, etc
 [pull]
-	ff = only
+  ff = only
 [gpg]
-	program = gpg2
+  program = gpg2
 [merge "npm-merge-driver"]
-	name = automatically merge npm lockfiles
-	driver = npx npm-merge-driver merge %A %O %B %P
+  name = automatically merge npm lockfiles
+  driver = npx npm-merge-driver merge %A %O %B %P

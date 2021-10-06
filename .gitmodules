@@ -313,9 +313,6 @@
 [submodule "grip"]
 	path = deps/grip
 	url = git@github.com:joeyespo/grip.git
-[submodule "home/vim/pack/default/opt/nvim-compe"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-compe
-	url = git@github.com:hrsh7th/nvim-compe.git
 [submodule "home/vim/pack/default/opt/lsp_signature"]
 	path = home/.local/share/nvim/site/pack/default/start/lsp_signature
 	url = git@github.com:ray-x/lsp_signature.nvim.git
@@ -355,9 +352,6 @@
 [submodule "home/.vim/pack/default/start/vim-bufkill"]
 	path = home/.vim/pack/default/start/vim-bufkill
 	url = git@github.com:qpkorr/vim-bufkill.git
-[submodule "home/.local/share/nvim/site/pack/default/start/compe-tmux"]
-	path = home/.local/share/nvim/site/pack/default/start/compe-tmux
-	url = git@github.com:andersevenrud/compe-tmux.git
 [submodule "deps/spot"]
 	path = deps/spot
 	url = git@github.com:xou816/spot.git
@@ -376,3 +370,24 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/plenary.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/plenary.nvim
 	url = git@github.com:nvim-lua/plenary.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-cmp"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-cmp
+	url = git@github.com:hrsh7th/nvim-cmp.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-buffer"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-buffer
+	url = git@github.com:hrsh7th/cmp-buffer.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-nvim-lsp"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-nvim-lsp
+	url = git@github.com:hrsh7th/cmp-nvim-lsp.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-vsnip"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-vsnip
+	url = git@github.com:hrsh7th/cmp-vsnip.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-emoji"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-emoji
+	url = git@github.com:hrsh7th/cmp-emoji.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-calc"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-calc
+	url = git@github.com:hrsh7th/cmp-calc.git
+[submodule "home/.local/share/nvim/site/pack/default/start/cmp-path"]
+	path = home/.local/share/nvim/site/pack/default/start/cmp-path
+	url = git@github.com:hrsh7th/cmp-path.git

@@ -19,11 +19,3 @@ autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({focusable = f
 hi def link LspReferenceText CursorLine
 hi def link LspReferenceWrite CursorLine
 hi def link LspReferenceRead CursorLine
-
-" Mappings
-inoremap <silent><expr> <C-Space> compe#complete()
-" TODO: explain why <LT> is needed?
-inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-" inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-" inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })

@@ -110,11 +110,14 @@ status.register_progress()
 
 require("trouble").setup {}
 
-config.tsserver.setup{on_attach=on_attach}
-config.ccls.setup{on_attach=on_attach}
-config.html.setup{on_attach=on_attach}
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
+config.tsserver.setup{on_attach=on_attach, capabilities=capabilities}
+config.ccls.setup{on_attach=on_attach, capabilities=capabilities}
+config.html.setup{on_attach=on_attach, capabilities=capabilities}
 config.cssls.setup{
   on_attach = on_attach,
+  capabilities = capabilities,
   settings = {
     css = {
       validate = false
@@ -137,6 +140,7 @@ metals_config.settings = {
   superMethodLensesEnabled = true,
 }
 metals_config.on_attach = on_attach
+metals_config.capabilities = capabilities
 
 local M = {}
 

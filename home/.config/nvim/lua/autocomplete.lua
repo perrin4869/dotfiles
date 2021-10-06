@@ -1,33 +1,24 @@
-require("compe").setup {
-  enabled = true,
-  autocomplete = true,
-  source = {
-    path = true,
-    buffer = true,
-    calc = true,
-    nvim_lsp = true,
-    nvim_lua = true,
-    vsnip = true,
-    emoji = true,
-    tmux = true,
+local cmp = require'cmp'
+
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` user.
+    end,
+  },
+  mapping = {
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  },
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' },
+    { name = 'buffer' },
+    { name = 'path' },
+    { name = 'calc' },
+    { name = 'emoji' },
   },
 }
-
--- https://github.com/hrsh7th/nvim-compe/issues/302
--- Expand function signature as a snippet
-local Helper = require "compe.helper"
-Helper.convert_lsp_orig = Helper.convert_lsp
-Helper.convert_lsp = function(args)
-  local response = args.response or {}
-  local items = response.items or response
-  for _, item in ipairs(items) do
-    -- 2: method
-    -- 3: function
-    -- 4: constructor
-    if item.insertText == nil and (item.kind == 2 or item.kind == 3 or item.kind == 4) then
-      item.insertText = item.label .. "(${1})"
-      item.insertTextFormat = 2
-    end
-  end
-  return Helper.convert_lsp_orig(args)
-end

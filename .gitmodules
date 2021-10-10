@@ -34,10 +34,6 @@
 	path = home/.vim/pack/default/start/skeletons
 	url = https://github.com/tobyS/skeletons.vim
 	ignore = untracked
-[submodule "vim/bundle/vdebug"]
-	path = home/.vim/pack/default/start/vdebug
-	url = https://github.com/joonty/vdebug
-	ignore = untracked
 [submodule "vim/bundle/vim-sauce"]
 	path = home/.vim/pack/default/start/vim-sauce
 	url = https://github.com/joonty/vim-sauce

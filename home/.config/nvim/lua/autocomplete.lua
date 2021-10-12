@@ -1,10 +1,6 @@
 local cmp = require'cmp'
 local lspkind = require'lspkind'
 
--- reduce flickers in custom menu
--- https://github.com/hrsh7th/nvim-cmp/issues/231#issuecomment-940196930
-vim.api.nvim_set_option('lazyredraw', true)
-
 cmp.setup {
   snippet = {
     expand = function(args)

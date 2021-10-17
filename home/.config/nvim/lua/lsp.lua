@@ -131,7 +131,7 @@ config.cssls.setup{
   }
 }
 
-local metals_config = metals.bare_config
+local metals_config = metals.bare_config()
 metals_config.init_options.statusBarProvider = 'on'
 metals_config.settings = {
   showImplicitArguments = true,

@@ -19,10 +19,14 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
+    { name = 'nvim_lua' },
+    { name = 'treesitter' },
     { name = 'vsnip' },
     { name = 'buffer' },
     { name = 'path' },
     { name = 'calc' },
     { name = 'emoji' },
+    { name = 'zsh' },
+    { name = 'spell' },
   },
 }

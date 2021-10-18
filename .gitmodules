@@ -50,10 +50,6 @@
 	path = home/.vim/pack/default/start/restore_view
 	url = https://github.com/vim-scripts/restore_view.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-snippets"]
-	path = home/.vim/pack/default/start/vim-snippets
-	url = https://github.com/honza/vim-snippets
-	ignore = untracked
 [submodule "vim/bundle/vim-javascript"]
 	path = home/.vim/pack/default/start/vim-javascript
 	url = https://github.com/pangloss/vim-javascript

@@ -398,3 +398,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/cmp-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/cmp-treesitter
 	url = git@github.com:ray-x/cmp-treesitter.git
+[submodule "home/.local/share/nvim/site/pack/default/start/telescope.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/telescope.nvim
+	url = git@github.com:nvim-telescope/telescope.nvim.git

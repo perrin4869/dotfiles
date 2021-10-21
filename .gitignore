@@ -23,3 +23,5 @@ home/.sbt/*
 !home/.sbt/1.0
 home/.sbt/1.0/*
 !home/.sbt/1.0/global.sbt
+
+home/.local/share/nvim/telescope_history

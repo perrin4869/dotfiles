@@ -407,3 +407,6 @@
 [submodule "home/.local/share/oh-my-zsh/custom/plugins/zsh-fzy"]
 	path = home/.local/share/oh-my-zsh/custom/plugins/zsh-fzy
 	url = git@github.com:aperezdc/zsh-fzy.git
+[submodule "home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
+	url = git@github.com:nvim-telescope/telescope-fzf-native.nvim.git

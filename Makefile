@@ -19,6 +19,7 @@ GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
+TELESCOPE_FZF_NATIVE_ROOT = $(XDG_DATA_HOME)/nvim/site/pack/default/start/telescope-fzf-native.nvim
 COC_ROOT = $(XDG_CONFIG_HOME)/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
@@ -36,7 +37,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy coc
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -83,10 +84,17 @@ $(fzf): $(fzf_head_file)
 fzf: $(fzf)
 
 fzy = $(FZF_ROOT)/bin/fzy
-$(eval $(call git_submodule,fzy,fzy,$(FZY_ROOT)))
+$(eval $(call git_submodule,fzy,deps/fzy,$(FZY_ROOT)))
 $(fzy): $(fzy_head_file)
 	$(MAKE) -C $(FZY_ROOT)
 fzy: $(fzy)
+
+TELESCOPE_FZF_NATIVE_MODULE_PATH=home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
+telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
+$(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_MODULE_PATH),$(TELESCOPE_FZF_NATIVE_ROOT)))
+$(telescope-fzf-native): $(telescope-fzf-native_head_file)
+	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
+telescope-fzf-native: $(telescope-fzf-native)
 
 coc = $(COC_ROOT)/extensions/package-lock.json
 $(coc):

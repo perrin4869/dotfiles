@@ -54,7 +54,7 @@ ZSH_CUSTOM="${XDG_DATA_HOME:-$HOME/.local/share}/oh-my-zsh/custom"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf)
+plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting zsh-fzy)
 
 # export ZSH_TMUX_AUTOSTART=true
 # export ZSH_TMUX_AUTOQUIT=false
@@ -149,6 +149,15 @@ export KEYTIMEOUT=1
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [ -e "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+
+# ALT-C: cd into the selected directory
+# CTRL-T: Place the selected file path in the command line
+# CTRL-R: Place the selected command from history in the command line
+# CTRL-P: Place the selected process ID in the command line
+bindkey '\ec' fzy-cd-widget
+bindkey '^T'  fzy-file-widget
+bindkey '^R'  fzy-history-widget
+bindkey '^P'  fzy-proc-widget
 
 if command -v fd &> /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type file'

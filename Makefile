@@ -18,6 +18,7 @@ POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
 FZF_ROOT = $(DEPS)/fzf
+FZY_ROOT = $(DEPS)/fzy
 COC_ROOT = $(XDG_CONFIG_HOME)/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
@@ -35,7 +36,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf coc
+all: mpv-mpris xwinwrap ccls fzf fzy coc
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -80,6 +81,12 @@ $(fzf): $(fzf_head_file)
 	@# Manually download executable
 	$(FZF_ROOT)/install --no-update-rc --no-bash --no-zsh --no-completion --no-key-bindings
 fzf: $(fzf)
+
+fzy = $(FZF_ROOT)/bin/fzy
+$(eval $(call git_submodule,fzy,fzy,$(FZY_ROOT)))
+$(fzy): $(fzy_head_file)
+	$(MAKE) -C $(FZY_ROOT)
+fzy: $(fzy)
 
 coc = $(COC_ROOT)/extensions/package-lock.json
 $(coc):

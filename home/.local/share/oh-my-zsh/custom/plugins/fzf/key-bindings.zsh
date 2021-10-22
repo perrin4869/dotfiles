@@ -1,1 +1,0 @@
-../../../../../../../deps/fzf/shell/key-bindings.zsh

@@ -156,7 +156,7 @@ export KEYTIMEOUT=1
 bindkey '\ec' fzy-cd-widget
 bindkey '^T'  fzy-file-widget
 bindkey '^R'  fzy-history-widget
-bindkey '^P'  fzy-proc-widget
+# bindkey '^P'  fzy-proc-widget
 
 if command -v fd &> /dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type file'

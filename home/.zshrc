@@ -50,6 +50,8 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Would you like to use another custom folder than $ZSH/custom?
 ZSH_CUSTOM="${XDG_DATA_HOME:-$HOME/.local/share}/oh-my-zsh/custom"
 
+export PATH=./node_modules/.bin:~/.local/bin:$PATH
+
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
@@ -66,8 +68,6 @@ unalias gm
 
 # User configuration
 
-export PATH=./node_modules/.bin:~/.local/bin:$PATH
-
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -77,7 +77,6 @@ export PATH=./node_modules/.bin:~/.local/bin:$PATH
 # else
 #   export EDITOR='mvim'
 # fi
-export EDITOR='vim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"

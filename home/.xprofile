@@ -3,6 +3,7 @@
 export TERMINAL="${TERMINAL:-kitty}"
 export FILE="${FILE:-ranger}"
 export BROWSER="${BROWSER-firefox}"
+export EDITOR="${EDITOR-nvim}"
 
 export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
 export XMODIFIERS=@im=ibus

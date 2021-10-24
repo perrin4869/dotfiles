@@ -141,7 +141,10 @@ metals_config.settings = {
   showImplicitConversionsAndClasses = true,
   superMethodLensesEnabled = true,
 }
-metals_config.on_attach = on_attach
+metals_config.on_attach = function(client, bufnr)
+  on_attach(client, bufnr)
+  metals.setup_dap()
+end
 metals_config.capabilities = capabilities
 
 local M = {}

@@ -1,4 +1,5 @@
 local dap = require("dap")
+local api = vim.api
 
 dap.adapters.node2 = {
   type = 'executable',
@@ -8,6 +9,7 @@ dap.adapters.node2 = {
 
 dap.configurations.javascript = {
   {
+    name = "Run",
     type = 'node2',
     request = 'launch',
     program = '${workspaceFolder}/${file}',
@@ -15,6 +17,15 @@ dap.configurations.javascript = {
     sourceMaps = true,
     protocol = 'inspector',
     console = 'integratedTerminal',
+  },
+  {
+    name = "Attach",
+    type = 'node2',
+    request = 'attach',
+    cwd = vim.fn.getcwd(),
+    sourceMaps = true,
+    protocol = 'inspector',
+    skipFiles = {'<node_internals>/**/*.js'},
   },
 }
 
@@ -54,7 +65,7 @@ vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''}
 vim.g.dap_virtual_text = true
 
 -- Mappings.
-local keymap = vim.api.nvim_set_keymap
+local keymap = api.nvim_set_keymap
 local opts = { noremap=true, silent=true }
 
 keymap('n', '<leader>dc', '<cmd>lua require"dap".continue()<CR>', opts)
@@ -66,6 +77,35 @@ keymap('n', '<leader>dsbr', '<cmd>lua require"dap".set_breakpoint(vim.fn.input("
 keymap('n', '<leader>dsbm', '<cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', opts)
 keymap('n', '<leader>dro', '<cmd>lua require"dap".repl.open()<CR>', opts)
 keymap('n', '<leader>drl', '<cmd>lua require"dap".repl.run_last()<CR>', opts)
+
+-- Map K to hover while session is active.
+local keymap_restore = {}
+dap.listeners.after['event_initialized']['me'] = function()
+  for _, buf in pairs(api.nvim_list_bufs()) do
+    local keymaps = api.nvim_buf_get_keymap(buf, 'n')
+    for _, keymap in pairs(keymaps) do
+      if keymap.lhs == "K" then
+        table.insert(keymap_restore, keymap)
+        api.nvim_buf_del_keymap(buf, 'n', 'K')
+      end
+    end
+  end
+  api.nvim_set_keymap(
+    'n', 'K', '<Cmd>lua require("dap.ui.variables").hover()<CR>', { silent = true })
+end
+
+dap.listeners.after['event_terminated']['me'] = function()
+  for _, keymap in pairs(keymap_restore) do
+    api.nvim_buf_set_keymap(
+      keymap.buffer,
+      keymap.mode,
+      keymap.lhs,
+      keymap.rhs,
+      { silent = keymap.silent == 1 }
+    )
+  end
+  keymap_restore = {}
+end
 
 -- nvim-dap-ui
 require("dapui").setup()

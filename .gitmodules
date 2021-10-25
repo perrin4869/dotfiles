@@ -61,7 +61,7 @@
 [submodule "vim/bundle/vim-jsdoc"]
 	path = home/.vim/pack/default/start/vim-jsdoc
 	url = https://github.com/heavenshell/vim-jsdoc
-	ignore = dirty # https://github.com/heavenshell/vim-jsdoc/pull/119
+	ignore = untracked
 [submodule "vim/bundle/vim-exchange"]
 	path = home/.vim/pack/default/start/vim-exchange
 	url = https://github.com/tommcdo/vim-exchange

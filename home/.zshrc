@@ -56,7 +56,7 @@ export PATH=./node_modules/.bin:~/.local/bin:$PATH
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting zsh-fzy)
+plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf zsh-fzy)
 
 # export ZSH_TMUX_AUTOSTART=true
 # export ZSH_TMUX_AUTOQUIT=false
@@ -155,7 +155,8 @@ export KEYTIMEOUT=1
 # CTRL-P: Place the selected process ID in the command line
 bindkey '\ec' fzy-cd-widget
 bindkey '^T'  fzy-file-widget
-bindkey '^R'  fzy-history-widget
+# Prefer FZF history widget
+# bindkey '^R'  fzy-history-widget
 # bindkey '^P'  fzy-proc-widget
 
 if command -v fd &> /dev/null; then

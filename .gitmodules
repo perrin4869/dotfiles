@@ -94,10 +94,6 @@
 	path = home/.vim/pack/default/start/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch
 	ignore = untracked
-[submodule "vim/bundle/maven-compiler.vim"]
-	path = home/.vim/pack/default/start/maven-compiler.vim
-	url = https://github.com/JalaiAmitahl/maven-compiler.vim
-	ignore = untracked
 [submodule "vim/bundle/vim-skipit"]
 	path = home/.vim/pack/default/start/vim-skipit
 	url = https://github.com/habamax/vim-skipit

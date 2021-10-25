@@ -29,6 +29,8 @@ dap.configurations.javascript = {
   },
 }
 
+dap.configurations.typescript = dap.configurations.javascript
+
 dap.configurations.scala = {
   {
     type = "scala",
@@ -68,15 +70,19 @@ vim.g.dap_virtual_text = true
 local keymap = api.nvim_set_keymap
 local opts = { noremap=true, silent=true }
 
-keymap('n', '<leader>dc', '<cmd>lua require"dap".continue()<CR>', opts)
-keymap('n', '<leader>dsv', '<cmd>lua require"dap".step_over()<CR>', opts)
-keymap('n', '<leader>dsi', '<cmd>lua require"dap".step_into()<CR>', opts)
-keymap('n', '<leader>dso', '<cmd>lua require"dap".step_out()<CR>', opts)
-keymap('n', '<leader>dtb', '<cmd>lua require"dap".toggle_breakpoint()<CR>', opts)
-keymap('n', '<leader>dsbr', '<cmd>lua require"dap".set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>', opts)
-keymap('n', '<leader>dsbm', '<cmd>lua require"dap".set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>', opts)
-keymap('n', '<leader>dro', '<cmd>lua require"dap".repl.open()<CR>', opts)
-keymap('n', '<leader>drl', '<cmd>lua require"dap".repl.run_last()<CR>', opts)
+keymap('n', '<leader>dh', ':lua require"dap".toggle_breakpoint()<CR>', opts)
+keymap('n', '<leader>dH', ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts)
+keymap('n', '<c-k>', ':lua require"dap".step_out()<CR>', opts)
+keymap('n', '<c-l>', ':lua require"dap".step_into()<CR>', opts)
+keymap('n', '<c-j>', ':lua require"dap".step_over()<CR>', opts)
+keymap('n', '<c-h>', ':lua require"dap".continue()<CR>', opts)
+keymap('n', '<leader>dk', ':lua require"dap".up()<CR>', opts)
+keymap('n', '<leader>dj', ':lua require"dap".down()<CR>', opts)
+keymap('n', '<leader>dc', ':lua require"dap".disconnect({ terminateDebuggee = true });require"dap".close()<CR>', opts)
+keymap('n', '<leader>dr', ':lua require"dap".repl.toggle({}, "vsplit")<CR><C-w>l', opts)
+keymap('n', '<leader>di', ':lua require"dap.ui.variables".visual_hover()<CR>', opts)
+keymap('n', '<leader>d?', ':lua require"dap.ui.variables".scopes()<CR>', opts)
+keymap('n', '<leader>de', ':lua require"dap".set_exception_breakpoints({"all"})<CR>', opts)
 
 -- Map K to hover while session is active.
 local keymap_restore = {}
@@ -109,11 +115,10 @@ end
 
 -- nvim-dap-ui
 require("dapui").setup()
-keymap('n', '<leader>dq', '<cmd>lua require"dapui".toggle()<CR>', opts)
+keymap('n', '<leader>du', '<cmd>lua require"dapui".toggle()<CR>', opts)
 
 -- telescope-dap
-keymap('n', '<leader>dcc', '<cmd>lua require"telescope".extensions.dap.commands{}<CR>', opts)
-keymap('n', '<leader>dco', '<cmd>lua require"telescope".extensions.dap.configurations{}<CR>', opts)
-keymap('n', '<leader>dlb', '<cmd>lua require"telescope".extensions.dap.list_breakpoints{}<CR>', opts)
+keymap('n', '<leader>dc', '<cmd>lua require"telescope".extensions.dap.commands{}<CR>', opts)
+keymap('n', '<leader>db', '<cmd>lua require"telescope".extensions.dap.list_breakpoints{}<CR>', opts)
 keymap('n', '<leader>dv', '<cmd>lua require"telescope".extensions.dap.variables{}<CR>', opts)
 keymap('n', '<leader>df', '<cmd>lua require"telescope".extensions.dap.frames{}<CR>', opts)

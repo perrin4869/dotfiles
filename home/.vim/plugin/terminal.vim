@@ -1,10 +1,10 @@
-noremap  <leader>t  :FloatermToggle<CR>
-noremap! <leader>t  <Esc>:FloatermToggle<CR>
-tnoremap <leader>t  <C-\><C-n>:FloatermToggle<CR>
+noremap  <silent> <leader>t :FloatermToggle<CR>
+noremap! <silent> <leader>t <Esc>:FloatermToggle<CR>
+tnoremap <silent> <leader>t <C-\><C-n>:FloatermToggle<CR>
 
 " vim-powered terminal in split window
-nnoremap <Leader>T :term<cr>
-tnoremap <Leader>T <c-w>:term<cr>
+nnoremap <silent> <Leader>T :term<cr>
+tnoremap <silent> <Leader>T <c-w>:term<cr>
 
 if has("nvim")
   " Make escape work in the Neovim terminal.

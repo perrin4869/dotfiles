@@ -17,9 +17,11 @@ SPOT_ROOT = $(DEPS)/spot
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
+VSCODE_NODE_DEBUG2_ROOT = $(DEPS)/vscode-node-debug2
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 TELESCOPE_FZF_NATIVE_ROOT = $(XDG_DATA_HOME)/nvim/site/pack/default/start/telescope-fzf-native.nvim
+VIM_JSDOC_ROOT = ${HOME}/.vim/pack/default/start/vim-jsdoc
 COC_ROOT = $(XDG_CONFIG_HOME)/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
@@ -37,7 +39,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_node_debug2 vim_jsdoc
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -100,6 +102,18 @@ coc = $(COC_ROOT)/extensions/package-lock.json
 $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
+
+vscode_node_debug2 = $(VSCODE_NODE_DEBUG2_ROOT)/out/src/nodeDebug.js
+$(eval $(call git_submodule,vscode_node_debug2,deps/vscode-node-debug2,$(VSCODE_NODE_DEBUG2_ROOT)))
+$(vscode_node_debug2): $(vscode_node_debug2_head_file)
+	cd $(VSCODE_NODE_DEBUG2_ROOT) && npm ci && gulp build
+vscode_node_debug2: $(vscode_node_debug2)
+
+vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
+$(eval $(call git_submodule,vim_jsdoc,vim/bundle/vim-jsdoc,$(VIM_JSDOC_ROOT)))
+$(vim_jsdoc): $(vim_jsdoc_head_file)
+	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
+vim_jsdoc: $(vim_jsdoc)
 
 gitflow: $(GITFLOW_ROOT)/.git
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install

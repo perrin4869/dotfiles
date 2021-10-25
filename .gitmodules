@@ -61,7 +61,7 @@
 [submodule "vim/bundle/vim-jsdoc"]
 	path = home/.vim/pack/default/start/vim-jsdoc
 	url = https://github.com/heavenshell/vim-jsdoc
-	ignore = untracked
+	ignore = dirty # https://github.com/heavenshell/vim-jsdoc/pull/119
 [submodule "vim/bundle/vim-exchange"]
 	path = home/.vim/pack/default/start/vim-exchange
 	url = https://github.com/tommcdo/vim-exchange
@@ -425,3 +425,6 @@
 [submodule "home/.vim/pack/default/start/vim-floaterm"]
 	path = home/.vim/pack/default/start/vim-floaterm
 	url = git@github.com:voldikss/vim-floaterm.git
+[submodule "deps/vscode-node-debug2"]
+	path = deps/vscode-node-debug2
+	url = https://github.com/microsoft/vscode-node-debug2.git

@@ -1,0 +1,1 @@
+../../../deps/vscode-node-debug2/out/src/nodeDebug.js

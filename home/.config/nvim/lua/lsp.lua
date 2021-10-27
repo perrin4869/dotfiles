@@ -58,7 +58,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>", opts)
 
   buf_set_keymap("n", "gt", "<cmd>TroubleToggle<cr>", opts)
-  buf_set_keymap("n", "<leader>d", "<cmd>Trouble lsp_document_diagnostics<cr>", opts)
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.resolved_capabilities.document_formatting then

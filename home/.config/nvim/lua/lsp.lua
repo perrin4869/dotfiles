@@ -35,11 +35,13 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
-  buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
-  buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
+  -- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
+  -- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
   -- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
-  -- buf_set_keymap('n', '<leader>ds', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
-  -- buf_set_keymap('n', '<leader>ws', [[<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>]], opts)
+  buf_set_keymap('n', '<leader>ds', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
+  buf_set_keymap('n', '<leader>ws', [[<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>]], opts)
+  -- https://github.com/nvim-telescope/telescope.nvim/issues/964
+  -- uses dynamic because most language servers return an empty list on an empty query
 
   buf_set_keymap('i', '<C-q>', '<cmd>lua require("lsp_signature").toggle_float_win()<CR>', opts)
 

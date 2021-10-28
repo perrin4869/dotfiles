@@ -116,7 +116,7 @@ require("trouble").setup {}
 
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-config.vimls.setup{}
+config.vimls.setup{on_attach=on_attach, capabilities=capabilities}
 config.tsserver.setup{on_attach=on_attach, capabilities=capabilities}
 config.ccls.setup{on_attach=on_attach, capabilities=capabilities}
 config.html.setup{on_attach=on_attach, capabilities=capabilities}
@@ -136,13 +136,20 @@ config.cssls.setup{
   }
 }
 config.jsonls.setup {
-    commands = {
-      Format = {
-        function()
-          vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line("$"),0})
-        end
-      }
+  on_attach=on_attach,
+  capabilities=capabilities,
+  commands = {
+    Format = {
+      function()
+        vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line("$"),0})
+      end
     }
+  },
+}
+config.sqlls.setup{
+  on_attach=on_attach,
+  capabilities=capabilities,
+  cmd={"sql-language-server", "up", "--method", "stdio"}
 }
 
 local metals_config = metals.bare_config()

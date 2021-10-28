@@ -33,3 +33,6 @@ doc/tags
 metals.sbt
 .bloop
 .bsp
+
+# sql
+.sqllsrc.json

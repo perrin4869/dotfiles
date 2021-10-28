@@ -24,7 +24,8 @@ The following language servers are setup in the neovim lsp config, and need to b
 		vscode-css-languageserver-bin \
 		vscode-html-languageserver-bin \
 		vscode-langservers-extracted \
-		vim-language-server
+		vim-language-server \
+		sql-language-server
 
 In order to build `spot`, [`libadwaita`](https://gitlab.gnome.org/GNOME/libadwaita) is necessary. This is not available on Slackware by default, it must be built from source for now.
 

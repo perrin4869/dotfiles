@@ -63,9 +63,6 @@ vim.fn.sign_define('DapBreakpoint', {text='🟥', texthl='', linehl='', numhl=''
 vim.fn.sign_define('DapBreakpointRejected', {text='🟦', texthl='', linehl='', numhl=''})
 vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''})
 
--- nvim-dap-virtual-text. Show virtual text for current frame
-vim.g.dap_virtual_text = true
-
 -- Mappings.
 local keymap = api.nvim_set_keymap
 local opts = { noremap=true, silent=true }
@@ -112,6 +109,8 @@ dap.listeners.after['event_terminated']['me'] = function()
   end
   keymap_restore = {}
 end
+
+require("nvim-dap-virtual-text").setup()
 
 -- nvim-dap-ui
 require("dapui").setup()

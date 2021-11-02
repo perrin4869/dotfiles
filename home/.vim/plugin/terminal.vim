@@ -1,5 +1,4 @@
-noremap  <silent> <leader>t :FloatermToggle<CR>
-noremap! <silent> <leader>t <Esc>:FloatermToggle<CR>
+nnoremap <silent> <leader>t :FloatermToggle<CR>
 tnoremap <silent> <leader>t <C-\><C-n>:FloatermToggle<CR>
 
 " vim-powered terminal in split window

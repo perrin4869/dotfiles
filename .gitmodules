@@ -110,10 +110,6 @@
 	path = home/.vim/pack/default/start/vim-markdown
 	url = https://github.com/tpope/vim-markdown
 	ignore = untracked
-[submodule "vim/bundle/vim-multiple-cursors"]
-	path = home/.vim/pack/default/start/vim-multiple-cursors
-	url = https://github.com/terryma/vim-multiple-cursors
-	ignore = untracked
 [submodule "vim/bundle/vimtex"]
 	path = home/.vim/pack/default/start/vimtex
 	url = https://github.com/lervag/vimtex
@@ -422,3 +418,6 @@
 [submodule "home/.vim/pack/default/start/exrc.vim"]
 	path = home/.vim/pack/default/start/exrc.vim
 	url = git@github.com:ii14/exrc.vim.git
+[submodule "home/.vim/pack/default/start/vim-visual-multi"]
+	path = home/.vim/pack/default/start/vim-visual-multi
+	url = git@github.com:mg979/vim-visual-multi.git

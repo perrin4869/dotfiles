@@ -424,3 +424,6 @@
 [submodule "deps/vscode-node-debug2"]
 	path = deps/vscode-node-debug2
 	url = https://github.com/microsoft/vscode-node-debug2.git
+[submodule "home/.local/share/nvim/site/pack/default/start/gitsigns.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/gitsigns.nvim
+	url = git@github.com:lewis6991/gitsigns.nvim.git

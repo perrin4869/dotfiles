@@ -45,6 +45,10 @@ fi
 
 [ -x $HOME/.layout.sh ] && $HOME/.layout.sh
 
+if [[ -d "~/.wallpaper" ]]; then
+  feh --bg-fill --randomize ~/.wallpaper/*
+fi
+
 BACKGROUND_VIDEO=~/.config/background.mkv
 
 if [[ -e $BACKGROUND_VIDEO ]]; then

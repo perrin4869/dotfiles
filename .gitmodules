@@ -10,10 +10,6 @@
 	path = home/.vim/pack/default/start/nerdtree.git
 	url = https://github.com/scrooloose/nerdtree.git
 	ignore = untracked
-[submodule "vim/bundle/tcomment_vim"]
-	path = home/.vim/pack/default/start/tcomment_vim
-	url = https://github.com/tomtom/tcomment_vim
-	ignore = untracked
 [submodule "vim/bundle/vim-repeat"]
 	path = home/.vim/pack/default/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
@@ -421,3 +417,9 @@
 [submodule "home/.vim/pack/default/start/vim-visual-multi"]
 	path = home/.vim/pack/default/start/vim-visual-multi
 	url = git@github.com:mg979/vim-visual-multi.git
+[submodule "home/.vim/pack/default/start/vim-commentary"]
+	path = home/.vim/pack/default/start/vim-commentary
+	url = git@github.com:tpope/vim-commentary.git
+[submodule "home/.local/share/nvim/site/pack/default/start/commented.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/commented.nvim
+	url = git@github.com:winston0410/commented.nvim.git

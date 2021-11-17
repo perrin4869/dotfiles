@@ -114,6 +114,8 @@ nmap <M-4> g$
 nmap <M-6> g^
 nmap <M-0> g^
 
+nnoremap <silent> g<Space> :b#<CR>
+
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> :noh<CR>
 

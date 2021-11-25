@@ -423,3 +423,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/commented.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/commented.nvim
 	url = git@github.com:winston0410/commented.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-neoclip"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-neoclip
+	url = https://github.com/AckslD/nvim-neoclip.lua

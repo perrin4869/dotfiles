@@ -9,6 +9,7 @@ require('telescope').setup {
 
 require('telescope').load_extension('fzf')
 require('telescope').load_extension('dap')
+require('telescope').load_extension('neoclip')
 
 local project_files = function()
   local opts = {} -- define here if you want to define something
@@ -35,7 +36,9 @@ keymap('n', 'gso', [[<cmd>lua require('telescope.builtin').tags{ only_current_bu
 keymap('n', 'gb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], opts)
 keymap('n', 'g?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], opts)
 
+keymap('n', 'gsc', [[<cmd>lua require('telescope').extensions.neoclip.default()<CR>]], opts)
+
 -- git
 keymap('n', 'gsb', [[<cmd>lua require('telescope.builtin').git_branches()<CR>]], opts)
-keymap('n', 'gsc', [[<cmd>lua require('telescope.builtin').git_commits()<CR>]], opts)
+keymap('n', 'gsg', [[<cmd>lua require('telescope.builtin').git_commits()<CR>]], opts)
 keymap('n', 'gss', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], opts)

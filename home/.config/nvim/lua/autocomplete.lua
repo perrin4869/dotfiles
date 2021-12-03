@@ -24,6 +24,7 @@ cmp.setup {
     { name = 'vsnip' },
     { name = 'buffer' },
     { name = 'path' },
+    { name = 'tmux' },
     { name = 'calc' },
     { name = 'emoji' },
     { name = 'zsh' },

@@ -13,7 +13,7 @@ endfunction
 
 " This is nicer than having virtual text
 " https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/
-autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({focusable = false})
+autocmd CursorHold * lua vim.diagnostic.open_float({focusable = false})
 
 " document highlighting
 hi def link LspReferenceText CursorLine

@@ -15,5 +15,7 @@ settings:
         <Ctrl+k>: completion-item-focus prev
       normal:
         <Ctrl+Alt+t>: set-cmd-text -s :tab-focus
+  content.autoplay:
+    global: false
   qt.highdpi:
     global: true

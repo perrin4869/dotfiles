@@ -420,3 +420,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/cmp-tmux"]
 	path = home/.local/share/nvim/site/pack/default/start/cmp-tmux
 	url = git@github.com:andersevenrud/cmp-tmux.git
+[submodule "home/.local/share/nvim/site/pack/default/start/gruvbox.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/gruvbox.nvim
+	url = https://github.com/ellisonleao/gruvbox.nvim

@@ -54,8 +54,8 @@ local on_attach = function(client, bufnr)
   end
 
   buf_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>", opts)
-  buf_set_keymap("n", "<leader>xw", "<cmd>Trouble lsp_workspace_diagnostics<cr>", opts)
-  buf_set_keymap("n", "<leader>xd", "<cmd>Trouble lsp_document_diagnostics<cr>", opts)
+  buf_set_keymap("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", opts)
+  buf_set_keymap("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", opts)
   buf_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>", opts)
   buf_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", opts)
   buf_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>", opts)

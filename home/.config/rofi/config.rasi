@@ -1,6 +1,6 @@
 configuration {
-  modi: [combi,"pass:rofi-pass-modi"];
-  combi-modi: [window, drun, pass, emoji, calc];
+  modi: "combi,pass:rofi-pass-modi";
+  combi-modi: "window,drun,pass,emoji,calc";
   show-icons: true;
 }
 

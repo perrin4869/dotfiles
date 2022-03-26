@@ -25,3 +25,6 @@ home/.sbt/1.0/*
 !home/.sbt/1.0/global.sbt
 
 home/.local/share/nvim/telescope_history
+
+# this thing is generated somehow
+home/.config/gtk-3.0/bookmarks

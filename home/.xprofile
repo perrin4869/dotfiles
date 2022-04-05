@@ -25,7 +25,7 @@ xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
 ibus-daemon --xim -d -r
-picom -b --config ~/.picom.conf $PICOM_VSYNC
+picom -b $PICOM_VSYNC
 setxkbmap -layout us -option compose:ralt
 
 # If autorandr-launcher is installed (presumably because udev was not) then daemonize

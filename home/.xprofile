@@ -5,10 +5,14 @@ export FILE="${FILE:-ranger}"
 export BROWSER="${BROWSER-firefox}"
 export EDITOR="${EDITOR-nvim}"
 
-export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails)
-export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus # makes ibus work with qutebrowser (xim fails)
-export GLFW_IM_MODULE=ibus # kitty
+export IM="${IM:-ibus}" # or fcitx support is blocked by https://groups.google.com/g/linux.debian.bugs.dist/c/cLsh_u-YMLU
+
+# xim -> X Input Method
+export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails, uses ibus xim emulation)
+export XMODIFIERS=@im=$IM
+export QT_IM_MODULE=$IM # makes ibus work with qutebrowser (xim fails)
+# kitty specific, only ibus is supported https://github.com/kovidgoyal/kitty/blob/6179cfc6703af1b0682fdd14829280b8a228c167/glfw/ibus_glfw.c#L286
+export GLFW_IM_MODULE=ibus 
 
 if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
   export $(dbus-launch --exit-with-x11)
@@ -24,7 +28,8 @@ dunst &
 xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
-ibus-daemon --xim -d -r
+[[ "$XIM" == "ibus" ]] && ibus-daemon -d -r --xim
+[[ "$XIM" == "fcitx" ]] && fcitx5 -d -r
 picom -b $PICOM_VSYNC
 setxkbmap -layout us -option compose:ralt
 

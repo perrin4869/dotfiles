@@ -1,6 +1,5 @@
 local config = require('lspconfig')
 local status = require('lsp-status')
-local signature = require('lsp_signature')
 local metals = require('metals')
 
 local autoformat_fts = {"scala"}
@@ -42,8 +41,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<leader>ws', [[<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>]], opts)
   -- https://github.com/nvim-telescope/telescope.nvim/issues/964
   -- uses dynamic because most language servers return an empty list on an empty query
-
-  buf_set_keymap('i', '<C-q>', '<cmd>lua require("lsp_signature").toggle_float_win()<CR>', opts)
 
   if client ~= nil and client.resolved_capabilities.code_lens then
     vim.cmd([[aug lsp_codelens]])
@@ -92,13 +89,6 @@ local on_attach = function(client, bufnr)
   end
 
   status.on_attach(client)
-  signature.on_attach({
-    floating_window_above_first = true, -- do not hide pum, etc
-    bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = {
-      border = "shadow"
-    },
-  }, bufnr)
 end
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(

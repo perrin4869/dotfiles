@@ -8,7 +8,7 @@ export EDITOR="${EDITOR-nvim}"
 export IM="${IM:-ibus}" # or fcitx support is blocked by https://groups.google.com/g/linux.debian.bugs.dist/c/cLsh_u-YMLU
 
 # xim -> X Input Method
-export GTK_IM_MODULE=xim # makes ibus work with chromium/chrome (ibus fails, uses ibus xim emulation)
+export GTK_IM_MODULE=${IM/ibus/xim} # makes ibus work with chromium/chrome (ibus fails, uses ibus xim emulation), and keeps fcitx correct
 export XMODIFIERS=@im=$IM
 export QT_IM_MODULE=$IM # makes ibus work with qutebrowser (xim fails)
 # kitty specific, only ibus is supported https://github.com/kovidgoyal/kitty/blob/6179cfc6703af1b0682fdd14829280b8a228c167/glfw/ibus_glfw.c#L286
@@ -28,8 +28,8 @@ dunst &
 xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
-[[ "$XIM" == "ibus" ]] && ibus-daemon -d -r --xim
-[[ "$XIM" == "fcitx" ]] && fcitx5 -d -r
+[[ "$IM" == "ibus" ]] && ibus-daemon -d -r --xim
+[[ "$IM" == "fcitx" ]] && fcitx5 -d -r
 picom -b $PICOM_VSYNC
 setxkbmap -layout us -option compose:ralt
 

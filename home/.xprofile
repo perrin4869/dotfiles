@@ -22,6 +22,8 @@ fi
 PICOM_VSYNC=""
 [[ -n $SOFTWARE_VSYNC ]] && PICOM_VSYNC=--vsync
 
+FCITX=$([[ -x "$(command -v fcitx5)" ]] && echo fcitx5 || echo fcitx)
+
 sxhkd &
 blueman-applet &
 dunst &
@@ -29,7 +31,7 @@ xscreensaver -no-splash &
 udiskie --tray &
 redshift-gtk &
 [[ "$IM" == "ibus" ]] && ibus-daemon -d -r --xim
-[[ "$IM" == "fcitx" ]] && fcitx5 -d -r
+[[ "$IM" == "fcitx" ]] && $FCITX -d -r
 picom -b $PICOM_VSYNC
 setxkbmap -layout us -option compose:ralt
 

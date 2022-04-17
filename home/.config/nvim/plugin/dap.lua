@@ -1,4 +1,4 @@
-local dap = require("dap")
+local dap = require'dap'
 local api = vim.api
 
 dap.adapters.node2 = {
@@ -66,19 +66,23 @@ vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''}
 -- Mappings.
 local opts = { silent=true }
 
-vim.keymap.set('n', '<leader>dh', require'dap'.toggle_breakpoint, opts)
-vim.keymap.set('n', '<leader>dH', function() require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
-vim.keymap.set('n', '<c-k>', require'dap'.step_out, opts)
-vim.keymap.set('n', '<c-l>', require'dap'.step_into, opts)
-vim.keymap.set('n', '<c-j>', require'dap'.step_over, opts)
-vim.keymap.set('n', '<c-h>', require'dap'.continue, opts)
-vim.keymap.set('n', '<leader>dk', require'dap'.up, opts)
-vim.keymap.set('n', '<leader>dj', require'dap'.down, opts)
-vim.keymap.set('n', '<leader>dd', function() require'dap'.disconnect({ terminateDebuggee = true }); require'dap'.close() end, opts)
-vim.keymap.set('n', '<leader>dr', function() require'dap'.repl.toggle({}, 'vsplit'); api.nvim_command('wincmd l') end, opts)
-vim.keymap.set('n', '<leader>di', function() require'dap.ui.widgets'.hover(require('dap.utils').get_visual_selection_text()) end, opts)
-vim.keymap.set('n', '<leader>d?', function() require'dap.ui.widgets'.cursor_float(require'dap.ui.widgets'.scopes) end, opts)
-vim.keymap.set('n', '<leader>de', function() require'dap'.set_exception_breakpoints({'all'}) end, opts)
+vim.keymap.set('n', '<leader>dh', dap.toggle_breakpoint, opts)
+vim.keymap.set('n', '<leader>dH', function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
+vim.keymap.set('n', '<c-k>', dap.step_out, opts)
+vim.keymap.set('n', '<c-l>', dap.step_into, opts)
+vim.keymap.set('n', '<c-j>', dap.step_over, opts)
+vim.keymap.set('n', '<c-h>', dap.continue, opts)
+vim.keymap.set('n', '<leader>dk', dap.up, opts)
+vim.keymap.set('n', '<leader>dj', dap.down, opts)
+vim.keymap.set('n', '<leader>dd', function() dap.disconnect({ terminateDebuggee = true }); dap.close() end, opts)
+vim.keymap.set('n', '<leader>dr', function() dap.repl.toggle({}, 'vsplit'); api.nvim_command('wincmd l') end, opts)
+vim.keymap.set('n', '<leader>de', function() dap.set_exception_breakpoints({'all'}) end, opts)
+vim.keymap.set('n', '<leader>di', function()
+  require'dap.ui.widgets'.hover(require('dap.utils').get_visual_selection_text())
+end, opts)
+vim.keymap.set('n', '<leader>d?', function()
+  require'dap.ui.widgets'.cursor_float(require'dap.ui.widgets'.scopes)
+end, opts)
 
 -- Map K to hover while session is active.
 local keymap_restore = {}

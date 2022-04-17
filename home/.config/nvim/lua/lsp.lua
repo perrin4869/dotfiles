@@ -4,7 +4,7 @@ local metals = require('metals')
 
 local autoformat_fts = {"scala"}
 
-function formatting_supported(client)
+local formatting_supported = function (client)
   return client.resolved_capabilities.document_formatting or
     client.resolved_capabilities.document_range_formatting
 end
@@ -101,6 +101,7 @@ local on_attach = function(client, bufnr)
   status.on_attach(client)
 end
 
+-- luacheck: push ignore 122
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     underline = true,
@@ -109,6 +110,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     update_in_insert = false,
   }
 )
+-- luacheck: pop
 
 status.register_progress()
 

@@ -29,6 +29,11 @@ The following language servers are setup in the neovim lsp config, and need to b
 
 In order to build `spot`, [`libadwaita`](https://gitlab.gnome.org/GNOME/libadwaita) is necessary. This is not available on Slackware by default, it must be built from source for now.
 
+Install `luacheck`:
+
+	luarocks install luacheck --local
+	luarocks install lanes --local
+
 Other 3rd party dependencies to be installed by the OS dependency manager:
 - `i3-gaps`
 - `i3-status`
@@ -45,6 +50,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `udiskie`
 - `redshift-gtk`
 - `ibus`
+- `fcitx5`
 - `picom`
 - `maim`
 - `playerctl`
@@ -56,6 +62,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `ripgrep`
 - `bat`
 - `fd`
+- `luarocks`
 
 In Slackware:
 - `sun-gtk`

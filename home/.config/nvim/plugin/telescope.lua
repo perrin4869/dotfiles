@@ -20,7 +20,7 @@ end
 -- Mappings.
 local opts = { silent=true }
 
-vim.keymap.set('n', '<C-p>', require('utils').project_files, opts)
+vim.keymap.set('n', '<C-p>', project_files, opts)
 
 -- nvim-lua/kickstart.nvim uses <leader>s, but it conflicts with hop.nvim
 -- so here the prefix is gs

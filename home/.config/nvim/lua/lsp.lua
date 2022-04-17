@@ -10,68 +10,76 @@ function formatting_supported(client)
 end
 
 local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
-  local opts = { noremap=true, silent=true }
-  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<leader>rn', "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-  buf_set_keymap('n', '<leader>ca', "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
-  buf_set_keymap('n', 'gr', "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  local opts = { silent=true, buffer=bufnr }
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+  vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+  vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+  vim.keymap.set('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
+  vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+  vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+  vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
   -- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
   -- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
   -- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
-  buf_set_keymap('n', '<leader>ds', [[<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>]], opts)
-  buf_set_keymap('n', '<leader>ws', [[<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>]], opts)
+  vim.keymap.set('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, opts)
+  vim.keymap.set('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, opts)
   -- https://github.com/nvim-telescope/telescope.nvim/issues/964
   -- uses dynamic because most language servers return an empty list on an empty query
 
   if client ~= nil and client.resolved_capabilities.code_lens then
-    vim.cmd([[aug lsp_codelens]])
-    vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
-    vim.cmd([[autocmd BufEnter,CursorHold,InsertLeave <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.codelens.refresh()]])
-    vim.cmd([[aug END]])
-    buf_set_keymap("n", "<leader>cl", "<Cmd>lua vim.lsp.codelens.run()<CR>", opts)
+    vim.api.nvim_create_augroup("lsp_codelens",  { clear = false })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_codelens" })
+    vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "InsertLeave"}, {
+      group = "lsp_codelens",
+      buffer = bufnr,
+      callback = vim.lsp.codelens.refresh
+    })
+
+    vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
   end
 
-  buf_set_keymap("n", "<leader>xx", "<cmd>Trouble<cr>", opts)
-  buf_set_keymap("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", opts)
-  buf_set_keymap("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", opts)
-  buf_set_keymap("n", "<leader>xl", "<cmd>Trouble loclist<cr>", opts)
-  buf_set_keymap("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", opts)
-  buf_set_keymap("n", "gR", "<cmd>Trouble lsp_references<cr>", opts)
+  vim.keymap.set("n", "<leader>xx", require'trouble'.open, opts)
+  vim.keymap.set("n", "<leader>xw", function() require'trouble'.open('workspace_diagnostics') end, opts)
+  vim.keymap.set("n", "<leader>xd", function() require'trouble'.open('document_diagnostics') end, opts)
+  vim.keymap.set("n", "<leader>xl", function() require'trouble'.open('loclist') end, opts)
+  vim.keymap.set("n", "<leader>xq", function() require'trouble'.open('quickfix') end, opts)
+  vim.keymap.set("n", "gR", function() require'trouble'.open('lsp_references') end, opts)
 
-  buf_set_keymap("n", "gt", "<cmd>TroubleToggle<cr>", opts)
+  vim.keymap.set("n", "gt", require'trouble'.toggle, opts)
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.resolved_capabilities.document_formatting then
-    buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, opts)
   elseif client ~= nil and client.resolved_capabilities.document_range_formatting then
-    buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, opts)
   end
 
   if client ~= nil and client.resolved_capabilities.document_highlight then
-    vim.cmd([[aug lsp_document_highlight]])
-    vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
-    vim.cmd([[autocmd CursorHold,CursorHoldI <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.document_highlight()]])
-    vim.cmd([[autocmd CursorMoved <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.clear_references()]])
-    vim.cmd([[aug END]])
+    vim.api.nvim_create_augroup("lsp_document_highlight",  { clear = false })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_document_highlight" })
+    vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
+      group = "lsp_document_highlight",
+      buffer = bufnr,
+      callback = vim.lsp.buf.document_highlight
+    })
+    vim.api.nvim_create_autocmd("CursorMoved", {
+      group = "lsp_document_highlight",
+      buffer = bufnr,
+      callback = vim.lsp.buf.clear_references
+    })
   end
 
   -- Format on save
@@ -81,11 +89,13 @@ local on_attach = function(client, bufnr)
     formatting_supported(client) and
     vim.tbl_contains(autoformat_fts, vim.api.nvim_buf_get_option(bufnr, "filetype"))
   then
-    vim.cmd([[aug lsp_autoformat]])
-    vim.cmd([[autocmd! * <buffer=]]..tostring(bufnr)..[[>]])
-    -- 5000 is the timeout - metals takes a few seconds to format
-    vim.cmd([[autocmd BufWritePre <buffer=]]..tostring(bufnr)..[[> lua vim.lsp.buf.formatting_sync(nil, 5000)]])
-    vim.cmd([[aug END]])
+    vim.api.nvim_create_augroup("lsp_autoformat",  { clear = false })
+    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_autoformat" })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      group = "lsp_autoformat",
+      buffer = bufnr,
+      callback = function() vim.lsp.buf.formatting_sync(nil, 5000) end
+    })
   end
 
   status.on_attach(client)

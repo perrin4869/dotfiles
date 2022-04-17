@@ -64,22 +64,21 @@ vim.fn.sign_define('DapBreakpointRejected', {text='🟦', texthl='', linehl='', 
 vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''})
 
 -- Mappings.
-local keymap = api.nvim_set_keymap
-local opts = { noremap=true, silent=true }
+local opts = { silent=true }
 
-keymap('n', '<leader>dh', ':lua require"dap".toggle_breakpoint()<CR>', opts)
-keymap('n', '<leader>dH', ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", opts)
-keymap('n', '<c-k>', ':lua require"dap".step_out()<CR>', opts)
-keymap('n', '<c-l>', ':lua require"dap".step_into()<CR>', opts)
-keymap('n', '<c-j>', ':lua require"dap".step_over()<CR>', opts)
-keymap('n', '<c-h>', ':lua require"dap".continue()<CR>', opts)
-keymap('n', '<leader>dk', ':lua require"dap".up()<CR>', opts)
-keymap('n', '<leader>dj', ':lua require"dap".down()<CR>', opts)
-keymap('n', '<leader>dd', ':lua require"dap".disconnect({ terminateDebuggee = true });require"dap".close()<CR>', opts)
-keymap('n', '<leader>dr', ':lua require"dap".repl.toggle({}, "vsplit")<CR><C-w>l', opts)
-keymap('n', '<leader>di', ':lua require"dap.ui.variables".visual_hover()<CR>', opts)
-keymap('n', '<leader>d?', ':lua require"dap.ui.variables".scopes()<CR>', opts)
-keymap('n', '<leader>de', ':lua require"dap".set_exception_breakpoints({"all"})<CR>', opts)
+vim.keymap.set('n', '<leader>dh', require'dap'.toggle_breakpoint, opts)
+vim.keymap.set('n', '<leader>dH', function() require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
+vim.keymap.set('n', '<c-k>', require'dap'.step_out, opts)
+vim.keymap.set('n', '<c-l>', require'dap'.step_into, opts)
+vim.keymap.set('n', '<c-j>', require'dap'.step_over, opts)
+vim.keymap.set('n', '<c-h>', require'dap'.continue, opts)
+vim.keymap.set('n', '<leader>dk', require'dap'.up, opts)
+vim.keymap.set('n', '<leader>dj', require'dap'.down, opts)
+vim.keymap.set('n', '<leader>dd', function() require'dap'.disconnect({ terminateDebuggee = true }); require'dap'.close() end, opts)
+vim.keymap.set('n', '<leader>dr', function() require'dap'.repl.toggle({}, 'vsplit'); api.nvim_command('wincmd l') end, opts)
+vim.keymap.set('n', '<leader>di', function() require'dap.ui.widgets'.hover(require('dap.utils').get_visual_selection_text()) end, opts)
+vim.keymap.set('n', '<leader>d?', function() require'dap.ui.widgets'.cursor_float(require'dap.ui.widgets'.scopes) end, opts)
+vim.keymap.set('n', '<leader>de', function() require'dap'.set_exception_breakpoints({'all'}) end, opts)
 
 -- Map K to hover while session is active.
 local keymap_restore = {}
@@ -93,8 +92,8 @@ dap.listeners.after['event_initialized']['me'] = function()
       end
     end
   end
-  api.nvim_set_keymap(
-    'n', 'K', '<Cmd>lua require("dap.ui.variables").hover()<CR>', { silent = true })
+
+  vim.keymap.set('n', 'K', require'dap.ui.widgets'.hover, { silent = true })
 end
 
 dap.listeners.after['event_terminated']['me'] = function()
@@ -110,14 +109,14 @@ dap.listeners.after['event_terminated']['me'] = function()
   keymap_restore = {}
 end
 
-require("nvim-dap-virtual-text").setup()
+require('nvim-dap-virtual-text').setup()
 
 -- nvim-dap-ui
-require("dapui").setup()
-keymap('n', '<leader>du', '<cmd>lua require"dapui".toggle()<CR>', opts)
+require('dapui').setup()
+vim.keymap.set('n', '<leader>du', require'dapui'.toggle, opts)
 
 -- telescope-dap
-keymap('n', '<leader>dc', '<cmd>lua require"telescope".extensions.dap.commands{}<CR>', opts)
-keymap('n', '<leader>db', '<cmd>lua require"telescope".extensions.dap.list_breakpoints{}<CR>', opts)
-keymap('n', '<leader>dv', '<cmd>lua require"telescope".extensions.dap.variables{}<CR>', opts)
-keymap('n', '<leader>df', '<cmd>lua require"telescope".extensions.dap.frames{}<CR>', opts)
+vim.keymap.set('n', '<leader>dc', function() require'telescope'.extensions.dap.commands{} end, opts)
+vim.keymap.set('n', '<leader>db', function() require'telescope'.extensions.dap.list_breakpoints{} end, opts)
+vim.keymap.set('n', '<leader>dv', function() require'telescope'.extensions.dap.variables{} end, opts)
+vim.keymap.set('n', '<leader>df', function() require'telescope'.extensions.dap.frames{} end, opts)

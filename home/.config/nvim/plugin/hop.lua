@@ -1,5 +1,5 @@
 require'hop'.setup()
 
-local opts = { noremap=true, silent=true }
-vim.api.nvim_set_keymap('n', '<leader>s', "<cmd>lua require'hop'.hint_char1()<cr>", opts)
-vim.api.nvim_set_keymap('n', '<leader>S', "<cmd>lua require'hop'.hint_char2()<cr>", opts)
+local opts = { silent=true }
+vim.keymap.set('n', '<leader>s', require'hop'.hint_char1, opts)
+vim.keymap.set('n', '<leader>S', require'hop'.hint_char2, opts)

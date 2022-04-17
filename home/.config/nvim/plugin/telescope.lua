@@ -18,27 +18,26 @@ local project_files = function()
 end
 
 -- Mappings.
-local keymap = vim.api.nvim_set_keymap
-local opts = { noremap=true, silent=true }
+local opts = { silent=true }
 
-keymap('n', '<C-p>', [[<cmd>lua require('utils').project_files()<CR>]], opts)
+vim.keymap.set('n', '<C-p>', require('utils').project_files, opts)
 
 -- nvim-lua/kickstart.nvim uses <leader>s, but it conflicts with hop.nvim
 -- so here the prefix is gs
-keymap('n', 'gsf', [[<cmd>lua require('telescope.builtin').find_files()<CR>]], opts)
-keymap('n', 'gsj', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], opts)
-keymap('n', 'gsh', [[<cmd>lua require('telescope.builtin').help_tags()<CR>]], opts)
-keymap('n', 'gst', [[<cmd>lua require('telescope.builtin').tags()<CR>]], opts)
-keymap('n', 'gsd', [[<cmd>lua require('telescope.builtin').grep_string()<CR>]], opts)
-keymap('n', 'gsp', [[<cmd>lua require('telescope.builtin').live_grep()<CR>]], opts)
-keymap('n', 'gsk', [[<cmd>lua require('telescope.builtin').keymaps()<CR>]], opts)
-keymap('n', 'gso', [[<cmd>lua require('telescope.builtin').tags{ only_current_buffer = true }<CR>]], opts)
-keymap('n', 'gb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], opts)
-keymap('n', 'g?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], opts)
+vim.keymap.set('n', 'gsf', require('telescope.builtin').find_files, opts)
+vim.keymap.set('n', 'gsj', require('telescope.builtin').current_buffer_fuzzy_find, opts)
+vim.keymap.set('n', 'gsh', require('telescope.builtin').help_tags, opts)
+vim.keymap.set('n', 'gst', require('telescope.builtin').tags, opts)
+vim.keymap.set('n', 'gsd', require('telescope.builtin').grep_string, opts)
+vim.keymap.set('n', 'gsp', require('telescope.builtin').live_grep, opts)
+vim.keymap.set('n', 'gsk', require('telescope.builtin').keymaps, opts)
+vim.keymap.set('n', 'gso', function() require('telescope.builtin').tags{ only_current_buffer = true } end, opts)
+vim.keymap.set('n', 'gb', require('telescope.builtin').buffers, opts)
+vim.keymap.set('n', 'g?', require('telescope.builtin').oldfiles, opts)
 
-keymap('n', 'gsc', [[<cmd>lua require('telescope').extensions.neoclip.default()<CR>]], opts)
+vim.keymap.set('n', 'gsc', require('telescope').extensions.neoclip.default, opts)
 
 -- git
-keymap('n', 'gsb', [[<cmd>lua require('telescope.builtin').git_branches()<CR>]], opts)
-keymap('n', 'gsg', [[<cmd>lua require('telescope.builtin').git_commits()<CR>]], opts)
-keymap('n', 'gss', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], opts)
+vim.keymap.set('n', 'gsb', require('telescope.builtin').git_branches, opts)
+vim.keymap.set('n', 'gsg', require('telescope.builtin').git_commits, opts)
+vim.keymap.set('n', 'gss', require('telescope.builtin').git_status, opts)

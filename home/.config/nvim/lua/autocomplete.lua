@@ -15,7 +15,7 @@ cmp.setup {
     ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
   }),
   formatting = {
-    format = lspkind.cmp_format({with_text = false})
+    format = lspkind.cmp_format({ mode = 'symbol_text' })
   },
   sources = {
     { name = 'nvim_lsp' },

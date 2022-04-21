@@ -21,7 +21,7 @@ VSCODE_NODE_DEBUG2_ROOT = $(DEPS)/vscode-node-debug2
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
-VIM_JSDOC_ROOT = ${HOME}/.vim/pack/default/start/vim-jsdoc
+VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 COC_ROOT = ./home/.config/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)

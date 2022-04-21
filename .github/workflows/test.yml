@@ -7,6 +7,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: deps
+        run: |
+          apt-get update
+          apt-get install libmpv-dev libglib2.0-dev
       - uses: actions/checkout@v3
         with:
           submodules: recursive
@@ -16,10 +20,6 @@ jobs:
         run: luarocks install luacheck
       - name: lint
         run: luacheck home
-      - name: deps
-        run: |
-          apt-get update
-          apt-get install libmpv-dev libglib2.0-dev
       - name: build
         run: make
       - name: install

@@ -14,3 +14,7 @@ jobs:
         run: luarocks install luacheck
       - name: lint
         run: luacheck home
+      - name: build
+        run: make
+      - name: install
+        run: make install

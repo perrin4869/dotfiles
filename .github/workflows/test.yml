@@ -27,7 +27,7 @@ jobs:
       - name: deps - node.js # various dependencies
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 16.x
       - name: build
         run: make
       - name: install

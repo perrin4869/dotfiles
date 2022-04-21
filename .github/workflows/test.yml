@@ -16,6 +16,8 @@ jobs:
         run: luarocks install luacheck
       - name: lint
         run: luacheck home
+      - name: deps
+        run: apt-get install libglib2.0-dev
       - name: build
         run: make
       - name: install

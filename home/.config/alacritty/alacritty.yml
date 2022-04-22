@@ -3,7 +3,7 @@ import:
 
 font:
   normal:
-    family: MesloLGS Nerd Font
+    family: Meslo LG S
   size: 10.0
 
 background_opacity: 0.8

@@ -13,6 +13,7 @@ DCONF = ./dconf
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
+FIRACODE_ROOT = $(DEPS)/FiraCode
 SPOT_ROOT = $(DEPS)/spot
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
@@ -67,6 +68,14 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
+
+firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
+									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
+									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
+$(eval $(call git_submodule,FiraCode,deps/FiraCode,$(FIRACODE_ROOT)))
+$(firacode_target): $(firacode_head_file)
+	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
+firacode: $(firacode_target)
 
 spot_target = $(PREFIX)/bin/spot
 $(eval $(call git_submodule,spot,deps/spot,$(SPOT_ROOT)))

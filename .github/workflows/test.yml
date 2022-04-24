@@ -19,7 +19,7 @@ jobs:
       - name: deps
         run: |
           sudo apt update
-          sudo apt install libmpv-dev libglib2.0-dev stow
+          sudo apt install libmpv-dev libglib2.0-dev stow dconf
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:

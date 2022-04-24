@@ -2,6 +2,8 @@ XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
 
+ENABLE_SPOT ?= y # cannot build in environments without libadwaita
+
 PYTHON := python3
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
 
@@ -80,9 +82,11 @@ firacode: $(firacode_target)
 spot_target = $(PREFIX)/bin/spot
 $(eval $(call git_submodule,spot,deps/spot,$(SPOT_ROOT)))
 $(spot_target): $(spot_head_file)
+ifeq ($(ENABLE_SPOT),y)
 	cd $(SPOT_ROOT) && \
 		meson target -Dbuildtype=release -Doffline=false --prefix=$(PREFIX) && \
 		ninja install -C target
+endif
 spot: $(spot_target)
 
 fzf = $(FZF_ROOT)/bin/fzf

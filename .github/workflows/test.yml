@@ -31,6 +31,8 @@ jobs:
       - name: build
         run: make
       - name: install
-        run: make install
+        run: |
+          export $(dbus-launch --exit-with-x11) # dconf required dbus
+          make install
         env:
           ENABLE_SPOT: f

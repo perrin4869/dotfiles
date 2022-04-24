@@ -33,4 +33,4 @@ jobs:
       - name: install
         run: make install
         env:
-          ENABLE_SPOT=f
+          ENABLE_SPOT: f

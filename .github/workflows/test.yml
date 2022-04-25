@@ -19,7 +19,9 @@ jobs:
       - name: deps
         run: |
           sudo apt update
-          sudo apt install libmpv-dev libglib2.0-dev stow dbus-x11 dconf-cli
+          sudo apt install stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli
+          # libglib2.0-dev libmpv-dev - mpv-mpris
+          # dbus-x11 dconf-cli - ibus
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:
@@ -33,7 +35,6 @@ jobs:
       - name: install
         run: |
           export $(dbus-launch) # dconf required dbus
-          env
           make install
         env:
           ENABLE_SPOT: f

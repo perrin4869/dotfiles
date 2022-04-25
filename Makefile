@@ -163,4 +163,4 @@ fonts: home
 
 install: home fonts spot gitflow powerline grip dconf
 
-.PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_node_debug2 telescope-fzf-native spot firacode grip dirs submodules dconf home fonts

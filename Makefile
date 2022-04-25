@@ -2,6 +2,8 @@ XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
 
+ENABLE_SPOT ?= y # cannot build in environments without libadwaita
+
 PYTHON := python3
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
 
@@ -21,9 +23,9 @@ GITFLOW_ROOT = $(DEPS)/gitflow
 VSCODE_NODE_DEBUG2_ROOT = $(DEPS)/vscode-node-debug2
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
-TELESCOPE_FZF_NATIVE_ROOT = $(XDG_DATA_HOME)/nvim/site/pack/default/start/telescope-fzf-native.nvim
-VIM_JSDOC_ROOT = ${HOME}/.vim/pack/default/start/vim-jsdoc
-COC_ROOT = $(XDG_CONFIG_HOME)/coc
+TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
+VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
+COC_ROOT = ./home/.config/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
@@ -80,9 +82,11 @@ firacode: $(firacode_target)
 spot_target = $(PREFIX)/bin/spot
 $(eval $(call git_submodule,spot,deps/spot,$(SPOT_ROOT)))
 $(spot_target): $(spot_head_file)
+ifeq ($(ENABLE_SPOT),y)
 	cd $(SPOT_ROOT) && \
 		meson target -Dbuildtype=release -Doffline=false --prefix=$(PREFIX) && \
 		ninja install -C target
+endif
 spot: $(spot_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
@@ -159,4 +163,4 @@ fonts: home
 
 install: home fonts spot gitflow powerline grip dconf
 
-.PHONY: install coc fzf gitflow mpv-mpris xwinwrap ccls powerline grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_node_debug2 telescope-fzf-native spot firacode grip dirs submodules dconf home fonts

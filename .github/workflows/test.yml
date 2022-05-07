@@ -19,10 +19,10 @@ jobs:
       - name: deps
         run: |
           sudo apt update
-          sudo apt install stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli meson ninja-build libadwaita-1-dev alsa-lib
+          sudo apt install stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli meson ninja-build libadwaita-1-dev libasound2
           # libglib2.0-dev libmpv-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
-          # meson ninja-build libadwaita-1-dev alsa-lib - spot
+          # meson ninja-build libadwaita-1-dev libasound2 - spot
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:

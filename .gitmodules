@@ -426,3 +426,6 @@
 [submodule "deps/FiraCode"]
 	path = deps/FiraCode
 	url = git@github.com:tonsky/FiraCode.git
+[submodule "deps/eslint_d"]
+	path = deps/eslint_d
+	url = git@github.com:mantoni/eslint_d.js.git

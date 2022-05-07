@@ -115,7 +115,8 @@ coc: $(coc)
 vscode_node_debug2 = $(VSCODE_NODE_DEBUG2_ROOT)/out/src/nodeDebug.js
 $(eval $(call git_submodule,vscode_node_debug2,deps/vscode-node-debug2,$(VSCODE_NODE_DEBUG2_ROOT)))
 $(vscode_node_debug2): $(vscode_node_debug2_head_file)
-	cd $(VSCODE_NODE_DEBUG2_ROOT) && npm ci && gulp build
+	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) ci
+	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) run build
 vscode_node_debug2: $(vscode_node_debug2)
 
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre

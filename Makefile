@@ -18,6 +18,7 @@ SPOT_ROOT = $(DEPS)/spot
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
+ESLINT_D_ROOT = $(DEPS)/eslint_d
 VSCODE_NODE_DEBUG2_ROOT = $(DEPS)/vscode-node-debug2
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
@@ -40,7 +41,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_node_debug2 vim_jsdoc
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_node_debug2 vim_jsdoc eslint_d
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -118,6 +119,12 @@ $(vscode_node_debug2): $(vscode_node_debug2_head_file)
 	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) ci
 	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) run build
 vscode_node_debug2: $(vscode_node_debug2)
+
+eslint_d = $(ESLINT_D_ROOT)/node_modules
+$(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
+$(eslint_d): $(eslint_d_head_file)
+	npm --prefix $(ESLINT_D_ROOT) ci --production --ignore-scripts
+eslint_d: $(eslint_d)
 
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,vim/bundle/vim-jsdoc,$(VIM_JSDOC_ROOT)))

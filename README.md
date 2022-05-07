@@ -14,10 +14,6 @@ make
 make install
 ```
 
-[ale](https://github.com/dense-analysis/ale) is configured to use [eslint\_d](https://www.npmjs.com/package/eslint_d), so you need to install that globally to do javascript/typescript development:
-
-	npm install -g eslint_d
-
 The following language servers are setup in the neovim lsp config, and need to be installed in order to be used:
 
 	npm install -g typescript typescript-language-server \

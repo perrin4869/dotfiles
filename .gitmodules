@@ -435,3 +435,6 @@
 [submodule "home/.config/ranger/plugins/devicons2"]
 	path = home/.config/ranger/plugins/devicons2
 	url = git@github.com:cdump/ranger-devicons2.git
+[submodule "home/.config/ranger/plugins/fzf"]
+	path = home/.config/ranger/plugins/fzf
+	url = git@github.com:cjbassi/ranger-fzf.git

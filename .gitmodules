@@ -432,3 +432,6 @@
 [submodule "home/.config/rofi/modi/rofi-pass-modi"]
 	path = home/.config/rofi/modi/rofi-pass-modi
 	url = git@github.com:RoshBeed/rofi-pass-modi.git
+[submodule "home/.config/ranger/plugins/devicons2"]
+	path = home/.config/ranger/plugins/devicons2
+	url = git@github.com:cdump/ranger-devicons2.git

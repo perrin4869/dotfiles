@@ -1,0 +1,20 @@
+version: 2
+updates:
+    - package-ecosystem: github-actions
+      directory: /
+      schedule:
+          # Check for updates to GitHub Actions every weekday
+          interval: daily
+      reviewers:
+          - perrin4869
+      assignees:
+          - perrin4869
+    - package-ecosystem: gitsubmodule
+      directory: /
+      schedule:
+          # Check for updates to GitHub Actions every weekday
+          interval: daily
+      reviewers:
+          - perrin4869
+      assignees:
+          - perrin4869

@@ -429,3 +429,6 @@
 [submodule "deps/eslint_d"]
 	path = deps/eslint_d
 	url = git@github.com:mantoni/eslint_d.js.git
+[submodule "home/.config/rofi/modi/rofi-pass-modi"]
+	path = home/.config/rofi/modi/rofi-pass-modi
+	url = git@github.com:RoshBeed/rofi-pass-modi.git

@@ -31,5 +31,7 @@ home/.config/gtk-3.0/bookmarks
 
 home/.config/qutebrowser/quickmarks
 home/.config/qutebrowser/qsettings
+home/.local/share/qutebrowser/
+!home/.local/share/qutebrowser/greasemonkey
 
 home/.config/fcitx5/conf/

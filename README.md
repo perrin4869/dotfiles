@@ -16,7 +16,7 @@ make install
 
 The following language servers are setup in the neovim lsp config, and need to be installed in order to be used:
 
-	npm install -g typescript typescript-language-server \
+	npm install --location=global typescript typescript-language-server \
 		vscode-css-languageserver-bin \
 		vscode-html-languageserver-bin \
 		vscode-langservers-extracted \

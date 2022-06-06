@@ -117,7 +117,7 @@ vscode_node_debug2 = $(VSCODE_NODE_DEBUG2_ROOT)/out/src/nodeDebug.js
 $(eval $(call git_submodule,vscode_node_debug2,deps/vscode-node-debug2,$(VSCODE_NODE_DEBUG2_ROOT)))
 $(vscode_node_debug2): $(vscode_node_debug2_head_file)
 	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) ci
-	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) run build
+	NODE_OPTIONS=--no-experimental-fetch npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) run build
 vscode_node_debug2: $(vscode_node_debug2)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules

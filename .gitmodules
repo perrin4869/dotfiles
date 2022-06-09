@@ -174,10 +174,6 @@
 	path = deps/urxvt-perls
 	url = https://github.com/muennich/urxvt-perls
 	ignore = untracked
-[submodule "vim/bundle/typescript-vim"]
-	path = home/.vim/pack/default/start/typescript-vim
-	url = https://github.com/leafgarland/typescript-vim
-	ignore = untracked
 [submodule "gitflow"]
 	path = deps/gitflow
 	url = https://github.com/petervanderdoes/gitflow-avh
@@ -438,3 +434,6 @@
 [submodule "home/.config/ranger/plugins/fzf"]
 	path = home/.config/ranger/plugins/fzf
 	url = git@github.com:cjbassi/ranger-fzf.git
+[submodule "home/.vim/pack/default/start/yats.vim"]
+	path = home/.vim/pack/default/start/yats.vim
+	url = git@github.com:HerringtonDarkholme/yats.vim.git

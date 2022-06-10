@@ -16,3 +16,8 @@ let b:ale_fix_on_save = 1
 
 let g:ale_javascript_eslint_use_global = 1
 let g:ale_javascript_eslint_executable = 'eslint_d'
+
+" should have a more elegant way of safely doing this
+" https://github.com/rafamadriz/friendly-snippets/issues/105
+let g:vsnip_filetypes = get(g:, 'vsnip_filetypes', {})
+let g:vsnip_filetypes.typescript = ['javascript']

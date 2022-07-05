@@ -14,6 +14,13 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   local opts = { silent=true, buffer=bufnr }
+  local function get_opts(right)
+    local merged = {}
+    for k,v in pairs(opts) do merged[k] = v end
+    for k,v in pairs(right) do merged[k] = v end
+    return merged
+  end
+
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
@@ -21,7 +28,8 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
   vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
   vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-  vim.keymap.set('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
+  vim.keymap.set('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end,
+    get_opts({ desc="lsp.list_workspace_folders" }))
   vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
   vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
   vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
@@ -51,20 +59,25 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
   end
 
-  vim.keymap.set("n", "<leader>xx", require'trouble'.open, opts)
-  vim.keymap.set("n", "<leader>xw", function() require'trouble'.open('workspace_diagnostics') end, opts)
-  vim.keymap.set("n", "<leader>xd", function() require'trouble'.open('document_diagnostics') end, opts)
-  vim.keymap.set("n", "<leader>xl", function() require'trouble'.open('loclist') end, opts)
-  vim.keymap.set("n", "<leader>xq", function() require'trouble'.open('quickfix') end, opts)
-  vim.keymap.set("n", "gR", function() require'trouble'.open('lsp_references') end, opts)
+  vim.keymap.set("n", "<leader>xx", require'trouble'.open, get_opts({ desc="trouble.open" }))
+  vim.keymap.set("n", "<leader>xw", function() require'trouble'.open('workspace_diagnostics') end,
+    get_opts({ desc="trouble.workspace_diagnostics" }))
+  vim.keymap.set("n", "<leader>xd", function() require'trouble'.open('document_diagnostics') end,
+    get_opts({ desc="trouble.document_diagnostics" }))
+  vim.keymap.set("n", "<leader>xl", function() require'trouble'.open('loclist') end,
+    get_opts({ desc="trouble.loclist" }))
+  vim.keymap.set("n", "<leader>xq", function() require'trouble'.open('quickfix') end,
+    get_opts({ desc="trouble.quickfix" }))
+  vim.keymap.set("n", "gR", function() require'trouble'.open('lsp_references') end,
+    get_opts({ desc="trouble.lsp_references" }))
 
   vim.keymap.set("n", "gt", require'trouble'.toggle, opts)
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.resolved_capabilities.document_formatting then
-    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, opts)
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, get_opts({ desc="lsp.formatting" }))
   elseif client ~= nil and client.resolved_capabilities.document_range_formatting then
-    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, opts)
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, get_opts({ desc="lsp.formatting" }))
   end
 
   if client ~= nil and client.resolved_capabilities.document_highlight then

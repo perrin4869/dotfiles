@@ -14,7 +14,6 @@ MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
 FIRACODE_ROOT = $(DEPS)/FiraCode
-SPOT_ROOT = $(DEPS)/spot
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
@@ -77,14 +76,6 @@ $(eval $(call git_submodule,FiraCode,deps/FiraCode,$(FIRACODE_ROOT)))
 $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)
-
-spot_target = $(PREFIX)/bin/spot
-$(eval $(call git_submodule,spot,deps/spot,$(SPOT_ROOT)))
-$(spot_target): $(spot_head_file)
-	cd $(SPOT_ROOT) && \
-		meson target -Dbuildtype=release -Doffline=false --prefix=$(PREFIX) && \
-		ninja install -C target
-spot: $(spot_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,fzf,$(FZF_ROOT)))
@@ -165,6 +156,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home fonts spot gitflow powerline grip dconf
+install: home fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_node_debug2 telescope-fzf-native spot firacode grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_node_debug2 telescope-fzf-native firacode grip dirs submodules dconf home fonts

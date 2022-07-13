@@ -23,8 +23,6 @@ The following language servers are setup in the neovim lsp config, and need to b
 		vim-language-server \
 		sql-language-server
 
-In order to build `spot`, [`libadwaita`](https://gitlab.gnome.org/GNOME/libadwaita) is necessary. This is not available on Slackware by default, it must be built from source for now.
-
 Install `luacheck`:
 
 	luarocks install luacheck --local
@@ -59,6 +57,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `bat`
 - `fd`
 - `luarocks`
+- `spot`
 
 In Slackware:
 - `sun-gtk`

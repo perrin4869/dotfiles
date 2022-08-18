@@ -114,7 +114,7 @@ vscode_node_debug2: $(vscode_node_debug2)
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
 $(eslint_d): $(eslint_d_head_file)
-	npm --prefix $(ESLINT_D_ROOT) ci --production --ignore-scripts
+	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
 eslint_d: $(eslint_d)
 
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre

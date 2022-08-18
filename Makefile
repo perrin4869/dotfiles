@@ -89,6 +89,7 @@ fzf: $(fzf)
 fzy = $(FZF_ROOT)/bin/fzy
 $(eval $(call git_submodule,fzy,deps/fzy,$(FZY_ROOT)))
 $(fzy): $(fzy_head_file)
+	$(MAKE) -C $(FZY_ROOT) clean # TODO: cannot rebuild without clean first
 	$(MAKE) -C $(FZY_ROOT)
 fzy: $(fzy)
 

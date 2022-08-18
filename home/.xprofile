@@ -5,7 +5,7 @@ export FILE="${FILE:-ranger}"
 export BROWSER="${BROWSER-firefox}"
 export EDITOR="${EDITOR-nvim}"
 
-export IM="${IM:-ibus}" # or fcitx support is blocked by https://groups.google.com/g/linux.debian.bugs.dist/c/cLsh_u-YMLU
+export IM="${IM:-fcitx}" # or fcitx support is blocked by https://groups.google.com/g/linux.debian.bugs.dist/c/cLsh_u-YMLU
 
 # xim -> X Input Method
 export GTK_IM_MODULE=${IM/ibus/xim} # makes ibus work with chromium/chrome (ibus fails, uses ibus xim emulation), and keeps fcitx correct

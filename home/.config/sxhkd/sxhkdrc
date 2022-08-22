@@ -2,9 +2,7 @@
 super + Return
     $TERMINAL
 super + d
-    rofi -show combi -emoji-format '\{emoji\} <span weight="bold">\{name\}</span>[ <span size="small">(\{keywords\})</span>]'
-    # https://github.com/Mange/rofi-emoji/issues/46
-    # rofi -show combi
+    rofi -show combi
 super + shift + d
     rofi-pass
 super + m

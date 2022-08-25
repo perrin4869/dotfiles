@@ -71,7 +71,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "gR", function() require'trouble'.open('lsp_references') end,
     get_opts({ desc="trouble.lsp_references" }))
 
-  vim.keymap.set("n", "gt", require'trouble'.toggle, opts)
+  vim.keymap.set("n", "gt", require'trouble'.toggle, get_opts({ desc="trouble.toggle" }))
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.resolved_capabilities.document_formatting then

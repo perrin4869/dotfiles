@@ -5,8 +5,8 @@ local metals = require('metals')
 local autoformat_fts = {"scala"}
 
 local formatting_supported = function (client)
-  return client.resolved_capabilities.document_formatting or
-    client.resolved_capabilities.document_range_formatting
+  return client.server_capabilities.documentFormattingProvider or
+    client.server_capabilities.documentRangeFormattingProvider
 end
 
 local on_attach = function(client, bufnr)
@@ -47,7 +47,7 @@ local on_attach = function(client, bufnr)
   -- https://github.com/nvim-telescope/telescope.nvim/issues/964
   -- uses dynamic because most language servers return an empty list on an empty query
 
-  if client ~= nil and client.resolved_capabilities.code_lens then
+  if client ~= nil and client.server_capabilities.codeLensProvider then
     vim.api.nvim_create_augroup("lsp_codelens",  { clear = false })
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_codelens" })
     vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "InsertLeave"}, {
@@ -74,13 +74,13 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "gt", require'trouble'.toggle, get_opts({ desc="trouble.toggle" }))
 
   -- Set some keybinds conditional on server capabilities
-  if client ~= nil and client.resolved_capabilities.document_formatting then
+  if client ~= nil and client.server_capabilities.documentFormattingProvider then
     vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, get_opts({ desc="lsp.formatting" }))
-  elseif client ~= nil and client.resolved_capabilities.document_range_formatting then
+  elseif client ~= nil and client.server_capabilities.documentRangeFormattingProvider then
     vim.keymap.set("n", "<leader>f", vim.lsp.buf.formatting, get_opts({ desc="lsp.formatting" }))
   end
 
-  if client ~= nil and client.resolved_capabilities.document_highlight then
+  if client ~= nil and client.server_capabilities.documentHighlightProvider then
     vim.api.nvim_create_augroup("lsp_document_highlight",  { clear = false })
     vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_document_highlight" })
     vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {

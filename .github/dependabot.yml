@@ -11,7 +11,7 @@ updates:
           - perrin4869
     - package-ecosystem: gitsubmodule
       directory: /
-      open-pull-requests-limit: 10
+      open-pull-requests-limit: 20
       schedule:
           # Check for updates to GitHub Actions every weekday
           interval: daily

@@ -61,3 +61,4 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 
 In Slackware:
 - `sun-gtk`
+- [`fcitx5-mozc`](https://www.linuxquestions.org/questions/slackware-14/build-and-install-fcitx5-on-slackware-4175709538/page2.html)

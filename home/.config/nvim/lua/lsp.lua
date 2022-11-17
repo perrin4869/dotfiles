@@ -1,6 +1,7 @@
 local config = require('lspconfig')
 local status = require('lsp-status')
 local metals = require('metals')
+local trouble = require('trouble')
 
 local autoformat_fts = {"scala"}
 
@@ -59,19 +60,19 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
   end
 
-  vim.keymap.set("n", "<leader>xx", require'trouble'.open, get_opts({ desc="trouble.open" }))
-  vim.keymap.set("n", "<leader>xw", function() require'trouble'.open('workspace_diagnostics') end,
+  vim.keymap.set("n", "<leader>xx", trouble.open, get_opts({ desc="trouble.open" }))
+  vim.keymap.set("n", "<leader>xw", function() trouble.open('workspace_diagnostics') end,
     get_opts({ desc="trouble.workspace_diagnostics" }))
-  vim.keymap.set("n", "<leader>xd", function() require'trouble'.open('document_diagnostics') end,
+  vim.keymap.set("n", "<leader>xd", function() trouble.open('document_diagnostics') end,
     get_opts({ desc="trouble.document_diagnostics" }))
-  vim.keymap.set("n", "<leader>xl", function() require'trouble'.open('loclist') end,
+  vim.keymap.set("n", "<leader>xl", function() trouble.open('loclist') end,
     get_opts({ desc="trouble.loclist" }))
-  vim.keymap.set("n", "<leader>xq", function() require'trouble'.open('quickfix') end,
+  vim.keymap.set("n", "<leader>xq", function() trouble.open('quickfix') end,
     get_opts({ desc="trouble.quickfix" }))
-  vim.keymap.set("n", "gR", function() require'trouble'.open('lsp_references') end,
+  vim.keymap.set("n", "gR", function() trouble.open('lsp_references') end,
     get_opts({ desc="trouble.lsp_references" }))
 
-  vim.keymap.set("n", "gt", require'trouble'.toggle, get_opts({ desc="trouble.toggle" }))
+  vim.keymap.set("n", "gt", trouble.toggle, get_opts({ desc="trouble.toggle" }))
 
   -- Set some keybinds conditional on server capabilities
   if client ~= nil and client.server_capabilities.documentFormattingProvider then
@@ -152,7 +153,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 
 status.register_progress()
 
-require("trouble").setup {}
+trouble.setup {}
 require("lsp-inlayhints").setup()
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities();

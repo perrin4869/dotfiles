@@ -1,5 +1,6 @@
 local metals = require"metals"
 local tvp = require"metals.tvp"
+local lsp = require"lsp"
 
 vim.api.nvim_create_augroup("LspAttach_metals", {})
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -14,8 +15,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return
     end
 
-    local bufnum = args.buf
-    local opts = { noremap=true, silent=true, buffer=bufnum }
+    local bufnr = args.buf
+    local opts = { noremap=true, silent=true, buffer=bufnr }
 
     -- Toggle panel with Tree Views
     vim.keymap.set('n', '<leader>tv', tvp.toggle_tree_view, opts)
@@ -23,8 +24,21 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', '<leader>tf', tvp.reveal_in_tree, opts)
 
     vim.keymap.set('n', '<leader>o', metals.organize_imports, opts)
-    vim.api.nvim_buf_create_user_command(bufnum, 'OR', 'MetalsOrganizeImport', { nargs = 0 })
+    vim.api.nvim_buf_create_user_command(bufnr, 'OR', 'MetalsOrganizeImport', { nargs = 0 })
+
+    lsp.autoformat(client, bufnr)
+    metals.setup_dap()
   end,
 })
 
-require("lsp").initialize_metals()
+local metals_config = metals.bare_config()
+metals_config.capabilities = lsp.capabilities
+metals_config.init_options.statusBarProvider = 'on'
+metals_config.settings = {
+  showImplicitArguments = true,
+  showInferredType = true,
+  showImplicitConversionsAndClasses = true,
+  superMethodLensesEnabled = true,
+}
+
+metals.initialize_or_attach(metals_config)

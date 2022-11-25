@@ -4,7 +4,11 @@ lua require'lsp'
 set completeopt=menuone,noselect
 
 function! LspStatus() abort
-  return luaeval("require('lsp').get_status()")
+  if (luaeval("#vim.lsp.buf_get_clients()") > 0)
+    return luaeval("require'lsp-status'.status()")
+  endif
+
+  return ''
 endfunction
 
 function! MetalsStatus() abort

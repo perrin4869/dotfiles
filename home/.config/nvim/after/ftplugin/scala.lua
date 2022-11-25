@@ -1,4 +1,5 @@
 local metals = require"metals"
+local tvp = require"metals.tvp"
 
 vim.api.nvim_create_augroup("LspAttach_metals", {})
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -17,9 +18,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local opts = { noremap=true, silent=true, buffer=bufnum }
 
     -- Toggle panel with Tree Views
-    vim.keymap.set('n', '<leader>tv', metals.toggle_tree_view, opts)
+    vim.keymap.set('n', '<leader>tv', tvp.toggle_tree_view, opts)
     -- Reveal current current class (trait or object) in Tree View 'metalsPackages'
-    vim.keymap.set('n', '<leader>tf', metals.reveal_in_tree, opts)
+    vim.keymap.set('n', '<leader>tf', tvp.reveal_in_tree, opts)
 
     vim.keymap.set('n', '<leader>o', metals.organize_imports, opts)
     vim.api.nvim_buf_create_user_command(bufnum, 'OR', 'MetalsOrganizeImport', { nargs = 0 })

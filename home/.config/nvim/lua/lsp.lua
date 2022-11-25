@@ -1,5 +1,6 @@
 local config = require('lspconfig')
 local status = require('lsp-status')
+local typescript = require('typescript')
 local metals = require('metals')
 local trouble = require('trouble')
 
@@ -166,34 +167,6 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities();
 config.vimls.setup{on_attach=on_attach, capabilities=capabilities}
 config.ccls.setup{on_attach=on_attach, capabilities=capabilities}
 config.html.setup{on_attach=on_attach, capabilities=capabilities}
-config.tsserver.setup{
-  on_attach=on_attach,
-  capabilities=capabilities,
-  settings = {
-    javascript = {
-      inlayHints = {
-        includeInlayEnumMemberValueHints = true,
-        includeInlayFunctionLikeReturnTypeHints = true,
-        includeInlayFunctionParameterTypeHints = true,
-        includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-        includeInlayPropertyDeclarationTypeHints = true,
-        includeInlayVariableTypeHints = true,
-      },
-    },
-    typescript = {
-      inlayHints = {
-        includeInlayEnumMemberValueHints = true,
-        includeInlayFunctionLikeReturnTypeHints = true,
-        includeInlayFunctionParameterTypeHints = true,
-        includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-        includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-        includeInlayPropertyDeclarationTypeHints = true,
-        includeInlayVariableTypeHints = true,
-      },
-    },
-  },
-}
 config.cssls.setup{
   on_attach = on_attach,
   capabilities = capabilities,
@@ -224,6 +197,37 @@ config.sqlls.setup{
   on_attach=on_attach,
   capabilities=capabilities,
   cmd={"sql-language-server", "up", "--method", "stdio"}
+}
+
+typescript.setup{
+  server = {
+    on_attach=on_attach,
+    capabilities=capabilities,
+    settings = {
+      javascript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+        },
+      },
+      typescript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+        },
+      },
+    },
+  }
 }
 
 local metals_config = metals.bare_config()

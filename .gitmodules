@@ -431,3 +431,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treeclimber"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treeclimber
 	url = git@github.com:Dkendal/nvim-treeclimber.git
+[submodule "home/.local/share/nvim/site/pack/default/start/typescript.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/typescript.nvim
+	url = git@github.com:jose-elias-alvarez/typescript.nvim.git

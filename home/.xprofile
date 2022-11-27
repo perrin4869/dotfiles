@@ -27,7 +27,7 @@ GEOCLUE2=$(
   # libexec is used in slackware, lib is in arch
   [[ -x /usr/libexec/geoclue-2.0/demos/agent ]] \
     && echo /usr/libexec/geoclue-2.0/demos/agent \
-    || /usr/lib/geoclue-2.0/demos/agent
+    || echo /usr/lib/geoclue-2.0/demos/agent
 )
 
 sxhkd &

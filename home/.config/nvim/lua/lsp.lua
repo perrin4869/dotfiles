@@ -1,6 +1,11 @@
 local config = require('lspconfig')
 local typescript = require('typescript')
 
+local formatting_supported = function (client)
+  return client.server_capabilities.documentFormattingProvider or
+    client.server_capabilities.documentRangeFormattingProvider
+end
+
 local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
@@ -53,8 +58,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- uses dynamic because most language servers return an empty list on an empty query
 
     if client ~= nil and client.server_capabilities.codeLensProvider then
-      vim.api.nvim_create_augroup("lsp_codelens",  { clear = false })
-      vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_codelens" })
+      vim.api.nvim_create_augroup("lsp_codelens",  { clear=false })
+      vim.api.nvim_clear_autocmds({ buffer=bufnr, group="lsp_codelens" })
       vim.api.nvim_create_autocmd({"BufEnter", "CursorHold", "InsertLeave"}, {
         group = "lsp_codelens",
         buffer = bufnr,
@@ -65,19 +70,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
 
-    local function format()
-      vim.lsp.buf.format { async=true }
-    end
-
     -- Set some keybinds conditional on server capabilities
-    if client ~= nil and client.server_capabilities.documentFormattingProvider then
-      vim.keymap.set("n", "<leader>f", format, get_opts({ desc="lsp.format" }))
-    elseif client ~= nil and client.server_capabilities.documentRangeFormattingProvider then
-      vim.keymap.set("n", "<leader>f", format, get_opts({ desc="lsp.format" }))
+    if client ~= nil and formatting_supported(client) then
+      vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format{async=true} end, get_opts({ desc="lsp.format" }))
     end
 
     if client ~= nil and client.server_capabilities.documentHighlightProvider then
-      vim.api.nvim_create_augroup("lsp_document_highlight",  { clear = false })
+      vim.api.nvim_create_augroup("lsp_document_highlight",  { clear=false })
       vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_document_highlight" })
       vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {
         group = "lsp_document_highlight",
@@ -170,19 +169,14 @@ typescript.setup{
 
 local M = {}
 
-local formatting_supported = function (client)
-  return client.server_capabilities.documentFormattingProvider or
-    client.server_capabilities.documentRangeFormattingProvider
-end
-
 M.autoformat = function(client, bufnr)
   if
     bufnr ~= nil and
     client ~= nil and
     formatting_supported(client)
   then
-    vim.api.nvim_create_augroup("lsp_autoformat",  { clear = false })
-    vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_autoformat" })
+    vim.api.nvim_create_augroup("lsp_autoformat",  { clear=false })
+    vim.api.nvim_clear_autocmds({ buffer=bufnr, group="lsp_autoformat" })
     vim.api.nvim_create_autocmd("BufWritePre", {
       group = "lsp_autoformat",
       buffer = bufnr,

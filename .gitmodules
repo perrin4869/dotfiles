@@ -440,3 +440,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/zone.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/zone.nvim
 	url = git@github.com:tamton-aquib/zone.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/treesj"]
+	path = home/.local/share/nvim/site/pack/default/start/treesj
+	url = git@github.com:Wansmer/treesj.git

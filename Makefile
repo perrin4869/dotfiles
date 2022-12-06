@@ -18,7 +18,7 @@ POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
-VSCODE_NODE_DEBUG2_ROOT = $(DEPS)/vscode-node-debug2
+VSCODE_JS_DEBUG = $(DEPS)/vscode-js-debug
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
@@ -40,7 +40,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_node_debug2 vim_jsdoc eslint_d firacode
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode-js-debug vim_jsdoc eslint_d firacode
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -105,12 +105,12 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
-vscode_node_debug2 = $(VSCODE_NODE_DEBUG2_ROOT)/out/src/nodeDebug.js
-$(eval $(call git_submodule,vscode_node_debug2,deps/vscode-node-debug2,$(VSCODE_NODE_DEBUG2_ROOT)))
-$(vscode_node_debug2): $(vscode_node_debug2_head_file)
-	npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) ci
-	NODE_OPTIONS=--no-experimental-fetch npm --prefix $(VSCODE_NODE_DEBUG2_ROOT) run build
-vscode_node_debug2: $(vscode_node_debug2)
+vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
+$(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
+$(vscode_js_debug): $(vscode_js_debug_head_file)
+	npm --prefix $(VSCODE_JS_DEBUG) ci --legacy-peer-deps
+	npm --prefix $(VSCODE_JS_DEBUG) run compile
+vscode_js_debug: $(vscode_js_debug)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
@@ -159,4 +159,4 @@ fonts: home
 
 install: home fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_node_debug2 telescope-fzf-native firacode grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native firacode grip dirs submodules dconf home fonts

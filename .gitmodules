@@ -377,9 +377,6 @@
 [submodule "home/.vim/pack/default/start/vim-floaterm"]
 	path = home/.vim/pack/default/start/vim-floaterm
 	url = git@github.com:voldikss/vim-floaterm.git
-[submodule "deps/vscode-node-debug2"]
-	path = deps/vscode-node-debug2
-	url = https://github.com/microsoft/vscode-node-debug2.git
 [submodule "home/.local/share/nvim/site/pack/default/start/gitsigns.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/gitsigns.nvim
 	url = git@github.com:lewis6991/gitsigns.nvim.git
@@ -446,3 +443,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim
 	url = git@github.com:nvim-telescope/telescope-file-browser.nvim.git
+[submodule "deps/vscode-js-debug"]
+	path = deps/vscode-js-debug
+	url = git@github.com:microsoft/vscode-js-debug.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap-vscode-js"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-dap-vscode-js
+	url = git@github.com:mxsdev/nvim-dap-vscode-js.git

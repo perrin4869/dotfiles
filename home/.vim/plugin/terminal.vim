@@ -14,8 +14,8 @@ nnoremap   <silent>   <F9>   :FloatermKill<CR>
 tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermKill<CR>
 
 " vim-powered terminal in split window
-nnoremap <silent> <Leader>T :term<cr>
-tnoremap <silent> <Leader>T <c-w>:term<cr>
+nnoremap <silent> <leader>T :term<cr>
+tnoremap <silent> <leader>T <c-w>:term<cr>
 
 if has("nvim")
   " Make escape work in the Neovim terminal.

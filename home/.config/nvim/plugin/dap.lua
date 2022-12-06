@@ -1,5 +1,6 @@
 local dap = require'dap'
-local api = vim.api
+local telescope = require'telescope'.extensions.dap
+local utils = require'utils'
 
 dap.adapters.node2 = {
   type = 'executable',
@@ -64,35 +65,40 @@ vim.fn.sign_define('DapBreakpointRejected', {text='🟦', texthl='', linehl='', 
 vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''})
 
 -- Mappings.
-local opts = { silent=true }
+local opts = { noremap=true,silent=true }
+local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set('n', '<leader>dh', dap.toggle_breakpoint, opts)
-vim.keymap.set('n', '<leader>dH', function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts)
-vim.keymap.set('n', '<c-k>', dap.step_out, opts)
-vim.keymap.set('n', '<c-l>', dap.step_into, opts)
-vim.keymap.set('n', '<c-j>', dap.step_over, opts)
-vim.keymap.set('n', '<c-h>', dap.continue, opts)
-vim.keymap.set('n', '<leader>dk', dap.up, opts)
-vim.keymap.set('n', '<leader>dj', dap.down, opts)
-vim.keymap.set('n', '<leader>dd', function() dap.disconnect({ terminateDebuggee = true }); dap.close() end, opts)
-vim.keymap.set('n', '<leader>dr', function() dap.repl.toggle({}, 'vsplit'); api.nvim_command('wincmd l') end, opts)
-vim.keymap.set('n', '<leader>de', function() dap.set_exception_breakpoints({'all'}) end, opts)
+vim.keymap.set('n', '<leader>dh', dap.toggle_breakpoint, get_opts({ desc="dap.toggle_breakpoint" }))
+vim.keymap.set('n', '<leader>dH', function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
+  get_opts({ desc="dap.set_breakpoint" }))
+vim.keymap.set('n', '<c-k>', dap.step_out, get_opts({ desc="dap.step_out" }))
+vim.keymap.set('n', '<c-l>', dap.step_into, get_opts({ desc="dap.step_into" }))
+vim.keymap.set('n', '<c-j>', dap.step_over, get_opts({ desc="dap.step_over" }))
+vim.keymap.set('n', '<c-h>', dap.continue, get_opts({ desc="dap.continue" }))
+vim.keymap.set('n', '<leader>dk', dap.up, get_opts({ desc="dap.up" }))
+vim.keymap.set('n', '<leader>dj', dap.down, get_opts({ desc="dap.down" }))
+vim.keymap.set('n', '<leader>dd', function() dap.disconnect({ terminateDebuggee = true }); dap.close() end,
+  get_opts({ desc="dap.disconnect" }))
+vim.keymap.set('n', '<leader>dr', function() dap.repl.toggle({}, 'vsplit'); vim.cmd('wincmd h') end,
+  get_opts({ desc="dap.repl.toggle" }))
+vim.keymap.set('n', '<leader>de', function() dap.set_exception_breakpoints({'all'}) end,
+  get_opts({ desc="dap.set_exception_breakpoints" }))
 vim.keymap.set('n', '<leader>di', function()
   require'dap.ui.widgets'.hover(require('dap.utils').get_visual_selection_text())
-end, opts)
+end, get_opts({ desc="dap.ui.widgets.hover" }))
 vim.keymap.set('n', '<leader>d?', function()
   require'dap.ui.widgets'.cursor_float(require'dap.ui.widgets'.scopes)
-end, opts)
+end, get_opts({ desc="dap.ui.widgets.scopes" }))
 
 -- Map K to hover while session is active.
 local keymap_restore = {}
 dap.listeners.after['event_initialized']['me'] = function()
-  for _, buf in pairs(api.nvim_list_bufs()) do
-    local keymaps = api.nvim_buf_get_keymap(buf, 'n')
+  for _, buf in pairs(vim.api.nvim_list_bufs()) do
+    local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
     for _, keymap in pairs(keymaps) do
       if keymap.lhs == "K" then
         table.insert(keymap_restore, keymap)
-        api.nvim_buf_del_keymap(buf, 'n', 'K')
+        vim.api.nvim_buf_del_keymap(buf, 'n', 'K')
       end
     end
   end
@@ -102,25 +108,44 @@ end
 
 dap.listeners.after['event_terminated']['me'] = function()
   for _, keymap in pairs(keymap_restore) do
-    api.nvim_buf_set_keymap(
-      keymap.buffer,
+    local rhs = keymap.callback ~= nil and keymap.callback or keymap.rhs
+    vim.keymap.set(
       keymap.mode,
       keymap.lhs,
-      keymap.rhs,
-      { silent = keymap.silent == 1 }
+      rhs,
+      { buffer = keymap.buffer, silent = keymap.silent == 1 }
     )
   end
   keymap_restore = {}
 end
 
+-- autocmd FileType dap-float nnoremap <buffer><silent> q <cmd>close!<CR>
+vim.api.nvim_create_augroup("dap_float", {})
+vim.api.nvim_clear_autocmds({ group="dap_float" })
+vim.api.nvim_create_autocmd("FileType", {
+  group = "dap_float",
+  pattern = "dap-float",
+  callback = function() vim.keymap.set("n", "q", function() vim.cmd("close!") end, opts) end
+})
+
+
+vim.api.nvim_create_augroup("dap_repl", {})
+vim.api.nvim_clear_autocmds({ group="dap_repl" })
+vim.api.nvim_create_autocmd("FileType", {
+  group = "dap_repl",
+  pattern = "dap-repl",
+  callback = function() vim.cmd("set nobuflisted") end
+})
+-- autocmd FileType dap-repl set nobuflisted
+
 require('nvim-dap-virtual-text').setup()
 
 -- nvim-dap-ui
 require('dapui').setup()
-vim.keymap.set('n', '<leader>du', require'dapui'.toggle, opts)
+vim.keymap.set('n', '<leader>du', require'dapui'.toggle, get_opts({ desc="dapui.toggle" }))
 
 -- telescope-dap
-vim.keymap.set('n', '<leader>dc', function() require'telescope'.extensions.dap.commands{} end, opts)
-vim.keymap.set('n', '<leader>db', function() require'telescope'.extensions.dap.list_breakpoints{} end, opts)
-vim.keymap.set('n', '<leader>dv', function() require'telescope'.extensions.dap.variables{} end, opts)
-vim.keymap.set('n', '<leader>df', function() require'telescope'.extensions.dap.frames{} end, opts)
+vim.keymap.set('n', '<leader>dc', telescope.commands, get_opts({ desc="telescope.dap.commands" }))
+vim.keymap.set('n', '<leader>db', telescope.list_breakpoints, get_opts({ desc="telescope.dap.list_breakpoints" }))
+vim.keymap.set('n', '<leader>dv', telescope.variables, get_opts({ desc="telescope.dap.variables" }))
+vim.keymap.set('n', '<leader>df', telescope.frames, get_opts({ desc="telescope.dap.frames" }))

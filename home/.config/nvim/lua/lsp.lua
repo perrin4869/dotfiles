@@ -1,5 +1,6 @@
-local config = require('lspconfig')
-local typescript = require('typescript')
+local config = require'lspconfig'
+local typescript = require'typescript'
+local utils = require'utils'
 
 local formatting_supported = function (client)
   return client.server_capabilities.documentFormattingProvider or
@@ -27,12 +28,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
     -- Mappings.
     local bufopts = { silent=true, buffer=bufnr }
-    local function get_opts(right)
-      local merged = {}
-      for k,v in pairs(bufopts) do merged[k] = v end
-      for k,v in pairs(right) do merged[k] = v end
-      return merged
-    end
+    local get_opts = utils.create_get_opts(bufopts)
 
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)

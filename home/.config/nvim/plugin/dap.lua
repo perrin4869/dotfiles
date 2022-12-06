@@ -10,23 +10,21 @@ dap.adapters.node2 = {
 
 dap.configurations.javascript = {
   {
-    name = "Run",
+    name = 'Launch',
     type = 'node2',
     request = 'launch',
-    program = '${workspaceFolder}/${file}',
+    program = '${file}',
     cwd = vim.fn.getcwd(),
     sourceMaps = true,
     protocol = 'inspector',
     console = 'integratedTerminal',
   },
   {
-    name = "Attach",
+    -- For this to work you need to make sure the node process is started with the `--inspect` flag.
+    name = 'Attach to process',
     type = 'node2',
     request = 'attach',
-    cwd = vim.fn.getcwd(),
-    sourceMaps = true,
-    protocol = 'inspector',
-    skipFiles = {'<node_internals>/**/*.js'},
+    processId = require'dap.utils'.pick_process,
   },
 }
 
@@ -68,7 +66,7 @@ vim.fn.sign_define('DapStopped', {text='⭐️', texthl='', linehl='', numhl=''}
 local opts = { noremap=true,silent=true }
 local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set('n', '<leader>dh', dap.toggle_breakpoint, get_opts({ desc="dap.toggle_breakpoint" }))
+vim.keymap.set('n', '<leader>dt', dap.toggle_breakpoint, get_opts({ desc="dap.toggle_breakpoint" }))
 vim.keymap.set('n', '<leader>dH', function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
   get_opts({ desc="dap.set_breakpoint" }))
 vim.keymap.set('n', '<c-k>', dap.step_out, get_opts({ desc="dap.step_out" }))

@@ -1,6 +1,3 @@
-lua require'autocomplete'
-lua require'lsp'
-
 set completeopt=menuone,noselect
 
 function! LspStatus() abort

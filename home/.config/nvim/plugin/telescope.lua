@@ -11,9 +11,10 @@ telescope.setup{
 }
 
 
-require('telescope').load_extension('fzf')
-require('telescope').load_extension('dap')
-require('telescope').load_extension('neoclip')
+telescope.load_extension'fzf'
+telescope.load_extension'dap'
+telescope.load_extension'neoclip'
+telescope.load_extension'file_browser'
 
 local project_files = function()
   local opts = {} -- define here if you want to define something
@@ -32,18 +33,19 @@ vim.keymap.set('n', '<C-p>', project_files, opts)
 vim.keymap.set('n', 'gsf', builtin.find_files, get_opts({ desc="telescope.find_files" }))
 vim.keymap.set('n', 'gsj', builtin.current_buffer_fuzzy_find, get_opts({ desc="telescope.find_files" }))
 vim.keymap.set('n', 'gsh', builtin.help_tags, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gst', builtin.tags, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gsd', builtin.grep_string, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gsp', builtin.live_grep, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gsk', builtin.keymaps, get_opts({ desc="telescope.help_tags" }))
+vim.keymap.set('n', 'gst', builtin.tags, get_opts({ desc="telescope.tags" }))
+vim.keymap.set('n', 'gsd', builtin.grep_string, get_opts({ desc="telescope.grep_string" }))
+vim.keymap.set('n', 'gsp', builtin.live_grep, get_opts({ desc="telescope.live_grep" }))
+vim.keymap.set('n', 'gsk', builtin.keymaps, get_opts({ desc="telescope.keymaps" }))
 vim.keymap.set('n', 'gso', function() builtin.tags{ only_current_buffer = true } end,
-  get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gb', builtin.buffers, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'g?', builtin.oldfiles, get_opts({ desc="telescope.help_tags" }))
+  get_opts({ desc="telescope.tags" }))
+vim.keymap.set('n', 'gb', builtin.buffers, get_opts({ desc="telescope.buffers" }))
+vim.keymap.set('n', 'g?', builtin.oldfiles, get_opts({ desc="telescope.oldfiles" }))
 
-vim.keymap.set('n', 'gsc', telescope.extensions.neoclip.default, get_opts({ desc="telescope.help_tags" }))
+vim.keymap.set('n', 'gsc', telescope.extensions.neoclip.default, get_opts({ desc="telescope.neoclip" }))
+vim.keymap.set('n', 'gst', telescope.extensions.file_browser.file_browser, get_opts({ desc="telescope.file_browser" }))
 
 -- git
-vim.keymap.set('n', 'gsb', builtin.git_branches, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gsg', builtin.git_commits, get_opts({ desc="telescope.help_tags" }))
-vim.keymap.set('n', 'gss', builtin.git_status, get_opts({ desc="telescope.help_tags" }))
+vim.keymap.set('n', 'gsb', builtin.git_branches, get_opts({ desc="telescope.git_branches" }))
+vim.keymap.set('n', 'gsg', builtin.git_commits, get_opts({ desc="telescope.git_commits" }))
+vim.keymap.set('n', 'gss', builtin.git_status, get_opts({ desc="telescope.git_status" }))

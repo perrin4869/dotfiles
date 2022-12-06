@@ -443,3 +443,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/treesj"]
 	path = home/.local/share/nvim/site/pack/default/start/treesj
 	url = git@github.com:Wansmer/treesj.git
+[submodule "home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim
+	url = git@github.com:nvim-telescope/telescope-file-browser.nvim.git

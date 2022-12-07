@@ -23,7 +23,8 @@ jobs:
                            libglib2.0-dev \
                            libmpv-dev \
                            dbus-x11 \
-                           dconf-cli
+                           dconf-cli \
+                           neovim
           # libglib2.0-dev libmpv-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
       - name: deps - llvm # ccls dep

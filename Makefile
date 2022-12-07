@@ -40,7 +40,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode-js-debug vim_jsdoc eslint_d firacode
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode
 
 $(submodules-deps) &:
 	git submodule update --init --recursive

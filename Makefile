@@ -21,6 +21,7 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 VSCODE_JS_DEBUG = $(DEPS)/vscode-js-debug
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
+TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 COC_ROOT = ./home/.config/coc
@@ -40,7 +41,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc treesitter eslint_d firacode
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -105,6 +106,15 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
+treesitter-langs = bash  c  cpp  css  graphql  haskell  html  javascript  json  jsonc  latex  lua  regex  scala  svelte  typescript  yaml
+treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+	rm -f $(treesitter-targets)
+	nvim --headless -c "TSInstallSync $(treesitter-langs)" -c q
+	@# nvim --headless +TSUpdateSync +qa exits immediately
+treesitter: $(treesitter-targets)
+
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
 $(vscode_js_debug): $(vscode_js_debug_head_file)
@@ -159,4 +169,4 @@ fonts: home
 
 install: home fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native firacode grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts

@@ -57,7 +57,7 @@ then
   xrdb -merge $HOME/.Xresources.hidpi
 fi
 
-[ -x $HOME/.layout.sh ] && $HOME/.layout.sh
+[ -x $HOME/.screenlayout/default.sh ] && $HOME/.screenlayout/default.sh
 
 if [[ -d ~/.wallpaper ]]; then
   feh --bg-fill --randomize ~/.wallpaper/*

@@ -17,16 +17,17 @@ jobs:
       - name: lint
         run: luacheck home
       - name: deps
-        run: |
-          sudo apt update
-          sudo apt install stow \
-                           libglib2.0-dev \
-                           libmpv-dev \
-                           dbus-x11 \
-                           dconf-cli \
-                           neovim
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: stow \
+                    libglib2.0-dev \
+                    libmpv-dev \
+                    dbus-x11 \
+                    dconf-cli \
+                    neovim
           # libglib2.0-dev libmpv-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
+          version: 1.0
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:

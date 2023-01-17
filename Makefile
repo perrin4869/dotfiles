@@ -106,7 +106,7 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
-treesitter-langs = bash  c  cpp  css  graphql  haskell  html  javascript  json  jsonc  latex  lua  regex  scala  svelte  typescript  yaml
+treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533

@@ -40,7 +40,6 @@ redshift-gtk &
 [[ "$IM" == "ibus" ]] && ibus-daemon -d -r --xim
 [[ "$IM" == "fcitx" ]] && $FCITX -d -r
 picom -b $PICOM_VSYNC
-setxkbmap -layout us -option compose:ralt
 
 # If autorandr-launcher is installed (presumably because udev was not) then daemonize
 command -v autorandr-launcher && autorandr-launcher --daemonize

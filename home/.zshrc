@@ -61,10 +61,10 @@ plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf zsh-fzy)
 # export ZSH_TMUX_AUTOSTART=true
 # export ZSH_TMUX_AUTOQUIT=false
 
-source $ZSH/oh-my-zsh.sh
-
 # oh-my-zsh update is handled by github PRs, so this should be disabled
 zstyle ':omz:update' mode disabled
+
+source $ZSH/oh-my-zsh.sh
 
 # git plugin aliases gm to git merge
 unalias gm

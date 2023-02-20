@@ -63,6 +63,9 @@ plugins=(git tmux vi-mode node sandboxd zsh-syntax-highlighting fzf zsh-fzy)
 
 source $ZSH/oh-my-zsh.sh
 
+# oh-my-zsh update is handled by github PRs, so this should be disabled
+zstyle ':omz:update' mode disabled
+
 # git plugin aliases gm to git merge
 unalias gm
 

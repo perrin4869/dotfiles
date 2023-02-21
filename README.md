@@ -61,4 +61,4 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `spot`
 
 In Slackware:
-- `sun-gtk`
+- `sun`

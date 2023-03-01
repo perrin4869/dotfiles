@@ -452,3 +452,6 @@
 [submodule "home/.vim/pack/default/start/kotlin-vim"]
 	path = home/.vim/pack/default/start/kotlin-vim
 	url = git@github.com:udalov/kotlin-vim.git
+[submodule "home/.vim/pack/default/start/vim-abolish"]
+	path = home/.vim/pack/default/start/vim-abolish
+	url = git@github.com:tpope/vim-abolish.git

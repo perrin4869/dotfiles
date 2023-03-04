@@ -45,7 +45,10 @@ picom -b $PICOM_VSYNC
 command -v autorandr-launcher && autorandr-launcher --daemonize
 
 if [[ -e "/etc/slackware-version" ]]; then
-  sun start && sun start --gtk
+  if ! [[ $(sun status) =~ "SUN is running" ]]; then
+    sun start
+  fi
+  sun start --gtk
 fi
 
 # bashism

@@ -39,6 +39,7 @@ metals_config.settings = {
   showInferredType = true,
   showImplicitConversionsAndClasses = true,
   superMethodLensesEnabled = true,
+  enableSemanticHighlighting = true,
 }
 
 metals.initialize_or_attach(metals_config)

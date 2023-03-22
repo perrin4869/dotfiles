@@ -275,9 +275,6 @@
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = git@github.com:nvim-treesitter/nvim-treesitter.git
-[submodule "share/nvim/site/pack/default/opt/nvim-ts-rainbow"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-rainbow
-	url = git@github.com:p00f/nvim-ts-rainbow.git
 [submodule "share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
 	url = git@github.com:nvim-treesitter/nvim-treesitter-textobjects.git
@@ -455,3 +452,6 @@
 [submodule "home/.vim/pack/default/start/vim-abolish"]
 	path = home/.vim/pack/default/start/vim-abolish
 	url = git@github.com:tpope/vim-abolish.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-rainbow"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-rainbow
+	url = git@github.com:HiPhish/nvim-ts-rainbow2.git

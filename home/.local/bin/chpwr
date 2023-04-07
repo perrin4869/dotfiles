@@ -1,16 +1,17 @@
 #!/bin/sh
-lock() {
-    i3lock
-}
 
 SYSD=$(command -v systemctl)
 ELOGIND=$(command -v loginctl)
+
+lock() {
+    i3lock
+}
 
 suspend() {
     if [[ $SYSD ]]; then
         systemctl suspend
     elif [[ $ELOGIND ]]; then
-      loginctl suspend
+        loginctl suspend
     else
         dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Suspend
     fi
@@ -20,7 +21,7 @@ hibernate() {
     if [[ $SYSD ]]; then
         systemctl hibernate
     elif [[ $ELOGIND ]]; then
-      loginctl hibernate
+        loginctl hibernate
     else
         dbus-send --system --print-reply --dest="org.freedesktop.UPower" /org/freedesktop/UPower org.freedesktop.UPower.Hibernate
     fi
@@ -30,7 +31,7 @@ reboot() {
     if [[ $SYSD ]]; then
         systemctl reboot
     elif [[ $ELOGIND ]]; then
-      loginctl reboot
+        loginctl reboot
     else
         dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart
     fi
@@ -40,7 +41,7 @@ shutdown() {
     if [[ $SYSD ]]; then
         systemctl poweroff
     elif [[ $ELOGIND ]]; then
-      loginctl poweroff
+        loginctl poweroff
     else
         dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop
     fi

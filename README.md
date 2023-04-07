@@ -31,6 +31,7 @@ Install `luacheck`:
 Other 3rd party dependencies to be installed by the OS dependency manager:
 - `i3-gaps`
 - `i3status`
+- `i3lock`
 - `ranger`
 - `pass`
 - `pass-otp`

@@ -119,7 +119,11 @@ vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
 $(vscode_js_debug): $(vscode_js_debug_head_file)
 	npm --prefix $(VSCODE_JS_DEBUG) ci --legacy-peer-deps
-	npm --prefix $(VSCODE_JS_DEBUG) run compile
+	@# --prefix doesn't seem to work for npm exec
+	@# https://github.com/npm/cli/issues/1368
+	cd $(VSCODE_JS_DEBUG) && npm exec gulp vsDebugServerBundle
+	@#https://github.com/mxsdev/nvim-dap-vscode-js/issues/34
+	mv $(VSCODE_JS_DEBUG)/dist $(VSCODE_JS_DEBUG)/out
 vscode_js_debug: $(vscode_js_debug)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules

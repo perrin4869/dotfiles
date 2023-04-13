@@ -28,8 +28,6 @@ jobs:
         with:
           # apt neovim is too old
           neovim: true
-      - name: neovim debug
-        run: nvim --version
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:

@@ -39,5 +39,9 @@ jobs:
         run: |
           export $(dbus-launch) # dconf required dbus
           make install
-        env:
-          HOME: /home/runner
+      - name: install
+        run: |
+          make treesitter
+          ls -lah ~/.config
+          ls -lah ~/.config/nvim
+          ls -lah ~/.config/nvim/lua

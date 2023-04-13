@@ -19,10 +19,15 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli neovim
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli
           # libglib2.0-dev libmpv-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
           version: 1.0
+      - name: neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          # apt neovim is too old
+          neovim: true
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:
@@ -36,4 +41,6 @@ jobs:
       - name: install
         run: |
           export $(dbus-launch) # dconf required dbus
+          # stow conflicts
+          rm ~/.bashrc ~/.bash_profile
           make install

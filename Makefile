@@ -1,3 +1,8 @@
+COMMA := ,
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+
+HOME ?= ${HOME}
 XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
@@ -41,7 +46,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc treesitter eslint_d firacode
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -107,13 +112,14 @@ $(coc):
 coc: $(coc)
 
 # print in neovim prints to stderr
-treesitter-langs = $(shell nvim --headless +'lua require("treesitter").print_langs()' +qa 2>&1)
+treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
-	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
-	@# rm -f $(treesitter-targets)
-	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
-	@# nvim --headless +TSUpdateSync +qa exits immediately
+# installing treesitter requires that all neovim config has been installed into rtp (home task)
+$(treesitter-targets) &: home $(TREESITTER_ROOT)/lockfile.json
+# 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+# 	@# rm -f $(treesitter-targets)
+	nvim --headless -c "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
+# 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
@@ -166,13 +172,14 @@ $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
 
+# By default stow stows to `../$(pwd)`, so in CI we need to be more precise
 home: dirs
-	stow -v home
+	stow -v home -t $(HOME)
 
 fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home fonts gitflow powerline grip dconf
+install: home treesitter fonts gitflow powerline grip dconf
 
 .PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts

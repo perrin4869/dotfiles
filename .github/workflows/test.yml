@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: test
-        run: pwd && whoami && echo $(HOME)
+        run: env
       - uses: actions/checkout@v3
         with:
           submodules: recursive
@@ -39,5 +39,5 @@ jobs:
         run: |
           export $(dbus-launch) # dconf required dbus
           make install
-      - name: test 2
-        run: ls -lah ~
+        env:
+          HOME: /home/runner

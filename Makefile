@@ -123,6 +123,7 @@ $(vscode_js_debug): $(vscode_js_debug_head_file)
 	@# https://github.com/npm/cli/issues/1368
 	cd $(VSCODE_JS_DEBUG) && npm exec gulp vsDebugServerBundle
 	@#https://github.com/mxsdev/nvim-dap-vscode-js/issues/34
+	rm -rf $(VSCODE_JS_DEBUG)/out
 	mv $(VSCODE_JS_DEBUG)/dist $(VSCODE_JS_DEBUG)/out
 vscode_js_debug: $(vscode_js_debug)
 

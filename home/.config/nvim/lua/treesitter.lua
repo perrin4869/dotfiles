@@ -28,6 +28,6 @@ M.ensure_installed = function()
   treesitter_install.ensure_installed_sync(langs)
   treesitter_install.update({ with_sync = true })(langs)
 end
-M.print_langs = function() print(table.concat(langs, ' ')) end
+M.print_langs = function() print(table.concat(langs, ' ') .. "\n") end
 
 return M

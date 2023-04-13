@@ -109,12 +109,16 @@ coc: $(coc)
 # print in neovim prints to stderr
 treesitter-langs = $(shell nvim --headless +'lua require("treesitter").print_langs()' +qa 2>&1)
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
-	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
-	@# rm -f $(treesitter-targets)
-	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
-	@# nvim --headless +TSUpdateSync +qa exits immediately
-treesitter: $(treesitter-targets)
+# $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+# 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+# 	@# rm -f $(treesitter-targets)
+# 	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
+# 	@# nvim --headless +TSUpdateSync +qa exits immediately
+# treesitter: $(treesitter-targets)
+
+treesitter:
+	echo $(treesitter-langs)
+	echo $(treesitter-targets)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))

@@ -5,25 +5,8 @@ vim.opt.foldlevelstart=99
 
 require'nvim-treesitter.configs'.setup {
   -- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  ensure_installed = {
-    "typescript",
-    "scala",
-    "javascript",
-    "bash",
-    "c",
-    "cpp",
-    "css",
-    "graphql",
-    "haskell",
-    "lua",
-    "latex",
-    "json",
-    "jsonc",
-    "regex",
-    "svelte",
-    "html",
-    "yaml",
-  },
+  -- This is handled by the Makefile
+  -- ensure_installed = require('treesitter').langs,
   highlight = {
     enable = true, -- false will disable the whole extension
   },

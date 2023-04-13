@@ -106,12 +106,13 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
-treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin
+# print in neovim prints to stderr
+treesitter-langs = $(shell nvim --headless +'lua require("treesitter").print_langs()' +qa 2>&1)
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
-	rm -f $(treesitter-targets)
-	nvim --headless -c "TSInstallSync $(treesitter-langs)" -c q
+	@# rm -f $(treesitter-targets)
+	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 

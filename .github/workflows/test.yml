@@ -36,4 +36,6 @@ jobs:
       - name: install
         run: |
           export $(dbus-launch) # dconf required dbus
+          # stow conflicts
+          rm ~/.bashrc ~/.bash_profile
           make install

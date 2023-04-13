@@ -1,3 +1,8 @@
+COMMA := ,
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+
+HOME ?= ${HOME}
 XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
@@ -106,10 +111,6 @@ $(coc):
 	cd $(COC_ROOT)/extensions && npm install
 coc: $(coc)
 
-COMMA := ,
-EMPTY :=
-SPACE := $(EMPTY) $(EMPTY)
-
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
@@ -171,8 +172,9 @@ $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
 
+# By default stow stows to `../$(pwd)`, so in CI we need to be more precise
 home: dirs
-	stow -v home
+	stow -v home -t $(HOME)
 
 fonts: home
 	# Refresh fonts

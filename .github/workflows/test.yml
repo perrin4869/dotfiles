@@ -7,8 +7,6 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: test
-        run: env
       - uses: actions/checkout@v3
         with:
           submodules: recursive
@@ -39,9 +37,3 @@ jobs:
         run: |
           export $(dbus-launch) # dconf required dbus
           make install
-      - name: install
-        run: |
-          make treesitter
-          ls -lah ~/.config
-          ls -lah ~/.config/nvim
-          ls -lah ~/.config/nvim/lua

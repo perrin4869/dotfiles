@@ -109,7 +109,8 @@ coc: $(coc)
 # print in neovim prints to stderr
 treesitter-langs = $(shell nvim --headless +'lua require("treesitter").print_langs()' +qa 2>&1)
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+# installing treesitter requires that all neovim config has been installed into rtp (home task)
+$(treesitter-targets) &: home $(TREESITTER_ROOT)/lockfile.json
 # 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 # 	@# rm -f $(treesitter-targets)
 	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q

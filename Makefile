@@ -41,7 +41,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc treesitter eslint_d firacode
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -109,16 +109,12 @@ coc: $(coc)
 # print in neovim prints to stderr
 treesitter-langs = $(shell nvim --headless +'lua require("treesitter").print_langs()' +qa 2>&1)
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-# $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 # 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 # 	@# rm -f $(treesitter-targets)
-# 	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
+	nvim --headless -c "lua require('treesitter').ensure_installed()" -c q
 # 	@# nvim --headless +TSUpdateSync +qa exits immediately
-# treesitter: $(treesitter-targets)
-
-treesitter:
-	echo $(treesitter-langs)
-	echo $(treesitter-targets)
+treesitter: $(treesitter-targets)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
@@ -177,6 +173,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home fonts gitflow powerline grip dconf
+install: home treesitter fonts gitflow powerline grip dconf
 
 .PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts

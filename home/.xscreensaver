@@ -1,5 +1,5 @@
 # XScreenSaver Preferences File
-# Written by xscreensaver-settings 6.05 for perrin4869 on Tue Nov 29 16:04:59 2022.
+# Written by xscreensaver-settings 6.06 for perrin4869 on Wed Apr 19 21:58:12 2023.
 # https://www.jwz.org/xscreensaver/
 
 timeout:	0:10:00
@@ -18,11 +18,11 @@ fade:		True
 unfade:		True
 fadeSeconds:	0:00:01
 ignoreUninstalledPrograms:False
-dpmsEnabled:	False
+dpmsEnabled:	True
 dpmsQuickOff:	False
-dpmsStandby:	2:00:00
-dpmsSuspend:	2:00:00
-dpmsOff:	4:00:00
+dpmsStandby:	0:20:00
+dpmsSuspend:	0:20:00
+dpmsOff:	0:00:00
 grabDesktopImages:  True
 grabVideoFrames:    False
 chooseRandomImages: True
@@ -289,6 +289,7 @@ programs:								      \
   GL: 				mapscroller --root			    \n\
   GL: 				nakagin --root				    \n\
   GL: 				squirtorus --root			    \n\
+  GL: 				hextrail --root				    \n\
 
 
 pointerHysteresis:  10

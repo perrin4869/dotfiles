@@ -3,6 +3,23 @@ vim.opt.foldexpr="nvim_treesitter#foldexpr()"
 -- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
 vim.opt.foldlevelstart=99
 
+-- https://alpha2phi.medium.com/neovim-101-tree-sitter-usage-fa3e8bed921a
+local swap_next, swap_prev = (function()
+  local swap_objects = {
+    p = "@parameter.inner",
+    f = "@function.outer",
+    c = "@class.outer",
+  }
+
+  local n, p = {}, {}
+  for key, obj in pairs(swap_objects) do
+    n[string.format("<A-n><A-%s>", key)] = obj
+    p[string.format("<A-p><A-%s>", key)] = obj
+  end
+
+  return n, p
+end)()
+
 require'nvim-treesitter.configs'.setup {
   -- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   -- This is handled by the Makefile
@@ -46,6 +63,11 @@ require'nvim-treesitter.configs'.setup {
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner"
       },
+    },
+    swap = {
+      enable = true,
+      swap_next = swap_next,
+      swap_previous = swap_prev,
     },
     move = {
       enable = true,

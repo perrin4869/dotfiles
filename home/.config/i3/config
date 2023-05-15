@@ -198,6 +198,7 @@ bindsym $mod+Shift+s mode "$mode_system"
 bar {
     # status_command i3blocks
     status_command i3status
+    tray_output primary
 
     font pango:mono 10
 

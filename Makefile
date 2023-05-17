@@ -78,7 +78,7 @@ ccls: $(ccls_target)
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
-$(eval $(call git_submodule,FiraCode,deps/FiraCode,$(FIRACODE_ROOT)))
+$(eval $(call git_submodule,firacode,deps/FiraCode,$(FIRACODE_ROOT)))
 $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)

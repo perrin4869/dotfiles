@@ -125,6 +125,12 @@ vnoremap <Space> zf
 nmap =j :%!python -m json.tool<CR>
 nmap =x :%!xmllint --format -<CR>
 
+function! CopyCurrentFileToClipboard() abort
+  let @+=@%
+endfunction
+
+nmap <silent><expr> <leader>cf CopyCurrentFileToClipboard()
+
 "Custom commads
 command -bang Q qall<bang>
 

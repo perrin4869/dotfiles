@@ -127,6 +127,7 @@ nmap =x :%!xmllint --format -<CR>
 
 function! CopyCurrentFileToClipboard() abort
   let @+=@%
+  let @"=@%
 endfunction
 
 nmap <silent><expr> <leader>cf CopyCurrentFileToClipboard()

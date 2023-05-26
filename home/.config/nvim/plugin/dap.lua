@@ -138,16 +138,6 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function() vim.keymap.set("n", "q", function() vim.cmd("close!") end, opts) end
 })
 
-
-vim.api.nvim_create_augroup("dap_repl", {})
-vim.api.nvim_clear_autocmds({ group="dap_repl" })
-vim.api.nvim_create_autocmd("FileType", {
-  group = "dap_repl",
-  pattern = "dap-repl",
-  callback = function() vim.cmd("set nobuflisted") end
-})
--- autocmd FileType dap-repl set nobuflisted
-
 require('nvim-dap-virtual-text').setup()
 
 -- nvim-dap-ui

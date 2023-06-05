@@ -80,7 +80,7 @@ ccls: $(ccls_target)
 nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
 										$(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
 $(nerd_fonts_target) &: $(NERD_FONTS).tar.xz
-	tar xvJf $(NERD_FONTS).tar.xz --one-top-level -C $(FONTS)
+	tar xvJf $(NERD_FONTS).tar.xz --one-top-level -C $(FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
 
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \

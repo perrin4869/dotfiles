@@ -14,6 +14,7 @@ CMAKE := cmake
 
 DEPS = ./deps
 DCONF = ./dconf
+FONTS = ./home/.local/share/fonts
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
@@ -26,6 +27,7 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 VSCODE_JS_DEBUG = $(DEPS)/vscode-js-debug
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
+NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
@@ -74,6 +76,12 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
+
+nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
+										$(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
+$(nerd_fonts_target) &: $(NERD_FONTS).tar.xz
+	tar xvJf $(NERD_FONTS).tar.xz --one-top-level -C $(FONTS)
+nerd_fonts: $(nerd_fonts_target)
 
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
@@ -182,4 +190,4 @@ fonts: home
 
 install: home treesitter fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts

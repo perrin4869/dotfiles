@@ -302,9 +302,6 @@
 [submodule "home/.vim/pack/default/start/close-buffers.vim"]
 	path = home/.vim/pack/default/start/close-buffers.vim
 	url = git@github.com:Asheq/close-buffers.vim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/hop.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/hop.nvim
-	url = git@github.com:phaazon/hop.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-playground"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-playground
 	url = git@github.com:nvim-treesitter/playground.git
@@ -458,3 +455,6 @@
 [submodule "home/.vim/pack/default/start/vim-matchup"]
 	path = home/.vim/pack/default/start/vim-matchup
 	url = git@github.com:andymass/vim-matchup.git
+[submodule "home/.local/share/nvim/site/pack/default/start/leap.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/leap.nvim
+	url = git@github.com:ggandor/leap.nvim.git

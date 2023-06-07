@@ -2,10 +2,6 @@
 	path = home/.vim/pack/default/start/html5.vim
 	url = https://github.com/othree/html5.vim
 	ignore = untracked
-[submodule "vim/bundle/matchit"]
-	path = home/.vim/pack/default/start/matchit
-	url = https://github.com/tmhedberg/matchit
-	ignore = untracked
 [submodule "vim/bundle/nerdtree.git"]
 	path = home/.vim/pack/default/start/nerdtree.git
 	url = https://github.com/scrooloose/nerdtree.git

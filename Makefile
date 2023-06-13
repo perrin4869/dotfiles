@@ -120,7 +120,7 @@ $(coc):
 coc: $(coc)
 
 # print in neovim prints to stderr
-treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin
+treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 $(treesitter-targets) &: home $(TREESITTER_ROOT)/lockfile.json

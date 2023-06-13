@@ -130,6 +130,18 @@ function! CopyCurrentFileToClipboard() abort
   let @"=@%
 endfunction
 
+" https://github.com/vim/vim/issues/8094
+com -bar -nargs=? -range=1 -addr=windows Resize exe Resize(<q-mods>, <q-count>, <q-args>)
+fu! Resize(mods = '', count = '', args = '')
+    let new_args = a:args
+    if a:args =~ '\d\+%'
+        let what = a:mods =~ 'vertical' ? &columns : &lines
+        let Rep = {m -> m[1]->str2nr() * what / 100}
+        let new_args = a:args->substitute('\(\d\+\)%', Rep, '')
+    endif
+    return a:mods .. ' :' .. a:count .. 'resize ' .. new_args
+endfu
+
 nmap <silent><expr> <leader>cf CopyCurrentFileToClipboard()
 
 "Custom commads

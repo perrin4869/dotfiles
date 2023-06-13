@@ -89,8 +89,10 @@ vim.keymap.set('n', '<leader>dk', dap.up, get_opts({ desc="dap.up" }))
 vim.keymap.set('n', '<leader>dj', dap.down, get_opts({ desc="dap.down" }))
 vim.keymap.set('n', '<leader>dd', function() dap.disconnect({ terminateDebuggee = true }); dap.close() end,
   get_opts({ desc="dap.disconnect" }))
-vim.keymap.set('n', '<leader>dr', function() dap.repl.toggle({}, 'vsplit'); vim.cmd('wincmd h') end,
-  get_opts({ desc="dap.repl.toggle" }))
+vim.keymap.set('n', '<leader>dr', function()
+  dap.repl.toggle({}, 'vsplit')
+  vim.cmd('wincmd h | exe Resize("vertical", "", "35%")')
+end, get_opts({ desc="dap.repl.toggle" }))
 vim.keymap.set('n', '<leader>de', function() dap.set_exception_breakpoints({'all'}) end,
   get_opts({ desc="dap.set_exception_breakpoints" }))
 vim.keymap.set('n', '<leader>di', function()

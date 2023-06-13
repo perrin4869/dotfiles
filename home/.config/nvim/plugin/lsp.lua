@@ -89,6 +89,8 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 )
 -- luacheck: pop
 
+require("neodev").setup({})
+
 local capabilities = lsp.capabilities
 
 config.vimls.setup{capabilities=capabilities}
@@ -154,3 +156,13 @@ typescript.setup{
     },
   }
 }
+
+config.lua_ls.setup({
+  settings = {
+    Lua = {
+      completion = {
+        callSnippet = "Replace"
+      }
+    }
+  }
+})

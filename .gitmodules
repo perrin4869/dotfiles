@@ -457,3 +457,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/dropbar.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/dropbar.nvim
 	url = git@github.com:Bekaboo/dropbar.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/neodev.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/neodev.nvim
+	url = git@github.com:folke/neodev.nvim.git
+[submodule "deps/lua-language-server"]
+	path = deps/lua-language-server
+	url = git@github.com:LuaLS/lua-language-server.git

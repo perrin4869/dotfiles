@@ -27,6 +27,7 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 VSCODE_JS_DEBUG = $(DEPS)/vscode-js-debug
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
+LUA_LANGUAGE_SERVER_ROOT = $(DEPS)/lua-language-server
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
@@ -48,7 +49,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts lua-language-server
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -142,6 +143,12 @@ $(vscode_js_debug): $(vscode_js_debug_head_file)
 	mv $(VSCODE_JS_DEBUG)/dist $(VSCODE_JS_DEBUG)/out
 vscode_js_debug: $(vscode_js_debug)
 
+lua-language-server = $(LUA_LANGUAGE_SERVER_ROOT)/bin/lua-language-server
+$(eval $(call git_submodule,lua-language-server,deps/lua-language-server,$(LUA_LANGUAGE_SERVER_ROOT)))
+$(lua-language-server): $(lua-language-server_head_file)
+	( cd $(LUA_LANGUAGE_SERVER_ROOT) && ./make.sh )
+lua-language-server: $(lua-language-server)
+
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
 $(eslint_d): $(eslint_d_head_file)
@@ -190,4 +197,4 @@ fonts: home
 
 install: home treesitter fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts
+.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts lua-language-server

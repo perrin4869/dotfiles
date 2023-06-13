@@ -119,7 +119,7 @@ nnoremap <silent> g<Space> :b#<CR>
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> :noh<CR>
 
-nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 vnoremap <Space> zf
 
 nmap =j :%!python -m json.tool<CR>

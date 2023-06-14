@@ -10,10 +10,6 @@
 	path = home/.vim/pack/default/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
 	ignore = untracked
-[submodule "vim/bundle/vim-sparkup"]
-	path = home/.vim/pack/default/start/vim-sparkup
-	url = https://github.com/tristen/vim-sparkup
-	ignore = untracked
 [submodule "vim/bundle/vim-surround"]
 	path = home/.vim/pack/default/start/vim-surround
 	url = https://github.com/tpope/vim-surround.git

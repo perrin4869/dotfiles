@@ -35,10 +35,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local caps = client.server_capabilities
     if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
       vim.b[bufnr].semantic_tokens = true
+      -- TODO: disable only on the buffer that was attached
+      -- https://github.com/m-demare/hlargs.nvim/issues/69
+      hlargs.disable()
     end
-
-    -- TODO: disable only on the buffer that was attached
-    -- https://github.com/m-demare/hlargs.nvim/issues/69
-    hlargs.disable()
   end,
 })

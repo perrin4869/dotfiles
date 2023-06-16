@@ -101,7 +101,7 @@ $(fzf): $(fzf_head_file)
 	$(FZF_ROOT)/install --no-update-rc --no-bash --no-zsh --no-completion --no-key-bindings
 fzf: $(fzf)
 
-fzy = $(FZF_ROOT)/bin/fzy
+fzy = $(FZY_ROOT)/fzy
 $(eval $(call git_submodule,fzy,deps/fzy,$(FZY_ROOT)))
 $(fzy): $(fzy_head_file)
 	$(MAKE) -C $(FZY_ROOT) clean # TODO: cannot rebuild without clean first

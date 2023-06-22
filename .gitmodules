@@ -408,9 +408,6 @@
 [submodule "home/.vim/pack/default/start/yats.vim"]
 	path = home/.vim/pack/default/start/yats.vim
 	url = git@github.com:HerringtonDarkholme/yats.vim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/lsp-inlayhints.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/lsp-inlayhints.nvim
-	url = git@github.com:lvimuser/lsp-inlayhints.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treeclimber"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treeclimber
 	url = git@github.com:Dkendal/nvim-treeclimber.git

@@ -43,7 +43,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- https://github.com/nvim-telescope/telescope.nvim/issues/964
     -- uses dynamic because most language servers return an empty list on an empty query
 
-    vim.lsp.buf.inlay_hint(bufnr, true)
     vim.keymap.set('n', '<leader>i', function()
       vim.lsp.buf.inlay_hint(bufnr)
     end, { silent=true, buffer=bufnr, desc="lsp.inlayhints.toggle" })
@@ -60,6 +59,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
     end
 
+    if client ~= nil and client.server_capabilities.inlayHintProvider then
+      vim.lsp.buf.inlay_hint(bufnr, true)
+    end
 
     -- Set some keybinds conditional on server capabilities
     if client ~= nil and lsp.formatting_supported(client) then

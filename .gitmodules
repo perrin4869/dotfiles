@@ -459,3 +459,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/hlargs.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/hlargs.nvim
 	url = git@github.com:m-demare/hlargs.nvim.git
+[submodule "home/.vim/pack/default/start/vim-caser"]
+	path = home/.vim/pack/default/start/vim-caser
+	url = git@github.com:arthurxavierx/vim-caser.git

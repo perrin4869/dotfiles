@@ -20,7 +20,7 @@ endfunc
 nmap ]r :set rl<CR>
 nmap [r :set norl<CR>
 
-nmap gp :call TogglePaste()<CR>
+nmap ,p :call TogglePaste()<CR>
 
 func! TogglePaste()
   if &paste

@@ -20,19 +20,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local opts = { silent=true, buffer=bufnr }
     local get_opts = utils.create_get_opts(opts)
 
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, get_opts({ desc="lsp.declaration" }))
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, get_opts({ desc="lsp.definition" }))
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, get_opts({ desc="lsp.hover" }))
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, get_opts({ desc="lsp.implementation" }))
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, get_opts({ desc="lsp.signature_help" }))
+    vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, get_opts({ desc="lsp.add_workspace_folder" }))
+    vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder,
+      get_opts({ desc="lsp.remove_workspace_folder" }))
     vim.keymap.set('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end,
       get_opts({ desc="lsp.list_workspace_folders" }))
-    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, get_opts({ desc="lsp.type_definition" }))
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, get_opts({ desc="lsp.rename" }))
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, get_opts({ desc="lsp.code_action" }))
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, get_opts({ desc="lsp.references" }))
     -- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
     -- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
     -- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
@@ -56,7 +57,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         callback = vim.lsp.codelens.refresh
       })
 
-      vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, opts)
+      vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, get_opts({ desc="lsp.codelens.run" }))
     end
 
     if client ~= nil and client.server_capabilities.inlayHintProvider then

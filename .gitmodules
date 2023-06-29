@@ -465,3 +465,6 @@
 [submodule "home/.vim/pack/default/start/vim-oscyank"]
 	path = home/.vim/pack/default/start/vim-oscyank
 	url = git@github.com:ojroques/vim-oscyank.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treehopper"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-treehopper
+	url = git@github.com:mfussenegger/nvim-treehopper.git

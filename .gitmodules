@@ -462,3 +462,6 @@
 [submodule "home/.vim/pack/default/start/vim-caser"]
 	path = home/.vim/pack/default/start/vim-caser
 	url = git@github.com:arthurxavierx/vim-caser.git
+[submodule "home/.vim/pack/default/start/vim-oscyank"]
+	path = home/.vim/pack/default/start/vim-oscyank
+	url = git@github.com:ojroques/vim-oscyank.git

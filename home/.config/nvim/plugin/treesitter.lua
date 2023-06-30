@@ -33,10 +33,11 @@ require'nvim-treesitter.configs'.setup {
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = '<M-w>', -- alternatives: gnn, <CR>
-      scope_incremental = '<M-e>', -- alternatives: grc, <CR>
-      node_incremental = '<M-w>', -- alternatives: grn, <TAB>
-      node_decremental = '<M-C-w>', -- alternatives: grm, <S-TAB>
+      -- this is also done by treeclimber
+      init_selection = '<M-w>', -- alternatives: <M-w>, <CR>, currently: <M-j> (treeclimber)
+      scope_incremental = '<M-e>', -- alternatives: <M-e>, <CR>
+      node_incremental = '<M-w>', -- alternatives: <M-w>, <TAB>, currently: <M-j> (treeclimber)
+      node_decremental = '<M-C-w>', -- alternatives: <M-C-w>, <S-TAB>, currently: <M-k> (treeclimber)
     }
   },
   indent = { enable = true },

@@ -61,7 +61,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     if client ~= nil and client.server_capabilities.inlayHintProvider then
-      vim.lsp.buf.inlay_hint(bufnr, true)
+      vim.lsp.inlay_hint(bufnr, true)
     end
 
     -- Set some keybinds conditional on server capabilities

@@ -468,3 +468,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treehopper"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treehopper
 	url = git@github.com:mfussenegger/nvim-treehopper.git
+[submodule "home/.local/share/nvim/site/pack/default/start/dashboard-nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/dashboard-nvim
+	url = git@github.com:nvimdev/dashboard-nvim.git

@@ -444,9 +444,6 @@
 [submodule "home/.vim/pack/default/start/vim-matchup"]
 	path = home/.vim/pack/default/start/vim-matchup
 	url = git@github.com:andymass/vim-matchup.git
-[submodule "home/.local/share/nvim/site/pack/default/start/leap.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/leap.nvim
-	url = git@github.com:ggandor/leap.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/dropbar.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/dropbar.nvim
 	url = git@github.com:Bekaboo/dropbar.nvim.git
@@ -471,3 +468,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/dashboard-nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/dashboard-nvim
 	url = git@github.com:nvimdev/dashboard-nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/flash.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/flash.nvim
+	url = git@github.com:folke/flash.nvim.git

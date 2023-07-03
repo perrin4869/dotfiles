@@ -28,8 +28,8 @@ local get_opts = utils.create_get_opts(opts)
 
 vim.keymap.set('n', '<C-p>', project_files, opts)
 
--- nvim-lua/kickstart.nvim uses <leader>s, but it conflicts with hop.nvim
-local prefix = '<Space>t'
+-- nvim-lua/kickstart.nvim uses <leader>s, but it conflicts with flash.nvim (easymotion)
+local prefix = '<leader><leader>'
 vim.keymap.set('n', prefix .. 'f', builtin.find_files, get_opts({ desc="telescope.find_files" }))
 vim.keymap.set('n', prefix .. 'j', builtin.current_buffer_fuzzy_find, get_opts({ desc="telescope.find_files" }))
 vim.keymap.set('n', prefix .. 'h', builtin.help_tags, get_opts({ desc="telescope.help_tags" }))

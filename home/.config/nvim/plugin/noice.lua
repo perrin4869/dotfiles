@@ -18,8 +18,15 @@ require("noice").setup({
   routes = {
     {
       filter = {
-        event = "msg_show",
-        min_height = 2
+        blocking = true,
+        kind = {"","echo","echomsg"}
+      },
+      view = 'notify'
+    },
+    {
+      filter = {
+        cmdline = true,
+        min_height = 2,
       },
       view = 'popup'
     },

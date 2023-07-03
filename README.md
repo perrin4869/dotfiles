@@ -5,8 +5,6 @@ dotfiles
 
 GNU [stow](https://www.gnu.org/software/stow/) is needed to install the dependencies onto your home directory.
 
-Additionally, [npm](https://www.npmjs.com/) is needed to install the [coc](https://github.com/neoclide/coc.nvim) plugins (I may remove this in the future since native neovim lsp works better).
-
 To install:
 
 ```

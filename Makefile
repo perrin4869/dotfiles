@@ -32,7 +32,6 @@ NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
-COC_ROOT = ./home/.config/coc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
@@ -49,7 +48,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native coc vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts lua-language-server
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts lua-language-server
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -114,11 +113,6 @@ $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_MODULE_P
 $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 telescope-fzf-native: $(telescope-fzf-native)
-
-coc = $(COC_ROOT)/extensions/package-lock.json
-$(coc):
-	cd $(COC_ROOT)/extensions && npm install
-coc: $(coc)
 
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
@@ -197,4 +191,4 @@ fonts: home
 
 install: home treesitter fonts gitflow powerline grip dconf
 
-.PHONY: install coc fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts lua-language-server
+.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts lua-language-server

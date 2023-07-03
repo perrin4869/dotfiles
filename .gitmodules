@@ -245,10 +245,6 @@
 [submodule "vim/pack/default/opt/lsp-status"]
 	path = home/.local/share/nvim/site/pack/default/start/lsp-status
 	url = https://github.com/nvim-lua/lsp-status.nvim
-[submodule "vim/pack/default/opt/coc.nvim"]
-	path = home/.vim/pack/default/start/coc.nvim
-	url = https://github.com/neoclide/coc.nvim
-	branch = release
 [submodule "mpv-mpris"]
 	path = deps/mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris

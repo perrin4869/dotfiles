@@ -149,3 +149,6 @@ command -bang Q qall<bang>
 
 " Run xrdb whenever Xdefaults or Xresources are updated.
 autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
+
+" manually enable them if needed
+let g:gutentags_enabled=0

@@ -39,8 +39,8 @@ vim.keymap.set('n', prefix .. 'p', builtin.live_grep, get_opts({ desc="telescope
 vim.keymap.set('n', prefix .. 'k', builtin.keymaps, get_opts({ desc="telescope.keymaps" }))
 vim.keymap.set('n', prefix .. 'o', function() builtin.tags{ only_current_buffer = true } end,
   get_opts({ desc="telescope.tags" }))
-vim.keymap.set('n', '<Space>b', builtin.buffers, get_opts({ desc="telescope.buffers" }))
-vim.keymap.set('n', '<Space>?', builtin.oldfiles, get_opts({ desc="telescope.oldfiles" }))
+vim.keymap.set('n', '<leader><Space>', builtin.buffers, get_opts({ desc="telescope.buffers" }))
+vim.keymap.set('n', '<leader>?', builtin.oldfiles, get_opts({ desc="telescope.oldfiles" }))
 
 vim.keymap.set('n', prefix .. 'c', telescope.extensions.neoclip.default, get_opts({ desc="telescope.neoclip" }))
 vim.keymap.set('n', prefix .. 't', telescope.extensions.file_browser.file_browser,

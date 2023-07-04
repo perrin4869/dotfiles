@@ -91,8 +91,8 @@ vno <right> <Nop>
 vno <up> <Nop>
 
 "close current buffer with bufkill
-nnoremap Q :BD<CR>
-nnoremap <Leader>Q :Bdelete hidden<CR>
+nnoremap <silent> Q <cmd>BD<CR>
+nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
 nmap G Gzz
@@ -114,16 +114,19 @@ nmap <M-4> g$
 nmap <M-6> g^
 nmap <M-0> g^
 
-nnoremap <silent> g<Space> :b#<CR>
+" see CTRL-^
+" see help expand (or run :echo expand("#"))
+" # is the alternate file name
+nnoremap <silent> g<Space> <cmd>b#<CR>
 
 "This unsets the "last search pattern" register by hitting return
-nnoremap <silent> <backspace> :noh<CR>
+nnoremap <silent> <backspace> <cmd>noh<CR>
 
 nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 vnoremap <Space> zf
 
-nmap =j :%!python -m json.tool<CR>
-nmap =x :%!xmllint --format -<CR>
+nnoremap <silent> =j <cmd>%!python -m json.tool<CR>
+nnoremap <silent> =x <cmd>%!xmllint --format -<CR>
 
 function! CopyCurrentFileToClipboard() abort
   let @+=@%

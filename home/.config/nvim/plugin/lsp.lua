@@ -80,7 +80,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.api.nvim_create_autocmd("CursorMoved", {
         group = "lsp_document_highlight",
         buffer = bufnr,
-        callback = function () vim.lsp.buf.clear_references(bufnr) end
+        callback = vim.lsp.buf.clear_references
       })
     end
   end,

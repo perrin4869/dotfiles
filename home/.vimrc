@@ -68,6 +68,8 @@ set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
 
+set exrc
+
 let mapleader=','
 
 " Convenience

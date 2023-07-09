@@ -362,9 +362,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/gitsigns.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/gitsigns.nvim
 	url = git@github.com:lewis6991/gitsigns.nvim.git
-[submodule "home/.vim/pack/default/start/exrc.vim"]
-	path = home/.vim/pack/default/start/exrc.vim
-	url = git@github.com:ii14/exrc.vim.git
 [submodule "home/.vim/pack/default/start/vim-visual-multi"]
 	path = home/.vim/pack/default/start/vim-visual-multi
 	url = git@github.com:mg979/vim-visual-multi.git

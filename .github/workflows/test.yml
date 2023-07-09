@@ -47,4 +47,5 @@ jobs:
           make install
       - name: test neovim
         # make sure neovim doesn't output errors
-        run: nvim --headless +qa 2>&1 | grep -v .
+        run: |
+          [[ -z "$(nvim --headless +qa 2>&1)" ]] || exit 1

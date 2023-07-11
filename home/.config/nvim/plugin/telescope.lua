@@ -46,7 +46,8 @@ vim.keymap.set('n', '<leader>?', builtin.oldfiles, get_opts({ desc="telescope.ol
 vim.keymap.set('n', prefix .. 'c', telescope.extensions.neoclip.default, get_opts({ desc="telescope.neoclip" }))
 vim.keymap.set('n', prefix .. 't', telescope.extensions.file_browser.file_browser,
   get_opts({ desc="telescope.file_browser" }))
-vim.keymap.set('n', prefix .. 'p', telescope.extensions.projects.projects, get_opts({ desc="telescope.projects" })) -- r for ripgrep
+vim.keymap.set('n', prefix .. 'p', telescope.extensions.projects.projects,
+  get_opts({ desc="telescope.projects" })) -- r for ripgrep
 
 -- git
 vim.keymap.set('n', prefix .. 'b', builtin.git_branches, get_opts({ desc="telescope.git_branches" }))

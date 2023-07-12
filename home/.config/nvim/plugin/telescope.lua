@@ -15,7 +15,7 @@ telescope.load_extension'fzf'
 telescope.load_extension'dap'
 telescope.load_extension'neoclip'
 telescope.load_extension'file_browser'
-telescope.load_extension'projects'
+telescope.load_extension'workspaces'
 
 local project_files = function()
   local opts = {} -- define here if you want to define something
@@ -36,7 +36,7 @@ vim.keymap.set('n', prefix .. 'j', builtin.current_buffer_fuzzy_find, get_opts({
 vim.keymap.set('n', prefix .. 'h', builtin.help_tags, get_opts({ desc="telescope.help_tags" }))
 vim.keymap.set('n', prefix .. 't', builtin.tags, get_opts({ desc="telescope.tags" }))
 vim.keymap.set('n', prefix .. 'd', builtin.grep_string, get_opts({ desc="telescope.grep_string" }))
-vim.keymap.set('n', prefix .. 'r', builtin.live_grep, get_opts({ desc="telescope.live_grep" })) -- r for ripgrep
+vim.keymap.set('n', prefix .. 'p', builtin.live_grep, get_opts({ desc="telescope.live_grep" })) -- ripgrep
 vim.keymap.set('n', prefix .. 'k', builtin.keymaps, get_opts({ desc="telescope.keymaps" }))
 vim.keymap.set('n', prefix .. 'o', function() builtin.tags{ only_current_buffer = true } end,
   get_opts({ desc="telescope.tags" }))
@@ -46,8 +46,8 @@ vim.keymap.set('n', '<leader>?', builtin.oldfiles, get_opts({ desc="telescope.ol
 vim.keymap.set('n', prefix .. 'c', telescope.extensions.neoclip.default, get_opts({ desc="telescope.neoclip" }))
 vim.keymap.set('n', prefix .. 't', telescope.extensions.file_browser.file_browser,
   get_opts({ desc="telescope.file_browser" }))
-vim.keymap.set('n', prefix .. 'p', telescope.extensions.projects.projects,
-  get_opts({ desc="telescope.projects" })) -- r for ripgrep
+vim.keymap.set('n', prefix .. 'w', telescope.extensions.workspaces.workspaces,
+  get_opts({ desc="telescope.workspaces" })) -- r for ripgrep
 
 -- git
 vim.keymap.set('n', prefix .. 'b', builtin.git_branches, get_opts({ desc="telescope.git_branches" }))

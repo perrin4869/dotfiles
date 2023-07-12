@@ -476,6 +476,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-autopairs"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-autopairs
 	url = git@github.com:windwp/nvim-autopairs.git
-[submodule "home/.local/share/nvim/site/pack/default/start/project.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/project.nvim
-	url = git@github.com:ahmedkhalf/project.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/workspaces.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/workspaces.nvim
+	url = git@github.com:natecraddock/workspaces.nvim.git

@@ -482,3 +482,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-tree"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-tree
 	url = git@github.com:nvim-tree/nvim-tree.lua.git
+[submodule "home/.local/share/nvim/site/pack/default/start/persistence.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/persistence.nvim
+	url = git@github.com:folke/persistence.nvim.git

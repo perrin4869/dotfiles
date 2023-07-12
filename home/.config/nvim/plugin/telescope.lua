@@ -1,6 +1,7 @@
 local telescope = require'telescope'
 local builtin = require'telescope.builtin'
 local utils = require'utils'
+local project_files = require'project_files'
 
 telescope.setup{
   pickers = {
@@ -16,12 +17,6 @@ telescope.load_extension'dap'
 telescope.load_extension'neoclip'
 telescope.load_extension'file_browser'
 telescope.load_extension'workspaces'
-
-local project_files = function()
-  local opts = {} -- define here if you want to define something
-  local ok = pcall(require'telescope.builtin'.git_files, opts)
-  if not ok then require'telescope.builtin'.find_files(opts) end
-end
 
 -- Mappings.
 local opts = { noremap=true,silent=true }

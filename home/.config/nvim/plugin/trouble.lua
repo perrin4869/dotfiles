@@ -3,9 +3,8 @@ local utils = require('utils')
 
 trouble.setup{}
 
-vim.api.nvim_create_augroup("LspAttach_trouble", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_trouble",
+  group = vim.api.nvim_create_augroup("LspAttach_trouble", {clear=true}),
   callback = function(args)
     if not (args.data and args.data.client_id) then
       return

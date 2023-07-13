@@ -132,10 +132,8 @@ dap.listeners.after['event_terminated']['me'] = function()
 end
 
 -- autocmd FileType dap-float nnoremap <buffer><silent> q <cmd>close!<CR>
-vim.api.nvim_create_augroup("dap_float", {})
-vim.api.nvim_clear_autocmds({ group="dap_float" })
 vim.api.nvim_create_autocmd("FileType", {
-  group = "dap_float",
+  group = vim.api.nvim_create_augroup("dap_float", {clear=true}),
   pattern = "dap-float",
   callback = function() vim.keymap.set("n", "q", function() vim.cmd("close!") end, opts) end
 })

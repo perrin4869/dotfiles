@@ -18,9 +18,8 @@ hlargs.setup {
   end
 }
 
-vim.api.nvim_create_augroup("LspAttach_hlargs", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_hlargs",
+  group = vim.api.nvim_create_augroup("LspAttach_hlargs", {}),
   callback = function(args)
     local bufnr = args.buf
     if vim.b[bufnr].semantic_tokens then

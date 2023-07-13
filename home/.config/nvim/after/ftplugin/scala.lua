@@ -2,9 +2,8 @@ local metals = require"metals"
 local tvp = require"metals.tvp"
 local lsp = require"lsp"
 
-vim.api.nvim_create_augroup("LspAttach_metals", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_metals",
+  group = vim.api.nvim_create_augroup("LspAttach_metals", {}),
   callback = function(args)
     if not (args.data and args.data.client_id) then
       return

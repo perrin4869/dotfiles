@@ -2,9 +2,8 @@ local status = require('lsp-status')
 
 status.register_progress()
 
-vim.api.nvim_create_augroup("LspAttach_status", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_status",
+  group = vim.api.nvim_create_augroup("LspAttach_status", {clear=true}),
   callback = function(args)
     if not (args.data and args.data.client_id) then
       return

@@ -3,9 +3,8 @@ local typescript = require'typescript'
 local lsp = require'lsp'
 local utils = require'utils'
 
-vim.api.nvim_create_augroup("LspAttach_general", {})
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_general",
+  group = vim.api.nvim_create_augroup("LspAttach_general", {clear=true}),
   callback = function(args)
     if not (args.data and args.data.client_id) then
       return

@@ -25,13 +25,37 @@ local get_opts = utils.create_get_opts(opts)
 vim.keymap.set('n', 'gN', api.tree.toggle, get_opts({ desc="nvim-tree.toggle" }))
 vim.keymap.set('n', 'gF', api.tree.find_file, get_opts({ desc="nvim-tree.find_file" }))
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
-  pattern = "NvimTree_*",
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--   group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),
+--   pattern = "NvimTree_*",
+--   callback = function()
+--     local layout = vim.fn.winlayout()
+--     if layout[1] == "leaf" and vim.bo[vim.api.nvim_win_get_buf(layout[2])].ft == "NvimTree" and layout[3] == nil then
+--       vim.cmd("confirm quit")
+--     end
+--   end
+-- })
+
+-- this solution allows VimLeavePre from persistence.nvim to trigger as expected and save the session correctly
+vim.api.nvim_create_autocmd("QuitPre", {
   callback = function()
-    local layout = vim.fn.winlayout()
-    if layout[1] == "leaf" and vim.bo[vim.api.nvim_win_get_buf(layout[2])].ft == "NvimTree" and layout[3] == nil then
-      vim.cmd("confirm quit")
+    local tree_wins = {}
+    local floating_wins = {}
+    local wins = vim.api.nvim_list_wins()
+    for _, w in ipairs(wins) do
+      local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
+      if bufname:match("NvimTree_") ~= nil then
+        table.insert(tree_wins, w)
+      end
+      if vim.api.nvim_win_get_config(w).relative ~= '' then
+        table.insert(floating_wins, w)
+      end
+    end
+    if 1 == #wins - #floating_wins - #tree_wins then
+      -- Should quit, so we close all invalid windows.
+      for _, w in ipairs(tree_wins) do
+        vim.api.nvim_win_close(w, true)
+      end
     end
   end
 })

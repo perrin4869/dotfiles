@@ -18,6 +18,17 @@ telescope.load_extension'neoclip'
 telescope.load_extension'file_browser'
 telescope.load_extension'workspaces'
 
+local function git_grep()
+  local opts = {}
+
+  local git_dir = vim.fn.system(string.format("git -C %s rev-parse --show-toplevel", vim.fn.expand("%:p:h")))
+  if (vim.v.shell_error == 0) then
+    git_dir = string.gsub(git_dir, "\n", "")
+    opts.cwd = git_dir
+  end
+  require('telescope.builtin').live_grep(opts)
+end
+
 -- Mappings.
 local opts = { noremap=true,silent=true }
 local get_opts = utils.create_get_opts(opts)
@@ -31,7 +42,7 @@ vim.keymap.set('n', prefix .. 'j', builtin.current_buffer_fuzzy_find, get_opts({
 vim.keymap.set('n', prefix .. 'h', builtin.help_tags, get_opts({ desc="telescope.help_tags" }))
 vim.keymap.set('n', prefix .. 't', builtin.tags, get_opts({ desc="telescope.tags" }))
 vim.keymap.set('n', prefix .. 'd', builtin.grep_string, get_opts({ desc="telescope.grep_string" }))
-vim.keymap.set('n', prefix .. 'p', builtin.live_grep, get_opts({ desc="telescope.live_grep" })) -- ripgrep
+vim.keymap.set('n', prefix .. 'p', git_grep, get_opts({ desc="telescope.live_grep" })) -- ripgrep
 vim.keymap.set('n', prefix .. 'k', builtin.keymaps, get_opts({ desc="telescope.keymaps" }))
 vim.keymap.set('n', prefix .. 'o', function() builtin.tags{ only_current_buffer = true } end,
   get_opts({ desc="telescope.tags" }))

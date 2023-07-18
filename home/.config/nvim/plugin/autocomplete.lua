@@ -29,7 +29,6 @@ cmp.setup {
     { name = 'tmux' },
     { name = 'calc' },
     { name = 'emoji' },
-    { name = 'zsh' },
     { name = 'spell' },
   },
 }

@@ -431,9 +431,6 @@
 [submodule "home/.vim/pack/default/start/vim-abolish"]
 	path = home/.vim/pack/default/start/vim-abolish
 	url = git@github.com:tpope/vim-abolish.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-rainbow"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-rainbow
-	url = git@github.com:HiPhish/nvim-ts-rainbow2.git
 [submodule "home/.vim/pack/default/start/vim-matchup"]
 	path = home/.vim/pack/default/start/vim-matchup
 	url = git@github.com:andymass/vim-matchup.git
@@ -488,3 +485,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim
 	url = git@github.com:davvid/telescope-git-grep.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim
+	url = git@github.com:HiPhish/rainbow-delimiters.nvim.git

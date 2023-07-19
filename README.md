@@ -35,7 +35,6 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `pass-otp`
 - `rofi`
 - `rofi-pass`
-- `pinentry-dmenu`
 - `sxhkd`
 - `blueman`
 - `dunst`

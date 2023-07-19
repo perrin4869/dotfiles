@@ -10,7 +10,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if (client.name ~= "metals") then
+    if (client == nil or client.name ~= "metals") then
       return
     end
 

@@ -38,7 +38,8 @@ metals_config.settings = {
   showInferredType = true,
   showImplicitConversionsAndClasses = true,
   superMethodLensesEnabled = true,
-  enableSemanticHighlighting = true,
+  -- this overrides tree-sitters semantic highlighting and is not as good (yet?)
+  -- enableSemanticHighlighting = true,
 }
 
 metals.initialize_or_attach(metals_config)

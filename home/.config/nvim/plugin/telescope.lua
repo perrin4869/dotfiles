@@ -44,6 +44,7 @@ vim.keymap.set('n', prefix .. 't', builtin.tags, get_opts({ desc="telescope.tags
 vim.keymap.set('n', prefix .. 'd', builtin.grep_string, get_opts({ desc="telescope.grep_string" }))
 vim.keymap.set('n', prefix .. 'r', builtin.live_grep, get_opts({ desc="telescope.live_grep" })) -- ripgrep
 vim.keymap.set('n', prefix .. 'k', builtin.keymaps, get_opts({ desc="telescope.keymaps" }))
+vim.keymap.set('n', prefix .. 'a', builtin.autocommands, get_opts({ desc="telescope.autocommands" }))
 vim.keymap.set('n', prefix .. 'o', function() builtin.tags{ only_current_buffer = true } end,
   get_opts({ desc="telescope.tags" }))
 vim.keymap.set('n', '<leader><Space>', builtin.buffers, get_opts({ desc="telescope.buffers" }))

@@ -23,7 +23,9 @@ local opts = { noremap=true,silent=true }
 local get_opts = utils.create_get_opts(opts)
 
 vim.keymap.set('n', 'gN', api.tree.toggle, get_opts({ desc="nvim-tree.toggle" }))
-vim.keymap.set('n', 'gF', api.tree.find_file, get_opts({ desc="nvim-tree.find_file" }))
+vim.keymap.set('n', 'gF', function ()
+  api.tree.find_file({focus=true,open=true})
+end, get_opts({ desc="nvim-tree.find_file" }))
 
 -- vim.api.nvim_create_autocmd("BufEnter", {
 --   group = vim.api.nvim_create_augroup("NvimTreeClose", {clear = true}),

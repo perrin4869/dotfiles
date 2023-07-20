@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set('n', 'gtf', tvp.reveal_in_tree, opts)
 
     vim.keymap.set('n', '<leader>o', metals.organize_imports, opts)
-    vim.api.nvim_buf_create_user_command(bufnr, 'OR', 'MetalsOrganizeImport', { nargs = 0 })
+    vim.api.nvim_buf_create_user_command(bufnr, 'OR', metals.organize_imports, { nargs = 0 })
 
     lsp.autoformat(client, bufnr)
     metals.setup_dap()

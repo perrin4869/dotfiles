@@ -97,13 +97,15 @@ nnoremap <silent> <C-q> <cmd>BD<CR>
 nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
-nmap G Gzz
-nmap n nzz
-nmap N Nzz
-nmap } }zz
-nmap { {zz
-nmap ) )zz
-nmap ( (zz
+nnoremap G Gzz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap } }zz
+nnoremap { {zz
+nnoremap ) )zz
+nnoremap ( (zz
+nnoremap <C-f> <C-f>zz
+nnoremap <C-b> <C-b>zz
 
 "make mappings for display lines
 "These mappings make it easy to move along long lines

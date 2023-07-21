@@ -131,6 +131,8 @@ nnoremap <silent> <backspace> <cmd>noh<CR>
 nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 vnoremap <Space> zf
 
+nnoremap <silent> <leader>rm <cmd>call delete(expand('%')) \| execute('bdelete!')<CR>
+
 nnoremap <silent> =j <cmd>%!python -m json.tool<CR>
 nnoremap <silent> =x <cmd>%!xmllint --format -<CR>
 

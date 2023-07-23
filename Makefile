@@ -193,6 +193,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home treesitter mason fonts gitflow powerline grip dconf
+install: treesitter mason home fonts gitflow powerline grip dconf
 
 .PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter mason firacode grip dirs submodules dconf home fonts nerd_fonts

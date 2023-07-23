@@ -125,9 +125,13 @@ $(treesitter-targets) &: home $(TREESITTER_ROOT)/lockfile.json
 # 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
+mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
+$(mason-registry): home
+	nvim --headless -c "MasonUpdate" -c q
+
 mason-packages = luacheck kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
-$(mason-targets) &: home $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
+$(mason-targets) &: $(mason-registry)
 	nvim --headless -c "MasonInstall $(mason-packages)" -c q
 mason: $(mason-targets)
 

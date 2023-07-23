@@ -398,9 +398,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treeclimber"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treeclimber
 	url = git@github.com:Dkendal/nvim-treeclimber.git
-[submodule "home/.local/share/nvim/site/pack/default/start/typescript.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/typescript.nvim
-	url = git@github.com:jose-elias-alvarez/typescript.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/cellular-automation.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/cellular-automation.nvim
 	url = git@github.com:Eandrju/cellular-automaton.nvim.git
@@ -482,3 +479,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim
 	url = git@github.com:HiPhish/rainbow-delimiters.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/typescript-tools.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/typescript-tools.nvim
+	url = git@github.com:pmizio/typescript-tools.nvim.git

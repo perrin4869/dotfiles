@@ -1,5 +1,5 @@
 local config = require'lspconfig'
-local typescript = require'typescript'
+local typescript = require'typescript-tools'
 local lsp = require'lsp'
 local utils = require'utils'
 
@@ -136,32 +136,24 @@ config.sqlls.setup{
 }
 
 typescript.setup{
-  server = {
-    capabilities=capabilities,
-    settings = {
-      javascript = {
-        inlayHints = {
-          includeInlayEnumMemberValueHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayVariableTypeHints = true,
-        },
-      },
-      typescript = {
-        inlayHints = {
-          includeInlayEnumMemberValueHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all';
-          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayVariableTypeHints = true,
-        },
-      },
+  capabilities=capabilities,
+  settings = {
+    -- spawn additional tsserver instance to calculate diagnostics on it
+    separate_diagnostic_server = true,
+    -- "change"|"insert_leave" determine when the client asks the server about diagnostic
+    publish_diagnostic_on = "change",
+    tsserver_file_preferences = {
+      includeInlayParameterNameHints = "all",
+      includeInlayEnumMemberValueHints = true,
+      includeInlayFunctionLikeReturnTypeHints = true,
+      includeInlayFunctionParameterTypeHints = true,
+      includeInlayPropertyDeclarationTypeHints = true,
+      includeInlayVariableTypeHints = true
     },
+    tsserver_format_options = {
+      allowIncompleteCompletions = false,
+      allowRenameOfImportPath = false
+    }
   }
 }
 

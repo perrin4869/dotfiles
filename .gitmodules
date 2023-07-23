@@ -431,9 +431,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/neodev.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/neodev.nvim
 	url = git@github.com:folke/neodev.nvim.git
-[submodule "deps/lua-language-server"]
-	path = deps/lua-language-server
-	url = git@github.com:LuaLS/lua-language-server.git
 [submodule "home/.local/share/nvim/site/pack/default/start/hlargs.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/hlargs.nvim
 	url = git@github.com:m-demare/hlargs.nvim.git
@@ -485,3 +482,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-cokeline"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-cokeline
 	url = git@github.com:willothy/nvim-cokeline.git
+[submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
+	url = git@github.com:williamboman/mason.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
+	url = git@github.com:williamboman/mason-lspconfig.nvim.git

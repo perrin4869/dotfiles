@@ -14,6 +14,7 @@ home/.local/share/nvim/undo/
 home/.local/share/nvim/shada/
 home/.local/share/nvim/workspaces
 home/.local/share/nvim/project_nvim/
+home/.local/share/nvim/mason/
 
 home/.gnupg/*
 !home/.gnupg/gpg-agent.conf
@@ -44,3 +45,5 @@ home/.config/fcitx5/crash.log
 
 # this is useful if there are local files that are temporarily conflicting, ignore them
 home/.stow-local-ignore
+
+.luarc.json

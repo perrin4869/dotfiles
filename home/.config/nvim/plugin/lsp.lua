@@ -97,10 +97,15 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 )
 -- luacheck: pop
 
+require("mason").setup()
+require("mason-lspconfig").setup({
+  automatic_installation = true
+})
 require("neodev").setup({})
 
 local capabilities = lsp.capabilities
 
+config.bashls.setup{capabilities=capabilities}
 config.vimls.setup{capabilities=capabilities}
 config.ccls.setup{capabilities=capabilities}
 config.html.setup{capabilities=capabilities}
@@ -120,6 +125,7 @@ config.cssls.setup{
     }
   }
 }
+
 config.jsonls.setup {
   capabilities=capabilities,
   commands = {
@@ -134,6 +140,16 @@ config.sqlls.setup{
   capabilities=capabilities,
   cmd={"sql-language-server", "up", "--method", "stdio"}
 }
+
+config.lua_ls.setup({
+  settings = {
+    Lua = {
+      completion = {
+        callSnippet = "Replace"
+      }
+    }
+  }
+})
 
 typescript.setup{
   capabilities=capabilities,
@@ -156,13 +172,3 @@ typescript.setup{
     }
   }
 }
-
-config.lua_ls.setup({
-  settings = {
-    Lua = {
-      completion = {
-        callSnippet = "Replace"
-      }
-    }
-  }
-})

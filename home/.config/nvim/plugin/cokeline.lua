@@ -6,6 +6,7 @@ local red = vim.g.terminal_color_1
 local yellow = vim.g.terminal_color_3
 
 require('cokeline').setup({
+  show_if_buffers_are_at_least = 2,
   default_hl = {
     fg = function(buffer)
       return

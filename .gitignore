@@ -16,6 +16,10 @@ home/.local/share/nvim/workspaces
 home/.local/share/nvim/project_nvim/
 home/.local/share/nvim/mason/
 
+# these get generated when running neovim with HOME=./home
+home/.local/state/
+home/.cache
+
 home/.gnupg/*
 !home/.gnupg/gpg-agent.conf
 
@@ -44,6 +48,5 @@ home/.config/fcitx5/conf/*
 home/.config/fcitx5/crash.log
 
 # this is useful if there are local files that are temporarily conflicting, ignore them
-home/.stow-local-ignore
-
+.stowrc
 .luarc.json

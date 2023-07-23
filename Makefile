@@ -121,19 +121,19 @@ treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
-	nvim --headless -c "let &runtimepath.=',$(PWD)/home/.local/share/nvim/site/pack/default/start/nvim-treesitter'" -c "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
-	touch $@
+	HOME=./home nvim --headless "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
+	touch $(treesitter-targets)
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
 mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
 $(mason-registry):
-	nvim --headless -c "let &runtimepath.=',$(PWD)/home/.local/share/nvim/site/pack/default/start/mason.nvim'" -c "MasonUpdate" -c q
+	HOME=./home nvim --headless -c "MasonUpdate" -c q
 
 mason-packages = luacheck kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
 $(mason-targets) &: $(mason-registry)
-	nvim --headless -c "let &runtimepath.=',$(PWD)/home/.local/share/nvim/site/pack/default/start/mason.nvim'" -c "MasonInstall $(mason-packages)" -c q
+	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q
 	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
 	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
 mason: $(mason-targets)
@@ -196,6 +196,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: treesitter mason home fonts gitflow powerline grip dconf
+install: home treesitter mason fonts gitflow powerline grip dconf
 
 .PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter mason firacode grip dirs submodules dconf home fonts nerd_fonts

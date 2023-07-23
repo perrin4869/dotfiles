@@ -2,7 +2,7 @@
 set showtabline=2
 
 let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox'
+let g:lightline.colorscheme = g:colors_name " help colorscheme
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],

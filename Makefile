@@ -130,7 +130,7 @@ mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/regist
 $(mason-registry):
 	HOME=./home nvim --headless -c "MasonUpdate" -c q
 
-mason-packages = luacheck kotlin-debug-adapter
+mason-packages = luacheck stylua kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
 $(mason-targets) &: $(mason-registry)
 	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q

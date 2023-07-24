@@ -130,12 +130,13 @@ mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/regist
 $(mason-registry):
 	HOME=./home nvim --headless -c "MasonUpdate" -c q
 
-mason-packages = luacheck stylua kotlin-debug-adapter
+mason-packages = luacheck stylua prettier jsonlint kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
 $(mason-targets) &: $(mason-registry)
 	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q
 	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
 	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
+	touch $(MASON_ROOT)/bin/stylua
 mason: $(mason-targets)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js

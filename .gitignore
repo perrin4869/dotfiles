@@ -20,6 +20,8 @@ home/.local/share/nvim/mason/
 home/.local/state/
 home/.cache
 
+home/.npm/
+
 home/.gnupg/*
 !home/.gnupg/gpg-agent.conf
 

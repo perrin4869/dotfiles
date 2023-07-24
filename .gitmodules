@@ -488,3 +488,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
 	url = git@github.com:williamboman/mason-lspconfig.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/formatter.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/formatter.nvim
+	url = git@github.com:mhartington/formatter.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-lint
+	url = git@github.com:mfussenegger/nvim-lint.git

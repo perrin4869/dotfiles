@@ -44,7 +44,7 @@ require('cokeline').setup({
     },
     {
       text = function(buffer) return buffer.filename end,
-      style = function(buffer) return buffer.is_focused and 'bold' or nil end,
+      style = function(buffer) return buffer.is_focused and 'bold' or (buffer.is_hovered and 'underline' or nil) end,
     },
     {
       text = function(buffer)
@@ -56,7 +56,9 @@ require('cokeline').setup({
     },
     {
       text = '󰅖',
-      delete_buffer_on_left_click = true,
+      on_click = function(_, _, _, _, buffer)
+        buffer:delete()
+      end
     },
     {
       text = '  ',

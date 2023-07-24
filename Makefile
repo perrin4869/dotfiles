@@ -118,21 +118,24 @@ telescope-fzf-native: $(telescope-fzf-native)
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
-$(treesitter-targets) &: home $(TREESITTER_ROOT)/lockfile.json
-# 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
-# 	@# rm -f $(treesitter-targets)
-	nvim --headless -c "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
-# 	@# nvim --headless +TSUpdateSync +qa exits immediately
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+	@# rm -f $(treesitter-targets)
+	HOME=./home nvim --headless "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
+	touch $(treesitter-targets)
+	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
 mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
-$(mason-registry): home
-	nvim --headless -c "MasonUpdate" -c q
+$(mason-registry):
+	HOME=./home nvim --headless -c "MasonUpdate" -c q
 
 mason-packages = luacheck kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
 $(mason-targets) &: $(mason-registry)
-	nvim --headless -c "MasonInstall $(mason-packages)" -c q
+	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q
+	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
+	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
 mason: $(mason-targets)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js

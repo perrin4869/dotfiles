@@ -494,3 +494,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lint
 	url = git@github.com:mfussenegger/nvim-lint.git
+[submodule "home/.local/share/nvim/site/pack/default/start/lsp-format.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/lsp-format.nvim
+	url = git@github.com:lukas-reineke/lsp-format.nvim.git

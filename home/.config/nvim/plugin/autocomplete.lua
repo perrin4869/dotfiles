@@ -23,13 +23,36 @@ cmp.setup({
 		{ name = "nvim_lua" },
 		{ name = "treesitter" },
 		{ name = "vsnip" },
-		{ name = "buffer" },
 		{ name = "path" },
 		{ name = "tmux" },
 		{ name = "calc" },
 		{ name = "emoji" },
 		{ name = "spell" },
 	},
+})
+
+cmp.setup.filetype("gitcommit", {
+	sources = cmp.config.sources({
+		{ name = "git" },
+	}, {
+		{ name = "buffer" },
+	}),
+})
+
+cmp.setup.cmdline({ "/", "?" }, {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = {
+		{ name = "buffer" },
+	},
+})
+
+cmp.setup.cmdline(":", {
+	mapping = cmp.mapping.preset.cmdline(),
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
 })
 
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")

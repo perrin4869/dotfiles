@@ -121,7 +121,7 @@ treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
-	HOME=./home nvim --headless "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
+	HOME=./home nvim --headless -c "lua require('treesitter').ensure_installed({ $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)')) })" -c q
 	touch $(treesitter-targets)
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)

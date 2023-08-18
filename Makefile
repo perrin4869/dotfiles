@@ -48,7 +48,7 @@ define git_submodule
 $($1_head_file): $3/.git
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts
+all: mpv-mpris xwinwrap ccls fzf fzy treesitter  telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts
 
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -197,6 +197,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home treesitter mason fonts gitflow powerline grip dconf
+install: home mason fonts gitflow powerline grip dconf
 
 .PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter mason firacode grip dirs submodules dconf home fonts nerd_fonts

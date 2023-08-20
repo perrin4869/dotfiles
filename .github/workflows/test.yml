@@ -19,12 +19,13 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli ninja-build yq
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli ninja-build
           # libglib2.0-dev libmpv-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
           # ninja-build - lua-language-server
-          # yq - mason-registry https://github.com/williamboman/mason.nvim/pull/1457
           version: 1.0
+      - name: yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
+        uses: mikefarah/yq@master
       - name: neovim
         uses: rhysd/action-setup-vim@v1
         with:

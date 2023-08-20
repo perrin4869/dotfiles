@@ -131,32 +131,30 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-mason-registry-refresh = lua require('mason-registry').refresh(function () end)
-
 luacheck-target = $(MASON_ROOT)/bin/luacheck
 $(luacheck-target): $(MASON_REGISTRY_ROOT)/packages/luacheck/package.yaml
-	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall luacheck" -c q
+	HOME=./home nvim --headless -c "MasonInstall luacheck" -c q
 luacheck: $(luacheck-target)
 
 stylua-target = $(MASON_ROOT)/bin/stylua
 $(stylua-target): $(MASON_REGISTRY_ROOT)/packages/stylua/package.yaml
-	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall stylua" -c q
+	HOME=./home nvim --headless -c "MasonInstall stylua" -c q
 	touch $(MASON_ROOT)/bin/stylua
 stylua: $(stylua-target)
 
 prettier-target = $(MASON_ROOT)/bin/prettier
 $(prettier-target): $(MASON_REGISTRY_ROOT)/packages/prettier/package.yaml
-	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall prettier" -c q
+	HOME=./home nvim --headless -c "MasonInstall prettier" -c q
 prettier: $(prettier-target)
 
 jsonlint-target = $(MASON_ROOT)/bin/jsonlint
 $(jsonlint-target): $(MASON_REGISTRY_ROOT)/packages/jsonlint/package.yaml
-	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall jsonlint" -c q
+	HOME=./home nvim --headless -c "MasonInstall jsonlint" -c q
 jsonlint: $(jsonlint-target)
 
 kotlin-debug-adapter-target = $(MASON_ROOT)/bin/kotlin-debug-adapter
 $(kotlin-debug-adapter-target): $(MASON_REGISTRY_ROOT)/packages/kotlin-debug-adapter/package.yaml
-	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall kotlin-debug-adapter" -c q
+	HOME=./home nvim --headless -c "MasonInstall kotlin-debug-adapter" -c q
 	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
 	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
 kotlin-debug-adapter: $(kotlin-debug-adapter-target)

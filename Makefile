@@ -131,15 +131,35 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-mason-packages = luacheck stylua prettier jsonlint kotlin-debug-adapter
-mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
-mason-registry-packages = $(addprefix $(addprefix $(MASON_REGISTRY_ROOT)/packages/, $(mason-packages)), /package.yaml)
-$(mason-targets) &: $(mason-registry-packages)
-	HOME=./home nvim --headless -c "lua require('mason-registry').refresh(function () end)" -c "MasonInstall $(mason-packages)" -c q
+mason-registry-refresh = lua require('mason-registry').refresh(function () end)
+
+luacheck-target = $(MASON_ROOT)/bin/luacheck
+$(luacheck-target): $(MASON_REGISTRY_ROOT)/packages/luacheck/package.yaml
+	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall luacheck" -c q
+luacheck: $(luacheck-target)
+
+stylua-target = $(MASON_ROOT)/bin/stylua
+$(stylua-target): $(MASON_REGISTRY_ROOT)/packages/stylua/package.yaml
+	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall stylua" -c q
+	touch $(MASON_ROOT)/bin/stylua
+stylua: $(stylua-target)
+
+prettier-target = $(MASON_ROOT)/bin/prettier
+$(prettier-target): $(MASON_REGISTRY_ROOT)/packages/prettier/package.yaml
+	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall prettier" -c q
+prettier: $(prettier-target)
+
+jsonlint-target = $(MASON_ROOT)/bin/jsonlint
+$(jsonlint-target): $(MASON_REGISTRY_ROOT)/packages/jsonlint/package.yaml
+	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall jsonlint" -c q
+jsonlint: $(jsonlint-target)
+
+kotlin-debug-adapter-target = $(MASON_ROOT)/bin/kotlin-debug-adapter
+$(kotlin-debug-adapter-target): $(MASON_REGISTRY_ROOT)/packages/kotlin-debug-adapter/package.yaml
+	HOME=./home nvim --headless -c "$(mason-registry-refresh)" -c "MasonInstall kotlin-debug-adapter" -c q
 	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
 	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
-	touch $(MASON_ROOT)/bin/stylua
-mason: $(mason-targets)
+kotlin-debug-adapter: $(kotlin-debug-adapter-target)
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
@@ -199,6 +219,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home mason fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint kotlin-debug-adapter fonts gitflow powerline grip dconf
 
-.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter mason firacode grip dirs submodules dconf home fonts nerd_fonts
+.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts luacheck stylua prettier jsonlint kotlin-debug-adapter

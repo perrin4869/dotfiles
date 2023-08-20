@@ -98,7 +98,6 @@ require("mason").setup({
 		"file:" .. vim.fn.stdpath("data") .. "/mason-registry",
 	},
 })
-require("mason-registry").refresh(function() end)
 require("mason-lspconfig").setup({
 	automatic_installation = true,
 })

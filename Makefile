@@ -40,13 +40,21 @@ submodules-deps = $(addsuffix /.git, $(submodules-paths))
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
 define git_submodule
-	$(eval $1_head = $(shell cat .git/modules/$2/HEAD))
-	$(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
-		.git/modules/$2/$(lastword $($1_head)),\
-		.git/modules/$2/HEAD))
+$(eval $1_head = $(shell cat .git/modules/$2/HEAD))
+$(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
+	.git/modules/$2/$(lastword $($1_head)),\
+	.git/modules/$2/HEAD))
 
 # init submodule if necessary
 $($1_head_file): $3/.git
+endef
+
+define meson_package
+$(eval $1-target = $(MASON_ROOT)/bin/$1)
+$($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
+	HOME=./home nvim --headless -c "MasonInstall $1" -c q
+	$(if $(findstring true,$2),touch $(MASON_ROOT)/bin/$1,)
+$1: $($1-target)
 endef
 
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts treesitter
@@ -131,33 +139,12 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-luacheck-target = $(MASON_ROOT)/bin/luacheck
-$(luacheck-target): $(MASON_REGISTRY_ROOT)/packages/luacheck/package.yaml
-	HOME=./home nvim --headless -c "MasonInstall luacheck" -c q
-luacheck: $(luacheck-target)
-
-stylua-target = $(MASON_ROOT)/bin/stylua
-$(stylua-target): $(MASON_REGISTRY_ROOT)/packages/stylua/package.yaml
-	HOME=./home nvim --headless -c "MasonInstall stylua" -c q
-	touch $(MASON_ROOT)/bin/stylua
-stylua: $(stylua-target)
-
-prettier-target = $(MASON_ROOT)/bin/prettier
-$(prettier-target): $(MASON_REGISTRY_ROOT)/packages/prettier/package.yaml
-	HOME=./home nvim --headless -c "MasonInstall prettier" -c q
-prettier: $(prettier-target)
-
-jsonlint-target = $(MASON_ROOT)/bin/jsonlint
-$(jsonlint-target): $(MASON_REGISTRY_ROOT)/packages/jsonlint/package.yaml
-	HOME=./home nvim --headless -c "MasonInstall jsonlint" -c q
-jsonlint: $(jsonlint-target)
-
-kotlin-debug-adapter-target = $(MASON_ROOT)/bin/kotlin-debug-adapter
-$(kotlin-debug-adapter-target): $(MASON_REGISTRY_ROOT)/packages/kotlin-debug-adapter/package.yaml
-	HOME=./home nvim --headless -c "MasonInstall kotlin-debug-adapter" -c q
-	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
-	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
-kotlin-debug-adapter: $(kotlin-debug-adapter-target)
+$(eval $(call meson_package,luacheck))
+$(eval $(call meson_package,stylua,true))
+$(eval $(call meson_package,prettier))
+$(eval $(call meson_package,jsonlint))
+$(eval $(call meson_package,kotlin-debug-adapter,true))
+# the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))

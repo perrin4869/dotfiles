@@ -30,6 +30,7 @@ FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 MASON_ROOT = ./home/.local/share/nvim/mason
+MASON_REGISTRY_ROOT = ./home/.local/share/nvim/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 
@@ -130,14 +131,11 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
-$(mason-registry):
-	HOME=./home nvim --headless -c "MasonUpdate" -c q
-
 mason-packages = luacheck stylua prettier jsonlint kotlin-debug-adapter
 mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
-$(mason-targets) &: $(mason-registry)
-	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q
+mason-registry-packages = $(addprefix $(addprefix $(MASON_REGISTRY_ROOT)/packages/, $(mason-packages)), /package.yaml)
+$(mason-targets) &: $(mason-registry-packages)
+	HOME=./home nvim --headless -c "lua require('mason-registry').refresh(function () end)" -c "MasonInstall $(mason-packages)" -c q
 	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
 	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
 	touch $(MASON_ROOT)/bin/stylua

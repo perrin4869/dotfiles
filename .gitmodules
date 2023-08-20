@@ -485,6 +485,7 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
 	url = git@github.com:williamboman/mason.nvim.git
+	branch = feat/local-registry-source
 [submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
 	url = git@github.com:williamboman/mason-lspconfig.nvim.git
@@ -506,3 +507,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/vim-illuminate"]
 	path = home/.local/share/nvim/site/pack/default/start/vim-illuminate
 	url = git@github.com:RRethy/vim-illuminate.git
+[submodule "home/.local/share/nvim/mason-registry"]
+	path = home/.local/share/nvim/mason-registry
+	url = git@github.com:mason-org/mason-registry.git

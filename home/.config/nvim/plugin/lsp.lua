@@ -93,7 +93,12 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagn
 })
 -- luacheck: pop
 
-require("mason").setup()
+require("mason").setup({
+	registries = {
+		"file:" .. vim.fn.stdpath("data") .. "/mason-registry",
+	},
+})
+require("mason-registry").refresh(function() end)
 require("mason-lspconfig").setup({
 	automatic_installation = true,
 })

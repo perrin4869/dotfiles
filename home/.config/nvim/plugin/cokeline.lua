@@ -1,5 +1,6 @@
 local is_picking_focus = require("cokeline/mappings").is_picking_focus
 local is_picking_close = require("cokeline/mappings").is_picking_close
+local pick = require("cokeline/mappings").pick
 local get_hex = require("cokeline/utils").get_hex
 
 local red = vim.g.terminal_color_1
@@ -23,6 +24,10 @@ require("cokeline").setup({
 		},
 		{
 			text = function(buffer)
+				vim.print(is_picking_focus())
+				if is_picking_focus() then
+					vim.print(buffer.pick_letter)
+				end
 				return "    "
 					.. ((is_picking_focus() or is_picking_close()) and buffer.pick_letter .. " " or buffer.devicon.icon)
 			end,
@@ -61,4 +66,6 @@ require("cokeline").setup({
 	},
 })
 
-vim.keymap.set("n", "<leader>bp", "<Plug>(cokeline-pick-focus)", { silent = true, noremap = true })
+vim.keymap.set("n", "<leader>bp", function()
+	pick("focus")
+end, { silent = true, noremap = true, desc = "cokeline.pick.focus" })

@@ -98,9 +98,7 @@ require("mason").setup({
 		"file:" .. vim.fn.stdpath("data") .. "/mason-registry",
 	},
 })
-require("mason-lspconfig").setup({
-	automatic_installation = true,
-})
+require("mason-lspconfig").setup({ automatic_installation = true })
 require("neodev").setup({})
 
 local capabilities = lsp.capabilities

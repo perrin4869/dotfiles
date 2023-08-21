@@ -24,10 +24,6 @@ require("cokeline").setup({
 		},
 		{
 			text = function(buffer)
-				vim.print(is_picking_focus())
-				if is_picking_focus() then
-					vim.print(buffer.pick_letter)
-				end
 				return "    "
 					.. ((is_picking_focus() or is_picking_close()) and buffer.pick_letter .. " " or buffer.devicon.icon)
 			end,

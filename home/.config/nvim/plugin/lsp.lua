@@ -95,7 +95,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagn
 
 require("mason").setup({
 	registries = {
-		"file:" .. vim.fn.stdpath("data") .. "/mason-registry",
+		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
 	},
 })
 require("mason-lspconfig").setup({ automatic_installation = true })

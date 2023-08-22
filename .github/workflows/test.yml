@@ -30,6 +30,7 @@ jobs:
         with:
           # apt neovim is too old
           neovim: true
+          version: nightly # using vim.fs.joinpath
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v1
         with:

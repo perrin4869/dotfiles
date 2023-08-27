@@ -485,7 +485,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
 	url = git@github.com:williamboman/mason.nvim.git
-	branch = feat/local-registry-source
 [submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
 	url = git@github.com:williamboman/mason-lspconfig.nvim.git

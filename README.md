@@ -41,6 +41,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `ripgrep`
 - `bat`
 - `fd`
+- `yq`
 - `spot`
 
 In Slackware:

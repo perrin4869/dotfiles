@@ -506,3 +506,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/vim-illuminate"]
 	path = home/.local/share/nvim/site/pack/default/start/vim-illuminate
 	url = git@github.com:RRethy/vim-illuminate.git
+[submodule "home/.local/share/nvim/mason-registry"]
+	path = home/.local/share/nvim/mason-registry
+	url = git@github.com:mason-org/mason-registry.git

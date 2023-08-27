@@ -30,6 +30,7 @@ FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 MASON_ROOT = ./home/.local/share/nvim/mason
+MASON_REGISTRY_ROOT = ./home/.local/share/nvim/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 
@@ -39,13 +40,21 @@ submodules-deps = $(addsuffix /.git, $(submodules-paths))
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
 define git_submodule
-	$(eval $1_head = $(shell cat .git/modules/$2/HEAD))
-	$(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
-		.git/modules/$2/$(lastword $($1_head)),\
-		.git/modules/$2/HEAD))
+$(eval $1_head = $(shell cat .git/modules/$2/HEAD))
+$(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
+	.git/modules/$2/$(lastword $($1_head)),\
+	.git/modules/$2/HEAD))
 
 # init submodule if necessary
 $($1_head_file): $3/.git
+endef
+
+define meson_package
+$(eval $1-target = $(MASON_ROOT)/bin/$1)
+$($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
+	HOME=./home nvim --headless -c "MasonInstall $1" -c q
+	$(if $(findstring true,$2),touch $(MASON_ROOT)/bin/$1,)
+$1: $($1-target)
 endef
 
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts treesitter
@@ -130,18 +139,12 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-mason-registry = $(MASON_ROOT)/registries/github/mason-org/mason-registry/registry.json
-$(mason-registry):
-	HOME=./home nvim --headless -c "MasonUpdate" -c q
-
-mason-packages = luacheck stylua prettier jsonlint kotlin-debug-adapter
-mason-targets = $(addprefix $(MASON_ROOT)/bin/, $(mason-packages))
-$(mason-targets) &: $(mason-registry)
-	HOME=./home nvim --headless -c "MasonInstall $(mason-packages)" -c q
-	@# the mdate on this file dates back to 2021 - update it to avoid rebuilding
-	touch $(MASON_ROOT)/bin/kotlin-debug-adapter
-	touch $(MASON_ROOT)/bin/stylua
-mason: $(mason-targets)
+$(eval $(call meson_package,luacheck))
+$(eval $(call meson_package,stylua,true))
+$(eval $(call meson_package,prettier))
+$(eval $(call meson_package,jsonlint))
+$(eval $(call meson_package,kotlin-debug-adapter,true))
+# the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
 $(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
@@ -201,6 +204,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home mason fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint kotlin-debug-adapter fonts gitflow powerline grip dconf
 
-.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter mason firacode grip dirs submodules dconf home fonts nerd_fonts
+.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts luacheck stylua prettier jsonlint kotlin-debug-adapter

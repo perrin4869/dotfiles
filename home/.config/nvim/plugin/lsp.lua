@@ -93,10 +93,12 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagn
 })
 -- luacheck: pop
 
-require("mason").setup()
-require("mason-lspconfig").setup({
-	automatic_installation = true,
+require("mason").setup({
+	registries = {
+		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
+	},
 })
+require("mason-lspconfig").setup({ automatic_installation = true })
 require("neodev").setup({})
 
 local capabilities = lsp.capabilities

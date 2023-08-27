@@ -290,9 +290,6 @@
 [submodule "home/.vim/pack/default/start/close-buffers.vim"]
 	path = home/.vim/pack/default/start/close-buffers.vim
 	url = git@github.com:Asheq/close-buffers.vim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-playground"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-playground
-	url = git@github.com:nvim-treesitter/playground.git
 [submodule "home/.local/share/nvim/site/pack/default/start/plenary.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/plenary.nvim
 	url = git@github.com:nvim-lua/plenary.nvim.git

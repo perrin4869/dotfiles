@@ -144,6 +144,7 @@ $(eval $(call meson_package,stylua,true))
 $(eval $(call meson_package,prettier))
 $(eval $(call meson_package,jsonlint))
 $(eval $(call meson_package,kotlin-debug-adapter,true))
+$(eval $(call meson_package,lua-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
@@ -204,6 +205,6 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
-install: home luacheck stylua prettier jsonlint kotlin-debug-adapter fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server fonts gitflow powerline grip dconf
 
-.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts luacheck stylua prettier jsonlint kotlin-debug-adapter
+.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server

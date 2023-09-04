@@ -17,7 +17,7 @@ require("gitsigns").setup({
 				gs.next_hunk()
 			end)
 			return "<Ignore>"
-		end, { expr = true, desc = "next_hunk" })
+		end, { expr = true, desc = "gitsigns.next_hunk" })
 
 		map("n", "[c", function()
 			if vim.wo.diff then
@@ -27,28 +27,32 @@ require("gitsigns").setup({
 				gs.prev_hunk()
 			end)
 			return "<Ignore>"
-		end, { expr = true, desc = "prev_thunk" })
+		end, { expr = true, desc = "gitsigns.prev_hunk" })
 
 		-- Actions
-		map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>")
-		map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>")
-		map("n", "<leader>hS", gs.stage_buffer)
-		map("n", "<leader>hu", gs.undo_stage_hunk)
-		map("n", "<leader>hR", gs.reset_buffer)
-		map("n", "<leader>hp", gs.preview_hunk)
+		map("n", "<leader>hs", gs.stage_hunk, { desc = "gitsigns.stage_hunk" })
+		map("n", "<leader>hr", gs.reset_hunk, { desc = "gitsigns.reset_hunk" })
+		map("v", "<leader>hs", function()
+			gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+		end, { desc = "gitsigns.stage_hunk" })
+		map("v", "<leader>hr", function()
+			gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+		end, { desc = "gitsigns.reset_hunk" })
+		map("n", "<leader>hS", gs.stage_buffer, { desc = "gitsigns.stage_buffer" })
+		map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "gitsigns.undo_stage_hunk" })
+		map("n", "<leader>hR", gs.reset_buffer, { desc = "gitsigns.reset_buffer" })
+		map("n", "<leader>hp", gs.preview_hunk, { desc = "gitsigns.preview_hunk" })
 		map("n", "<leader>hb", function()
 			gs.blame_line({ full = true })
-		end)
-		-- official is <leader>tb, conflicts with <leader>t from FloatTerm
-		map("n", "<leader>hB", gs.toggle_current_line_blame)
-		map("n", "<leader>hd", gs.diffthis)
+		end, { desc = "gitsigns.blame_line" })
+		map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "gitsigns.toggle_current_line_blame" })
+		map("n", "<leader>hd", gs.diffthis, { desc = "gitsigns.diffthis" })
 		map("n", "<leader>hD", function()
 			gs.diffthis("~")
-		end)
-		-- official is <leader>td, conflicts with <leader>t from FloatTerm
-		map("n", "<leader>htd", gs.toggle_deleted)
+		end, { desc = "gitsigns.diffthis_~" })
+		map("n", "<leader>td", gs.toggle_deleted, { desc = "gitsigns.toggle_deleted" })
 
 		-- Text object
-		map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+		map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "gitsigns.select_hunk" })
 	end,
 })

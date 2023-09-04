@@ -37,6 +37,10 @@ VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
+helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -type d -name doc)
+helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
+helptags = $(addsuffix /tags, $(helptags-paths))
+
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
 define git_submodule
@@ -59,6 +63,7 @@ endef
 
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts treesitter
 
+.PHONY: submodules
 $(submodules-deps) &:
 	git submodule update --init --recursive
 # Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
@@ -66,18 +71,21 @@ $(submodules-deps) &:
 # 	git submodule update --init --recursive $(@:/.git=)
 submodules: $(submodules-deps)
 
+.PHONY: mpv-mpris
 mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
 $(eval $(call git_submodule,mpv-mpris,mpv-mpris,$(MPV_MPRIS_ROOT)))
 $(mpv-mpris_target): $(mpv-mpris_head_file)
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
 mpv-mpris: $(mpv-mpris_target)
 
+.PHONY: xwinwrap
 xwinwrap_target = $(XWINWRAP_ROOT)/xwinwrap
 $(eval $(call git_submodule,xwinwrap,xwinwrap,$(XWINWRAP_ROOT)))
 $(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
 
+.PHONY: ccls
 ccls_target = $(CCLS_ROOT)/Release/ccls
 $(eval $(call git_submodule,ccls,ccls,$(CCLS_ROOT)))
 $(ccls_target): $(ccls_head_file)
@@ -86,6 +94,7 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
 
+.PHONY: nerd_fonts
 nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
 										$(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
 $(nerd_fonts_target) &: $(NERD_FONTS).tar.xz
@@ -123,6 +132,12 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 telescope-fzf-native: $(telescope-fzf-native)
 
+.PHONY: helptags
+$(helptags): $(helptags-deps)
+	HOME=./home nvim --headless -c "helptags ALL" -c q
+helptags: $(helptags)
+
+.PHONY: treesitter
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
@@ -139,6 +154,7 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
+PHONY: luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server
 $(eval $(call meson_package,luacheck))
 $(eval $(call meson_package,stylua,true))
 $(eval $(call meson_package,prettier))
@@ -171,6 +187,7 @@ $(vim_jsdoc): $(vim_jsdoc_head_file)
 	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
 vim_jsdoc: $(vim_jsdoc)
 
+.PHONY: gitflow
 gitflow: $(GITFLOW_ROOT)/.git
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 
@@ -186,25 +203,30 @@ $(grip): $(grip_head_file)
 	pip install --user --editable=$(GRIP_ROOT)
 grip: $(grip)
 
+.PHONY: dconf
 dconf:
 	@# dconf dump /desktop/ibus > ibus.dconf
 	dconf load /desktop/ibus/ < ${DCONF}/ibus.dconf
 	@# dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
 	dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
 
+.PHONY: dirs
 dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(PREFIX)/bin
 $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
 
 # By default stow stows to `../$(pwd)`, so in CI we need to be more precise
+.PHONY: home
 home: dirs
 	stow -v home -t $(HOME)
 
+.PHONY: fonts
 fonts: home
 	# Refresh fonts
 	fc-cache -f
 
+.PHONY: install
 install: home luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server fonts gitflow powerline grip dconf
 
-.PHONY: install fzf fzy gitflow mpv-mpris xwinwrap ccls powerline vim_jsdoc vscode_js_debug telescope-fzf-native treesitter firacode grip dirs submodules dconf home fonts nerd_fonts luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server
+.PHONY: fzf fzy powerline vim_jsdoc vscode_js_debug telescope-fzf-native firacode grip

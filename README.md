@@ -37,6 +37,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `zathura`
 - `alacritty`
 - `kitty`
+- `wezterm`
 - `urxvt`
 - `ripgrep`
 - `bat`

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TERMINAL="${TERMINAL:-kitty}"
+export TERMINAL="${TERMINAL:-wezterm}"
 export FILE="${FILE:-ranger}"
 export BROWSER="${BROWSER-firefox}"
 export EDITOR="${EDITOR-nvim}"
@@ -12,7 +12,7 @@ export GTK_IM_MODULE=${IM/ibus/xim} # makes ibus work with chromium/chrome (ibus
 export XMODIFIERS=@im=$IM
 export QT_IM_MODULE=$IM # makes ibus work with qutebrowser (xim fails)
 # kitty specific, only ibus is supported https://github.com/kovidgoyal/kitty/blob/6179cfc6703af1b0682fdd14829280b8a228c167/glfw/ibus_glfw.c#L286
-export GLFW_IM_MODULE=ibus 
+export GLFW_IM_MODULE=ibus
 
 if [[ -z "$DBUS_SESSION_BUS_ADDRESS" ]]; then
   export $(dbus-launch --exit-with-x11)

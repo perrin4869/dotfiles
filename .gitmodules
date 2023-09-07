@@ -440,9 +440,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treehopper"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treehopper
 	url = git@github.com:mfussenegger/nvim-treehopper.git
-[submodule "home/.local/share/nvim/site/pack/default/start/dashboard-nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/dashboard-nvim
-	url = git@github.com:nvimdev/dashboard-nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/flash.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/flash.nvim
 	url = git@github.com:folke/flash.nvim.git
@@ -509,3 +506,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/wf.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/wf.nvim
 	url = git@github.com:Cassin01/wf.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/alpha-nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/alpha-nvim
+	url = git@github.com:goolord/alpha-nvim.git

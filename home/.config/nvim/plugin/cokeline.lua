@@ -15,6 +15,18 @@ require("cokeline").setup({
 		bg = "NONE",
 	},
 
+	sidebar = {
+		filetype = "NvimTree",
+		components = {
+			{
+				text = "  NvimTree",
+				fg = yellow,
+				bg = get_hex("NvimTreeNormal", "bg"),
+				style = "bold",
+			},
+		},
+	},
+
 	components = {
 		{
 			text = function(buffer)

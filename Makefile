@@ -61,7 +61,7 @@ $($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
 $1: $($1-target)
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d firacode nerd_fonts treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d helptags firacode nerd_fonts treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:

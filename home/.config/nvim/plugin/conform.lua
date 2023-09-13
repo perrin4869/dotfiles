@@ -9,19 +9,40 @@ require("conform").setup({
 		typescriptreact = { "eslint_d" },
 		-- Use a sub-list to run only the first available formatter
 		json = { { "prettierd", "prettier" } },
-		scala = {},
 		["*"] = { "trim_whitespace" },
 	},
 })
 
-local function format()
-	require("conform").format({ lsp_fallback = true })
+local function get_lsp_fallback(bufnr)
+	local ft = vim.bo[bufnr or 0].filetype
+
+	-- local always_use_lsp = not ft:match("^typescript") and not ft:match("^javascript")
+	local always_use_lsp = ft:match("scala")
+	return always_use_lsp and "always" or true
 end
 
-local function format_write()
+local function format(args)
+	local bufnr = args and args.buf
+
 	require("conform").format({
-		lsp_fallback = true,
-	}, vim.cmd.write)
+		lsp_fallback = get_lsp_fallback(bufnr),
+		async = true,
+		bufnr = bufnr,
+	})
+end
+
+local function format_write(args)
+	local bufnr = args and args.buf
+
+	require("conform").format({
+		lsp_fallback = get_lsp_fallback(bufnr),
+		async = true,
+		bufnr = bufnr,
+	}, function(err)
+		if not err then
+			vim.cmd.update()
+		end
+	end)
 end
 
 local opts = { silent = true }

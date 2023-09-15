@@ -31,7 +31,11 @@ local function format(args)
 	})
 end
 
+local saving = false
 local function format_write(args)
+	if saving then
+		return
+	end
 	local bufnr = args and args.buf
 
 	require("conform").format({
@@ -40,7 +44,9 @@ local function format_write(args)
 		bufnr = bufnr,
 	}, function(err)
 		if not err then
+			saving = true
 			vim.cmd.update()
+			saving = false
 		end
 	end)
 end

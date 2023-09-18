@@ -1,5 +1,7 @@
 local utils = require("utils")
 
+local enabled = true
+
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
@@ -11,71 +13,43 @@ require("conform").setup({
 		json = { { "prettierd", "prettier" } },
 		["*"] = { "trim_whitespace" },
 	},
+	format_after_save = function(bufnr)
+		if not enabled then
+			return false
+		end
+
+		return {
+			async = true,
+			lsp_fallback = true,
+			bufnr = bufnr,
+		}
+	end,
 })
 
-local function get_lsp_fallback(bufnr)
-	local ft = vim.bo[bufnr or 0].filetype
-
-	-- local always_use_lsp = not ft:match("^typescript") and not ft:match("^javascript")
-	local always_use_lsp = ft:match("scala")
-	return always_use_lsp and "always" or true
-end
-
-local function format(args)
-	local bufnr = args and args.buf
-
+local function format()
 	require("conform").format({
-		lsp_fallback = get_lsp_fallback(bufnr),
 		async = true,
-		bufnr = bufnr,
+		lsp_fallback = true,
 	})
 end
 
-local saving = false
-local function format_write(args)
-	if saving then
-		return
-	end
-	local bufnr = args and args.buf
+local function toggle_autoformat()
+	enabled = not enabled
+end
 
-	require("conform").format({
-		lsp_fallback = get_lsp_fallback(bufnr),
-		async = true,
-		bufnr = bufnr,
-	}, function(err)
-		if not err then
-			saving = true
-			vim.cmd.update()
-			saving = false
-		end
-	end)
+local function enable_autoformat()
+	enabled = true
+end
+
+local function disable_autoformat()
+	enabled = false
 end
 
 local opts = { silent = true }
 local get_opts = utils.create_get_opts(opts)
-vim.keymap.set("n", "<leader>f", format, get_opts({ desc = "conform.format" }))
-vim.keymap.set("n", "<leader>F", format_write, get_opts({ desc = "conform.format_write" }))
-
-local function enable_autoformat()
-	vim.api.nvim_create_autocmd("BufWritePost", {
-		group = vim.api.nvim_create_augroup("FormatAutogroup", {}),
-		callback = format_write,
-	})
-end
-
-local function disable_autoformat()
-	vim.api.nvim_clear_autocmds({ group = "FormatAutogroup" })
-end
-
-enable_autoformat()
+vim.keymap.set("n", "<leader>ff", format, get_opts({ desc = "conform.format" }))
+vim.keymap.set("n", "<leader>ft", toggle_autoformat, get_opts({ desc = "conform.toggle_autoformat" }))
 
 vim.api.nvim_create_user_command("FormatEnable", enable_autoformat, {})
 vim.api.nvim_create_user_command("FormatDisable", disable_autoformat, {})
-vim.api.nvim_create_user_command("FormatToggle", function()
-	local enabled = #vim.api.nvim_get_autocmds({ group = "FormatAutogroup" }) > 0
-	if enabled then
-		disable_autoformat()
-	else
-		enable_autoformat()
-	end
-end, {})
+vim.api.nvim_create_user_command("FormatToggle", toggle_autoformat, {})

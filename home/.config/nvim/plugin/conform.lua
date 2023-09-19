@@ -11,7 +11,13 @@ require("conform").setup({
 		typescriptreact = { "eslint_d" },
 		-- Use a sub-list to run only the first available formatter
 		json = { { "prettierd", "prettier" } },
-		["*"] = { "trim_whitespace" },
+		["*"] = { "trim_trailing_whitespace" },
+	},
+	formatters = {
+		trim_trailing_whitespace = {
+			command = "sed",
+			args = "'s/[ \t]*$//'",
+		},
 	},
 	format_after_save = function(bufnr)
 		if not enabled then

@@ -154,12 +154,15 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-PHONY: luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server
+PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server
 $(eval $(call meson_package,luacheck))
 $(eval $(call meson_package,stylua,true))
 $(eval $(call meson_package,prettier))
 $(eval $(call meson_package,jsonlint))
+$(eval $(call meson_package,typescript-language-server))
+$(eval $(call meson_package,kotlin-language-server,true))
 $(eval $(call meson_package,kotlin-debug-adapter,true))
+$(eval $(call meson_package,sqlls,true))
 $(eval $(call meson_package,lua-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
@@ -227,6 +230,6 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint kotlin-debug-adapter lua-language-server fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server sqlls fonts gitflow powerline grip dconf
 
 .PHONY: fzf fzy powerline vim_jsdoc vscode_js_debug telescope-fzf-native firacode grip

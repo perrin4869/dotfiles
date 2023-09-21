@@ -509,3 +509,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lightbulb"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lightbulb
 	url = git@github.com:kosayoda/nvim-lightbulb.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-endwise"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-endwise
+	url = git@github.com:RRethy/nvim-treesitter-endwise.git

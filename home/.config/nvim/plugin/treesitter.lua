@@ -30,6 +30,9 @@ require("nvim-treesitter.configs").setup({
 	matchup = {
 		enable = true, -- mandatory, false will disable the whole extension
 	},
+	endwise = {
+		enable = true,
+	},
 	incremental_selection = {
 		enable = true,
 		keymaps = {

@@ -1,7 +1,7 @@
 local is_picking_focus = require("cokeline/mappings").is_picking_focus
 local is_picking_close = require("cokeline/mappings").is_picking_close
 local pick = require("cokeline/mappings").pick
-local get_hex = require("cokeline/utils").get_hex
+local get_hex = require("cokeline.hlgroups").get_hl_attr
 
 local red = vim.g.terminal_color_1
 local yellow = vim.g.terminal_color_3

@@ -15,7 +15,7 @@ require("conform").setup({
 		["*"] = { "trim_whitespace" },
 	},
 	format_after_save = function(bufnr)
-		if not enabled then
+		if not enabled or vim.bo[bufnr].readonly then
 			return false
 		end
 

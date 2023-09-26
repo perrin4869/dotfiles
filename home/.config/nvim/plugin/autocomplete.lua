@@ -29,6 +29,10 @@ cmp.setup({
 		{ name = "emoji" },
 		{ name = "spell" },
 	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+	},
 })
 
 cmp.setup.filetype("gitcommit", {

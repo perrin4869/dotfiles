@@ -4,10 +4,10 @@ local telescope = require("telescope").extensions.dap
 local utils = require("utils")
 
 require("dap-vscode-js").setup({
-	node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
-	debugger_path = os.getenv("HOME") .. "/.local/bin/vscode-js-debug",
+	-- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+	-- debugger_path = "(runtimedir)/site/pack/packer/opt/vscode-js-debug", -- Path to vscode-js-debug installation.
 	-- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-	-- debugger_cmd = { "js-debug-adapter" },
+	debugger_cmd = { "js-debug-adapter" },
 	-- which adapters to register in nvim-dap
 	adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" },
 	log_file_path = os.getenv("HOME") .. "/.cache/dap_vscode_js.log", -- Path for file logging

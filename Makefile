@@ -24,7 +24,6 @@ POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
-VSCODE_JS_DEBUG = $(DEPS)/vscode-js-debug
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
@@ -61,7 +60,7 @@ $($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
 $1: $($1-target)
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vscode_js_debug vim_jsdoc eslint_d helptags firacode nerd_fonts treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -154,29 +153,18 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server
+PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter
 $(eval $(call meson_package,luacheck))
 $(eval $(call meson_package,stylua,true))
 $(eval $(call meson_package,prettier))
 $(eval $(call meson_package,jsonlint))
+$(eval $(call meson_package,js-debug-adapter))
 $(eval $(call meson_package,typescript-language-server))
 $(eval $(call meson_package,kotlin-language-server,true))
 $(eval $(call meson_package,kotlin-debug-adapter,true))
 $(eval $(call meson_package,sqlls,true))
 $(eval $(call meson_package,lua-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
-
-vscode_js_debug = $(VSCODE_JS_DEBUG)/out/src/vsDebugServer.js
-$(eval $(call git_submodule,vscode_js_debug,deps/vscode-js-debug,$(VSCODE_JS_DEBUG)))
-$(vscode_js_debug): $(vscode_js_debug_head_file)
-	npm --prefix $(VSCODE_JS_DEBUG) ci --legacy-peer-deps
-	@# --prefix doesn't seem to work for npm exec
-	@# https://github.com/npm/cli/issues/1368
-	cd $(VSCODE_JS_DEBUG) && npm exec gulp vsDebugServerBundle
-	@#https://github.com/mxsdev/nvim-dap-vscode-js/issues/34
-	rm -rf $(VSCODE_JS_DEBUG)/out
-	mv $(VSCODE_JS_DEBUG)/dist $(VSCODE_JS_DEBUG)/out
-vscode_js_debug: $(vscode_js_debug)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
@@ -230,6 +218,6 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server sqlls fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter sqlls fonts gitflow powerline grip dconf
 
-.PHONY: fzf fzy powerline vim_jsdoc vscode_js_debug telescope-fzf-native firacode grip
+.PHONY: fzf fzy powerline vim_jsdoc telescope-fzf-native firacode grip

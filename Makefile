@@ -36,7 +36,7 @@ VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -type d -name doc)
+helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -type d -name doc -maxdepth 2 -mindepth 2)
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags = $(addsuffix /tags, $(helptags-paths))
 
@@ -132,7 +132,7 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 telescope-fzf-native: $(telescope-fzf-native)
 
 .PHONY: helptags
-$(helptags): $(helptags-deps)
+$(helptags)&: $(helptags-deps)
 	HOME=./home nvim --headless -c "helptags ALL" -c q
 helptags: $(helptags)
 

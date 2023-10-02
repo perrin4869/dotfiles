@@ -1,18 +1,24 @@
-let s:theme = v:lua.require("gruvbox.groups").setup(v:lua.require("gruvbox").config)
+function! ReturnHighlightTerm(group, term)
+   " Store output of group to variable
+   let output = execute('hi ' . a:group)
 
-let s:bg0 = s:theme.GruvboxBg0.fg
-let s:bg1 = s:theme.GruvboxBg1.fg
-let s:bg2 = s:theme.GruvboxBg2.fg
-let s:bg4 = s:theme.GruvboxBg4.fg
-let s:fg1 = s:theme.GruvboxFg1.fg
-let s:fg4 = s:theme.GruvboxFg4.fg
+   " Find the term we're looking for
+   return matchstr(output, a:term.'=\zs\S*')
+endfunction
 
-let s:yellow = s:theme.GruvboxYellow.fg
-let s:blue = s:theme.GruvboxBlue.fg
-let s:aqua = s:theme.GruvboxAqua.fg
-let s:orange = s:theme.GruvboxOrange.fg
-let s:red = s:theme.GruvboxRed.fg
-let s:green = s:theme.GruvboxGreen.fg
+let s:bg0 = ReturnHighlightTerm('GruvboxBg0', 'guifg')
+let s:bg1 = ReturnHighlightTerm('GruvboxBg1', 'guifg')
+let s:bg2 = ReturnHighlightTerm('GruvboxBg2', 'guifg')
+let s:bg4 = ReturnHighlightTerm('GruvboxBg4', 'guifg')
+let s:fg1 = ReturnHighlightTerm('GruvboxFg1', 'guifg')
+let s:fg4 = ReturnHighlightTerm('GruvboxFg4', 'guifg')
+
+let s:yellow = ReturnHighlightTerm('GruvboxYellow', 'guifg')
+let s:blue = ReturnHighlightTerm('GruvboxBlue', 'guifg')
+let s:aqua = ReturnHighlightTerm('GruvboxAqua', 'guifg')
+let s:orange = ReturnHighlightTerm('GruvboxOrange', 'guifg')
+let s:red = ReturnHighlightTerm('GruvboxRed', 'guifg')
+let s:green = ReturnHighlightTerm('GruvboxGreen', 'guifg')
 
 let s:palette = {
     \ 'normal': {

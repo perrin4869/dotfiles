@@ -509,3 +509,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/one-small-step-for-vimkind"]
 	path = home/.local/share/nvim/site/pack/default/start/one-small-step-for-vimkind
 	url = git@github.com:jbyuki/one-small-step-for-vimkind.git
+[submodule "home/.local/share/nvim/site/pack/default/start/ccls.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/ccls.nvim
+	url = git@github.com:ranjithshegde/ccls.nvim.git

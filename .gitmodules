@@ -512,3 +512,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/ccls.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/ccls.nvim
 	url = git@github.com:ranjithshegde/ccls.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context
+	url = git@github.com:nvim-treesitter/nvim-treesitter-context.git

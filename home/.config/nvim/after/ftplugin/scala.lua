@@ -1,4 +1,5 @@
 local metals = require("metals")
+local handlers = require("metals.handlers")
 local tvp = require("metals.tvp")
 local lsp = require("lsp")
 
@@ -32,7 +33,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 local metals_config = metals.bare_config()
 metals_config.capabilities = lsp.capabilities
 metals_config.init_options.statusBarProvider = "on"
+metals_config.handlers = {
+	["metals/status"] = function(...)
+		handlers["metals/status"](...)
+		vim.fn["lightline#update"]()
+	end,
+}
 metals_config.settings = {
+	-- serverVersion = "1.0.1",
 	showImplicitArguments = true,
 	showInferredType = true,
 	showImplicitConversionsAndClasses = true,

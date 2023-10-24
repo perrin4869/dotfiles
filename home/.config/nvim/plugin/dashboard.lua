@@ -148,7 +148,7 @@ dashboard.section.buttons.val = {
 	dashboard.button("r", "  Recent Files", ":Telescope oldfiles<CR>"),
 	dashboard.button("t", "  Find Text", ":Telescope live_grep<CR>"),
 	dashboard.button("c", "  Configuration", ":e $MYVIMRC<CR>"),
-	dashboard.button("q", "  Quit Neovim", ":qa!<CR>"),
+	dashboard.button("q", "󰅚  Quit Neovim", ":qa!<CR>"),
 }
 
 local footer = function()

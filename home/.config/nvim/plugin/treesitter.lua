@@ -44,11 +44,6 @@ require("nvim-treesitter.configs").setup({
 		},
 	},
 	indent = { enable = true },
-	playground = {
-		enable = true,
-		updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-		persist_queries = false, -- Whether the query persists across vim sessions
-	},
 	textobjects = {
 		select = {
 			enable = true,
@@ -100,5 +95,4 @@ require("nvim-treesitter.configs").setup({
 			},
 		},
 	},
-	context_commentstring = { enable = true },
 })

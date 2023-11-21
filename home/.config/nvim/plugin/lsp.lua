@@ -63,7 +63,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- uses dynamic because most language servers return an empty list on an empty query
 
 		vim.keymap.set("n", "<leader>i", function()
-			vim.lsp.inlay_hint(bufnr)
+			vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
 		end, { silent = true, buffer = bufnr, desc = "lsp.inlayhints.toggle" })
 
 		if client ~= nil and client.server_capabilities.codeLensProvider then
@@ -79,7 +79,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		if client ~= nil and client.server_capabilities.inlayHintProvider then
-			vim.lsp.inlay_hint(bufnr, true)
+			vim.lsp.inlay_hint.enable(bufnr, true)
 		end
 	end,
 })

@@ -515,3 +515,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context
 	url = git@github.com:nvim-treesitter/nvim-treesitter-context.git
+[submodule "home/.local/share/fonts/monaspace"]
+	path = home/.local/share/fonts/monaspace
+	url = git@github.com:githubnext/monaspace.git

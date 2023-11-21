@@ -152,7 +152,7 @@ dashboard.section.buttons.val = {
 }
 
 local footer = function()
-	local version = " NVIM " .. tostring(vim.version())
+	local version = " NVIM " .. tostring(vim.version())
 	return version
 end
 

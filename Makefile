@@ -36,7 +36,7 @@ VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -type d -name doc -maxdepth 2 -mindepth 2)
+helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags = $(addsuffix /tags, $(helptags-paths))
 

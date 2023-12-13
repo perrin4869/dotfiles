@@ -39,6 +39,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `kitty`
 - `wezterm`
 - `urxvt`
+- `luarocks`
 - `ripgrep`
 - `bat`
 - `fd`

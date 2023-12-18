@@ -9,6 +9,10 @@ PREFIX ?= ${HOME}/.local
 
 PYTHON := python3
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
+PIPX := $(shell command -v pipx 2> /dev/null)
+ifneq ($(PIPX),)
+	PIPX_LOCAL_VENVS := $(shell pipx environment -v PIPX_LOCAL_VENVS)
+endif
 
 CMAKE := cmake
 
@@ -182,16 +186,32 @@ vim_jsdoc: $(vim_jsdoc)
 gitflow: $(GITFLOW_ROOT)/.git
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 
+ifdef PIPX_LOCAL_VENVS
+powerline = $(PIPX_LOCAL_VENVS)/powerline-status/bin/powerline-daemon
+else
 powerline = $(PYTHON_SITE_PACKAGES)/powerline-status.egg-link
+endif
 $(eval $(call git_submodule,powerline,powerline,$(POWERLINE_ROOT)))
 $(powerline): $(powerline_head_file)
+ifdef PIPX_LOCAL_VENVS
+	pipx install $(POWERLINE_ROOT)
+else
 	pip install --user --editable=$(POWERLINE_ROOT)
+endif
 powerline: $(powerline)
 
+ifdef PIPX_LOCAL_VENVS
+grip = $(PIPX_LOCAL_VENVS)/grip/bin/grip
+else
 grip = $(PYTHON_SITE_PACKAGES)/grip.egg-link
+endif
 $(eval $(call git_submodule,grip,grip,$(GRIP_ROOT)))
 $(grip): $(grip_head_file)
+ifdef PIPX_LOCAL_VENVS
+	pipx install $(GRIP_ROOT)
+else
 	pip install --user --editable=$(GRIP_ROOT)
+endif
 grip: $(grip)
 
 .PHONY: dconf
@@ -218,6 +238,6 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter sqlls fonts gitflow powerline grip dconf
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter sqlls fonts gitflow dconf grip powerline
 
-.PHONY: fzf fzy powerline vim_jsdoc telescope-fzf-native firacode grip
+.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

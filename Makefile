@@ -64,7 +64,7 @@ $($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
 $1: $($1-target)
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -111,6 +111,12 @@ $(eval $(call git_submodule,firacode,deps/FiraCode,$(FIRACODE_ROOT)))
 $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)
+
+.PHONY: iosevka
+iosevka_target = $(FONTS)/Iosevka.ttc
+$(iosevka_target): $(FONTS)/SuperTTC-Iosevka-28.0.4.zip
+	unzip -o -d $(FONTS) $<
+iosevka: $(iosevka_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,fzf,$(FZF_ROOT)))

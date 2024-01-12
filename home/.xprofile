@@ -63,6 +63,9 @@ if [[ -e "/etc/slackware-version" ]]; then
   sun start --gtk
 fi
 
+# if NetworkManager is running and nm-applet is installed, run it
+pidof NetworkManager >/dev/null && command -v nm-applet && nm-applet &
+
 # bashism
 # a monitor may be connected but not have a resolution
 # match the resultion format with grep to ensure we check a monitor that is being used

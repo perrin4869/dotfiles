@@ -114,7 +114,7 @@ firacode: $(firacode_target)
 
 .PHONY: iosevka
 iosevka_target = $(FONTS)/Iosevka.ttc
-$(iosevka_target): $(FONTS)/SuperTTC-Iosevka-28.0.4.zip
+$(iosevka_target): $(FONTS)/SuperTTC-Iosevka-28.0.5.zip
 	unzip -o -d $(FONTS) $<
 	touch $@
 iosevka: $(iosevka_target)

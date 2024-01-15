@@ -116,6 +116,7 @@ firacode: $(firacode_target)
 iosevka_target = $(FONTS)/Iosevka.ttc
 $(iosevka_target): $(FONTS)/SuperTTC-Iosevka-28.0.4.zip
 	unzip -o -d $(FONTS) $<
+	touch $@
 iosevka: $(iosevka_target)
 
 fzf = $(FZF_ROOT)/bin/fzf

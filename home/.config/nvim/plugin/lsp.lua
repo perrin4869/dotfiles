@@ -112,7 +112,7 @@ local capabilities = lsp.capabilities
 config.bashls.setup({ capabilities = capabilities })
 config.vimls.setup({ capabilities = capabilities })
 config.html.setup({ capabilities = capabilities })
--- config.kotlin_language_server.setup({ capabilities = capabilities })
+config.kotlin_language_server.setup({ capabilities = capabilities })
 
 config.cssls.setup({
 	capabilities = capabilities,

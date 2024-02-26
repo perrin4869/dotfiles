@@ -34,3 +34,6 @@ metals.sbt
 
 # sql
 .sqllsrc.json
+
+# kotlin language server
+kls_database.db

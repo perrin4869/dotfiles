@@ -108,7 +108,6 @@ alias gvim="gvim -v --servername vimserver"
 alias tmux="tmux -2"
 alias tmuxinator="TERM=xterm-256color tmuxinator"
 alias mux="tmuxinator"
-alias gpg="gpg2"
 
 # use vi keybindings
 bindkey -v

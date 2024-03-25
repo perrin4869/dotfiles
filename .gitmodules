@@ -518,3 +518,7 @@
 [submodule "home/.local/share/fonts/monaspace"]
 	path = home/.local/share/fonts/monaspace
 	url = git@github.com:githubnext/monaspace.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-nio"]
+	# this is a dependency of nvim-dap-ui
+	path = home/.local/share/nvim/site/pack/default/start/nvim-nio
+	url = git@github.com:nvim-neotest/nvim-nio.git

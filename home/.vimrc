@@ -100,6 +100,8 @@ nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
 nnoremap G Gzz
 nnoremap n nzz
 nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
 nnoremap } }zz
 nnoremap { {zz
 nnoremap ) )zz

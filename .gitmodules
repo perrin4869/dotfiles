@@ -522,3 +522,6 @@
 	# this is a dependency of nvim-dap-ui
 	path = home/.local/share/nvim/site/pack/default/start/nvim-nio
 	url = git@github.com:nvim-neotest/nvim-nio.git
+[submodule "home/.local/share/nvim/site/pack/default/start/numb.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/numb.nvim
+	url = git@github.com:nacro90/numb.nvim.git

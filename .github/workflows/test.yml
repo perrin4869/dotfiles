@@ -32,7 +32,7 @@ jobs:
           neovim: true
           version: nightly # using vim.fs.joinpath
       - name: deps - llvm # ccls dep
-        uses: KyleMayes/install-llvm-action@v1
+        uses: KyleMayes/install-llvm-action@v2
         with:
           version: 12.0
       - name: deps - node.js # various dependencies

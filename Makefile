@@ -97,11 +97,16 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
 
+nerdfonts_version = 3.2.0
+nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
+$(nerdfonts_source):
+	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v$(nerdfonts_version)/NerdFontsSymbolsOnly.tar.xz -O $(nerdfonts_source)
+
 .PHONY: nerd_fonts
 nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
 										$(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
-$(nerd_fonts_target) &: $(NERD_FONTS).tar.xz
-	tar xvJf $(NERD_FONTS).tar.xz --one-top-level -C $(FONTS) -m
+$(nerd_fonts_target) &: $(nerdfonts_source)
+	tar xvJf $< --one-top-level=$(NERD_FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
 
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \

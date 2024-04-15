@@ -63,6 +63,11 @@ $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_
 $($1_target): $($1_package_yaml)
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
 	ls $(MASON_ROOT)/bin
+	ls ./home
+	ls ./home/.local
+	ls ./home/.local/share/
+	ls ./home/.local/share/nvim
+	ls ./home/.local/share/nvim/mason
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef

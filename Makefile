@@ -31,16 +31,18 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
-TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
-MASON_ROOT = ./home/.local/share/nvim/mason
-MASON_REGISTRY_ROOT = ./home/.local/share/nvim/mason-registry
-TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
+
+NVIM_DATA_DIRECTORY = ./home/.local/share/nvim
+TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
+MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
+MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
+TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
+helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags = $(addsuffix /tags, $(helptags-paths))
 

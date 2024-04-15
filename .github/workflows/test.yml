@@ -41,8 +41,8 @@ jobs:
           node-version: 20.x
       - name: build
         run: make
-      # - name: test build
-      #   run:  make test-build
+      - name: test build
+        run:  make test-build
       - name: install
         run: |
           export $(dbus-launch) # dconf required dbus

@@ -99,7 +99,6 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 })
 -- luacheck: pop
 
-vim.print("file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"))
 require("mason").setup({
 	registries = {
 		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),

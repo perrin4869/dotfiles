@@ -64,9 +64,6 @@ define mason_package
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 $($1_target): $($1_package_yaml) dirs
-	echo "testing"
-	nvim --headless +qa
-	echo "tested"
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
@@ -270,15 +267,15 @@ install: home luacheck stylua prettier jsonlint typescript-language-server kotli
 
 .PHONY: test-build
 test-build:
-	[ -e $(mpv-mpris_target) ] || die "$(mpv-mpris_target) not found"
-	[ -x $(tree-sitter-cli_target) ] || die "tree-sitter not found"
+	[ -e $(mpv-mpris_target) ] || exit 1
+	[ -x $(tree-sitter-cli_target) ] || exit 1
 
 .PHONY: test
 test:
 	# test neovim
-	[ -x $(lua-language-server_target) ] || die "tree-sitter not found"
-	[ -x $$(which powerline-daemon) ] || die "powerline-daemon not found"
+	[ -x $(lua-language-server_target) ] || exit 1
+	[ -x $$(which powerline-daemon) ] || exit 1
 	# make sure neovim doesn't output errors
-	[[ -z "$$(nvim --headless +qa 2>&1)" ]] || die "neovim errored out"
+	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
 
 .PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

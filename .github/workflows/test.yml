@@ -39,6 +39,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+      - name: debug
+        run: |
+            HOME=./home nvim --startuptime foo +qa
+            cat foo
+            HOME=./home nvim --startuptime bar --headless -c "MasonInstall $1" -c q
+            cat bar
       - name: build
         run: make
       - name: test build

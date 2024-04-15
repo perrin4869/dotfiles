@@ -42,6 +42,8 @@ jobs:
       - name: debug
         run: |
           pipx environement --help
+          # stow conflicts
+          rm ~/.bashrc ~/.bash_profile
           make home
           make tree-sitter-cli
       - name: build

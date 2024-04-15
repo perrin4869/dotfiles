@@ -44,6 +44,7 @@ jobs:
             echo "finding out rtp"
             pwd
             ls -lah
+            export HOME=./home
             HOME=./home nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --startuptime foo +qa
             cat foo

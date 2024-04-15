@@ -270,11 +270,12 @@ test-build:
 	[ -e $(mpv-mpris_target) ] || die "$(mpv-mpris_target) not found"
 	[ -x $(tree-sitter-cli_target) ] || die "tree-sitter not found"
 
-.PHONY test
+.PHONY: test
 test:
 	# test neovim
 	[ -x $(lua-language-server_target) ] || die "tree-sitter not found"
 	[ -x $$(which powerline-daemon) ] || die "powerline-daemon not found"
-	[[ -z "$(nvim --headless +qa 2>&1)" ]] || die "neovim errored out"
+	# make sure neovim doesn't output errors
+	[[ -z "$$(nvim --headless +qa 2>&1)" ]] || die "neovim errored out"
 
 .PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

@@ -50,5 +50,4 @@ jobs:
           rm ~/.bashrc ~/.bash_profile
           make install
       - name: test
-        # make sure neovim doesn't output errors
         run: make test

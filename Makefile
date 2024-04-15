@@ -70,7 +70,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -263,7 +263,7 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli treesitter sqlls fonts gitflow dconf grip powerline
 
 .PHONY: test-build
 test-build:

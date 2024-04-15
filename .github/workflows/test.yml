@@ -42,15 +42,15 @@ jobs:
       - name: debug
         run: |
             echo "finding out rtp"
-            HOME=./home nvim -c "echo &rtp" +qa
+            HOME=./home nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --startuptime foo +qa
             cat foo
             rm ~/.bashrc ~/.bash_profile
             make home
             echo "finding out rtp2"
-            HOME=./home nvim -c "echo &rtp" +qa
+            HOME=./home nvim --headless -c "echo &rtp" +qa
             echo "finding out rtp3"
-            nvim -c "echo &rtp" +qa
+            nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --startuptime bar --headless -c "MasonInstall $1" -c q
             cat bar
       # - name: build

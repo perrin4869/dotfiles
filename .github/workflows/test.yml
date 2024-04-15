@@ -41,7 +41,7 @@ jobs:
           node-version: 18.x
       - name: debug
         run: |
-          pipx --version
+          pipx environement --help
           make home
           make tree-sitter-cli
       - name: build

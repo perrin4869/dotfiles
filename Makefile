@@ -62,7 +62,6 @@ $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 $($1_target): $($1_package_yaml)
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
-	ls $(MASON_ROOT)/bin
 	ls ./home
 	ls ./home/.local
 	ls ./home/.local/share/

@@ -47,6 +47,8 @@ jobs:
             HOME=./home nvim --headless -c "echo &rtp" +qa
             nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --headless -c "echo &rtp" +qa
+
+            sleep 5000
             HOME=./home nvim --startuptime foo +qa
             cat foo
             rm ~/.bashrc ~/.bash_profile

@@ -69,8 +69,6 @@ $($1_target): $($1_package_yaml)
 $1: $($1_target)
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka
-
 .PHONY: submodules
 $(submodules-deps) &:
 	git submodule update --init --recursive
@@ -261,7 +259,10 @@ fonts: home
 	# Refresh fonts
 	fc-cache -f
 
+.PHONY: all
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
+
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls treesitter fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
 
 .PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

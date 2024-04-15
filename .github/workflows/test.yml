@@ -41,7 +41,7 @@ jobs:
           node-version: 18.x
       - name: debug
         run: |
-          pipx environement --help
+          pipx environment --help
           # stow conflicts
           rm ~/.bashrc ~/.bash_profile
           make home

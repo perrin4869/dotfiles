@@ -57,12 +57,13 @@ $($1_head_file): $3/.git
 endef
 
 define mason_package
-$(eval $1-target = $(MASON_ROOT)/bin/$1)
-$($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
+# sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
+$(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
+$(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml))
+$($1_target): $($1_package_yaml)
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
-	@# sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
-	$(if $(findstring true,$2),touch $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1-target)),)
-$1: $($1-target)
+	$(if $(findstring true,$2),touch $$@,)
+$1: $($1_target)
 endef
 
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter

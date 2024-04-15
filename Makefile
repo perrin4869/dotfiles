@@ -61,12 +61,21 @@ define mason_package
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 $($1_target): $($1_package_yaml)
-	HOME=./home nvim --headless -c "MasonInstall $1" -c q
+	( export HOME=./home && nvim --headless -c "MasonInstall $1" -c q )
+	ls ./home
+	ls ./home/.local
+	ls ./home/.local/share/
+	ls ./home/.local/share/nvim
+	ls ~
+	ls ~/.local
+	ls ~/.local/share/
+	ls ~/.local/share/nvim
+	ls ~/.local/share/nvim/mason
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
 
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -259,6 +268,6 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter treesitter sqlls fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
 
 .PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

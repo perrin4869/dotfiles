@@ -39,13 +39,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-      - name: debug
-        run: |
-          pipx environment --help
-          # stow conflicts
-          rm ~/.bashrc ~/.bash_profile
-          make home
-          make tree-sitter-cli
       - name: build
         run: make
       - name: install

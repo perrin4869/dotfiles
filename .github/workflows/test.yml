@@ -42,6 +42,8 @@ jobs:
       - name: debug
         run: |
             echo "finding out rtp"
+            pwd
+            ls -lah
             HOME=./home nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --startuptime foo +qa
             cat foo

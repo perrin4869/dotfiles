@@ -63,9 +63,9 @@ define mason_package
 # sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
-$($1_target): $($1_package_yaml)
-	( export HOME=./home && nvim --headless -c "MasonInstall $1" -c q )
-	# $(if $(findstring true,$2),touch $$@,)
+$($1_target): $($1_package_yaml) dirs
+	HOME=./home nvim --headless -c "MasonInstall $1" -c q
+	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
 

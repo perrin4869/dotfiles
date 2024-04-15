@@ -56,7 +56,7 @@ $(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
 $($1_head_file): $3/.git
 endef
 
-define meson_package
+define mason_package
 $(eval $1-target = $(MASON_ROOT)/bin/$1)
 $($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
@@ -163,7 +163,8 @@ treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc lat
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+# also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json tree-sitter-cli
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	HOME=./home nvim --headless \
@@ -174,17 +175,18 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter
-$(eval $(call meson_package,luacheck))
-$(eval $(call meson_package,stylua,true))
-$(eval $(call meson_package,prettier))
-$(eval $(call meson_package,jsonlint))
-$(eval $(call meson_package,js-debug-adapter))
-$(eval $(call meson_package,typescript-language-server))
-$(eval $(call meson_package,kotlin-language-server,true))
-$(eval $(call meson_package,kotlin-debug-adapter,true))
-$(eval $(call meson_package,sqlls,true))
-$(eval $(call meson_package,lua-language-server))
+PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
+$(eval $(call mason_package,luacheck))
+$(eval $(call mason_package,stylua,true))
+$(eval $(call mason_package,prettier))
+$(eval $(call mason_package,jsonlint))
+$(eval $(call mason_package,js-debug-adapter))
+$(eval $(call mason_package,typescript-language-server))
+$(eval $(call mason_package,kotlin-language-server,true))
+$(eval $(call mason_package,kotlin-debug-adapter,true))
+$(eval $(call mason_package,sqlls,true))
+$(eval $(call mason_package,lua-language-server))
+$(eval $(call mason_package,tree-sitter-cli,true))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules

@@ -48,17 +48,16 @@ jobs:
             nvim --headless -c "echo &rtp" +qa
             HOME=./home nvim --headless -c "echo &rtp" +qa
 
-            # sleep 5000
-            # HOME=./home nvim --startuptime foo +qa
-            # cat foo
-            # rm ~/.bashrc ~/.bash_profile
-            # make home
-            # echo "finding out rtp2"
-            # HOME=./home nvim --headless -c "echo &rtp" +qa
-            # echo "finding out rtp3"
-            # nvim --headless -c "echo &rtp" +qa
-            # HOME=./home nvim --startuptime bar --headless -c "MasonInstall $1" -c q
-            # cat bar
+            HOME=./home nvim --startuptime foo +qa
+            cat foo
+            rm ~/.bashrc ~/.bash_profile
+            make home
+            echo "finding out rtp2"
+            HOME=./home nvim --headless -c "echo &rtp" +qa
+            echo "finding out rtp3"
+            nvim --headless -c "echo &rtp" +qa
+            HOME=./home nvim --startuptime bar --headless -c "MasonInstall $1" -c q
+            cat bar
       # - name: build
       #   run: make
       # - name: test build

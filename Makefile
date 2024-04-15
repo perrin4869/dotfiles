@@ -11,7 +11,8 @@ PYTHON := python3
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
 PIPX := $(shell command -v pipx 2> /dev/null)
 ifneq ($(PIPX),)
-	PIPX_LOCAL_VENVS := $(shell pipx environment -v PIPX_LOCAL_VENVS)
+	# pipx --value shorthand changed from -v -> -V somewhere between 1.3.1 and 1.5.0
+	PIPX_LOCAL_VENVS := $(shell pipx environment --value PIPX_LOCAL_VENVS)
 endif
 
 CMAKE := cmake

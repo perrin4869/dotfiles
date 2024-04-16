@@ -169,7 +169,9 @@ helptags: $(helptags)
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+# installing treesitter requires that all neovim config has been installed into rtp (home task)
+# also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json tree-sitter-cli
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	HOME=./home nvim --headless \
@@ -267,12 +269,12 @@ install: home luacheck stylua prettier jsonlint typescript-language-server kotli
 .PHONY: test-build
 test-build:
 	[ -e $(mpv-mpris_target) ] || exit 1
+	[ -x $(tree-sitter-cli_target) ] || exit 1
 
 .PHONY: test
 test:
 	# test neovim
 	[ -x $(lua-language-server_target) ] || exit 1
-	[ -x $(tree-sitter-cli_target) ] || exit 1
 	[ -x $$(which powerline-daemon) ] || exit 1
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1

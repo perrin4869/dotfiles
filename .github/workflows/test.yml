@@ -41,13 +41,13 @@ jobs:
           node-version: 20.x
       - name: build
         run: make
+      - name: test build
+        run:  make test-build
       - name: install
         run: |
           export $(dbus-launch) # dconf required dbus
           # stow conflicts
           rm ~/.bashrc ~/.bash_profile
           make install
-      - name: test neovim
-        # make sure neovim doesn't output errors
-        run: |
-          [[ -z "$(nvim --headless +qa 2>&1)" ]] || exit 1
+      - name: test
+        run: make test

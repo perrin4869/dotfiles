@@ -32,16 +32,18 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
-TREESITTER_ROOT = ./home/.local/share/nvim/site/pack/default/start/nvim-treesitter
-MASON_ROOT = ./home/.local/share/nvim/mason
-MASON_REGISTRY_ROOT = ./home/.local/share/nvim/mason-registry
-TELESCOPE_FZF_NATIVE_ROOT = ./home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
+
+NVIM_DATA_DIRECTORY = ./home/.local/share/nvim
+TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
+MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
+MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
+TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
 VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-helptags-paths = $(shell find ./home/.local/share/nvim/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
+helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags = $(addsuffix /tags, $(helptags-paths))
 
@@ -57,14 +59,17 @@ $(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
 $($1_head_file): $3/.git
 endef
 
-define meson_package
-$(eval $1-target = $(MASON_ROOT)/bin/$1)
-$($1-target): $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml
+define mason_package
+# sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
+$(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
+$(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
+$($1_target): $($1_package_yaml) dirs
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
-	$(if $(findstring true,$2),touch $(MASON_ROOT)/bin/$1,)
-$1: $($1-target)
+	$(if $(findstring true,$2),touch $$@,)
+$1: $($1_target)
 endef
 
+.PHONY: all
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
 
 .PHONY: submodules
@@ -163,7 +168,6 @@ helptags: $(helptags)
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-# installing treesitter requires that all neovim config has been installed into rtp (home task)
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
@@ -175,17 +179,18 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
-PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter
-$(eval $(call meson_package,luacheck))
-$(eval $(call meson_package,stylua,true))
-$(eval $(call meson_package,prettier))
-$(eval $(call meson_package,jsonlint))
-$(eval $(call meson_package,js-debug-adapter))
-$(eval $(call meson_package,typescript-language-server))
-$(eval $(call meson_package,kotlin-language-server,true))
-$(eval $(call meson_package,kotlin-debug-adapter,true))
-$(eval $(call meson_package,sqlls,true))
-$(eval $(call meson_package,lua-language-server))
+PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
+$(eval $(call mason_package,luacheck))
+$(eval $(call mason_package,stylua,true))
+$(eval $(call mason_package,prettier))
+$(eval $(call mason_package,jsonlint))
+$(eval $(call mason_package,js-debug-adapter))
+$(eval $(call mason_package,typescript-language-server))
+$(eval $(call mason_package,kotlin-language-server,true))
+$(eval $(call mason_package,kotlin-debug-adapter,true))
+$(eval $(call mason_package,sqlls,true))
+$(eval $(call mason_package,lua-language-server))
+$(eval $(call mason_package,tree-sitter-cli,true))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules
@@ -256,6 +261,19 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter sqlls fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
+
+.PHONY: test-build
+test-build:
+	[ -e $(mpv-mpris_target) ] || exit 1
+
+.PHONY: test
+test:
+	# test neovim
+	[ -x $(lua-language-server_target) ] || exit 1
+	[ -x $(tree-sitter-cli_target) ] || exit 1
+	[ -x $$(which powerline-daemon) ] || exit 1
+	# make sure neovim doesn't output errors
+	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
 
 .PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip

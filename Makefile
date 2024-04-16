@@ -266,12 +266,12 @@ install: home luacheck stylua prettier jsonlint typescript-language-server kotli
 .PHONY: test-build
 test-build:
 	[ -e $(mpv-mpris_target) ] || exit 1
-	[ -x $(tree-sitter-cli_target) ] || exit 1
 
 .PHONY: test
 test:
 	# test neovim
 	[ -x $(lua-language-server_target) ] || exit 1
+	[ -x $(tree-sitter-cli_target) ] || exit 1
 	[ -x $$(which powerline-daemon) ] || exit 1
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1

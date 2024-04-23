@@ -258,7 +258,7 @@ home: | dirs
 
 .PHONY: fonts
 fonts: home
-	# Refresh fonts
+	@# refresh fonts
 	fc-cache -f
 
 .PHONY: install

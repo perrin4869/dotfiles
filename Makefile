@@ -158,7 +158,6 @@ telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
 $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_MODULE_PATH),$(TELESCOPE_FZF_NATIVE_ROOT)))
 $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
-	touch $(telescope-fzf-native)
 telescope-fzf-native: $(telescope-fzf-native)
 
 PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli

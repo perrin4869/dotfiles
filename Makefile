@@ -65,7 +65,8 @@ $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
 $($1_target): $($1_package_yaml) telescope-fzf-native | dirs
-	HOME=./home nvim --headless -c "MasonInstall $1" -c q
+	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
@@ -157,11 +158,13 @@ telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
 $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_MODULE_PATH),$(TELESCOPE_FZF_NATIVE_ROOT)))
 $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
+	touch $(telescope-fzf-native)
 telescope-fzf-native: $(telescope-fzf-native)
 
 .PHONY: helptags
 $(helptags)&: $(helptags-deps) telescope-fzf-native
-	HOME=./home nvim --headless -c "helptags ALL" -c q
+	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "helptags ALL" -c q )
 helptags: $(helptags)
 
 .PHONY: treesitter
@@ -174,10 +177,11 @@ treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(
 $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json telescope-fzf-native tree-sitter-cli
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
-	HOME=./home nvim --headless \
+	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless \
 			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
 			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
-			 -c q
+			 -c q )
 	touch $(treesitter-targets)
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)

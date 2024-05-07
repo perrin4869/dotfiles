@@ -22,5 +22,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+      - name: debug
+        run: HOME=./home nvim --headless -c "echo &rtp" +qa
+      - name: debug 2
+        run: HOME=./home nvim --headless -c "echo &rtp" +qa
       - name: build
         run: make

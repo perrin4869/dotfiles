@@ -66,7 +66,7 @@ $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
 $($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "MasonInstall $1" -c q )
+	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
@@ -177,7 +177,7 @@ $(eval $(call mason_package,tree-sitter-cli,true))
 .PHONY: helptags
 $(helptags)&: $(helptags-deps) $(telescope-fzf-native)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "helptags ALL" -c q )
+	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "helptags ALL" -c q )
 helptags: $(helptags)
 
 .PHONY: treesitter
@@ -191,7 +191,7 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless \
+	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless \
 			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
 			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
 			 -c q )

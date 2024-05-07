@@ -21,7 +21,6 @@ DEPS = ./deps
 DCONF = ./dconf
 FONTS = ./home/.local/share/fonts
 
-MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
@@ -76,13 +75,6 @@ $(submodules-deps) &:
 # $(submodules-deps):
 # 	git submodule update --init --recursive $(@:/.git=)
 submodules: $(submodules-deps)
-
-.PHONY: mpv-mpris
-mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
-$(eval $(call git_submodule,mpv-mpris,mpv-mpris,$(MPV_MPRIS_ROOT)))
-$(mpv-mpris_target): $(mpv-mpris_head_file)
-	$(MAKE) -C $(MPV_MPRIS_ROOT)
-mpv-mpris: $(mpv-mpris_target)
 
 nerdfonts_version = 3.2.1
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
@@ -141,7 +133,7 @@ helptags: $(helptags)
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json tree-sitter-cli
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	HOME=./home nvim --headless \
@@ -229,10 +221,6 @@ fonts: home
 
 .PHONY: install
 install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
-
-.PHONY: test-build
-test-build:
-	[ -e $(mpv-mpris_target) ] || exit 1
 
 .PHONY: test
 test:

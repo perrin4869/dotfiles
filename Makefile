@@ -71,7 +71,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter
+all: ccls fzf fzy telescope-fzf-native vim_jsdoc helptags treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:

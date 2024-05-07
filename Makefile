@@ -64,7 +64,7 @@ define mason_package
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
-$($1_target): $($1_package_yaml) telescope-fzf-native | dirs
+$($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
@@ -161,31 +161,6 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	touch $(telescope-fzf-native)
 telescope-fzf-native: $(telescope-fzf-native)
 
-.PHONY: helptags
-$(helptags)&: $(helptags-deps) telescope-fzf-native
-	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "helptags ALL" -c q )
-helptags: $(helptags)
-
-.PHONY: treesitter
-# print in neovim prints to stderr
-treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
-treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
-treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
-# installing treesitter requires that all neovim config has been installed into rtp (home task)
-# also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json telescope-fzf-native tree-sitter-cli
-	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
-	@# rm -f $(treesitter-targets)
-	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless \
-			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
-			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
-			 -c q )
-	touch $(treesitter-targets)
-	@# nvim --headless +TSUpdateSync +qa exits immediately
-treesitter: $(treesitter-targets)
-
 PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
@@ -199,6 +174,31 @@ $(eval $(call mason_package,sqlls,true))
 $(eval $(call mason_package,lua-language-server))
 $(eval $(call mason_package,tree-sitter-cli,true))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
+
+.PHONY: helptags
+$(helptags)&: $(helptags-deps) $(telescope-fzf-native)
+	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless -c "helptags ALL" -c q )
+helptags: $(helptags)
+
+.PHONY: treesitter
+# print in neovim prints to stderr
+treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala svelte typescript yaml kotlin vim vimdoc
+treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
+treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
+# installing treesitter requires that all neovim config has been installed into rtp (home task)
+# also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native) $(tree-sitter-cli_target)
+	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+	@# rm -f $(treesitter-targets)
+	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	( export HOME=./home && unset XDG_CONFIG_HOME && nvim --headless \
+			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
+			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
+			 -c q )
+	touch $(treesitter-targets)
+	@# nvim --headless +TSUpdateSync +qa exits immediately
+treesitter: $(treesitter-targets)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))

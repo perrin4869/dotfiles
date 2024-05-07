@@ -64,7 +64,7 @@ define mason_package
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
-$($1_target): $($1_package_yaml) | dirs
+$($1_target): $($1_package_yaml) telescope-fzf-native | dirs
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
@@ -160,7 +160,7 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 telescope-fzf-native: $(telescope-fzf-native)
 
 .PHONY: helptags
-$(helptags)&: $(helptags-deps)
+$(helptags)&: $(helptags-deps) telescope-fzf-native
 	HOME=./home nvim --headless -c "helptags ALL" -c q
 helptags: $(helptags)
 
@@ -171,7 +171,7 @@ treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-
 treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 # also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json tree-sitter-cli
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json telescope-fzf-native tree-sitter-cli
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	HOME=./home nvim --headless \

@@ -27,4 +27,6 @@ jobs:
       - name: debug 2
         run: HOME=./home nvim --headless -c "echo &rtp" +qa
       - name: build
-        run: make
+        run: |
+          unset XDG_CONFIG_HOME
+          make

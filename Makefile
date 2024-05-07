@@ -71,7 +71,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: fzf fzy telescope-fzf-native vim_jsdoc helptags treesitter
+all: fzf fzy telescope-fzf-native vim_jsdoc treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:

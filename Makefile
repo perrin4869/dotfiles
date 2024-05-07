@@ -22,13 +22,9 @@ DCONF = ./dconf
 FONTS = ./home/.local/share/fonts
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
-XWINWRAP_ROOT = $(DEPS)/xwinwrap
-CCLS_ROOT = $(DEPS)/ccls
-FIRACODE_ROOT = $(DEPS)/FiraCode
 POWERLINE_ROOT = $(DEPS)/powerline
 GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
-ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
@@ -71,7 +67,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: ccls fzf fzy telescope-fzf-native vim_jsdoc helptags treesitter
+all: fzf fzy telescope-fzf-native vim_jsdoc helptags treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -88,22 +84,6 @@ $(mpv-mpris_target): $(mpv-mpris_head_file)
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
 mpv-mpris: $(mpv-mpris_target)
 
-.PHONY: xwinwrap
-xwinwrap_target = $(XWINWRAP_ROOT)/xwinwrap
-$(eval $(call git_submodule,xwinwrap,xwinwrap,$(XWINWRAP_ROOT)))
-$(xwinwrap_target): $(xwinwrap_head_file)
-	$(MAKE) -C $(XWINWRAP_ROOT)
-xwinwrap: $(xwinwrap_target)
-
-.PHONY: ccls
-ccls_target = $(CCLS_ROOT)/Release/ccls
-$(eval $(call git_submodule,ccls,ccls,$(CCLS_ROOT)))
-$(ccls_target): $(ccls_head_file)
-	cd $(CCLS_ROOT) && \
-		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
-		$(CMAKE) --build Release
-ccls: $(ccls_target)
-
 nerdfonts_version = 3.2.1
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
 $(nerdfonts_source):
@@ -115,14 +95,6 @@ nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
 $(nerd_fonts_target) &: $(nerdfonts_source)
 	tar xvJf $< --one-top-level=$(NERD_FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
-
-firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
-									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
-									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
-$(eval $(call git_submodule,firacode,deps/FiraCode,$(FIRACODE_ROOT)))
-$(firacode_target): $(firacode_head_file)
-	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
-firacode: $(firacode_target)
 
 iosevka_version = 30.0.0
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
@@ -193,12 +165,6 @@ $(eval $(call mason_package,sqlls,true))
 $(eval $(call mason_package,lua-language-server))
 $(eval $(call mason_package,tree-sitter-cli,true))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
-
-eslint_d = $(ESLINT_D_ROOT)/node_modules
-$(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
-$(eslint_d): $(eslint_d_head_file)
-	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
-eslint_d: $(eslint_d)
 
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,vim/bundle/vim-jsdoc,$(VIM_JSDOC_ROOT)))

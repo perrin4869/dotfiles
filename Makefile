@@ -63,6 +63,8 @@ $($1_target): $($1_package_yaml)
 	echo "DEBUG DEBUG"
 	HOME=./home nvim --headless -c "echo &rtp" +qa
 	echo "DEBUG DEBUG DEBUG"
+	HOME=./home nvim --headless -c "echo &rtp" +qa
+	echo "DEBUG DEBUG DEBUG DEBUG"
 	HOME=./home nvim --headless -c "MasonInstall $1" -c q
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)

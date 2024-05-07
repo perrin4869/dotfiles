@@ -8,8 +8,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        # with:
-        #   submodules: recursive
+        with:
+          submodules: recursive
       - name: yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master
       - name: neovim

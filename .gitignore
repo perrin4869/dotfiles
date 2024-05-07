@@ -24,6 +24,7 @@ home/.npm/
 
 home/.gnupg/*
 !home/.gnupg/gpg-agent.conf
+!home/.gnupg/scdaemon.conf
 
 home/.anthy/*
 !home/.anthy/private_words_default

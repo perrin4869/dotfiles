@@ -223,7 +223,7 @@ endif
 $(eval $(call git_submodule,powerline,powerline,$(POWERLINE_ROOT)))
 $(powerline): $(powerline_head_file)
 ifdef PIPX_LOCAL_VENVS
-	pipx install $(POWERLINE_ROOT)
+	[ -e $(powerline) ] && pipx upgrade powerline-status || pipx install $(POWERLINE_ROOT)
 else
 	pip install --user --editable=$(POWERLINE_ROOT)
 endif

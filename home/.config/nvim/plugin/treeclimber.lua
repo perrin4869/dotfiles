@@ -1,1 +1,1 @@
-require('nvim-treeclimber').setup()
+require("nvim-treeclimber").setup()

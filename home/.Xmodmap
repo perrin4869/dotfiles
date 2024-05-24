@@ -1,1 +1,13 @@
+! https://wiki.archlinux.org/title/X_keyboard_extension#I_have_an_USB_keyboard_and_the_settings_get_lost_upon_unplugging_it
+! despite setting xmodmap here, the rules don't persist suspend/hybernate and don't survive usb hotplugs
+! we need a permanent system-level rule
+! /etc/X11/xorg.conf.d/90-custom-kbd.conf
+! Section "InputClass"
+!     Identifier "keyboard defaults"
+!     MatchIsKeyboard "on"
+!
+!     # setxkbmap -option compose:ralt
+!     Option "XKbOptions" "compose:ralt"
+! EndSection
+
 keycode 108 = Multi_key Alt_R Meta_R Alt_R Meta_R

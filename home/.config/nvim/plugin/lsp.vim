@@ -9,7 +9,7 @@ function! LspStatus() abort
 endfunction
 
 function! MetalsStatus() abort
-  return get(g:, 'metals_status', '')
+  return get(g:, 'metals_status', '') .. ' ' .. get(g:, 'bsp_status', '')
 endfunction
 
 " document highlighting

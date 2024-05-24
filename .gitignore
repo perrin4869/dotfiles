@@ -12,9 +12,20 @@ home/.config/coc/extensions/*
 home/.local/share/nvim/view/
 home/.local/share/nvim/undo/
 home/.local/share/nvim/shada/
+home/.local/share/nvim/workspaces
+home/.local/share/nvim/project_nvim/
+home/.local/share/nvim/mason/
+
+# these get generated when running neovim with HOME=./home
+home/.local/state/
+home/.cache
+
+home/.npm/
 
 home/.gnupg/*
+!home/.gnupg/gpg.conf
 !home/.gnupg/gpg-agent.conf
+!home/.gnupg/scdaemon.conf
 
 home/.anthy/*
 !home/.anthy/private_words_default
@@ -34,11 +45,15 @@ home/.config/qutebrowser/qsettings
 home/.local/share/qutebrowser/
 !home/.local/share/qutebrowser/greasemonkey
 
+home/.local/share/fonts/NerdFontsSymbolsOnly-3.2.1.tar.xz
 home/.local/share/fonts/NerdFontsSymbolsOnly/
+home/.local/share/fonts/SuperTTC-Iosevka-30.0.1.zip
+home/.local/share/fonts/Iosevka.ttc
 
 home/.config/fcitx5/conf/*
 !home/.config/fcitx5/conf/xcb.conf
 home/.config/fcitx5/crash.log
 
 # this is useful if there are local files that are temporarily conflicting, ignore them
-home/.stow-local-ignore
+.stowrc
+.luarc.json

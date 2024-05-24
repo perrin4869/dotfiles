@@ -1,12 +1,12 @@
 " Toggle undo tree
-nmap gu :UndotreeToggle<CR>
+nmap <silent> gu <cmd>UndotreeToggle<CR>
 
 " Toggle tagbar
-nmap gT :TagbarToggle<CR>
+nmap <silent> gT <cmd>TagbarToggle<CR>
 
 " <C-r> is by default used in insert mode for pasting registers so let's not
 " meddle with that
-imap <C-l> <C-o>:call ToggleRl()<CR>
+imap <silent> <C-l> <C-o>:call ToggleRl()<CR>
 
 func! ToggleRl()
   if &rl
@@ -17,10 +17,10 @@ func! ToggleRl()
 endfunc
 
 " Toggle rl
-nmap ]r :set rl<CR>
-nmap [r :set norl<CR>
+nmap <silent> ]r <cmd>set rl<CR>
+nmap <silent> [r <cmd>set norl<CR>
 
-nmap ,p :call TogglePaste()<CR>
+nmap <silent> ,p <cmd>call TogglePaste()<CR>
 
 func! TogglePaste()
   if &paste
@@ -31,7 +31,7 @@ func! TogglePaste()
 endfunc
 
 " Toggle tagbar
-nmap <silent> gws :call TagbarRemoveTrailingWhiteSpace()<CR>
+nmap <silent> gws <cmd>call TagbarRemoveTrailingWhiteSpace()<CR>
 
 func! TagbarRemoveTrailingWhiteSpace()
   if b:strip_trailing_whitespace_enabled
@@ -41,7 +41,7 @@ func! TagbarRemoveTrailingWhiteSpace()
   end
 endfunc
 
-nmap gq :call ToggleQuickFix()<CR>
+nmap <silent> gq <cmd>call ToggleQuickFix()<CR>
 
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -51,7 +51,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap gl :call ToggleLocList()<CR>
+nmap <silent> gl <cmd>call ToggleLocList()<CR>
 
 function! ToggleLocList()
     if empty(filter(getwininfo(), 'v:val.loclist'))

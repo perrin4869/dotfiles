@@ -73,7 +73,7 @@ set exrc
 let mapleader=','
 
 " Convenience
-nnoremap ; :
+nnoremap <silent> <C-s> <cmd>w<CR>
 " https://github.com/neovim/neovim/issues/13086
 " If you type <ESC>; quickly enough, the key sequence generated will be <M-;>
 inoremap <M-;> <ESC>:
@@ -93,15 +93,21 @@ vno <right> <Nop>
 vno <up> <Nop>
 
 "close current buffer with bufkill
-nnoremap <silent> Q <cmd>BD<CR>
+nnoremap <silent> <C-q> <cmd>BD<CR>
 nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
-nmap G Gzz
-nmap n nzz
-nmap N Nzz
-nmap } }zz
-nmap { {zz
+nnoremap G Gzz
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap * *zz
+nnoremap # #zz
+nnoremap } }zz
+nnoremap { {zz
+nnoremap ) )zz
+nnoremap ( (zz
+nnoremap <C-f> <C-f>zz
+nnoremap <C-b> <C-b>zz
 
 "make mappings for display lines
 "These mappings make it easy to move along long lines
@@ -126,6 +132,8 @@ nnoremap <silent> <backspace> <cmd>noh<CR>
 
 nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 vnoremap <Space> zf
+
+nnoremap <silent> <leader>rm <cmd>call delete(expand('%')) \| execute('bdelete!')<CR>
 
 nnoremap <silent> =j <cmd>%!python -m json.tool<CR>
 nnoremap <silent> =x <cmd>%!xmllint --format -<CR>

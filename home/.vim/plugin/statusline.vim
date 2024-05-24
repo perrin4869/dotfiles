@@ -2,7 +2,12 @@
 set showtabline=2
 
 let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox'
+if (has('nvim'))
+  " neovim is using cokeline
+  let g:lightline.enable = {}
+  let g:lightline.enable.tabline = 0
+end
+let g:lightline.colorscheme = g:colors_name " help colorscheme
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],

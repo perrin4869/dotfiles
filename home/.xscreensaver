@@ -1,5 +1,5 @@
 # XScreenSaver Preferences File
-# Written by xscreensaver-settings 6.06 for perrin4869 on Thu Apr 20 18:57:35 2023.
+# Written by xscreensaver-settings 6.08 for perrin4869 on Thu Mar 28 17:46:44 2024.
 # https://www.jwz.org/xscreensaver/
 
 timeout:	0:10:00
@@ -290,6 +290,10 @@ programs:								      \
   GL: 				nakagin --root				    \n\
   GL: 				squirtorus --root			    \n\
   GL: 				hextrail --root				    \n\
+  GL: 				cubocteversion --root			    \n\
+				droste --root				    \n\
+  GL: 				papercube --root			    \n\
+  GL: 				skulloop --root				    \n\
 
 
 pointerHysteresis:  10

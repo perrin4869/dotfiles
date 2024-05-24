@@ -105,10 +105,6 @@ gpg-connect-agent updatestartuptty /bye >/dev/null
 alias zshconfig="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
 alias gvim="gvim -v --servername vimserver"
-alias tmux="tmux -2"
-alias tmuxinator="TERM=xterm-256color tmuxinator"
-alias mux="tmuxinator"
-alias gpg="gpg2"
 
 # use vi keybindings
 bindkey -v

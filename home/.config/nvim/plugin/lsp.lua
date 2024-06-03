@@ -163,7 +163,7 @@ vim.api.nvim_create_autocmd("FileType", {
 			},
 		})
 
-		require("lspconfig").lua_ls.setup({
+		config.lua_ls.setup({
 			settings = {
 				Lua = {
 					completion = {

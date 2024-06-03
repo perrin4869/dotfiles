@@ -28,6 +28,7 @@ cmp.setup({
 		{ name = "calc" },
 		{ name = "emoji" },
 		{ name = "spell" },
+		{ name = "lazydev", group_index = 0 }, -- set group index to 0 to skip loading LuaLS completions
 	},
 	window = {
 		completion = cmp.config.window.bordered(),

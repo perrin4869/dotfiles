@@ -1,5 +1,4 @@
 local config = require("lspconfig")
-local typescript = require("typescript-tools")
 local lsp = require("lsp")
 local utils = require("utils")
 
@@ -64,7 +63,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		if client ~= nil and client.server_capabilities.inlayHintProvider then
 			vim.keymap.set("n", "<leader>i", function()
-				vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
+				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 			end, { silent = true, buffer = bufnr, desc = "lsp.inlayhints.toggle" })
 			-- this is too verbose, so do not enable this by default
 			-- vim.lsp.inlay_hint.enable(bufnr, true)
@@ -165,6 +164,28 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+	once = true,
+	pattern = "lua",
+	callback = function()
+		vim.cmd([[
+			packadd lazydev.nvim
+			packadd luvit-meta
+		]])
+
+		require("lazydev").setup({
+			library = {
+				-- Library items can be absolute paths
+				-- "~/projects/my-awesome-lib",
+				-- Or relative, which means they will be resolved as a plugin
+				-- "LazyVim",
+				-- When relative, you can also provide a path to the library in the plugin dir
+				"luvit-meta/library", -- see below
+			},
+		})
+	end,
+})
+
 config.lua_ls.setup({
 	settings = {
 		Lua = {
@@ -175,27 +196,31 @@ config.lua_ls.setup({
 	},
 })
 
-require("ccls").setup()
-config.ccls.setup({ capabilities = capabilities })
+vim.api.nvim_create_autocmd("FileType", {
+	once = true,
+	pattern = "typescript",
+	callback = function()
+		vim.cmd([[
+			packadd nvim-vtsls
+		]])
+	end,
+})
 
-typescript.setup({
+config.vtsls.setup({
 	capabilities = capabilities,
 	settings = {
-		-- spawn additional tsserver instance to calculate diagnostics on it
-		separate_diagnostic_server = true,
-		-- "change"|"insert_leave" determine when the client asks the server about diagnostic
-		publish_diagnostic_on = "change",
-		tsserver_file_preferences = {
-			includeInlayParameterNameHints = "all",
-			includeInlayEnumMemberValueHints = true,
-			includeInlayFunctionLikeReturnTypeHints = true,
-			includeInlayFunctionParameterTypeHints = true,
-			includeInlayPropertyDeclarationTypeHints = true,
-			includeInlayVariableTypeHints = true,
-		},
-		tsserver_format_options = {
-			allowIncompleteCompletions = false,
-			allowRenameOfImportPath = false,
+		typescript = {
+			inlayHints = {
+				parameterNames = { enabled = "literals" },
+				parameterTypes = { enabled = true },
+				variableTypes = { enabled = true },
+				propertyDeclarationTypes = { enabled = true },
+				functionLikeReturnTypes = { enabled = true },
+				enumMemberValues = { enabled = true },
+			},
 		},
 	},
 })
+
+require("ccls").setup()
+config.ccls.setup({ capabilities = capabilities })

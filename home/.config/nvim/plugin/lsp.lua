@@ -162,17 +162,17 @@ vim.api.nvim_create_autocmd("FileType", {
 				"luvit-meta/library", -- see below
 			},
 		})
-
-		config.lua_ls.setup({
-			settings = {
-				Lua = {
-					completion = {
-						callSnippet = "Replace",
-					},
-				},
-			},
-		})
 	end,
+})
+
+config.lua_ls.setup({
+	settings = {
+		Lua = {
+			completion = {
+				callSnippet = "Replace",
+			},
+		},
+	},
 })
 
 require("ccls").setup()

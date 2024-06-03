@@ -419,9 +419,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/dropbar.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/dropbar.nvim
 	url = git@github.com:Bekaboo/dropbar.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/neodev.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/neodev.nvim
-	url = git@github.com:folke/neodev.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/hlargs.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/hlargs.nvim
 	url = git@github.com:m-demare/hlargs.nvim.git
@@ -528,3 +525,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/oil.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/oil.nvim
 	url = git@github.com:stevearc/oil.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/lazydev.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/lazydev.nvim
+	url = git@github.com:folke/lazydev.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/luvit-meta"]
+	path = home/.local/share/nvim/site/pack/default/opt/luvit-meta
+	url = git@github.com:Bilal2453/luvit-meta.git

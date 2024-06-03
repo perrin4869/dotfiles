@@ -105,7 +105,6 @@ require("mason").setup({
 	},
 })
 require("mason-lspconfig").setup({ automatic_installation = true })
-require("neodev").setup({})
 
 local capabilities = lsp.capabilities
 
@@ -144,14 +143,36 @@ config.sqlls.setup({
 	cmd = { "sql-language-server", "up", "--method", "stdio" },
 })
 
-config.lua_ls.setup({
-	settings = {
-		Lua = {
-			completion = {
-				callSnippet = "Replace",
+vim.api.nvim_create_autocmd("FileType", {
+	once = true,
+	pattern = "lua",
+	callback = function()
+		vim.cmd([[
+			packadd lazydev.nvim
+			packadd luvit-meta
+		]])
+
+		require("lazydev").setup({
+			library = {
+				-- Library items can be absolute paths
+				-- "~/projects/my-awesome-lib",
+				-- Or relative, which means they will be resolved as a plugin
+				-- "LazyVim",
+				-- When relative, you can also provide a path to the library in the plugin dir
+				"luvit-meta/library", -- see below
 			},
-		},
-	},
+		})
+
+		config.lua_ls.setup({
+			settings = {
+				Lua = {
+					completion = {
+						callSnippet = "Replace",
+					},
+				},
+			},
+		})
+	end,
 })
 
 require("ccls").setup()

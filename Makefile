@@ -160,13 +160,17 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 telescope-fzf-native: $(telescope-fzf-native)
 
-PHONY: luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
+PHONY: luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
 $(eval $(call mason_package,prettier))
 $(eval $(call mason_package,jsonlint))
+$(eval $(call mason_package,json-lsp))
+$(eval $(call mason_package,html-lsp))
+$(eval $(call mason_package,css-lsp))
 $(eval $(call mason_package,js-debug-adapter))
 $(eval $(call mason_package,typescript-language-server))
+$(eval $(call mason_package,bash-language-server))
 $(eval $(call mason_package,kotlin-language-server,true))
 $(eval $(call mason_package,kotlin-debug-adapter,true))
 $(eval $(call mason_package,sqlls,true))
@@ -267,7 +271,7 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
 
 .PHONY: test-build
 test-build:

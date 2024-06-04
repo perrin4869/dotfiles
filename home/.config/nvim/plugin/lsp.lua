@@ -66,7 +66,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 			end, { silent = true, buffer = bufnr, desc = "lsp.inlayhints.toggle" })
 			-- this is too verbose, so do not enable this by default
-			-- vim.lsp.inlay_hint.enable(bufnr, true)
+			-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 		end
 
 		if client ~= nil and client.server_capabilities.codeLensProvider then
@@ -217,6 +217,25 @@ config.vtsls.setup({
 				propertyDeclarationTypes = { enabled = true },
 				functionLikeReturnTypes = { enabled = true },
 				enumMemberValues = { enabled = true },
+			},
+			referencesCodeLens = {
+				enabled = true,
+			},
+			implementationsCodeLens = {
+				enabled = true,
+			},
+		},
+		javascript = {
+			inlayHints = {
+				parameterNames = { enabled = "literals" },
+				parameterTypes = { enabled = true },
+				variableTypes = { enabled = true },
+				propertyDeclarationTypes = { enabled = true },
+				functionLikeReturnTypes = { enabled = true },
+				enumMemberValues = { enabled = true },
+			},
+			referencesCodeLens = {
+				enabled = true,
 			},
 		},
 	},

@@ -69,10 +69,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 		end
 
-		if client ~= nil and client.server_capabilities.codeLensProvider then
+		if client ~= nil and client.supports_method("textDocument/codeLens") then
 			vim.api.nvim_create_augroup("lsp_codelens", { clear = false })
 			vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_codelens" })
-			vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+			-- https://github.com/LunarVim/LunarVim/pull/2600
+			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
 				group = "lsp_codelens",
 				buffer = bufnr,
 				callback = vim.lsp.codelens.refresh,

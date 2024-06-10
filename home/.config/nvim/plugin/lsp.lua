@@ -197,50 +197,54 @@ config.lua_ls.setup({
 	},
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-	once = true,
-	pattern = "typescript",
-	callback = function()
-		vim.cmd([[
+if vim.env.LSP_TYPESCRIPT == "vtsls" then
+	vim.api.nvim_create_autocmd("FileType", {
+		once = true,
+		pattern = "typescript",
+		callback = function()
+			vim.cmd([[
 			packadd nvim-vtsls
 		]])
-	end,
-})
+		end,
+	})
 
-config.vtsls.setup({
-	capabilities = capabilities,
-	settings = {
-		typescript = {
-			inlayHints = {
-				parameterNames = { enabled = "literals" },
-				parameterTypes = { enabled = true },
-				variableTypes = { enabled = true },
-				propertyDeclarationTypes = { enabled = true },
-				functionLikeReturnTypes = { enabled = true },
-				enumMemberValues = { enabled = true },
+	config.vtsls.setup({
+		capabilities = capabilities,
+		settings = {
+			typescript = {
+				inlayHints = {
+					parameterNames = { enabled = "literals" },
+					parameterTypes = { enabled = true },
+					variableTypes = { enabled = true },
+					propertyDeclarationTypes = { enabled = true },
+					functionLikeReturnTypes = { enabled = true },
+					enumMemberValues = { enabled = true },
+				},
+				referencesCodeLens = {
+					enabled = true,
+				},
+				implementationsCodeLens = {
+					enabled = true,
+				},
 			},
-			referencesCodeLens = {
-				enabled = true,
-			},
-			implementationsCodeLens = {
-				enabled = true,
+			javascript = {
+				inlayHints = {
+					parameterNames = { enabled = "literals" },
+					parameterTypes = { enabled = true },
+					variableTypes = { enabled = true },
+					propertyDeclarationTypes = { enabled = true },
+					functionLikeReturnTypes = { enabled = true },
+					enumMemberValues = { enabled = true },
+				},
+				referencesCodeLens = {
+					enabled = true,
+				},
 			},
 		},
-		javascript = {
-			inlayHints = {
-				parameterNames = { enabled = "literals" },
-				parameterTypes = { enabled = true },
-				variableTypes = { enabled = true },
-				propertyDeclarationTypes = { enabled = true },
-				functionLikeReturnTypes = { enabled = true },
-				enumMemberValues = { enabled = true },
-			},
-			referencesCodeLens = {
-				enabled = true,
-			},
-		},
-	},
-})
+	})
+else
+	config.tsserver.setup({})
+end
 
 require("ccls").setup()
 config.ccls.setup({ capabilities = capabilities })

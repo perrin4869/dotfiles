@@ -69,14 +69,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 		end
 
-		if client ~= nil and client.supports_method("textDocument/codeLens") then
-			vim.api.nvim_create_augroup("lsp_codelens", { clear = false })
-			vim.api.nvim_clear_autocmds({ buffer = bufnr, group = "lsp_codelens" })
+		if client ~= nil and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+			local group = vim.api.nvim_create_augroup("lsp_codelens", { clear = false })
+			vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 			-- https://github.com/LunarVim/LunarVim/pull/2600
 			vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
-				group = "lsp_codelens",
+				group = group,
 				buffer = bufnr,
-				callback = vim.lsp.codelens.refresh,
+				callback = function()
+					vim.lsp.codelens.refresh({ bufnr = bufnr })
+				end,
 			})
 
 			vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, get_opts({ desc = "lsp.codelens.run" }))
@@ -197,7 +199,9 @@ config.lua_ls.setup({
 	},
 })
 
-if vim.env.LSP_TYPESCRIPT == "vtsls" then
+if vim.env.LSP_TYPESCRIPT == "tsserver" then
+	config.tsserver.setup({})
+else
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,
 		pattern = "typescript",
@@ -242,8 +246,6 @@ if vim.env.LSP_TYPESCRIPT == "vtsls" then
 			},
 		},
 	})
-else
-	config.tsserver.setup({})
 end
 
 require("ccls").setup()

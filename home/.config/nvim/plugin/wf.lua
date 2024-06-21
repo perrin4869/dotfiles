@@ -51,11 +51,19 @@ vim.keymap.set(
 )
 
 -- Which Key
-vim.keymap.set(
-	"n",
-	"<Leader>",
-	-- mark(opts?: table) -> function
-	-- opts?: option
-	which_key({ text_insert_in_advance = "<Leader>" }),
-	{ noremap = true, silent = true, desc = "[wf.nvim] which-key /" }
-)
+local wk_map = {
+	["<Leader>"] = "<Leader>",
+	["<Leader>b"] = "buffers",
+	["<Leader><Leader>"] = "telescope",
+}
+
+for key, desc in pairs(wk_map) do
+	vim.keymap.set(
+		"n",
+		key,
+		-- mark(opts?: table) -> function
+		-- opts?: option
+		which_key({ text_insert_in_advance = key }),
+		{ noremap = true, silent = true, desc = "[wf.nvim] which-key " .. desc }
+	)
+end

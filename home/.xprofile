@@ -46,6 +46,12 @@ command -v autorandr-launcher && autorandr-launcher --daemonize
 
 # if pipewire in available in the system, enable it
 if [[ -x "$(command -v pipewire)" ]]; then
+  INIT=$(ps --no-headers -o comm 1)
+  if [[ "$INIT" != "systemd" ]]; then 
+    # on slackware we don't use systemd, so enable logging explicitly
+    export PIPEWIRE_LOG=~/.pipewire.log
+  fi
+
   pipewire &
   pipewire-pulse &
 

@@ -8,8 +8,7 @@ end
 require("workspaces").setup({
 	hooks = {
 		open = function()
-			-- TODO: replace if this gets merged https://github.com/folke/persistence.nvim/pull/31/files
-			if vim.fn.filereadable(persistence.get_current()) ~= 0 then
+			if vim.uv.fs_stat(require("persistence").current()) ~= nil then
 				-- force the current session file to reload since cwd has changed
 				-- maybe send a PR for a persistence.set_current()
 				persistence.stop()

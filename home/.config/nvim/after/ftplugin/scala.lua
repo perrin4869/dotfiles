@@ -40,11 +40,16 @@ metals_config.handlers = {
 	end,
 }
 metals_config.settings = {
-	-- serverVersion = "1.0.1",
 	showImplicitArguments = true,
-	showInferredType = true,
-	showImplicitConversionsAndClasses = true,
+	enableSemanticHighlighting = true,
 	superMethodLensesEnabled = true,
+	inlayHints = {
+		inferredTypes = { enable = true },
+		implicitArguments = { enable = true },
+		implicitConversions = { enable = true },
+		typeParameters = { enable = true },
+		hintsInPatternMatch = { enable = true },
+	},
 }
 
 metals.initialize_or_attach(metals_config)

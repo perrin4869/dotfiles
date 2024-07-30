@@ -10,7 +10,7 @@ require("conform").setup({
 		typescript = { "eslint_d" },
 		typescriptreact = { "eslint_d" },
 		-- Use a sub-list to run only the first available formatter
-		json = { { "prettierd", "prettier" } },
+		json = { "prettierd", "prettier", stop_after_first = true },
 		kotlin = {}, -- disable lsp formatting
 		["*"] = { "trim_whitespace" },
 	},

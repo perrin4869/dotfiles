@@ -242,9 +242,6 @@
 [submodule "vim/pack/default/opt/nvim-lsp-smag"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lsp-smag
 	url = https://github.com/weilbith/nvim-lsp-smag
-[submodule "vim/pack/default/opt/lsp-status"]
-	path = home/.local/share/nvim/site/pack/default/start/lsp-status
-	url = https://github.com/nvim-lua/lsp-status.nvim
 [submodule "mpv-mpris"]
 	path = deps/mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris
@@ -531,3 +528,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-vtsls"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-vtsls
 	url = git@github.com:yioneko/nvim-vtsls.git
+[submodule "home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim
+	url = git@github.com:linrongbin16/lsp-progress.nvim.git

@@ -1,8 +1,6 @@
 local trouble = require("trouble")
 local utils = require("utils")
 
-trouble.setup({})
-
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspAttach_trouble", { clear = true }),
 	callback = function(args)
@@ -14,16 +12,23 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local get_opts = utils.create_get_opts(opts)
 
 		vim.keymap.set("n", "<leader>xd", function()
-			trouble.toggle("document_diagnostics")
+			trouble.toggle("diagnostics")
 		end, get_opts({ desc = "trouble.document_diagnostics" }))
 		vim.keymap.set("n", "gR", function()
-			trouble.toggle("lsp_references")
+			trouble.toggle({ mode = "lsp_references", focus = true })
+		end, get_opts({ desc = "trouble.lsp_references" }))
+		vim.keymap.set("n", "<leader>l", function()
+			trouble.toggle({
+				mode = "lsp",
+				win = { position = "right", size = { width = math.floor(vim.api.nvim_win_get_width(0) / 4) } }, -- 25%
+			})
 		end, get_opts({ desc = "trouble.lsp_references" }))
 	end,
 })
 
 local get_opts = utils.create_get_opts({ silent = true })
 vim.keymap.set("n", "<leader>xx", trouble.toggle, get_opts({ desc = "trouble.toggle" }))
+vim.keymap.set("n", "<leader>xf", trouble.focus, get_opts({ desc = "trouble.focus" }))
 vim.keymap.set("n", "<leader>xw", function()
 	trouble.toggle("workspace_diagnostics")
 end, get_opts({ desc = "trouble.workspace_diagnostics" }))

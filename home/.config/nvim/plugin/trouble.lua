@@ -20,7 +20,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<leader>l", function()
 			trouble.toggle({
 				mode = "lsp",
-				win = { position = "right", size = { width = math.floor(vim.api.nvim_win_get_width(0) / 4) } }, -- 25%
+				win = { position = "right", size = { width = 0.3 } },
 			})
 		end, get_opts({ desc = "trouble.lsp_references" }))
 	end,

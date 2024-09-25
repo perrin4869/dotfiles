@@ -1,6 +1,13 @@
 local cmp = require("cmp")
 local lspkind = require("lspkind")
 
+local function select_behavior()
+	if vim.bo.filetype == "scala" then
+		return cmp.SelectBehavior.Select
+	end
+	return cmp.SelectBehavior.Insert
+end
+
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -14,6 +21,15 @@ cmp.setup({
 		["<C-e>"] = cmp.mapping.close(),
 		["<CR>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
 		["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+		-- https://github.com/hrsh7th/nvim-cmp/issues/1269
+		-- SelectBehavior.Insert is problematic with metals whenever it selects an operator
+		-- that operator will be inserted and the completion menu will be closed
+		["<C-n>"] = cmp.mapping(function()
+			cmp.select_next_item({ behavior = select_behavior() })
+		end),
+		["<C-p>"] = cmp.mapping(function()
+			cmp.select_prev_item({ behavior = select_behavior() })
+		end),
 	}),
 	formatting = {
 		format = lspkind.cmp_format({ mode = "symbol_text" }),

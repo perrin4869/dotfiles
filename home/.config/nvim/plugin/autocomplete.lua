@@ -44,22 +44,40 @@ cmp.setup.filetype("gitcommit", {
 	}),
 })
 
+local cmdline_mappings = cmp.mapping.preset.cmdline({
+	-- to preserve C-n and C-p behavior, only apply the mappings if an item is already selected
+	-- you can select an item if none has been selected yet by using `Tab`
+	["<C-n>"] = cmp.mapping(function(fallback)
+		if cmp.visible() and cmp.get_selected_entry() then
+			return cmp.select_next_item()
+		end
+		fallback()
+	end, { "i", "c" }),
+	["<C-p>"] = cmp.mapping(function(fallback)
+		if cmp.visible() and cmp.get_selected_entry() then
+			return cmp.select_prev_item()
+		end
+		fallback()
+	end, { "i", "c" }),
+})
+
+-- cmdline mappings are too troublesome (at least currently)
 cmp.setup.cmdline({ "/", "?" }, {
-	mapping = cmp.mapping.preset.cmdline(),
+	mapping = cmdline_mappings,
 	sources = {
 		{ name = "buffer" },
 	},
 })
 
 -- https://github.com/hrsh7th/nvim-cmp/issues/1680
--- cmp.setup.cmdline(":", {
--- 	mapping = cmdline_mappings,
--- 	sources = cmp.config.sources({
--- 		{ name = "path" },
--- 	}, {
--- 		{ name = "cmdline" },
--- 	}),
--- })
+cmp.setup.cmdline(":", {
+	mapping = cmdline_mappings,
+	sources = cmp.config.sources({
+		{ name = "path" },
+	}, {
+		{ name = "cmdline" },
+	}),
+})
 
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())

@@ -97,17 +97,18 @@ nnoremap <silent> <C-q> <cmd>BD<CR>
 nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
-nnoremap G Gzz
-nnoremap n nzz
-nnoremap N Nzz
-nnoremap * *zz
-nnoremap # #zz
-nnoremap } }zz
-nnoremap { {zz
-nnoremap ) )zz
-nnoremap ( (zz
-nnoremap <C-f> <C-f>zz
-nnoremap <C-b> <C-b>zz
+" nnoremap G Gzz
+" nnoremap n nzz
+" nnoremap N Nzz
+" nnoremap * *zz
+" nnoremap # #zz
+" nnoremap } }zz
+" nnoremap { {zz
+" nnoremap ) )zz
+" nnoremap ( (zz
+" nnoremap <C-f> <C-f>zz
+" nnoremap <C-b> <C-b>zz
+set scrolloff=999 " this is more reliable than calling zz after move operations
 
 "make mappings for display lines
 "These mappings make it easy to move along long lines

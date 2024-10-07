@@ -1,7 +1,15 @@
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
--- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
-vim.opt.foldlevelstart = 99
+vim.api.nvim_create_autocmd("FileType", {
+	-- TODO: in nvim-treesitter 1.0 this is require("nvim-treesitter.config")
+	pattern = require("nvim-treesitter.info").installed_parsers(),
+	callback = function()
+		vim.treesitter.start()
+		vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+		vim.bo.foldmethod = "expr"
+		-- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
+		vim.bo.foldlevelstart = 99
+		vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+	end,
+})
 
 -- https://alpha2phi.medium.com/neovim-101-tree-sitter-usage-fa3e8bed921a
 local swap_next, swap_prev = (function()
@@ -23,27 +31,12 @@ end)()
 require("nvim-treesitter.configs").setup({
 	-- ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
 	-- This is handled by the Makefile
-	-- ensure_installed = require('treesitter').langs,
-	highlight = {
-		enable = true, -- false will disable the whole extension
-	},
 	matchup = {
 		enable = true, -- mandatory, false will disable the whole extension
 	},
 	endwise = {
 		enable = true,
 	},
-	incremental_selection = {
-		enable = true,
-		keymaps = {
-			-- this is also done by treeclimber
-			init_selection = "<M-w>", -- alternatives: <M-w>, <CR>, currently: <M-j> (treeclimber)
-			scope_incremental = "<M-e>", -- alternatives: <M-e>, <CR>
-			node_incremental = "<M-w>", -- alternatives: <M-w>, <TAB>, currently: <M-j> (treeclimber)
-			node_decremental = "<M-C-w>", -- alternatives: <M-C-w>, <S-TAB>, currently: <M-k> (treeclimber)
-		},
-	},
-	indent = { enable = true },
 	textobjects = {
 		select = {
 			enable = true,

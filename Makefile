@@ -105,7 +105,7 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
 
-nerdfonts_version = 3.2.1
+nerdfonts_version = 3.3.0
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
 $(nerdfonts_source):
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v$(nerdfonts_version)/NerdFontsSymbolsOnly.tar.xz -O $(nerdfonts_source)

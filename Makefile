@@ -125,7 +125,7 @@ $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)
 
-iosevka_version = 32.2.1
+iosevka_version = 32.3.0
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
 	wget https://github.com/be5invis/Iosevka/releases/download/v$(iosevka_version)/SuperTTC-Iosevka-$(iosevka_version).zip -P $(FONTS)

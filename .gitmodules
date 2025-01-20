@@ -531,3 +531,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim
 	url = git@github.com:linrongbin16/lsp-progress.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim
+	url = git@github.com:sphamba/smear-cursor.nvim.git

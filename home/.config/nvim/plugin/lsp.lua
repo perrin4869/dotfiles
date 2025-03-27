@@ -18,12 +18,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local opts = { silent = true, buffer = bufnr }
 		local get_opts = utils.create_get_opts(opts)
 
+		local signature_help = function()
+			vim.lsp.buf.signature_help({ border = utils.border })
+		end
+
+		local hover = function()
+			vim.lsp.buf.hover({ border = utils.border })
+		end
+
 		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, get_opts({ desc = "lsp.declaration" }))
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, get_opts({ desc = "lsp.definition" }))
-		vim.keymap.set("n", "K", vim.lsp.buf.hover, get_opts({ desc = "lsp.hover" }))
+		vim.keymap.set("n", "K", hover, get_opts({ desc = "lsp.hover" }))
 		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, get_opts({ desc = "lsp.implementation" }))
-		vim.keymap.set("n", "gk", vim.lsp.buf.signature_help, get_opts({ desc = "lsp.signature_help" }))
-		vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, get_opts({ desc = "lsp.signature_help" }))
+		vim.keymap.set("n", "gk", signature_help, get_opts({ desc = "lsp.signature_help" }))
+		vim.keymap.set("i", "<C-k>", signature_help, get_opts({ desc = "lsp.signature_help" }))
 		vim.keymap.set(
 			"n",
 			"<leader>wa",
@@ -42,7 +50,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, get_opts({ desc = "lsp.type_definition" }))
 		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, get_opts({ desc = "lsp.rename" }))
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, get_opts({ desc = "lsp.code_action" }))
-		vim.keymap.set("n", "gr", vim.lsp.buf.references, get_opts({ desc = "lsp.references" }))
 		-- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
 		-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 		-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
@@ -60,6 +67,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		)
 		-- https://github.com/nvim-telescope/telescope.nvim/issues/964
 		-- uses dynamic because most language servers return an empty list on an empty query
+
+		if client ~= nil then
+			vim.diagnostic.config({
+				underline = true,
+				virtual_text = false,
+				virtual_lines = true,
+				signs = true,
+				update_in_insert = false,
+			}, vim.lsp.diagnostic.get_namespace(client.id))
+		end
 
 		if client ~= nil and client.server_capabilities.inlayHintProvider then
 			vim.keymap.set("n", "<leader>i", function()
@@ -86,21 +103,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
--- luacheck: push ignore 122
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-	underline = true,
-	virtual_text = false,
-	signs = true,
-	update_in_insert = false,
-})
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-	border = utils.border,
-})
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-	border = utils.border,
-})
--- luacheck: pop
-
 require("mason").setup({
 	registries = {
 		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
@@ -110,6 +112,8 @@ require("mason-lspconfig").setup({ automatic_installation = true })
 
 local capabilities = lsp.capabilities
 
+-- TODO: will use once lspconfig migrates to vim.lsp.config
+-- vim.lsp.config("*", { capabilities = capabilities })
 config.bashls.setup({ capabilities = capabilities })
 config.vimls.setup({ capabilities = capabilities })
 config.html.setup({ capabilities = capabilities })

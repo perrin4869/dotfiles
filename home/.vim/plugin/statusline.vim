@@ -7,6 +7,7 @@ if (has('nvim'))
   let g:lightline.enable = {}
   let g:lightline.enable.tabline = 0
 end
+
 let g:lightline.colorscheme = g:colors_name " help colorscheme
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],

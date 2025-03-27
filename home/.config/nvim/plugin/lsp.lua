@@ -50,7 +50,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gy", vim.lsp.buf.type_definition, get_opts({ desc = "lsp.type_definition" }))
 		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, get_opts({ desc = "lsp.rename" }))
 		vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, get_opts({ desc = "lsp.code_action" }))
-		vim.keymap.set("n", "gr", vim.lsp.buf.references, get_opts({ desc = "lsp.references" }))
 		-- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
 		-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 		-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/

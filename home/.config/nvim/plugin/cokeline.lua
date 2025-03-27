@@ -8,6 +8,11 @@ local yellow = vim.g.terminal_color_3
 
 require("cokeline").setup({
 	show_if_buffers_are_at_least = 2,
+	buffers = {
+		filter_valid = function(buffer)
+			return buffer.type ~= "terminal" and buffer.type ~= "quickfix"
+		end,
+	},
 	default_hl = {
 		fg = function(buffer)
 			return buffer.is_focused and get_hex("Normal", "fg") or get_hex("Comment", "fg")

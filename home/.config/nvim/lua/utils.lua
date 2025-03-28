@@ -13,6 +13,6 @@ M.create_get_opts = function(lhs)
 	end
 end
 
-M.border = "solid"
+M.border = "rounded"
 
 return M

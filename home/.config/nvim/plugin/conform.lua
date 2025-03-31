@@ -5,14 +5,18 @@ local enabled = true
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
-		javascript = { "eslint_d" },
-		javascriptreact = { "eslint_d" },
-		typescript = { "eslint_d" },
-		typescriptreact = { "eslint_d" },
+		javascript = { "eslint_d", lsp_format = "never" },
+		javascriptreact = { "eslint_d", lsp_format = "never" },
+		typescript = { "eslint_d", lsp_format = "never" },
+		typescriptreact = { "eslint_d", lsp_format = "never" },
 		-- Use a sub-list to run only the first available formatter
 		json = { "prettierd", "prettier", stop_after_first = true },
 		kotlin = {}, -- disable lsp formatting
 		["*"] = { "trim_whitespace" },
+	},
+	default_format_opts = {
+		lsp_format = "last",
+		async = true,
 	},
 	format_after_save = function(bufnr)
 		if not enabled or vim.bo[bufnr].readonly then
@@ -20,18 +24,13 @@ require("conform").setup({
 		end
 
 		return {
-			async = true,
-			lsp_fallback = true,
 			bufnr = bufnr,
 		}
 	end,
 })
 
 local function format()
-	require("conform").format({
-		async = true,
-		lsp_fallback = true,
-	})
+	require("conform").format()
 end
 
 local function toggle_autoformat()

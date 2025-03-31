@@ -111,6 +111,9 @@ require("mason").setup({
 require("mason-lspconfig").setup({ automatic_installation = true })
 
 local capabilities = lsp.capabilities
+vim.lsp.config("*", {
+	capabilities = lsp.capabilities,
+})
 
 -- TODO: will use once lspconfig migrates to vim.lsp.config
 -- vim.lsp.config("*", { capabilities = capabilities })
@@ -211,13 +214,12 @@ else
 		pattern = "typescript",
 		callback = function()
 			vim.cmd([[
-			packadd nvim-vtsls
-		]])
+				packadd nvim-vtsls
+			]])
 		end,
 	})
 
-	config.vtsls.setup({
-		capabilities = capabilities,
+	vim.lsp.config("vtsls", {
 		settings = {
 			typescript = {
 				inlayHints = {
@@ -250,6 +252,7 @@ else
 			},
 		},
 	})
+	vim.lsp.enable("vtsls")
 end
 
 require("ccls").setup()

@@ -6,13 +6,6 @@ function! ReturnHighlightTerm(group, term)
    return matchstr(output, a:term.'=\zs\S*')
 endfunction
 
-" https://github.com/nvim-lualine/lualine.nvim/issues/1312
-" https://github.com/ellisonleao/gruvbox.nvim/issues/377
-lua << EOF
-   vim.api.nvim_set_hl(0, "StatusLine", {reverse = false})
-   vim.api.nvim_set_hl(0, "StatusLineNC", {reverse = false})
-EOF
-
 let s:bg0 = ReturnHighlightTerm('GruvboxBg0', 'guifg')
 let s:bg1 = ReturnHighlightTerm('GruvboxBg1', 'guifg')
 let s:bg2 = ReturnHighlightTerm('GruvboxBg2', 'guifg')

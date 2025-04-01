@@ -90,6 +90,17 @@ vim.fn.sign_define("DapStopped", { text = "⭐️", texthl = "", linehl = "", nu
 local opts = { noremap = true, silent = true }
 local get_opts = utils.create_get_opts(opts)
 
+local function focus_repl()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		if vim.bo[buf].filetype == "dap-repl" then
+			vim.api.nvim_set_current_win(win)
+			return true
+		end
+	end
+	return false
+end
+
 vim.keymap.set("n", "<leader>dt", dap.toggle_breakpoint, get_opts({ desc = "dap.toggle_breakpoint" }))
 vim.keymap.set("n", "<leader>dH", function()
 	dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
@@ -105,6 +116,13 @@ vim.keymap.set("n", "<leader>dd", function()
 	dap.close()
 end, get_opts({ desc = "dap.disconnect" }))
 vim.keymap.set("n", "<leader>dr", function()
+	if focus_repl() == false then
+		local _, win = dap.repl.open({}, "vsplit")
+		vim.api.nvim_set_current_win(win)
+		vim.cmd('exe Resize("vertical", "", "35%")')
+	end
+end, get_opts({ desc = "dap.repl.open_focus" }))
+vim.keymap.set("n", "<leader>dR", function()
 	dap.repl.toggle({}, "vsplit")
 	vim.cmd('wincmd h | exe Resize("vertical", "", "35%")')
 end, get_opts({ desc = "dap.repl.toggle" }))
@@ -159,15 +177,21 @@ require("nvim-dap-virtual-text").setup()
 dapui.setup()
 vim.keymap.set("n", "<leader>du", require("dapui").toggle, get_opts({ desc = "dapui.toggle" }))
 
-dap.listeners.after.event_initialized["dapui_config"] = function()
+dap.listeners.before.attach.dapui_config = function()
+	dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
 	dapui.open()
 end
 dap.listeners.before.event_terminated["dapui_config"] = function()
-	dapui.close()
+	focus_repl()
+
+	-- closing is too intrusive - cannot inspect the output
+	-- dapui.close()
 end
-dap.listeners.before.event_exited["dapui_config"] = function()
-	dapui.close()
-end
+-- dap.listeners.before.event_exited["dapui_config"] = function()
+-- 	dapui.close()
+-- end
 
 -- telescope-dap
 vim.keymap.set("n", "<leader>dc", telescope.commands, get_opts({ desc = "telescope.dap.commands" }))

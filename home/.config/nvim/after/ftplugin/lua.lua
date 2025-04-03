@@ -3,3 +3,13 @@ vim.api.nvim_create_user_command("OsvLaunch", function()
 end, { desc = "Launch osv" })
 
 vim.api.nvim_create_user_command("OsvStop", require("osv").stop, { desc = "Stop osv" })
+
+vim.keymap.set("n", "<space>x", function()
+	vim.cmd(".source")
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<space>X", function()
+	vim.cmd("source %")
+end, { noremap = true, silent = true })
+vim.keymap.set("x", "<space>x", function()
+	vim.cmd("'<'>source")
+end, { noremap = true, silent = true })

@@ -23,6 +23,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- Reveal current current class (trait or object) in Tree View 'metalsPackages'
 		vim.keymap.set("n", "gtf", tvp.reveal_in_tree, opts)
 
+		vim.keymap.set("n", "<leader><leader>m", require("telescope").extensions.metals.commands, opts)
+		vim.keymap.set("n", "gtt", "<cmd>MetalsSelectTestSuite<cr>", opts)
+		vim.keymap.set("n", "gtc", "<cmd>MetalsSelectTestCase<cr>", opts)
+
 		vim.keymap.set("n", "<leader>o", metals.organize_imports, opts)
 		vim.api.nvim_buf_create_user_command(bufnr, "OR", metals.organize_imports, { nargs = 0 })
 
@@ -43,6 +47,7 @@ metals_config.settings = {
 	verboseCompilation = true,
 	enableSemanticHighlighting = true,
 	superMethodLensesEnabled = true,
+	testUserInterface = "Test Explorer",
 	defaultBspToBuildTool = true,
 	inlayHints = {
 		hintsInPatternMatch = { enable = true },

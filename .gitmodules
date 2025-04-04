@@ -534,3 +534,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim
 	url = git@github.com:sphamba/smear-cursor.nvim.git
+[submodule "home/.local/share/tmux/tmux-sensible"]
+	path = home/.local/share/tmux/tmux-sensible
+	url = git@github.com:tmux-plugins/tmux-sensible.git

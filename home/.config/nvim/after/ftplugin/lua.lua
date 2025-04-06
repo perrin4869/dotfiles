@@ -6,10 +6,10 @@ vim.api.nvim_create_user_command("OsvStop", require("osv").stop, { desc = "Stop 
 
 vim.keymap.set("n", "<space>x", function()
 	vim.cmd(".source")
-end, { noremap = true, silent = true })
+end, { noremap = true, silent = true, desc = "execute lua lua" })
 vim.keymap.set("n", "<space>X", function()
 	vim.cmd("source %")
-end, { noremap = true, silent = true })
+end, { noremap = true, silent = true, desc = "execute lua file" })
 vim.keymap.set("x", "<space>x", function()
 	vim.cmd("'<'>source")
-end, { noremap = true, silent = true })
+end, { noremap = true, silent = true, desc = "execute lua visual" })

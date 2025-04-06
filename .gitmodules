@@ -532,3 +532,9 @@
 [submodule "home/.local/share/tmux/catppuccin"]
 	path = home/.local/share/tmux/catppuccin
 	url = git@github.com:catppuccin/tmux.git
+[submodule "home/.local/share/tmux/tmux-cpu"]
+	path = home/.local/share/tmux/tmux-cpu
+	url = git@github.com:tmux-plugins/tmux-cpu.git
+[submodule "home/.local/share/tmux/tmux-battery"]
+	path = home/.local/share/tmux/tmux-battery
+	url = git@github.com:tmux-plugins/tmux-battery.git

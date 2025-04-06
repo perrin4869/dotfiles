@@ -90,10 +90,6 @@
 	path = home/.vim/pack/default/start/vim-themis
 	url = https://github.com/thinca/vim-themis
 	ignore = untracked
-[submodule "vim/bundle/vim-markdown-preview"]
-	path = home/.vim/pack/default/start/vim-markdown-preview
-	url = https://github.com/JamshedVesuna/vim-markdown-preview
-	ignore = untracked
 [submodule "vim/bundle/vimtex"]
 	path = home/.vim/pack/default/start/vimtex
 	url = https://github.com/lervag/vimtex
@@ -250,9 +246,6 @@
 [submodule "powerline"]
 	path = deps/powerline
 	url = git@github.com:powerline/powerline.git
-[submodule "grip"]
-	path = deps/grip
-	url = git@github.com:joeyespo/grip.git
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = git@github.com:nvim-treesitter/nvim-treesitter.git
@@ -536,3 +529,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/render-markdown.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/render-markdown.nvim
 	url = git@github.com:MeanderingProgrammer/render-markdown.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/live-preview.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/live-preview.nvim
+	url = git@github.com:brianhuster/live-preview.nvim.git

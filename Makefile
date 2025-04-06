@@ -26,7 +26,6 @@ XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
 FIRACODE_ROOT = $(DEPS)/FiraCode
 POWERLINE_ROOT = $(DEPS)/powerline
-GRIP_ROOT = $(DEPS)/grip
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -234,20 +233,6 @@ else
 endif
 powerline: $(powerline)
 
-ifdef PIPX_LOCAL_VENVS
-grip = $(PIPX_LOCAL_VENVS)/grip/bin/grip
-else
-grip = $(PYTHON_SITE_PACKAGES)/grip.egg-link
-endif
-$(eval $(call git_submodule,grip,grip,$(GRIP_ROOT)))
-$(grip): $(grip_head_file)
-ifdef PIPX_LOCAL_VENVS
-	pipx install $(GRIP_ROOT)
-else
-	pip install --user --editable=$(GRIP_ROOT)
-endif
-grip: $(grip)
-
 .PHONY: dconf
 dconf:
 	@# dconf dump /desktop/ibus > ibus.dconf
@@ -272,7 +257,7 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf grip powerline
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf powerline
 
 .PHONY: test-build
 test-build:
@@ -287,4 +272,4 @@ test:
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
 
-.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline grip
+.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline

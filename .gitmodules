@@ -243,9 +243,6 @@
 [submodule "gruvbox-material-gtk"]
 	path = deps/gruvbox-material-gtk
 	url = https://github.com/sainnhe/gruvbox-material-gtk
-[submodule "powerline"]
-	path = deps/powerline
-	url = git@github.com:powerline/powerline.git
 [submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = git@github.com:nvim-treesitter/nvim-treesitter.git
@@ -532,3 +529,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/live-preview.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/live-preview.nvim
 	url = git@github.com:brianhuster/live-preview.nvim.git
+[submodule "home/.local/share/tmux/catppuccin"]
+	path = home/.local/share/tmux/catppuccin
+	url = git@github.com:catppuccin/tmux.git

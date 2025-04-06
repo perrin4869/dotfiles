@@ -9,11 +9,6 @@ PREFIX ?= ${HOME}/.local
 
 PYTHON := python3
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
-PIPX := $(shell command -v pipx 2> /dev/null)
-ifneq ($(PIPX),)
-	# pipx --value shorthand changed from -v -> -V somewhere between 1.3.1 and 1.5.0
-	PIPX_LOCAL_VENVS := $(shell pipx environment --value PIPX_LOCAL_VENVS)
-endif
 
 CMAKE := cmake
 
@@ -218,20 +213,6 @@ vim_jsdoc: $(vim_jsdoc)
 .PHONY: gitflow
 gitflow: $(GITFLOW_ROOT)/.git
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
-
-ifdef PIPX_LOCAL_VENVS
-powerline = $(PIPX_LOCAL_VENVS)/powerline-status/bin/powerline-daemon
-else
-powerline = $(PYTHON_SITE_PACKAGES)/powerline-status.egg-link
-endif
-$(eval $(call git_submodule,powerline,powerline,$(POWERLINE_ROOT)))
-$(powerline): $(powerline_head_file)
-ifdef PIPX_LOCAL_VENVS
-	[ -e $(powerline) ] && pipx upgrade powerline-status || pipx install $(POWERLINE_ROOT)
-else
-	pip install --user --editable=$(POWERLINE_ROOT)
-endif
-powerline: $(powerline)
 
 .PHONY: dconf
 dconf:

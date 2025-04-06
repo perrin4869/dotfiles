@@ -533,3 +533,6 @@
 [submodule "home/.local/share/tmux/tmux-sensible"]
 	path = home/.local/share/tmux/tmux-sensible
 	url = git@github.com:tmux-plugins/tmux-sensible.git
+[submodule "home/.local/share/nvim/site/pack/default/start/render-markdown.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/render-markdown.nvim
+	url = git@github.com:MeanderingProgrammer/render-markdown.nvim.git

@@ -94,10 +94,6 @@
 	path = home/.vim/pack/default/start/vim-markdown-preview
 	url = https://github.com/JamshedVesuna/vim-markdown-preview
 	ignore = untracked
-[submodule "vim/bundle/vim-markdown"]
-	path = home/.vim/pack/default/start/vim-markdown
-	url = https://github.com/tpope/vim-markdown
-	ignore = untracked
 [submodule "vim/bundle/vimtex"]
 	path = home/.vim/pack/default/start/vimtex
 	url = https://github.com/lervag/vimtex

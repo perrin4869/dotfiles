@@ -1,3 +1,3 @@
-nnoremap <space>x <cmd>.source<CR>
-nnoremap <space>X <cmd>source %<CR>
-xnoremap <space>x <cmd>'<'>source<CR>
+nnoremap <buffer> <space>x <cmd>.source<CR>
+nnoremap <buffer> <space>X <cmd>source %<CR>
+xnoremap <buffer> <space>x <cmd>'<'>source<CR>

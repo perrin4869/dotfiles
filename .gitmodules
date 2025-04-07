@@ -550,3 +550,6 @@
 [submodule "home/.local/share/tmux/tmux-floax"]
 	path = home/.local/share/tmux/tmux-floax
 	url = git@github.com:omerxx/tmux-floax.git
+[submodule "home/.local/share/tmux/tmux-sessionx"]
+	path = home/.local/share/tmux/tmux-sessionx
+	url = git@github.com:omerxx/tmux-sessionx.git

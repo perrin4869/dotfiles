@@ -541,3 +541,9 @@
 [submodule "home/.local/share/tmux/tmux-fingers"]
 	path = home/.local/share/tmux/tmux-fingers
 	url = git@github.com:Morantron/tmux-fingers.git
+[submodule "home/.local/share/tmux/tmux-fzf"]
+	path = home/.local/share/tmux/tmux-fzf
+	url = git@github.com:sainnhe/tmux-fzf.git
+[submodule "home/.local/share/tmux/tmux-fzf-url"]
+	path = home/.local/share/tmux/tmux-fzf-url
+	url = git@github.com:wfxr/tmux-fzf-url.git

@@ -538,3 +538,6 @@
 [submodule "home/.local/share/tmux/tmux-battery"]
 	path = home/.local/share/tmux/tmux-battery
 	url = git@github.com:tmux-plugins/tmux-battery.git
+[submodule "home/.local/share/tmux/tmux-fingers"]
+	path = home/.local/share/tmux/tmux-fingers
+	url = git@github.com:Morantron/tmux-fingers.git

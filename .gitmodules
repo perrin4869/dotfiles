@@ -547,3 +547,6 @@
 [submodule "home/.local/share/tmux/tmux-fzf-url"]
 	path = home/.local/share/tmux/tmux-fzf-url
 	url = git@github.com:wfxr/tmux-fzf-url.git
+[submodule "home/.local/share/tmux/tmux-floax"]
+	path = home/.local/share/tmux/tmux-floax
+	url = git@github.com:omerxx/tmux-floax.git

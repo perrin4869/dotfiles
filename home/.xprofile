@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TERMINAL="${TERMINAL:-wezterm}"
+export TERMINAL="${TERMINAL:-ghostty}"
 export FILE="${FILE:-ranger}"
 export BROWSER="${BROWSER-firefox}"
 export EDITOR="${EDITOR-nvim}"
@@ -47,7 +47,7 @@ command -v autorandr-launcher && autorandr-launcher --daemonize
 # if pipewire in available in the system, enable it
 if [[ -x "$(command -v pipewire)" ]]; then
   INIT=$(ps --no-headers -o comm 1)
-  if [[ "$INIT" != "systemd" ]]; then 
+  if [[ "$INIT" != "systemd" ]]; then
     # on slackware we don't use systemd, so enable logging explicitly
     export PIPEWIRE_LOG=~/.pipewire.log
   fi

@@ -45,7 +45,6 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `fd`
 - `yq`
 - `spot`
-- `pipx` (environments with python 3.11)
 
 In Slackware:
 - `sun`

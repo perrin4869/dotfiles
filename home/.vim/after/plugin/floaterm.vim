@@ -1,1 +1,1 @@
-hi FloatermBorder guibg=none guifg=cyan
+hi FloatermBorder guibg=NONE guifg=cyan

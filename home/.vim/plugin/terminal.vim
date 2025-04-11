@@ -1,5 +1,5 @@
-nnoremap <silent> <leader>t :FloatermToggle<CR>
-tnoremap <silent> <leader>t <C-\><C-n>:FloatermToggle<CR>
+nnoremap <silent> <M-t> <cmd>FloatermToggle<CR>
+tnoremap <silent> <M-t> <cmd>FloatermToggle<CR>
 
 nnoremap   <silent>   <F6>    :FloatermNew<CR>
 tnoremap   <silent>   <F6>    <C-\><C-n>:FloatermNew<CR>
@@ -13,14 +13,10 @@ tnoremap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 nnoremap   <silent>   <F9>   :FloatermKill<CR>
 tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermKill<CR>
 
-" vim-powered terminal in split window
-nnoremap <silent> <leader>T :term<cr>
-tnoremap <silent> <leader>T <c-w>:term<cr>
-
 if has("nvim")
   " Make escape work in the Neovim terminal.
   " Esc is useful in zsh in vim-mode, so use <C-o> instead
-  tnoremap <C-o> <C-\><C-n>
+  tnoremap <Esc><Esc> <C-\><C-n>
 
   " Prefer Neovim terminal insert mode to normal mode.
   autocmd TermOpen * startinsert

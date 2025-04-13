@@ -109,49 +109,12 @@ require("mason").setup({
 	},
 })
 require("mason-lspconfig").setup({ automatic_installation = true })
+require("ccls").setup()
 
-local capabilities = lsp.capabilities
 vim.lsp.config("*", {
 	capabilities = lsp.capabilities,
 })
 
--- TODO: will use once lspconfig migrates to vim.lsp.config
--- vim.lsp.config("*", { capabilities = capabilities })
-config.bashls.setup({ capabilities = capabilities })
-config.vimls.setup({ capabilities = capabilities })
-config.html.setup({ capabilities = capabilities })
-config.kotlin_language_server.setup({ capabilities = capabilities })
-
-config.cssls.setup({
-	capabilities = capabilities,
-	settings = {
-		css = {
-			validate = false,
-		},
-		less = {
-			validate = true,
-		},
-		scss = {
-			validate = true,
-		},
-	},
-})
-
-config.jsonls.setup({
-	capabilities = capabilities,
-	commands = {
-		Format = {
-			function()
-				vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
-			end,
-		},
-	},
-})
-config.sqlls.setup({
-	capabilities = capabilities,
-	cmd = { "sql-language-server", "up", "--method", "stdio" },
-})
-
 vim.api.nvim_create_autocmd("FileType", {
 	once = true,
 	pattern = "lua",
@@ -174,41 +137,10 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-	once = true,
-	pattern = "lua",
-	callback = function()
-		vim.cmd([[
-			packadd lazydev.nvim
-			packadd luvit-meta
-		]])
+local typescript_lsp = "tsserver"
+if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
+	typescript_lsp = "vtsls"
 
-		require("lazydev").setup({
-			library = {
-				-- Library items can be absolute paths
-				-- "~/projects/my-awesome-lib",
-				-- Or relative, which means they will be resolved as a plugin
-				-- "LazyVim",
-				-- When relative, you can also provide a path to the library in the plugin dir
-				"luvit-meta/library", -- see below
-			},
-		})
-	end,
-})
-
-config.lua_ls.setup({
-	settings = {
-		Lua = {
-			completion = {
-				callSnippet = "Replace",
-			},
-		},
-	},
-})
-
-if vim.env.LSP_TYPESCRIPT == "tsserver" then
-	config.tsserver.setup({})
-else
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,
 		pattern = "typescript",
@@ -218,42 +150,17 @@ else
 			]])
 		end,
 	})
-
-	vim.lsp.config("vtsls", {
-		settings = {
-			typescript = {
-				inlayHints = {
-					parameterNames = { enabled = "literals" },
-					parameterTypes = { enabled = true },
-					variableTypes = { enabled = true },
-					propertyDeclarationTypes = { enabled = true },
-					functionLikeReturnTypes = { enabled = true },
-					enumMemberValues = { enabled = true },
-				},
-				referencesCodeLens = {
-					enabled = true,
-				},
-				implementationsCodeLens = {
-					enabled = true,
-				},
-			},
-			javascript = {
-				inlayHints = {
-					parameterNames = { enabled = "literals" },
-					parameterTypes = { enabled = true },
-					variableTypes = { enabled = true },
-					propertyDeclarationTypes = { enabled = true },
-					functionLikeReturnTypes = { enabled = true },
-					enumMemberValues = { enabled = true },
-				},
-				referencesCodeLens = {
-					enabled = true,
-				},
-			},
-		},
-	})
-	vim.lsp.enable("vtsls")
 end
 
-require("ccls").setup()
-config.ccls.setup({ capabilities = capabilities })
+vim.lsp.enable({
+	"bashls",
+	"vimls",
+	"html",
+	"kotlin_languange_server",
+	"cssls",
+	"jsonls",
+	"sqlls",
+	"lua_ls",
+	"ccls",
+	typescript_lsp,
+})

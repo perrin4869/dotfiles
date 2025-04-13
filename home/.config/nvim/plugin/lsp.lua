@@ -1,4 +1,3 @@
-local config = require("lspconfig")
 local lsp = require("lsp")
 local utils = require("utils")
 

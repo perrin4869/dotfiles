@@ -16,7 +16,8 @@ tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermKill<CR>
 if has("nvim")
   " Make escape work in the Neovim terminal.
   " Esc is useful in zsh in vim-mode, so use <C-o> instead
-  tnoremap <Esc><Esc> <C-\><C-n>
+  " <Esc><Esc> makes a single <Esc> be delayed, so not ideal
+  tnoremap <C-o> <C-\><C-n>
 
   " Prefer Neovim terminal insert mode to normal mode.
   autocmd TermOpen * startinsert

@@ -553,3 +553,6 @@
 [submodule "home/.local/share/tmux/tmux-sessionx"]
 	path = home/.local/share/tmux/tmux-sessionx
 	url = git@github.com:omerxx/tmux-sessionx.git
+[submodule "home/.local/share/tmux/tmux-pomodoro-plus"]
+	path = home/.local/share/tmux/tmux-pomodoro-plus
+	url = git@github.com:olimorris/tmux-pomodoro-plus.git

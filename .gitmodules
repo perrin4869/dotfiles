@@ -556,3 +556,6 @@
 [submodule "home/.local/share/tmux/tmux-pomodoro-plus"]
 	path = home/.local/share/tmux/tmux-pomodoro-plus
 	url = git@github.com:olimorris/tmux-pomodoro-plus.git
+[submodule "home/.local/share/tmux/tmux-resurrect"]
+	path = home/.local/share/tmux/tmux-resurrect
+	url = git@github.com:tmux-plugins/tmux-resurrect.git

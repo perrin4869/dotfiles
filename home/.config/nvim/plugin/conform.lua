@@ -27,10 +27,6 @@ require("conform").setup({
 	end,
 })
 
-local function format()
-	require("conform").format()
-end
-
 local function toggle_autoformat(args)
 	if args and args.bang then
 		-- FormatDisable! will disable formatting just for this buffer
@@ -56,8 +52,29 @@ end
 
 local opts = { silent = true }
 local get_opts = utils.create_get_opts(opts)
-vim.keymap.set("n", "<leader>ff", format, get_opts({ desc = "conform.format" }))
+vim.keymap.set({ "n", "x" }, "<leader>ff", function()
+	require("conform").format({}, function(err)
+		if not err then
+			local mode = vim.api.nvim_get_mode().mode
+			if vim.startswith(string.lower(mode), "v") then
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+			end
+		end
+	end)
+end, get_opts({ desc = "conform.format" }))
 vim.keymap.set("n", "<leader>ft", toggle_autoformat, get_opts({ desc = "conform.toggle_autoformat" }))
+
+vim.api.nvim_create_user_command("Format", function(args)
+	local range = nil
+	if args.count ~= -1 then
+		local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+		range = {
+			start = { args.line1, 0 },
+			["end"] = { args.line2, end_line:len() },
+		}
+	end
+	require("conform").format({ range = range })
+end, { range = true })
 
 vim.api.nvim_create_user_command("FormatEnable", enable_autoformat, { desc = "Re-enable autoformat-on-save" })
 vim.api.nvim_create_user_command(

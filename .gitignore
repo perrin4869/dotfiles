@@ -57,6 +57,8 @@ home/.config/fcitx5/conf/*
 !home/.config/fcitx5/conf/xcb.conf
 home/.config/fcitx5/crash.log
 
+home/.local/share/tmux/resurrect/
+
 # this is useful if there are local files that are temporarily conflicting, ignore them
 .stowrc
 .luarc.json

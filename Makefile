@@ -175,6 +175,24 @@ $(helptags)&: $(helptags-deps) $(telescope-fzf-native)
 	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "helptags ALL" -c q )
 helptags: $(helptags)
 
+i3status-config-template := $(XDG_CONFIG_HOME)/i3status/config.template
+i3status-config          := $(XDG_CONFIG_HOME)/i3status/config
+amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
+
+# Check if on amd
+ifeq ($(wildcard $(amd-cpu-temperature-path)),)
+cpu-temperature-device-file-path :=
+else
+cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
+endif
+.PHONY: i3status
+$(i3status-config): $(i3status-config-template)
+	@awk ' \
+		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
+		{ print }' \
+		"$(i3status-config-template)" > "$(i3status-config)"
+i3status: $(i3status-config)
+
 .PHONY: treesitter
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql
@@ -234,7 +252,7 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf i3status
 
 .PHONY: test-build
 test-build:

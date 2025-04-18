@@ -7,9 +7,6 @@ XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
 
-PYTHON := python3
-PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
-
 CMAKE := cmake
 
 DEPS = ./deps
@@ -20,7 +17,6 @@ MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
 FIRACODE_ROOT = $(DEPS)/FiraCode
-POWERLINE_ROOT = $(DEPS)/powerline
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -238,7 +234,7 @@ fonts: home
 	fc-cache -f
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf powerline
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf
 
 .PHONY: test-build
 test-build:
@@ -249,8 +245,7 @@ test-build:
 test:
 	# test neovim
 	[ -x $(lua-language-server_target) ] || exit 1
-	[ -x $$(which powerline-daemon) ] || exit 1
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
 
-.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode powerline
+.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode

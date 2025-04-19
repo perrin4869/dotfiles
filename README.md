@@ -13,7 +13,7 @@ make install
 ```
 
 Other 3rd party dependencies to be installed by the OS dependency manager:
-- `i3-gaps`
+- `i3`
 - `i3status`
 - `i3lock`
 - `ranger`

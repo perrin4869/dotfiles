@@ -61,26 +61,8 @@ $($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 $1: $($1_target)
 endef
 
-i3status-config-template := ./home/.config/i3status/config.template
-i3status-config          := ./home/.config/i3status/config
-amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
-
-# Check if on amd
-ifeq ($(wildcard $(amd-cpu-temperature-path)),)
-cpu-temperature-device-file-path :=
-else
-cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
-endif
-.PHONY: i3status
-$(i3status-config): $(i3status-config-template)
-	@awk ' \
-		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
-		{ print }' \
-		"$(i3status-config-template)" > "$(i3status-config)"
-i3status: $(i3status-config)
-
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter i3status
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka i3status treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -103,6 +85,24 @@ $(eval $(call git_submodule,xwinwrap,xwinwrap,$(XWINWRAP_ROOT)))
 $(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
+
+i3status-config-template := ./home/.config/i3status/config.template
+i3status-config          := ./home/.config/i3status/config
+amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
+
+# Check if on amd
+ifeq ($(wildcard $(amd-cpu-temperature-path)),)
+cpu-temperature-device-file-path :=
+else
+cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
+endif
+.PHONY: i3status
+$(i3status-config): $(i3status-config-template)
+	@awk ' \
+		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
+		{ print }' \
+		"$(i3status-config-template)" > "$(i3status-config)"
+i3status: $(i3status-config)
 
 .PHONY: ccls
 ccls_target = $(CCLS_ROOT)/Release/ccls
@@ -257,6 +257,7 @@ install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint
 .PHONY: test-build
 test-build:
 	[ -e $(mpv-mpris_target) ] || exit 1
+	[ -e $(i3status-config) ] || exit 1
 	[ -x $(tree-sitter-cli_target) ] || exit 1
 
 .PHONY: test

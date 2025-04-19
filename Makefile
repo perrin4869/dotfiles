@@ -61,6 +61,24 @@ $($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 $1: $($1_target)
 endef
 
+i3status-config-template := ./home/.config/i3status/config.template
+i3status-config          := ./home/.config/i3status/config
+amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
+
+# Check if on amd
+ifeq ($(wildcard $(amd-cpu-temperature-path)),)
+cpu-temperature-device-file-path :=
+else
+cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
+endif
+.PHONY: i3status
+$(i3status-config): $(i3status-config-template)
+	@awk ' \
+		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
+		{ print }' \
+		"$(i3status-config-template)" > "$(i3status-config)"
+i3status: $(i3status-config)
+
 .PHONY: all
 all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka treesitter i3status
 
@@ -174,24 +192,6 @@ $(helptags)&: $(helptags-deps) $(telescope-fzf-native)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "helptags ALL" -c q )
 helptags: $(helptags)
-
-i3status-config-template := $(XDG_CONFIG_HOME)/i3status/config.template
-i3status-config          := $(XDG_CONFIG_HOME)/i3status/config
-amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
-
-# Check if on amd
-ifeq ($(wildcard $(amd-cpu-temperature-path)),)
-cpu-temperature-device-file-path :=
-else
-cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
-endif
-.PHONY: i3status
-$(i3status-config): $(i3status-config-template)
-	@awk ' \
-		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
-		{ print }' \
-		"$(i3status-config-template)" > "$(i3status-config)"
-i3status: $(i3status-config)
 
 .PHONY: treesitter
 # print in neovim prints to stderr

@@ -2,7 +2,7 @@
 
 export TERMINAL="${TERMINAL:-ghostty}"
 export FILE="${FILE:-ranger}"
-export BROWSER="${BROWSER-firefox}"
+export BROWSER="${BROWSER-zen}"
 export EDITOR="${EDITOR-nvim}"
 
 export IM="${IM:-fcitx}" # or fcitx support is blocked by https://groups.google.com/g/linux.debian.bugs.dist/c/cLsh_u-YMLU

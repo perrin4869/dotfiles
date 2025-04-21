@@ -46,6 +46,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `fd`
 - `yq`
 - `spot`
+- `zen`
 
 In Slackware:
 - `sun`

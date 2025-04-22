@@ -11,7 +11,6 @@ CMAKE := cmake
 
 DEPS = ./deps
 DCONF = ./dconf
-FONTS = ./home/.local/share/fonts
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
@@ -25,7 +24,7 @@ NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
-NATSUMI_BROWSER := ./deps/natsumi-browser
+NATSUMI_BROWSER := $(DEPS)/natsumi-browser
 NATSUMI_BROWSER_FILES := \
   userChrome.css \
   natsumi-config.css \
@@ -33,6 +32,7 @@ NATSUMI_BROWSER_FILES := \
   userContent.css \
   natsumi-pages
 
+FONTS = ./home/.local/share/fonts
 NVIM_DATA_DIRECTORY = ./home/.local/share/nvim
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason

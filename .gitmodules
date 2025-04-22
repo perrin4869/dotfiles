@@ -559,3 +559,6 @@
 [submodule "home/.local/share/tmux/tmux-resurrect"]
 	path = home/.local/share/tmux/tmux-resurrect
 	url = git@github.com:tmux-plugins/tmux-resurrect.git
+[submodule "deps/natsumi-browser"]
+	path = deps/natsumi-browser
+	url = git@github.com:greeeen-dev/natsumi-browser.git

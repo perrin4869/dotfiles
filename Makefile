@@ -23,6 +23,16 @@ FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 
+ZEN_DIR := $(HOME)/.zen
+ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
+NATSUMI_BROWSER := ./deps/natsumi-browser
+NATSUMI_BROWSER_FILES := \
+  userChrome.css \
+  natsumi-config.css \
+  natsumi \
+  userContent.css \
+  natsumi-pages
+
 NVIM_DATA_DIRECTORY = ./home/.local/share/nvim
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
@@ -251,8 +261,40 @@ fonts: home
 	@# refresh fonts
 	fc-cache -f
 
+ifeq ($(wildcard $(ZEN_PROFILES_INI)),)
+ZEN_PROFILE_PAIRS :=
+else
+# assume that + won't be used in the path to the profile, because makefile doesn't handle spaces in paths
+ZEN_PROFILE_PAIRS := $(shell awk -F= '\
+	function normalize(s) { gsub(" ", "_", s); return tolower(s); } \
+	/^\[Profile[0-9]+\]/{in_profile=1; name=""; path=""; next} \
+	/^\[/{in_profile=0} \
+	in_profile && $$1=="Name"{name=normalize($$2)} \
+	in_profile && $$1=="Path"{path=$$2} \
+	name && path {gsub(" ", "+", path); print name ":" path; name=""; path=""} \
+' "$(ZEN_PROFILES_INI)")
+endif
+
+# Generate make targets like zen-natsumi-personal
+ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-natsumi-$(firstword $(subst :, ,$(pair))))
+
+$(foreach pair,$(ZEN_PROFILE_PAIRS),\
+  $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\
+  $(eval ZEN_PROFILE_PATH := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
+  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(NATSUMI_BROWSER_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)))\
+  $(eval zen-natsumi-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)-files))\
+  $(eval $($(ZEN_PROFILE_NAME)-files) &: ; \
+    @echo "Setting up profile: $(ZEN_PROFILE_NAME) at path: $(ZEN_PROFILE_PATH)" && \
+    mkdir -p $(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome && \
+    $(foreach file,$(NATSUMI_BROWSER_FILES), \
+      ln -sf "$(abspath $(NATSUMI_BROWSER))/$(file)" $(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file); \
+    )\
+  )\
+  $(eval .PHONY: zen-natsumi-$(NAME))\
+)
+
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

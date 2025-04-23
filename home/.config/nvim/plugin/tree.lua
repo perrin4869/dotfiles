@@ -38,7 +38,6 @@ end, get_opts({ desc = "nvim-tree.find_file" }))
 --   end
 -- })
 
--- this solution allows VimLeavePre from persistence.nvim to trigger as expected and save the session correctly
 vim.api.nvim_create_autocmd("QuitPre", {
 	callback = function()
 		local tree_wins = {}
@@ -54,6 +53,13 @@ vim.api.nvim_create_autocmd("QuitPre", {
 			end
 		end
 		if 1 == #wins - #floating_wins - #tree_wins then
+			-- save the session before closing the windows, otherwise the tree state does not get saved
+			local persistence = require("persistence")
+			if persistence.active() then
+				persistence.save()
+				persistence.stop()
+			end
+
 			-- Should quit, so we close all invalid windows.
 			for _, w in ipairs(tree_wins) do
 				vim.api.nvim_win_close(w, true)

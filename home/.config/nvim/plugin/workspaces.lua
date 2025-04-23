@@ -6,16 +6,31 @@ local function toggle_tree()
 end
 
 require("workspaces").setup({
+	auto_open = true,
 	hooks = {
-		open = function()
-			if vim.uv.fs_stat(require("persistence").current()) ~= nil then
-				-- force the current session file to reload since cwd has changed
-				-- maybe send a PR for a persistence.set_current()
+		-- first argument is the workspace name
+		open_pre = function(_, path)
+			if persistence.active() then
+				local cwd = vim.uv.cwd()
+				if cwd and vim.fs.normalize(cwd) ~= vim.fs.normalize(path) then
+					persistence.save()
+				end
 				persistence.stop()
-				persistence.start()
-
+			end
+		end,
+		open = function()
+			persistence.start()
+			if vim.uv.fs_stat(require("persistence").current()) ~= nil then
 				persistence.load()
-				toggle_tree()
+
+				local wins = vim.api.nvim_list_wins()
+				for _, w in ipairs(wins) do
+					local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
+					if bufname:match("NvimTree_") ~= nil then
+						toggle_tree()
+						break
+					end
+				end
 			else
 				toggle_tree()
 				project_files()

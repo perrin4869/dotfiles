@@ -51,3 +51,12 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 
 In Slackware:
 - `sun`
+
+# zen
+
+Here are two configs used in the zen browser, found in `~/.zen/{profile_dir}>/prefs.js`:
+
+```
+user_pref("zen.theme.content-element-separation", 0);
+user_pref("zen.view.experimental-force-window-controls-left", true);
+```

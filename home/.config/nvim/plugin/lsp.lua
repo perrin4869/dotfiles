@@ -108,9 +108,7 @@ require("mason").setup({
 	},
 })
 require("mason-lspconfig").setup({ automatic_installation = true })
--- TODO: remove lsp setup when lspconfig supports by default
--- https://github.com/neovim/nvim-lspconfig/issues/3705
-require("ccls").setup({ lsp = { use_defaults = true } })
+require("ccls").setup()
 
 vim.lsp.config("*", {
 	capabilities = lsp.capabilities,

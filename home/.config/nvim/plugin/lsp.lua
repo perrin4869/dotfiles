@@ -71,7 +71,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			vim.diagnostic.config({
 				underline = true,
 				virtual_text = false,
-				virtual_lines = true,
+				virtual_lines = { current_line = true },
 				signs = true,
 				update_in_insert = false,
 			}, vim.lsp.diagnostic.get_namespace(client.id))

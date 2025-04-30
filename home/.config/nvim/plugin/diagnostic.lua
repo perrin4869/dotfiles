@@ -13,8 +13,8 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, get_opts({ desc = "d
 
 -- This is nicer than having virtual text
 -- https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/
-vim.api.nvim_create_autocmd("CursorHold", {
-	callback = function()
-		vim.diagnostic.open_float({ focusable = false })
-	end,
-})
+-- vim.api.nvim_create_autocmd("CursorHold", {
+-- 	callback = function()
+-- 		vim.diagnostic.open_float({ focusable = false })
+-- 	end,
+-- })

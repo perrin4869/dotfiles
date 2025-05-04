@@ -2,7 +2,9 @@ local cmp = require("cmp")
 local lspkind = require("lspkind")
 
 local function select_behavior()
-	if vim.bo.filetype == "scala" then
+	-- https://github.com/hrsh7th/nvim-cmp/issues/1269
+	-- in typescript, the snippet closes when the autocomplete has a Symbol
+	if vim.bo.filetype == "scala" or vim.bo.filetype == "typescript" then
 		return cmp.SelectBehavior.Select
 	end
 	return cmp.SelectBehavior.Insert
@@ -19,8 +21,11 @@ cmp.setup({
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 		["<C-Space>"] = cmp.mapping.complete(),
 		["<C-e>"] = cmp.mapping.close(),
-		["<CR>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
-		["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+
+		-- let's try without this for a while, see how it goes
+		-- ["<CR>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+		-- ["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+
 		-- https://github.com/hrsh7th/nvim-cmp/issues/1269
 		-- SelectBehavior.Insert is problematic with metals whenever it selects an operator
 		-- that operator will be inserted and the completion menu will be closed
@@ -45,7 +50,7 @@ cmp.setup({
 		{ name = "emoji" },
 		{ name = "spell" },
 		{ name = "render-markdown" },
-		{ name = "lazydev",        group_index = 0 }, -- set group index to 0 to skip loading LuaLS completions
+		{ name = "lazydev", group_index = 0 }, -- set group index to 0 to skip loading LuaLS completions
 	},
 	window = {
 		completion = cmp.config.window.bordered(),

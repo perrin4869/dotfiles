@@ -9,8 +9,8 @@ PREFIX ?= ${HOME}/.local
 
 CMAKE := cmake
 
-DEPS = ./deps
-DCONF = ./dconf
+DEPS = deps
+DCONF = dconf
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
@@ -32,13 +32,13 @@ NATSUMI_BROWSER_FILES := \
   userContent.css \
   natsumi-pages
 
-FONTS = ./home/.local/share/fonts
-NVIM_DATA_DIRECTORY = ./home/.local/share/nvim
+FONTS = home/.local/share/fonts
+NVIM_DATA_DIRECTORY = home/.local/share/nvim
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
 MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
-VIM_JSDOC_ROOT = ./home/.vim/pack/default/start/vim-jsdoc
+VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
@@ -56,7 +56,7 @@ $(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
 	.git/modules/$2/HEAD))
 
 # init submodule if necessary
-$($1_head_file): $3/.git
+$($1_head_file): $2/.git
 endef
 
 define mason_package
@@ -66,7 +66,7 @@ $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
 $($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "MasonInstall $1" -c q )
+	( unset XDG_CONFIG_HOME && HOME=home nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
@@ -84,20 +84,20 @@ submodules: $(submodules-deps)
 
 .PHONY: mpv-mpris
 mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
-$(eval $(call git_submodule,mpv-mpris,mpv-mpris,$(MPV_MPRIS_ROOT)))
+$(eval $(call git_submodule,mpv-mpris,$(MPV_MPRIS_ROOT)))
 $(mpv-mpris_target): $(mpv-mpris_head_file)
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
 mpv-mpris: $(mpv-mpris_target)
 
 .PHONY: xwinwrap
 xwinwrap_target = $(XWINWRAP_ROOT)/xwinwrap
-$(eval $(call git_submodule,xwinwrap,xwinwrap,$(XWINWRAP_ROOT)))
+$(eval $(call git_submodule,xwinwrap,$(XWINWRAP_ROOT)))
 $(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
 
-i3status-config-template := ./home/.config/i3status/config.template
-i3status-config          := ./home/.config/i3status/config
+i3status-config-template := home/.config/i3status/config.template
+i3status-config          := home/.config/i3status/config
 amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
 
 # Check if on amd
@@ -116,7 +116,7 @@ i3status: $(i3status-config)
 
 .PHONY: ccls
 ccls_target = $(CCLS_ROOT)/Release/ccls
-$(eval $(call git_submodule,ccls,ccls,$(CCLS_ROOT)))
+$(eval $(call git_submodule,ccls,$(CCLS_ROOT)))
 $(ccls_target): $(ccls_head_file)
 	cd $(CCLS_ROOT) && \
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
@@ -138,7 +138,7 @@ nerd_fonts: $(nerd_fonts_target)
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
-$(eval $(call git_submodule,firacode,deps/FiraCode,$(FIRACODE_ROOT)))
+$(eval $(call git_submodule,firacode,$(FIRACODE_ROOT)))
 $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)
@@ -156,7 +156,7 @@ $(iosevka_target): $(iosevka_source)
 iosevka: $(iosevka_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
-$(eval $(call git_submodule,fzf,fzf,$(FZF_ROOT)))
+$(eval $(call git_submodule,fzf,$(FZF_ROOT)))
 $(fzf): $(fzf_head_file)
 	@# Officially:
 	@# $DEPS_DIR/fzf/install --all
@@ -165,15 +165,14 @@ $(fzf): $(fzf_head_file)
 fzf: $(fzf)
 
 fzy = $(FZY_ROOT)/fzy
-$(eval $(call git_submodule,fzy,deps/fzy,$(FZY_ROOT)))
+$(eval $(call git_submodule,fzy,$(FZY_ROOT)))
 $(fzy): $(fzy_head_file)
 	$(MAKE) -C $(FZY_ROOT) clean # TODO: cannot rebuild without clean first
 	$(MAKE) -C $(FZY_ROOT)
 fzy: $(fzy)
 
-TELESCOPE_FZF_NATIVE_MODULE_PATH=home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
-$(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_MODULE_PATH),$(TELESCOPE_FZF_NATIVE_ROOT)))
+$(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_ROOT)))
 $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 telescope-fzf-native: $(telescope-fzf-native)
@@ -200,7 +199,7 @@ $(eval $(call mason_package,tree-sitter-cli,true))
 .PHONY: helptags
 $(helptags)&: $(helptags-deps) $(telescope-fzf-native)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless -c "helptags ALL" -c q )
+	( unset XDG_CONFIG_HOME && HOME=home nvim --headless -c "helptags ALL" -c q )
 helptags: $(helptags)
 
 .PHONY: treesitter
@@ -214,7 +213,7 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( unset XDG_CONFIG_HOME && HOME=./home nvim --headless \
+	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
 			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
 			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
 			 -c q )
@@ -223,13 +222,13 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native
 treesitter: $(treesitter-targets)
 
 eslint_d = $(ESLINT_D_ROOT)/node_modules
-$(eval $(call git_submodule,eslint_d,deps/eslint_d,$(ESLINT_D_ROOT)))
+$(eval $(call git_submodule,eslint_d,$(ESLINT_D_ROOT)))
 $(eslint_d): $(eslint_d_head_file)
 	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
 eslint_d: $(eslint_d)
 
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
-$(eval $(call git_submodule,vim_jsdoc,vim/bundle/vim-jsdoc,$(VIM_JSDOC_ROOT)))
+$(eval $(call git_submodule,vim_jsdoc,$(VIM_JSDOC_ROOT)))
 $(vim_jsdoc): $(vim_jsdoc_head_file)
 	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
 vim_jsdoc: $(vim_jsdoc)

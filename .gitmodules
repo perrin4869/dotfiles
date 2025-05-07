@@ -447,9 +447,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
 	url = https://github.com/mason-org/mason.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
-	url = https://github.com/mason-org/mason-lspconfig.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lint
 	url = https://github.com/mfussenegger/nvim-lint.git

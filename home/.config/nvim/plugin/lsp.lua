@@ -107,7 +107,6 @@ require("mason").setup({
 		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
 	},
 })
-require("mason-lspconfig").setup({ automatic_installation = true })
 require("ccls").setup()
 
 vim.lsp.config("*", {

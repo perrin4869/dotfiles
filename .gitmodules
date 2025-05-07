@@ -181,9 +181,6 @@
 	path = home/.vim/pack/default/start/vim-subversive
 	url = https://github.com/svermeulen/vim-subversive
 	ignore = untracked
-[submodule "coursier"]
-	path = deps/coursier
-	url = https://github.com/coursier/launchers
 [submodule "vim/pack/default/start/suda.vim"]
 	path = home/.vim/pack/default/start/suda.vim
 	url = https://github.com/lambdalisue/suda.vim
@@ -449,7 +446,7 @@
 	url = https://github.com/willothy/nvim-cokeline.git
 [submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
-	url = https://github.com/williamboman/mason.nvim.git
+	url = https://github.com/mason-org/mason.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
 	url = https://github.com/williamboman/mason-lspconfig.nvim.git

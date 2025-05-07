@@ -1,255 +1,255 @@
-[submodule "vim/bundle/html5.vim"]
+[submodule "home/.vim/pack/default/start/html5.vim"]
 	path = home/.vim/pack/default/start/html5.vim
 	url = https://github.com/othree/html5.vim
 	ignore = untracked
-[submodule "vim/bundle/nerdtree.git"]
+[submodule "home/.vim/pack/default/start/nerdtree.git"]
 	path = home/.vim/pack/default/start/nerdtree.git
 	url = https://github.com/scrooloose/nerdtree.git
 	ignore = untracked
-[submodule "vim/bundle/vim-repeat"]
+[submodule "home/.vim/pack/default/start/vim-repeat"]
 	path = home/.vim/pack/default/start/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
 	ignore = untracked
-[submodule "vim/bundle/vim-surround"]
+[submodule "home/.vim/pack/default/start/vim-surround"]
 	path = home/.vim/pack/default/start/vim-surround
 	url = https://github.com/tpope/vim-surround.git
 	ignore = untracked
-[submodule "vim/bundle/vim-fugitive"]
+[submodule "home/.vim/pack/default/start/vim-fugitive"]
 	path = home/.vim/pack/default/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
 	ignore = untracked
-[submodule "vim/bundle/ragtag"]
+[submodule "home/.vim/pack/default/start/ragtag"]
 	path = home/.vim/pack/default/start/ragtag
 	url = https://github.com/tpope/vim-ragtag
 	ignore = untracked
-[submodule "vim/bundle/vim-unimpaired"]
+[submodule "home/.vim/pack/default/start/vim-unimpaired"]
 	path = home/.vim/pack/default/start/vim-unimpaired
 	url = https://github.com/tpope/vim-unimpaired
 	ignore = untracked
-[submodule "vim/bundle/restore_view"]
+[submodule "home/.vim/pack/default/start/restore_view"]
 	path = home/.vim/pack/default/start/restore_view
 	url = https://github.com/vim-scripts/restore_view.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-javascript"]
+[submodule "home/.vim/pack/default/start/vim-javascript"]
 	path = home/.vim/pack/default/start/vim-javascript
 	url = https://github.com/pangloss/vim-javascript
 	ignore = untracked
-[submodule "vim/bundle/nerdtree-git-plugin"]
+[submodule "home/.vim/pack/default/start/nerdtree-git-plugin"]
 	path = home/.vim/pack/default/start/nerdtree-git-plugin
 	url = https://github.com/Xuyuanp/nerdtree-git-plugin
 	ignore = untracked
-[submodule "vim/bundle/vim-jsdoc"]
+[submodule "home/.vim/pack/default/start/vim-jsdoc"]
 	path = home/.vim/pack/default/start/vim-jsdoc
 	url = https://github.com/heavenshell/vim-jsdoc
 	ignore = untracked
-[submodule "vim/bundle/vim-exchange"]
+[submodule "home/.vim/pack/default/start/vim-exchange"]
 	path = home/.vim/pack/default/start/vim-exchange
 	url = https://github.com/tommcdo/vim-exchange
 	ignore = untracked
-[submodule "vim/bundle/bufexplorer"]
+[submodule "home/.vim/pack/default/start/bufexplorer"]
 	path = home/.vim/pack/default/start/bufexplorer
 	url = https://github.com/jlanzarotta/bufexplorer
 	ignore = untracked
-[submodule "vim/bundle/vim-speeddating"]
+[submodule "home/.vim/pack/default/start/vim-speeddating"]
 	path = home/.vim/pack/default/start/vim-speeddating
 	url = https://github.com/tpope/vim-speeddating
 	ignore = untracked
-[submodule "vim/bundle/undotree"]
+[submodule "home/.vim/pack/default/start/undotree"]
 	path = home/.vim/pack/default/start/undotree
 	url = https://github.com/mbbill/undotree
 	ignore = untracked
-[submodule "vim/bundle/vim-easy-align"]
+[submodule "home/.vim/pack/default/start/vim-easy-align"]
 	path = home/.vim/pack/default/start/vim-easy-align
 	url = https://github.com/junegunn/vim-easy-align
 	ignore = untracked
-[submodule "vim/bundle/tagbar"]
+[submodule "home/.vim/pack/default/start/tagbar"]
 	path = home/.vim/pack/default/start/tagbar
 	url = https://github.com/majutsushi/tagbar
 	ignore = untracked
-[submodule "vim/bundle/targets.vim"]
+[submodule "home/.vim/pack/default/start/targets.vim"]
 	path = home/.vim/pack/default/start/targets.vim
 	url = https://github.com/wellle/targets.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-dispatch"]
+[submodule "home/.vim/pack/default/start/vim-dispatch"]
 	path = home/.vim/pack/default/start/vim-dispatch
 	url = https://github.com/tpope/vim-dispatch
 	ignore = untracked
-[submodule "vim/bundle/vim-skipit"]
+[submodule "home/.vim/pack/default/start/vim-skipit"]
 	path = home/.vim/pack/default/start/vim-skipit
 	url = https://github.com/habamax/vim-skipit
 	ignore = untracked
-[submodule "vim/bundle/vim-gitgutter"]
+[submodule "home/.vim/pack/default/start/vim-gitgutter"]
 	path = home/.vim/pack/default/start/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
 	ignore = untracked
-[submodule "vim/bundle/lexima.vim"]
+[submodule "home/.vim/pack/default/start/lexima.vim"]
 	path = home/.vim/pack/default/start/lexima.vim
 	url = https://github.com/cohama/lexima.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-themis"]
+[submodule "home/.vim/pack/default/start/vim-themis"]
 	path = home/.vim/pack/default/start/vim-themis
 	url = https://github.com/thinca/vim-themis
 	ignore = untracked
-[submodule "vim/bundle/vimtex"]
+[submodule "home/.vim/pack/default/start/vimtex"]
 	path = home/.vim/pack/default/start/vimtex
 	url = https://github.com/lervag/vimtex
 	ignore = untracked
-[submodule "vim/bundle/ale"]
+[submodule "home/.vim/pack/default/start/ale"]
 	path = home/.vim/pack/default/start/ale
 	url = https://github.com/w0rp/ale.git
 	ignore = untracked
-[submodule "vim/bundle/fzf"]
+[submodule "home/.vim/pack/default/start/fzf.vim"]
 	path = home/.vim/pack/default/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-pug"]
+[submodule "home/.vim/pack/default/start/vim-pug"]
 	path = home/.vim/pack/default/start/vim-pug
 	url = https://github.com/digitaltoad/vim-pug
 	ignore = untracked
-[submodule "vim/bundle/vim-gutentags"]
+[submodule "home/.vim/pack/default/start/vim-gutentags"]
 	path = home/.vim/pack/default/start/vim-gutentags
 	url = https://github.com/ludovicchabant/vim-gutentags
 	ignore = untracked
-[submodule "fzf"]
+[submodule "deps/fzf"]
 	path = deps/fzf
 	url = https://github.com/junegunn/fzf
 	ignore = untracked
-[submodule "vim/bundle/vim-textobj-function-javascript"]
+[submodule "home/.vim/pack/default/start/vim-textobj-function-javascript"]
 	path = home/.vim/pack/default/start/vim-textobj-function-javascript
 	url = https://github.com/thinca/vim-textobj-function-javascript
 	ignore = untracked
-[submodule "vim/bundle/vim-textobj-function"]
+[submodule "home/.vim/pack/default/start/vim-textobj-function"]
 	path = home/.vim/pack/default/start/vim-textobj-function
 	url = https://github.com/kana/vim-textobj-function
 	ignore = untracked
-[submodule "vim/bundle/vim-textobj-user"]
+[submodule "home/.vim/pack/default/start/vim-textobj-user"]
 	path = home/.vim/pack/default/start/vim-textobj-user
 	url = https://github.com/kana/vim-textobj-user
 	ignore = untracked
-[submodule "vim/bundle/vim-terraform"]
+[submodule "home/.vim/pack/default/start/vim-terraform"]
 	path = home/.vim/pack/default/start/vim-terraform
 	url = https://github.com/hashivim/vim-terraform.git
 	ignore = untracked
-[submodule "vim/bundle/vim-graphql"]
+[submodule "home/.vim/pack/default/start/vim-graphql"]
 	path = home/.vim/pack/default/start/vim-graphql
 	url = https://github.com/jparise/vim-graphql
 	ignore = untracked
-[submodule "vim/bundle/vim-jsx-pretty"]
+[submodule "home/.vim/pack/default/start/vim-jsx-pretty"]
 	path = home/.vim/pack/default/start/vim-jsx-pretty
 	url = https://github.com/MaxMEllon/vim-jsx-pretty
 	ignore = untracked
-[submodule "vim/bundle/i3config"]
+[submodule "home/.vim/pack/default/start/i3config"]
 	path = home/.vim/pack/default/start/i3config
 	url = https://github.com/mboughaba/i3config.vim
 	ignore = untracked
-[submodule "vim/bundle/vim-sxhkdrc"]
+[submodule "home/.vim/pack/default/start/vim-sxhkdrc"]
 	path = home/.vim/pack/default/start/vim-sxhkdrc
 	url = https://github.com/baskerville/vim-sxhkdrc
 	ignore = untracked
-[submodule "xwinwrap"]
+[submodule "deps/xwinwrap"]
 	path = deps/xwinwrap
 	url = https://github.com/ujjwal96/xwinwrap
 	ignore = untracked
-[submodule "urxvt/urxvt-resize-font"]
+[submodule "deps/urxvt-resize-font"]
 	path = deps/urxvt-resize-font
 	url = https://github.com/simmel/urxvt-resize-font
 	ignore = untracked
-[submodule "urxvt/urxvt-perls"]
+[submodule "deps/urxvt-perls"]
 	path = deps/urxvt-perls
 	url = https://github.com/muennich/urxvt-perls
 	ignore = untracked
-[submodule "gitflow"]
+[submodule "deps/gitflow"]
 	path = deps/gitflow
 	url = https://github.com/petervanderdoes/gitflow-avh
-[submodule "vim/bundle/vim-strip-trailing-whitespace"]
+[submodule "home/.vim/pack/default/start/vim-strip-trailing-whitespace"]
 	path = home/.vim/pack/default/start/vim-strip-trailing-whitespace
 	url = https://github.com/axelf4/vim-strip-trailing-whitespace
 	ignore = untracked
-[submodule "vim/bundle/vim-scala"]
+[submodule "home/.vim/pack/default/start/vim-scala"]
 	path = home/.vim/pack/default/start/vim-scala
 	url = https://github.com/derekwyatt/vim-scala
 	ignore = untracked
-[submodule "vim/bundle/vim-sbt"]
+[submodule "home/.vim/pack/default/start/vim-sbt"]
 	path = home/.vim/pack/default/start/vim-sbt
 	url = https://github.com/derekwyatt/vim-sbt
 	ignore = untracked
-[submodule "vim/pack/default/start/gruvbox"]
+[submodule "home/.vim/pack/default/start/gruvbox"]
 	path = home/.vim/pack/default/start/gruvbox
 	url = https://github.com/morhetz/gruvbox
 	ignore = untracked
-[submodule "vim/pack/default/start/vim-subversive"]
+[submodule "home/.vim/pack/default/start/vim-subversive"]
 	path = home/.vim/pack/default/start/vim-subversive
 	url = https://github.com/svermeulen/vim-subversive
 	ignore = untracked
-[submodule "vim/pack/default/start/suda.vim"]
+[submodule "home/.vim/pack/default/start/suda.vim"]
 	path = home/.vim/pack/default/start/suda.vim
 	url = https://github.com/lambdalisue/suda.vim
-[submodule "pulsemixer"]
+[submodule "deps/pulsemixer"]
 	path = deps/pulsemixer
 	url = https://github.com/GeorgeFilipkin/pulsemixer
-[submodule "ccls"]
+[submodule "deps/ccls"]
 	path = deps/ccls
 	url = https://github.com/MaskRay/ccls.git
-[submodule "sandboxd"]
+[submodule "home/.local/share/oh-my-zsh/custom/plugins/sandboxd"]
 	path = home/.local/share/oh-my-zsh/custom/plugins/sandboxd
 	url = https://github.com/benvan/sandboxd
-[submodule "powerlevel10k"]
+[submodule "home/.local/share/oh-my-zsh/custom/themes/powerlevel10k"]
 	path = home/.local/share/oh-my-zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "ohmyzsh"]
+[submodule "home/.oh-my-zsh"]
 	path = home/.oh-my-zsh
 	url = https://github.com/ohmyzsh/ohmyzsh
 	ignore = untracked
-[submodule "vim/pack/default/start/vim-devicons"]
+[submodule "home/.vim/pack/default/start/vim-devicons"]
 	path = home/.vim/pack/default/start/vim-devicons
 	url = https://github.com/ryanoasis/vim-devicons
-[submodule "zsh-syntax-highlighting"]
+[submodule "home/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting"]
 	path = home/.local/share/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting
-[submodule "vim/pack/default/start/lightline.vim"]
+[submodule "home/.vim/pack/default/start/lightline.vim"]
 	path = home/.vim/pack/default/start/lightline.vim
 	url = https://github.com/itchyny/lightline.vim
-[submodule "vim/pack/default/start/lightline-bufferline"]
+[submodule "home/.vim/pack/default/start/lightline-bufferline"]
 	path = home/.vim/pack/default/start/lightline-bufferline
 	url = https://github.com/mengelbrecht/lightline-bufferline
-[submodule "vim/pack/default/start/lightline-ale"]
+[submodule "home/.vim/pack/default/start/lightline-ale"]
 	path = home/.vim/pack/default/start/lightline-ale
 	url = https://github.com/maximbaz/lightline-ale
-[submodule "vim/pack/default/start/vim-easymotion"]
+[submodule "home/.vim/pack/default/start/vim-easymotion"]
 	path = home/.vim/pack/default/start/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion
 	ignore = untracked
-[submodule "vim/pack/default/start/vim-fat-finger"]
+[submodule "home/.vim/pack/default/start/vim-fat-finger"]
 	path = home/.vim/pack/default/start/vim-fat-finger
 	url = https://github.com/chip/vim-fat-finger
-[submodule "vim/pack/default/opt/nvim-lspconfig"]
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lspconfig"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
-[submodule "vim/pack/default/opt/nvim-metals"]
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-metals"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
-[submodule "vim/pack/default/opt/nvim-lsp-smag"]
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lsp-smag"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lsp-smag
 	url = https://github.com/weilbith/nvim-lsp-smag
-[submodule "mpv-mpris"]
+[submodule "deps/mpv-mpris"]
 	path = deps/mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris
-[submodule "config/alacritty/colors"]
+[submodule "home/.config/alacritty/colors"]
 	path = home/.config/alacritty/colors
 	url = https://github.com/eendroroy/alacritty-theme
-[submodule "gruvbox-material-gtk"]
+[submodule "deps/gruvbox-material-gtk"]
 	path = deps/gruvbox-material-gtk
 	url = https://github.com/sainnhe/gruvbox-material-gtk
-[submodule "share/nvim/site/pack/default/opt/nvim-treesitter"]
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter.git
-[submodule "share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
 	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
-[submodule "home/vim/pack/default/start/vim-sleuth"]
+[submodule "home/.vim/pack/default/start/vim-sleuth"]
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
+[submodule "home/.local/share/nvim/site/pack/default/start/trouble.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/trouble.nvim
 	url = https://github.com/folke/trouble.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
@@ -449,7 +449,7 @@
 	url = https://github.com/mason-org/mason.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason-lspconfig.nvim
-	url = https://github.com/williamboman/mason-lspconfig.nvim.git
+	url = https://github.com/mason-org/mason-lspconfig.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lint
 	url = https://github.com/mfussenegger/nvim-lint.git
@@ -502,10 +502,10 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/oil.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/oil.nvim
 	url = https://github.com/stevearc/oil.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/lazydev.nvim"]
+[submodule "home/.local/share/nvim/site/pack/default/opt/lazydev.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/lazydev.nvim
 	url = https://github.com/folke/lazydev.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/luvit-meta"]
+[submodule "home/.local/share/nvim/site/pack/default/opt/luvit-meta"]
 	path = home/.local/share/nvim/site/pack/default/opt/luvit-meta
 	url = https://github.com/Bilal2453/luvit-meta.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-vtsls"]

@@ -21,6 +21,7 @@ ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
+COURSIER_ROOT = $(DEPS)/coursier
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
@@ -154,6 +155,25 @@ $(iosevka_target): $(iosevka_source)
 	unzip -o -d $(FONTS) $<
 	touch $@
 iosevka: $(iosevka_target)
+
+.PHONY: coursier
+coursier_version = 2.1.24
+coursier_builder = $(COURSIER_ROOT)/coursier-builder-$(coursier_version)
+$(coursier_builder):
+	mkdir -p $(dir $(coursier_builder))
+	wget https://github.com/coursier/coursier/releases/download/v$(coursier_version)/coursier -O $(coursier_builder)
+	chmod +x $(coursier_builder)
+coursier_target = $(COURSIER_ROOT)/coursier
+$(coursier_target): $(coursier_builder)
+	mkdir -p $(COURSIER_ROOT)/cache
+	COURSIER_CACHE="$(COURSIER_ROOT)/cache" sh $(coursier_builder) bootstrap \
+		       "io.get-coursier::coursier-cli:$(coursier_version)" \
+		       --no-default \
+		       -r central \
+		       -r typesafe:ivy-releases \
+		       -f -o "$(coursier_target)" \
+		       --standalone
+coursier: $(coursier_target)
 
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))
@@ -293,7 +313,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf $(ZEN_PROFILE_TASKS)
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf coursier $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

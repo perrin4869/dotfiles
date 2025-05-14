@@ -50,6 +50,7 @@ metals_config.settings = {
 	testUserInterface = "Test Explorer",
 	defaultBspToBuildTool = true,
 	inlayHints = {
+		byNameParameters = { enable = true },
 		hintsInPatternMatch = { enable = true },
 		implicitArguments = { enable = true },
 		implicitConversions = { enable = true },

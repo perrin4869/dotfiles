@@ -272,8 +272,11 @@ $(vim_jsdoc): $(vim_jsdoc_head_file)
 vim_jsdoc: $(vim_jsdoc)
 
 .PHONY: gitflow
-gitflow: $(GITFLOW_ROOT)/.git
+$(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
+gitflow = $(PREFIX)/bin/git-flow
+$(gitflow): $(gitflow_head_file)
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
+gitflow: $(gitflow)
 
 .PHONY: dconf
 dconf:

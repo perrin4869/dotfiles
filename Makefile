@@ -22,6 +22,7 @@ FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 COURSIER_ROOT = $(DEPS)/coursier
+METALS_ROOT = $(DEPS)/metals
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
@@ -175,6 +176,23 @@ $(coursier_target): $(coursier_builder)
 		       --standalone
 coursier: $(coursier_target)
 
+.PHONY: metals
+metals_version = 1.5.3
+metals_target = $(METALS_ROOT)/metals-$(metals_version)
+metals_bin = home/.local/bin/metals
+$(metals_target): $(coursier_target)
+	mkdir -p $(METALS_ROOT)
+	$(coursier_target) bootstrap \
+		--java-opt -XX:+UseG1GC \
+		--java-opt -XX:+UseStringDeduplication  \
+		--java-opt -Xss4m \
+		--java-opt -Xms100m \
+		org.scalameta:metals_2.13:$(metals_version) -o $(metals_target) -f
+	chmod +x $(metals_target)
+$(metals_bin): $(metals_target)
+	ln -sf ../../../$(metals_target) $(metals_bin)
+metals: $(metals_bin)
+
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))
 $(fzf): $(fzf_head_file)
@@ -313,7 +331,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf coursier $(ZEN_PROFILE_TASKS)
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf coursier metals $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

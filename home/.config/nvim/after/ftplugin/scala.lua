@@ -44,6 +44,7 @@ metals_config.handlers = {
 	end,
 }
 metals_config.settings = {
+	useGlobalExecutable = true,
 	verboseCompilation = true,
 	enableSemanticHighlighting = true,
 	superMethodLensesEnabled = true,

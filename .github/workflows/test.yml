@@ -11,7 +11,7 @@ jobs:
         with:
           submodules: recursive
       - uses: leafo/gh-actions-lua@v10
-      - uses: leafo/gh-actions-luarocks@v4
+      - uses: leafo/gh-actions-luarocks@v5
       - name: install luacheck
         run: luarocks install luacheck
       - name: lint

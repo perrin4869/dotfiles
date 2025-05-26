@@ -1,15 +1,6 @@
 local cmp = require("cmp")
 local lspkind = require("lspkind")
 
-local function select_behavior()
-	-- https://github.com/hrsh7th/nvim-cmp/issues/1269
-	-- in typescript, the snippet closes when the autocomplete has a Symbol
-	if vim.bo.filetype == "scala" or vim.bo.filetype == "typescript" then
-		return cmp.SelectBehavior.Select
-	end
-	return cmp.SelectBehavior.Insert
-end
-
 cmp.setup({
 	snippet = {
 		expand = function(args)
@@ -30,10 +21,10 @@ cmp.setup({
 		-- SelectBehavior.Insert is problematic with metals whenever it selects an operator
 		-- that operator will be inserted and the completion menu will be closed
 		["<C-n>"] = cmp.mapping(function()
-			cmp.select_next_item({ behavior = select_behavior() })
+			cmp.select_next_item()
 		end),
 		["<C-p>"] = cmp.mapping(function()
-			cmp.select_prev_item({ behavior = select_behavior() })
+			cmp.select_prev_item()
 		end),
 	}),
 	formatting = {
@@ -103,3 +94,15 @@ cmp.setup.cmdline(":", {
 
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
+-- https://github.com/andymass/vim-matchup/pull/382
+-- https://github.com/hrsh7th/nvim-cmp/issues/1269
+-- https://github.com/hrsh7th/nvim-cmp/issues/1940
+cmp.event:on("menu_opened", function()
+	vim.b.matchup_matchparen_enabled = false
+	-- vim.g.matchup_enabled = false
+end)
+cmp.event:on("menu_closed", function()
+	vim.b.matchup_matchparen_enabled = true
+	-- vim.g.matchup_enabled = true
+end)

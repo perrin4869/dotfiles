@@ -102,13 +102,13 @@ i3status-config-template := home/.config/i3status/config.template
 i3status-config          := home/.config/i3status/config
 amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
 
+.PHONY: i3status
 # Check if on amd
 ifeq ($(wildcard $(amd-cpu-temperature-path)),)
 cpu-temperature-device-file-path :=
 else
 cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
 endif
-.PHONY: i3status
 $(i3status-config): $(i3status-config-template)
 	@awk ' \
 		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
@@ -137,6 +137,7 @@ $(nerd_fonts_target) &: $(nerdfonts_source)
 	tar xvJf $< --one-top-level=$(NERD_FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
 
+.PHONY: firacode
 firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
 									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
@@ -145,12 +146,11 @@ $(firacode_target): $(firacode_head_file)
 	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
 firacode: $(firacode_target)
 
+.PHONY: iosevka
 iosevka_version = 33.2.5
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
 	wget https://github.com/be5invis/Iosevka/releases/download/v$(iosevka_version)/SuperTTC-Iosevka-$(iosevka_version).zip -P $(FONTS)
-
-.PHONY: iosevka
 iosevka_target = $(FONTS)/Iosevka.ttc
 $(iosevka_target): $(iosevka_source)
 	unzip -o -d $(FONTS) $<
@@ -202,6 +202,7 @@ $(fzf): $(fzf_head_file)
 	$(FZF_ROOT)/install --no-update-rc --no-bash --no-zsh --no-completion --no-key-bindings
 fzf: $(fzf)
 
+.PHONY: fzy
 fzy = $(FZY_ROOT)/fzy
 $(eval $(call git_submodule,fzy,$(FZY_ROOT)))
 $(fzy): $(fzy_head_file)
@@ -209,6 +210,7 @@ $(fzy): $(fzy_head_file)
 	$(MAKE) -C $(FZY_ROOT)
 fzy: $(fzy)
 
+.PHONY: telescope-fzf-native
 telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
 $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_ROOT)))
 $(telescope-fzf-native): $(telescope-fzf-native_head_file)
@@ -259,12 +261,14 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native
 	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
+.PHONY: eslint_d
 eslint_d = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,$(ESLINT_D_ROOT)))
 $(eslint_d): $(eslint_d_head_file)
 	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
 eslint_d: $(eslint_d)
 
+.PHONY: vim_jsdoc
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,$(VIM_JSDOC_ROOT)))
 $(vim_jsdoc): $(vim_jsdoc_head_file)
@@ -330,7 +334,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
       ln -sf "$(abspath $(NATSUMI_BROWSER))/$(file)" $(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file); \
     )\
   )\
-  $(eval .PHONY: zen-natsumi-$(NAME))\
+  $(eval .PHONY: zen-natsumi-$(ZEN_PROFILE_NAME))\
 )
 
 .PHONY: install
@@ -348,5 +352,3 @@ test:
 	[ -x $(lua-language-server_target) ] || exit 1
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
-
-.PHONY: fzf fzy vim_jsdoc telescope-fzf-native firacode

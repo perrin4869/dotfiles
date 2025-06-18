@@ -338,7 +338,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-language-server kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf coursier metals $(ZEN_PROFILE_TASKS)
+install: home luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp eslint_d vtsls bash-language-server typescript-language-server kotlin-lsp kotlin-debug-adapter lua-language-server js-debug-adapter tree-sitter-cli sqlls fonts gitflow dconf coursier metals $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

@@ -154,7 +154,7 @@ vim.lsp.enable({
 	"bashls",
 	"vimls",
 	"html",
-	"kotlin_languange_server",
+	"kotlin_lsp",
 	"cssls",
 	"jsonls",
 	"sqlls",

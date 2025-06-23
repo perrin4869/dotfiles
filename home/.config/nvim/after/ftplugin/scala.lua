@@ -50,6 +50,7 @@ metals_config.settings = {
 	superMethodLensesEnabled = true,
 	testUserInterface = "Test Explorer",
 	defaultBspToBuildTool = true,
+	enableBestEffort = true,
 	inlayHints = {
 		byNameParameters = { enable = true },
 		hintsInPatternMatch = { enable = true },

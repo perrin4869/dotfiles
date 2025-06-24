@@ -1,14 +1,17 @@
 local utils = require("utils")
 
+local json = { "prettierd", "prettier", stop_after_first = true }
+local js = { "eslint_d" }
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
-		javascript = { "eslint_d" },
-		javascriptreact = { "eslint_d" },
-		typescript = { "eslint_d" },
-		typescriptreact = { "eslint_d" },
+		javascript = js,
+		javascriptreact = js,
+		typescript = js,
+		typescriptreact = js,
 		-- Use a sub-list to run only the first available formatter
-		json = { "prettierd", "prettier", stop_after_first = true },
+		json = json,
+		jsonc = json,
 		kotlin = { lsp_format = "never" },
 		["_"] = { "trim_whitespace", lsp_format = "prefer" },
 	},

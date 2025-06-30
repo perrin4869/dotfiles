@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
@@ -30,16 +30,16 @@ jobs:
         with:
           # apt neovim is too old
           neovim: true
-          version: v0.11.0
+          version: v0.11.2
           # version: nightly
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: 12.0
+          version: 20.0
       - name: deps - node.js # various dependencies
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
       - name: build
         run: make
       - name: test build

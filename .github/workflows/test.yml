@@ -19,10 +19,9 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev llvm-14 clang-14-dev
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev
           # libglib2.0-dev libmpv-dev libavformat-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
-          # llvm clang - ccls
           version: 1.0
       - name: yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master
@@ -33,6 +32,10 @@ jobs:
           neovim: true
           version: v0.11.2
           # version: nightly
+      - name: deps - llvm # ccls dep
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: 12
       - name: deps - node.js # various dependencies
         uses: actions/setup-node@v4
         with:

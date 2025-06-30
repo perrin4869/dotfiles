@@ -19,7 +19,7 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev llvm-17 clang-17-dev
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev llvm-14 clang-14-dev
           # libglib2.0-dev libmpv-dev libavformat-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
           # llvm clang - ccls

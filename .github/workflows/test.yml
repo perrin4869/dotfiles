@@ -35,7 +35,7 @@ jobs:
       - name: deps - llvm # ccls dep
         uses: KyleMayes/install-llvm-action@v2
         with:
-          version: 17
+          version: 18
       - name: deps - node.js # various dependencies
         uses: actions/setup-node@v4
         with:

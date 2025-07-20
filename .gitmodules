@@ -556,3 +556,6 @@
 [submodule "deps/natsumi-browser"]
 	path = deps/natsumi-browser
 	url = https://github.com/greeeen-dev/natsumi-browser.git
+[submodule "home/.local/share/nvim/site/pack/default/start/refactoring.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/refactoring.nvim
+	url = https://github.com/ThePrimeagen/refactoring.nvim.git

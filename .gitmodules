@@ -438,9 +438,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim
 	url = https://github.com/davvid/telescope-git-grep.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim
-	url = https://github.com/HiPhish/rainbow-delimiters.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-cokeline"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-cokeline
 	url = https://github.com/willothy/nvim-cokeline.git
@@ -559,3 +556,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/refactoring.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/refactoring.nvim
 	url = https://github.com/ThePrimeagen/refactoring.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim
+	url = https://github.com/HiPhish/rainbow-delimiters.nvim.git

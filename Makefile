@@ -31,8 +31,7 @@ NATSUMI_BROWSER_FILES := \
   userChrome.css \
   natsumi-config.css \
   natsumi \
-  userContent.css \
-  natsumi-pages
+  userContent.css
 
 FONTS = home/.local/share/fonts
 NVIM_DATA_DIRECTORY = home/.local/share/nvim

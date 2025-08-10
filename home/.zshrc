@@ -169,3 +169,10 @@ elif command -v ag &> /dev/null; then
   export FZF_DEFAULT_COMMAND='ag --follow --nocolor --nogroup --hidden -g ""'
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
+
+if [ -e "$HOME/.local/share/scalacli/completions/zsh" ]; then
+  # >>> scala-cli completions >>>
+  fpath=("$HOME/.local/share/scalacli/completions/zsh" $fpath)
+  compinit
+  # <<< scala-cli completions <<<
+fi

@@ -146,7 +146,7 @@ $(firacode_target): $(firacode_head_file)
 firacode: $(firacode_target)
 
 .PHONY: iosevka
-iosevka_version = 33.2.7
+iosevka_version = 33.2.8
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
 	wget https://github.com/be5invis/Iosevka/releases/download/v$(iosevka_version)/SuperTTC-Iosevka-$(iosevka_version).zip -P $(FONTS)

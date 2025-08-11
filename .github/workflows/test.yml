@@ -19,9 +19,10 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-17-dev
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-dev
           # libglib2.0-dev libmpv-dev libavformat-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
+          # libclang-dev - ccls (in ubuntu-24.04 this is libclang-17-dev)
           version: 1.0
       - name: yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master

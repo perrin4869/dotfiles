@@ -36,6 +36,7 @@ NATSUMI_BROWSER_FILES := \
 FONTS = home/.local/share/fonts
 NVIM_DATA_DIRECTORY = home/.local/share/nvim
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
+TREESITTER_PARSERS = $(NVIM_DATA_DIRECTORY)/site/parser
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
 MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
@@ -246,16 +247,16 @@ helptags: $(helptags)
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql markdown markdown_inline
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
-treesitter-targets = $(addprefix $(TREESITTER_ROOT)/parser/, $(addsuffix .so, $(treesitter-langs)))
+treesitter-targets = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 # also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lockfile.json $(telescope-fzf-native) $(tree-sitter-cli_target)
+$(treesitter-targets) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(telescope-fzf-native) $(tree-sitter-cli_target)
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
-			 -c "lua require('nvim-treesitter.install').ensure_installed_sync({ $(treesitter-langs-params) })" \
-			 -c "lua require('nvim-treesitter.install').update({ with_sync = true })({ $(treesitter-langs-params) })" \
+			 -c "lua require('nvim-treesitter').install({ $(treesitter-langs-params) }):wait(300000)" \
+			 -c "lua require('nvim-treesitter').update({ $(treesitter-langs-params) }):wait(300000)" \
 			 -c q )
 	touch $(treesitter-targets)
 	@# nvim --headless +TSUpdateSync +qa exits immediately

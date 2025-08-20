@@ -16,6 +16,11 @@ home/.local/share/nvim/workspaces
 home/.local/share/nvim/project_nvim/
 home/.local/share/nvim/mason/
 
+# treesitter
+home/.local/share/nvim/site/parser-info/
+home/.local/share/nvim/site/parser/
+home/.local/share/nvim/site/queries/
+
 # these get generated when running neovim with HOME=./home
 home/.local/state/
 home/.cache

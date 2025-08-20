@@ -243,9 +243,13 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter.git
+	# https://github.com/nvim-treesitter/nvim-treesitter/issues/4767
+	branch = main
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
 	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
+	# https://github.com/nvim-treesitter/nvim-treesitter-textobjects/issues/772
+	branch = main
 [submodule "home/.vim/pack/default/start/vim-sleuth"]
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git

@@ -1,5 +1,4 @@
 vim.api.nvim_create_autocmd("FileType", {
-	-- TODO: in nvim-treesitter 1.0 this is require("nvim-treesitter.config")
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function()
 		vim.treesitter.start()

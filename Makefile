@@ -15,7 +15,6 @@ DCONF = dconf
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
-FIRACODE_ROOT = $(DEPS)/FiraCode
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -74,7 +73,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags firacode nerd_fonts iosevka i3status treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka i3status treesitter
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -136,15 +135,6 @@ nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
 $(nerd_fonts_target) &: $(nerdfonts_source)
 	tar xvJf $< --one-top-level=$(NERD_FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
-
-.PHONY: firacode
-firacode_target = $(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Regular.ttf \
-									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Light.ttf \
-									$(FIRACODE_ROOT)/distr/ttf/Fira\ Code/FiraCode-Bold.ttf
-$(eval $(call git_submodule,firacode,$(FIRACODE_ROOT)))
-$(firacode_target): $(firacode_head_file)
-	cd $(FIRACODE_ROOT) && $(MAKE) # make -C does't work here
-firacode: $(firacode_target)
 
 .PHONY: iosevka
 iosevka_version = 33.2.8

@@ -68,6 +68,14 @@ dap.configurations.scala = {
 			runType = "testTarget",
 		},
 	},
+	{
+		type = "scala",
+		request = "attach",
+		name = "Attach to Localhost",
+		hostName = "localhost",
+		port = 5005,
+		buildTarget = "root",
+	},
 }
 
 dap.configurations.lua = {

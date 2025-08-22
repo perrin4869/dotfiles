@@ -48,7 +48,9 @@ metals_config.settings = {
 	verboseCompilation = true,
 	enableSemanticHighlighting = true,
 	superMethodLensesEnabled = true,
-	testUserInterface = "Test Explorer",
+	-- enables using MetalsSelectTestSuite and MetalsSelectTestCase
+	-- but deactivates code lenses for test classes.
+	-- testUserInterface = "Test Explorer",
 	defaultBspToBuildTool = true,
 	enableBestEffort = true,
 	inlayHints = {

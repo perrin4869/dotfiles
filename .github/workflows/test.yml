@@ -34,7 +34,7 @@ jobs:
           version: v0.11.3
           # version: nightly
       - name: deps - node.js # various dependencies
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22.x
       - name: build

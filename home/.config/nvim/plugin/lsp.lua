@@ -85,7 +85,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 		end
 
-		if client ~= nil and client.supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+		if client ~= nil and client:supports_method("textDocument/codeLens", { bufnr = bufnr }) then
 			local group = vim.api.nvim_create_augroup("lsp_codelens", { clear = false })
 			vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 			-- https://github.com/LunarVim/LunarVim/pull/2600

@@ -1,0 +1,8 @@
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
+
+[ui]
+paginate = "never"
+
+[user]
+name = "Julian Grinblat"
+email = "julian@dotcore.co.il"

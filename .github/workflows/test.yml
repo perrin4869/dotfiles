@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - uses: leafo/gh-actions-lua@v11
+      - uses: leafo/gh-actions-lua@v12
       - uses: leafo/gh-actions-luarocks@v6
       - name: install luacheck
         run: luarocks install luacheck

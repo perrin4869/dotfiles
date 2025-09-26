@@ -311,7 +311,8 @@ ZEN_PROFILE_PAIRS := $(shell awk -F= '\
 endif
 
 # Generate make targets like zen-natsumi-personal
-ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-natsumi-$(firstword $(subst :, ,$(pair))))
+# ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-natsumi-$(firstword $(subst :, ,$(pair))))
+ZEN_PROFILE_TASKS :=
 
 $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\

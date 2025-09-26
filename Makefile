@@ -315,14 +315,15 @@ ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-natsumi-$(firstword
 
 $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\
-  $(eval ZEN_PROFILE_PATH := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
-  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(NATSUMI_BROWSER_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)))\
+  $(eval ZEN_PROFILE_PATH := $(subst +, ,$(word 2,$(subst :, ,$(pair)))))\
+  $(eval ZEN_PROFILE_PATH_ESCAPED := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
+  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(NATSUMI_BROWSER_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
   $(eval zen-natsumi-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)-files))\
   $(eval $($(ZEN_PROFILE_NAME)-files) &: ; \
     @echo "Setting up profile: $(ZEN_PROFILE_NAME) at path: $(ZEN_PROFILE_PATH)" && \
-    mkdir -p $(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome && \
+    mkdir -p "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome" && \
     $(foreach file,$(NATSUMI_BROWSER_FILES), \
-      ln -sf "$(abspath $(NATSUMI_BROWSER))/$(file)" $(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file); \
+      ln -sf "$(abspath $(NATSUMI_BROWSER))/$(file)" "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)"; \
     )\
   )\
   $(eval .PHONY: zen-natsumi-$(ZEN_PROFILE_NAME))\

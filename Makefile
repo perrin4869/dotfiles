@@ -25,12 +25,11 @@ METALS_ROOT = $(DEPS)/metals
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
-NATSUMI_BROWSER := $(DEPS)/natsumi-browser
-NATSUMI_BROWSER_FILES := \
+ZEN_CATPPUCCIN := $(DEPS)/catppuccin/zen-browser/themes/Macchiato/Flamingo
+ZEN_CATPPUCCIN_FILES := \
   userChrome.css \
-  natsumi-config.css \
-  natsumi \
-  userContent.css
+  userContent.css \
+  zen-logo-macchiato.svg
 
 FONTS = home/.local/share/fonts
 NVIM_DATA_DIRECTORY = home/.local/share/nvim
@@ -311,23 +310,22 @@ ZEN_PROFILE_PAIRS := $(shell awk -F= '\
 endif
 
 # Generate make targets like zen-natsumi-personal
-# ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-natsumi-$(firstword $(subst :, ,$(pair))))
-ZEN_PROFILE_TASKS :=
+ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-catppuccin-$(firstword $(subst :, ,$(pair))))
 
 $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\
   $(eval ZEN_PROFILE_PATH := $(subst +, ,$(word 2,$(subst :, ,$(pair)))))\
   $(eval ZEN_PROFILE_PATH_ESCAPED := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
-  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(NATSUMI_BROWSER_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
-  $(eval zen-natsumi-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)-files))\
+  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(ZEN_CATPPUCCIN_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
+  $(eval zen-catppuccin-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)-files))\
   $(eval $($(ZEN_PROFILE_NAME)-files) &: ; \
     @echo "Setting up profile: $(ZEN_PROFILE_NAME) at path: $(ZEN_PROFILE_PATH)" && \
     mkdir -p "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome" && \
-    $(foreach file,$(NATSUMI_BROWSER_FILES), \
-      ln -sf "$(abspath $(NATSUMI_BROWSER))/$(file)" "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)"; \
+    $(foreach file,$(ZEN_CATPPUCCIN_FILES), \
+      ln -sf "$(abspath $(ZEN_CATPPUCCIN))/$(file)" "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)"; \
     )\
   )\
-  $(eval .PHONY: zen-natsumi-$(ZEN_PROFILE_NAME))\
+  $(eval .PHONY: zen-catppuccin-$(ZEN_PROFILE_NAME))\
 )
 
 .PHONY: install

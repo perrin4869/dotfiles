@@ -560,3 +560,6 @@
 [submodule "deps/catppuccin/zen-browser"]
 	path = deps/catppuccin/zen-browser
 	url = https://github.com/catppuccin/zen-browser.git
+[submodule "deps/catppuccin/rofi"]
+	path = deps/catppuccin/rofi
+	url = https://github.com/catppuccin/rofi.git

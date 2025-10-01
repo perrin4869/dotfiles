@@ -146,6 +146,25 @@ $(iosevka_target): $(iosevka_source)
 	touch $@
 iosevka: $(iosevka_target)
 
+.PHONY: carapace
+carapace_version = 1.5.0
+CP := )
+carapace_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo amd64 ;; \
+	i386|i686$(CP) echo 386 ;; \
+	aarch64|arm64$(CP) echo arm64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+carapace_archive = carapace-bin_$(carapace_version)_linux_$(carapace_arch).tar.gz
+$(DEPS)/$(carapace_archive):
+	wget https://github.com/carapace-sh/carapace-bin/releases/download/v$(carapace_version)/$(carapace_archive) -P $(DEPS)
+carapace_target = $(DEPS)/carapace/carapace
+$(carapace_target): $(DEPS)/$(carapace_archive)
+	mkdir -p $(DEPS)/carapace
+	tar xvzf $< -C $(DEPS)/carapace
+	touch $@
+carapace: $(carapace_target)
+
 .PHONY: coursier
 coursier_version = 2.1.24
 coursier_builder = $(COURSIER_ROOT)/coursier-builder-$(coursier_version)

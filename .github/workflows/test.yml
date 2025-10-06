@@ -12,6 +12,10 @@ jobs:
           submodules: recursive
       - uses: leafo/gh-actions-lua@v12
       - uses: leafo/gh-actions-luarocks@v6
+      - uses: actions-rs/toolchain@v1 # atuin
+        with:
+          toolchain: stable
+          override: true
       - name: install luacheck
         run: luarocks install luacheck
       - name: lint

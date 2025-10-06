@@ -15,6 +15,7 @@ DCONF = dconf
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
+ATUIN_ROOT = $(DEPS)/atuin
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -72,7 +73,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -164,6 +165,20 @@ $(carapace_target): $(DEPS)/$(carapace_archive)
 	tar xvzf $< -C $(DEPS)/carapace
 	touch $@
 carapace: $(carapace_target)
+
+# Extract Rust version if cargo exists
+HAS_CARGO := $(shell command -v cargo >/dev/null 2>&1 && echo yes || echo no)
+
+.PHONY: atuin
+atuin_target = $(ATUIN_ROOT)/target/release/atuin
+$(eval $(call git_submodule,atuin,$(ATUIN_ROOT)))
+$(atuin_target): $(atuin_head_file)
+ifeq ($(HAS_CARGO),yes)
+	cargo build --manifest-path $(ATUIN_ROOT)/crates/atuin/Cargo.toml --release
+else
+	@echo "❌ cargo not found, skipping atuin"
+endif
+atuin: $(atuin_target)
 
 .PHONY: coursier
 coursier_version = 2.1.24

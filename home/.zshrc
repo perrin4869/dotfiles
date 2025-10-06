@@ -183,3 +183,7 @@ if command -v carapace &> /dev/null; then
   zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
   source <(carapace _carapace)
 fi
+
+if command -v atuin &> /dev/null; then
+  eval "$(atuin init zsh)"
+fi

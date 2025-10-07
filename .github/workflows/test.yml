@@ -12,6 +12,10 @@ jobs:
           submodules: recursive
       - uses: leafo/gh-actions-lua@v12
       - uses: leafo/gh-actions-luarocks@v6
+      - uses: actions-rs/toolchain@v1 # atuin
+        with:
+          toolchain: stable
+          override: true
       - name: install luacheck
         run: luarocks install luacheck
       - name: lint
@@ -33,6 +37,15 @@ jobs:
           neovim: true
           # version: v0.11.3
           version: nightly
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            deps/atuin/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
       - name: deps - node.js # various dependencies
         uses: actions/setup-node@v5
         with:

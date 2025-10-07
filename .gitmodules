@@ -563,3 +563,9 @@
 [submodule "deps/catppuccin/rofi"]
 	path = deps/catppuccin/rofi
 	url = https://github.com/catppuccin/rofi.git
+[submodule "deps/atuin"]
+	path = deps/atuin
+	url = https://github.com/atuinsh/atuin.git
+[submodule "deps/catppuccin/atuin"]
+	path = deps/catppuccin/atuin
+	url = https://github.com/catppuccin/atuin

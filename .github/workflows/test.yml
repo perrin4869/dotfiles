@@ -47,7 +47,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
       - name: deps - node.js # various dependencies
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 22.x
       - name: build

@@ -7,6 +7,16 @@ XDG_CONFIG_HOME ?= ${HOME}/.config
 XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
 
+PYTHON := python3
+
+
+PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
+PIPX := $(shell command -v pipx 2> /dev/null)
+ifneq ($(PIPX),)
+	# pipx --value shorthand changed from -v -> -V somewhere between 1.3.1 and 1.5.0
+	PIPX_LOCAL_VENVS := $(shell pipx environment --value PIPX_LOCAL_VENVS)
+endif
+
 CMAKE := cmake
 
 DEPS = deps
@@ -16,6 +26,7 @@ MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
 ATUIN_ROOT = $(DEPS)/atuin
+QMK_CLI_ROOT = $(DEPS)/qmk_cli
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -216,6 +227,20 @@ $(metals_bin): $(metals_target)
 	ln -sf ../../../$(metals_target) $(metals_bin)
 metals: $(metals_bin)
 
+ifdef PIPX_LOCAL_VENVS
+qmk_cli = $(PIPX_LOCAL_VENVS)/qmk/bin/qmk
+else
+qmk_cli = $(PYTHON_SITE_PACKAGES)/qmk.egg-link
+endif
+$(eval $(call git_submodule,qmk_cli,$(QMK_CLI_ROOT)))
+$(qmk_cli): $(qmk_cli_head_file)
+ifdef PIPX_LOCAL_VENVS
+	[ -e $(qmk_cli) ] && pipx upgrade qmk || pipx install $(QMK_CLI_ROOT)
+else
+	pip install --user --editable=$(QMK_CLI_ROOT)
+endif
+qmk_cli: $(qmk_cli)
+
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))
 $(fzf): $(fzf_head_file)
@@ -363,7 +388,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home fonts gitflow dconf coursier metals $(lsps) $(ZEN_PROFILE_TASKS)
+install: home fonts gitflow dconf coursier metals qmk_cli $(lsps) $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

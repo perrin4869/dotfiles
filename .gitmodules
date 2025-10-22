@@ -569,3 +569,9 @@
 [submodule "deps/catppuccin/atuin"]
 	path = deps/catppuccin/atuin
 	url = https://github.com/catppuccin/atuin
+[submodule "home/.local/share/qmk/qmk_userspace"]
+	path = home/.local/share/qmk/qmk_userspace
+	url = https://github.com/perrin4869/qmk_userspace.git
+[submodule "deps/qmk_cli"]
+	path = deps/qmk_cli
+	url = https://github.com/qmk/qmk_cli.git

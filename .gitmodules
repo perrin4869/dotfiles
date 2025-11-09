@@ -575,3 +575,6 @@
 [submodule "deps/qmk_cli"]
 	path = deps/qmk_cli
 	url = https://github.com/qmk/qmk_cli.git
+[submodule "deps/zmk-cli"]
+	path = deps/zmk-cli
+	url = https://github.com/zmkfirmware/zmk-cli.git

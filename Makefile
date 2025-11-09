@@ -27,6 +27,7 @@ XWINWRAP_ROOT = $(DEPS)/xwinwrap
 CCLS_ROOT = $(DEPS)/ccls
 ATUIN_ROOT = $(DEPS)/atuin
 QMK_CLI_ROOT = $(DEPS)/qmk_cli
+ZMK_CLI_ROOT = $(DEPS)/zmk-cli
 GITFLOW_ROOT = $(DEPS)/gitflow
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 FZF_ROOT = $(DEPS)/fzf
@@ -240,6 +241,20 @@ else
 	pip install --user --editable=$(QMK_CLI_ROOT)
 endif
 qmk_cli: $(qmk_cli)
+
+ifdef PIPX_LOCAL_VENVS
+zmk_cli = $(PIPX_LOCAL_VENVS)/zmk/bin/zmk
+else
+zmk_cli = $(PYTHON_SITE_PACKAGES)/zmk.egg-link
+endif
+$(eval $(call git_submodule,zmk_cli,$(ZMK_CLI_ROOT)))
+$(zmk_cli): $(zmk_cli_head_file)
+ifdef PIPX_LOCAL_VENVS
+	[ -e $(zmk_cli) ] && pipx upgrade zmk || pipx install $(ZMK_CLI_ROOT)
+else
+	pip install --user --editable=$(ZMK_CLI_ROOT)
+endif
+zmk_cli: $(zmk_cli)
 
 fzf = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))

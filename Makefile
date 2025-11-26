@@ -212,7 +212,7 @@ $(coursier_target): $(coursier_builder)
 coursier: $(coursier_target)
 
 .PHONY: metals
-metals_version = 1.6.3
+metals_version = 1.6.4
 metals_target = $(METALS_ROOT)/metals-$(metals_version)
 metals_bin = home/.local/bin/metals
 $(metals_target): $(coursier_target)

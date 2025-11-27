@@ -1,7 +1,7 @@
 -- General repeatable prev/next mapping with descriptions
 local function repeatable_unimpaired(prev_mapping, next_mapping, repeat_key, action_prev, action_next, opts)
 	opts = opts or {}
-	local timeout = opts.timeout or 600
+	local timeout = opts.timeout or 1000
 	---@type uv.uv_timer_t|nil
 	local timer = nil
 

@@ -578,3 +578,6 @@
 [submodule "deps/zmk-cli"]
 	path = deps/zmk-cli
 	url = https://github.com/zmkfirmware/zmk-cli.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-locals"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-locals
+	url = https://github.com/nvim-treesitter/nvim-treesitter-locals.git

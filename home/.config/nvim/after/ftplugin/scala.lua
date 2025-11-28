@@ -54,12 +54,15 @@ metals_config.settings = {
 	defaultBspToBuildTool = true,
 	enableBestEffort = true,
 	inlayHints = {
+		namedParameters = { enable = true },
 		byNameParameters = { enable = true },
 		hintsInPatternMatch = { enable = true },
 		implicitArguments = { enable = true },
 		implicitConversions = { enable = true },
 		inferredTypes = { enable = true },
 		typeParameters = { enable = true },
+		hintsXRayMode = { enable = true },
+		closingLabels = { enable = true },
 	},
 }
 

@@ -43,7 +43,7 @@ local function repeatable_unimpaired(prev_mapping, next_mapping, repeat_key, act
 				action_prev()
 			end
 			vim.schedule(ensure_timer)
-		end, { silent = true, desc = desc_repeat })
+		end, { silent = true, desc = desc_repeat, nowait = true })
 		vim.schedule(ensure_timer)
 	end
 

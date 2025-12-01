@@ -30,3 +30,7 @@ XF86AudioMute
     pactl set-sink-mute $(pactl list short sinks | grep RUNNING | cut -f1) toggle # mute sound
 XF86Audio{Lower,Raise}Volume
     pactl set-sink-volume $(pactl list short sinks | grep RUNNING | cut -f1) {-,+}5% # decrease sound volume
+XF86ScreenSaver
+    xscreensaver-command -activate
+Print
+    maim -s $HOME/$(date +%Y-%m-%d_%H:%M:%S).png

@@ -137,17 +137,21 @@ vim.api.nvim_create_autocmd("FileType", {
 
 local typescript_lsp = "tsserver"
 if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
-	typescript_lsp = "vtsls"
+	if vim.env.LSP_TYPESCRIPT == "vtsls" then
+		typescript_lsp = "vtsls"
 
-	vim.api.nvim_create_autocmd("FileType", {
-		once = true,
-		pattern = "typescript",
-		callback = function()
-			vim.cmd([[
-				packadd nvim-vtsls
-			]])
-		end,
-	})
+		vim.api.nvim_create_autocmd("FileType", {
+			once = true,
+			pattern = "typescript",
+			callback = function()
+				vim.cmd([[
+					packadd nvim-vtsls
+				]])
+			end,
+		})
+	else
+		typescript_lsp = "tsgo" -- TODO: remove tsserver and vtsls once tsgo is stable
+	end
 end
 
 vim.lsp.enable({

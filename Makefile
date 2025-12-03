@@ -280,7 +280,7 @@ $(telescope-fzf-native): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 telescope-fzf-native: $(telescope-fzf-native)
 
-lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
+lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls tsgo kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
 PHONY: $(lsps)
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
@@ -290,8 +290,9 @@ $(eval $(call mason_package,json-lsp))
 $(eval $(call mason_package,html-lsp))
 $(eval $(call mason_package,css-lsp))
 $(eval $(call mason_package,js-debug-adapter))
-$(eval $(call mason_package,vtsls))
-$(eval $(call mason_package,typescript-language-server))
+$(eval $(call mason_package,vtsls)) # TODO: remove once tsgo is stable
+$(eval $(call mason_package,typescript-language-server)) # TODO: remove once tsgo is stable
+$(eval $(call mason_package,tsgo))
 $(eval $(call mason_package,bash-language-server))
 $(eval $(call mason_package,kotlin-lsp,true))
 $(eval $(call mason_package,kotlin-debug-adapter,true))

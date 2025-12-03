@@ -15,9 +15,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			trouble.toggle("diagnostics")
 		end, get_opts({ desc = "trouble.document_diagnostics" }))
 		vim.keymap.set("n", "gR", function()
+			---@diagnostic disable-next-line: missing-fields
 			trouble.toggle({ mode = "lsp_references", focus = true })
 		end, get_opts({ desc = "trouble.lsp_references" }))
+		vim.keymap.set("n", "gi", function()
+			---@diagnostic disable-next-line: missing-fields
+			trouble.toggle({ mode = "lsp_implementations", focus = true })
+		end, get_opts({ desc = "trouble.lsp_implementations" }))
 		vim.keymap.set("n", "<leader>l", function()
+			---@diagnostic disable-next-line: missing-fields
 			trouble.toggle({
 				mode = "lsp",
 				win = { position = "right", size = { width = 0.3 } },

@@ -1,5 +1,7 @@
 -- vim: ft=lua tw=80
 
+max_comment_line_length = 160
+
 exclude_files = { "home/.local/share/", "home/.vim/undo", "home/.vim/pack" }
 
 -- Rerun tests only if their modification time changed.

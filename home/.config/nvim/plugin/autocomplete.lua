@@ -12,20 +12,11 @@ cmp.setup({
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 		["<C-Space>"] = cmp.mapping.complete(),
 		["<C-e>"] = cmp.mapping.close(),
+		-- help complete_CTRL-Y
+		["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 
-		-- let's try without this for a while, see how it goes
-		-- ["<CR>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
-		-- ["<Tab>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
-
-		-- https://github.com/hrsh7th/nvim-cmp/issues/1269
-		-- SelectBehavior.Insert is problematic with metals whenever it selects an operator
-		-- that operator will be inserted and the completion menu will be closed
-		["<C-n>"] = cmp.mapping(function()
-			cmp.select_next_item()
-		end),
-		["<C-p>"] = cmp.mapping(function()
-			cmp.select_prev_item()
-		end),
+		["<C-k>"] = cmp.mapping.select_prev_item(),
+		["<C-j>"] = cmp.mapping.select_next_item(),
 	}),
 	formatting = {
 		format = lspkind.cmp_format({ mode = "symbol_text" }),
@@ -47,6 +38,9 @@ cmp.setup({
 		completion = cmp.config.window.bordered(),
 		documentation = cmp.config.window.bordered(),
 	},
+	experimental = {
+		ghost_text = true,
+	},
 })
 
 cmp.setup.filetype("gitcommit", {
@@ -60,6 +54,8 @@ cmp.setup.filetype("gitcommit", {
 local cmdline_mappings = cmp.mapping.preset.cmdline({
 	-- to preserve C-n and C-p behavior, only apply the mappings if an item is already selected
 	-- you can select an item if none has been selected yet by using `Tab`
+	["<C-k>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), { "i", "c" }),
+	["<C-j>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), { "i", "c" }),
 	["<C-n>"] = cmp.mapping(function(fallback)
 		if cmp.visible() and cmp.get_selected_entry() then
 			return cmp.select_next_item()
@@ -69,6 +65,12 @@ local cmdline_mappings = cmp.mapping.preset.cmdline({
 	["<C-p>"] = cmp.mapping(function(fallback)
 		if cmp.visible() and cmp.get_selected_entry() then
 			return cmp.select_prev_item()
+		end
+		fallback()
+	end, { "i", "c" }),
+	["<CR>"] = cmp.mapping(function(fallback)
+		if cmp.visible() and cmp.get_selected_entry() then
+			return cmp.confirm()
 		end
 		fallback()
 	end, { "i", "c" }),

@@ -47,7 +47,7 @@ vim.keymap.set("n", prefix .. "a", builtin.autocommands, get_opts({ desc = "tele
 vim.keymap.set("n", prefix .. "o", function()
 	builtin.tags({ only_current_buffer = true })
 end, get_opts({ desc = "telescope.tags" }))
-vim.keymap.set("n", "<leader>,", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
+vim.keymap.set("n", "<leader><leader>", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
 vim.keymap.set("n", "<leader>?", builtin.oldfiles, get_opts({ desc = "telescope.oldfiles" }))
 
 vim.keymap.set("n", prefix .. "c", telescope.extensions.neoclip.default, get_opts({ desc = "telescope.neoclip" }))
@@ -69,8 +69,3 @@ vim.keymap.set("n", prefix .. "p", git_grep_conditional, get_opts({ desc = "tele
 vim.keymap.set("n", prefix .. "b", builtin.git_branches, get_opts({ desc = "telescope.git_branches" }))
 vim.keymap.set("n", prefix .. "g", builtin.git_commits, get_opts({ desc = "telescope.git_commits" }))
 vim.keymap.set("n", prefix .. "s", builtin.git_status, get_opts({ desc = "telescope.git_status" }))
-
-local M = {}
-M.prefix = prefix
-
-return M

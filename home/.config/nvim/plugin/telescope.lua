@@ -35,7 +35,8 @@ local get_opts = utils.create_get_opts(opts)
 vim.keymap.set("n", "<C-p>", project_files, opts)
 
 -- nvim-lua/kickstart.nvim uses <leader>s, but it conflicts with flash.nvim (easymotion)
-local prefix = "<leader><leader>"
+-- local prefix = "<leader><leader>"
+local prefix = require("settings").telesope_prefix
 vim.keymap.set("n", prefix .. "f", builtin.find_files, get_opts({ desc = "telescope.find_files" }))
 vim.keymap.set("n", prefix .. "j", builtin.current_buffer_fuzzy_find, get_opts({ desc = "telescope.find_files" }))
 vim.keymap.set("n", prefix .. "h", builtin.help_tags, get_opts({ desc = "telescope.help_tags" }))
@@ -47,7 +48,7 @@ vim.keymap.set("n", prefix .. "a", builtin.autocommands, get_opts({ desc = "tele
 vim.keymap.set("n", prefix .. "o", function()
 	builtin.tags({ only_current_buffer = true })
 end, get_opts({ desc = "telescope.tags" }))
-vim.keymap.set("n", "<leader><Space>", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
+vim.keymap.set("n", "<leader>,", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
 vim.keymap.set("n", "<leader>?", builtin.oldfiles, get_opts({ desc = "telescope.oldfiles" }))
 
 vim.keymap.set("n", prefix .. "c", telescope.extensions.neoclip.default, get_opts({ desc = "telescope.neoclip" }))
@@ -69,3 +70,8 @@ vim.keymap.set("n", prefix .. "p", git_grep_conditional, get_opts({ desc = "tele
 vim.keymap.set("n", prefix .. "b", builtin.git_branches, get_opts({ desc = "telescope.git_branches" }))
 vim.keymap.set("n", prefix .. "g", builtin.git_commits, get_opts({ desc = "telescope.git_commits" }))
 vim.keymap.set("n", prefix .. "s", builtin.git_status, get_opts({ desc = "telescope.git_status" }))
+
+local M = {}
+M.prefix = prefix
+
+return M

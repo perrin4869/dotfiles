@@ -70,7 +70,7 @@ set nowritebackup
 
 set exrc
 
-let mapleader=','
+let mapleader=' '
 
 " Convenience
 nnoremap <silent> <C-s> <cmd>w<CR>
@@ -131,8 +131,8 @@ nnoremap <silent> g<Space> <cmd>b#<CR>
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> <cmd>noh<CR>
 
-nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
-vnoremap <Space> zf
+" nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
+" vnoremap <Space> zf
 
 nnoremap <silent> <leader>rm <cmd>call delete(expand('%')) \| execute('bdelete!')<CR>
 

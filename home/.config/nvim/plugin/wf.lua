@@ -56,6 +56,7 @@ local wk_map = {
 	["<Leader>b"] = "buffers",
 	["<Leader>h"] = "hunks",
 	["<Leader>d"] = "dap",
+	["<Leader>m"] = "treesj",
 	[require("settings").telesope_prefix] = "telescope",
 }
 

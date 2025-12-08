@@ -47,7 +47,7 @@ vim.keymap.set("n", prefix .. "a", builtin.autocommands, get_opts({ desc = "tele
 vim.keymap.set("n", prefix .. "o", function()
 	builtin.tags({ only_current_buffer = true })
 end, get_opts({ desc = "telescope.tags" }))
-vim.keymap.set("n", "<leader><leader>", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
+vim.keymap.set("n", prefix .. "<leader>", builtin.buffers, get_opts({ desc = "telescope.buffers" }))
 vim.keymap.set("n", "<leader>?", builtin.oldfiles, get_opts({ desc = "telescope.oldfiles" }))
 
 vim.keymap.set("n", prefix .. "c", telescope.extensions.neoclip.default, get_opts({ desc = "telescope.neoclip" }))

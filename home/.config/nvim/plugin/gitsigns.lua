@@ -8,13 +8,17 @@ require("gitsigns").setup({
 			vim.keymap.set(mode, l, r, opts)
 		end
 
+		local next_integrations = require("nvim-next.integrations")
+		local nngs = next_integrations.gitsigns(gs)
+
 		-- Navigation
 		map("n", "]c", function()
 			if vim.wo.diff then
 				return "]c"
 			end
 			vim.schedule(function()
-				gs.next_hunk()
+				-- gs.next_hunk()
+				nngs.next_hunk()
 			end)
 			return "<Ignore>"
 		end, { expr = true, desc = "gitsigns.next_hunk" })
@@ -24,7 +28,7 @@ require("gitsigns").setup({
 				return "[c"
 			end
 			vim.schedule(function()
-				gs.prev_hunk()
+				nngs.prev_hunk()
 			end)
 			return "<Ignore>"
 		end, { expr = true, desc = "gitsigns.prev_hunk" })

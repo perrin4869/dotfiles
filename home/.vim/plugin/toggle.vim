@@ -20,7 +20,7 @@ endfunc
 nmap <silent> ]r <cmd>set rl<CR>
 nmap <silent> [r <cmd>set norl<CR>
 
-nmap <silent> ,p <cmd>call TogglePaste()<CR>
+nmap <silent> <leader>p <cmd>call TogglePaste()<CR>
 
 func! TogglePaste()
   if &paste

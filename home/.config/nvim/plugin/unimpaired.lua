@@ -59,22 +59,28 @@ local function repeatable_unimpaired(prev_mapping, next_mapping, repeat_key, act
 	end, { silent = true, desc = desc_next })
 end
 
--- buffers
-repeatable_unimpaired("[b", "]b", "b", function()
+local next_move = require("nvim-next.move")
+
+local prev_buffers, next_buffers = next_move.make_repeatable_pair(function()
 	vim.cmd("bprevious")
 end, function()
 	vim.cmd("bnext")
-end, {
+end)
+
+-- buffers
+repeatable_unimpaired("[b", "]b", "b", prev_buffers, next_buffers, {
 	desc_prev = "Go to previous buffer",
 	desc_next = "Go to next buffer",
 	desc_repeat = "Repeat buffer prev/next with 'b'",
 })
 
-repeatable_unimpaired("[d", "]d", "d", function()
+local prev_diag, next_diag = next_move.make_repeatable_pair(function()
 	vim.diagnostic.jump({ count = -vim.v.count1 })
 end, function()
 	vim.diagnostic.jump({ count = vim.v.count1 })
-end, {
+end)
+
+repeatable_unimpaired("[d", "]d", "d", prev_diag, next_diag, {
 	desc_prev = "Go to previous diagnostic",
 	desc_next = "Go to next diagnostic",
 	desc_repeat = "Repeat diagnostic prev/next with 'd'",

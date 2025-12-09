@@ -24,7 +24,7 @@ local function git_grep_conditional()
 	if vim.v.shell_error == 0 then
 		require("git_grep").live_grep()
 	else
-		require("telescope.builtin").live_grep()
+		builtin.live_grep()
 	end
 end
 

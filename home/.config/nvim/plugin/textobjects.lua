@@ -31,6 +31,9 @@ require("nvim-treesitter-textobjects").setup({
 	},
 })
 
+local next_move = require("nvim-next.move")
+local move = require("nvim-treesitter-textobjects.move")
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
@@ -77,56 +80,131 @@ vim.api.nvim_create_autocmd("FileType", {
 			end, { buffer = args.buf, desc = string.format("textobjects.swap.previous.%s", obj) })
 		end
 
+		local prev_func_start, next_func_start = next_move.make_repeatable_pair(function()
+			move.goto_previous_start("@function.outer", "textobjects")
+		end, function()
+			move.goto_next_start("@function.outer", "textobjects")
+		end)
+
+		local prev_class_start, next_class_start = next_move.make_repeatable_pair(function()
+			move.goto_previous_start("@class.outer", "textobjects")
+		end, function()
+			move.goto_next_start("@class.outer", "textobjects")
+		end)
+
+		local prev_func_end, next_func_end = next_move.make_repeatable_pair(function()
+			move.goto_previous_end("@function.outer", "textobjects")
+		end, function()
+			move.goto_next_end("@function.outer", "textobjects")
+		end)
+
+		local prev_class_end, next_class_end = next_move.make_repeatable_pair(function()
+			move.goto_previous_end("@class.outer", "textobjects")
+		end, function()
+			move.goto_next_end("@class.outer", "textobjects")
+		end)
+
+		local next_loop = next_move.make_forward_repeatable_move(function()
+			move.goto_next_start({ "@loop.inner", "@loop.outer" }, "textobjects")
+		end, function()
+			move.goto_previous_start({ "@loop.inner", "@loop.outer" }, "textobjects")
+		end)
+
+		local next_scope = next_move.make_forward_repeatable_move(function()
+			move.goto_next_start("@local.scope", "locals")
+		end, function()
+			move.goto_previous_start("@local.scope", "locals")
+		end)
+
+		local next_fold = next_move.make_forward_repeatable_move(function()
+			move.goto_next_start("@fold", "folds")
+		end, function()
+			move.goto_previous_start("@fold", "folds")
+		end)
+
 		-- keymaps
 		-- You can use the capture groups defined in `textobjects.scm`
-		vim.keymap.set({ "n", "x", "o" }, "]m", function()
-			require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.next_start.@function.outer" })
-		vim.keymap.set({ "n", "x", "o" }, "]]", function()
-			require("nvim-treesitter-textobjects.move").goto_next_start("@class.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.next_start.@class.outer" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]m",
+			next_func_start,
+			{ buffer = args.buf, desc = "textobjects.move.next_start.@function.outer" }
+		)
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]]",
+			next_class_start,
+			{ buffer = args.buf, desc = "textobjects.move.next_start.@class.outer" }
+		)
 		-- You can also pass a list to group multiple queries.
-		vim.keymap.set({ "n", "x", "o" }, "]o", function()
-			require("nvim-treesitter-textobjects.move").goto_next_start({ "@loop.inner", "@loop.outer" }, "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.next_start.@loop.inner" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]o",
+			next_loop,
+			{ buffer = args.buf, desc = "textobjects.move.next_start.@loop.inner" }
+		)
 		-- You can also use captures from other query groups like `locals.scm` or `folds.scm`
-		vim.keymap.set({ "n", "x", "o" }, "]s", function()
-			require("nvim-treesitter-textobjects.move").goto_next_start("@local.scope", "locals")
-		end, { buffer = args.buf, desc = "textobjects.move.next_start.@local.scope" })
-		vim.keymap.set({ "n", "x", "o" }, "]z", function()
-			require("nvim-treesitter-textobjects.move").goto_next_start("@fold", "folds")
-		end, { buffer = args.buf, desc = "textobjects.move.next_start.@fold" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]s",
+			next_scope,
+			{ buffer = args.buf, desc = "textobjects.move.next_start.@local.scope" }
+		)
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]z",
+			next_fold,
+			{ buffer = args.buf, desc = "textobjects.move.next_start.@fold" }
+		)
 
-		vim.keymap.set({ "n", "x", "o" }, "]M", function()
-			require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.next_end.@function.outer" })
-		vim.keymap.set({ "n", "x", "o" }, "][", function()
-			require("nvim-treesitter-textobjects.move").goto_next_end("@class.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.next_end.@class.outer" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"]M",
+			next_func_end,
+			{ buffer = args.buf, desc = "textobjects.move.next_end.@function.outer" }
+		)
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"][",
+			next_class_end,
+			{ buffer = args.buf, desc = "textobjects.move.next_end.@class.outer" }
+		)
 
-		vim.keymap.set({ "n", "x", "o" }, "[m", function()
-			require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.previous_start.@function.outer" })
-		vim.keymap.set({ "n", "x", "o" }, "[[", function()
-			require("nvim-treesitter-textobjects.move").goto_previous_start("@class.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.previous_start.@class.outer" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"[m",
+			prev_func_start,
+			{ buffer = args.buf, desc = "textobjects.move.previous_start.@function.outer" }
+		)
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"[[",
+			prev_class_start,
+			{ buffer = args.buf, desc = "textobjects.move.previous_start.@class.outer" }
+		)
 
-		vim.keymap.set({ "n", "x", "o" }, "[M", function()
-			require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.previous_end.@function.outer" })
-		vim.keymap.set({ "n", "x", "o" }, "[]", function()
-			require("nvim-treesitter-textobjects.move").goto_previous_end("@class.outer", "textobjects")
-		end, { buffer = args.buf, desc = "textobjects.move.previous_end.@class.outer" })
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"[M",
+			prev_func_end,
+			{ buffer = args.buf, desc = "textobjects.move.previous_end.@function.outer" }
+		)
+		vim.keymap.set(
+			{ "n", "x", "o" },
+			"[]",
+			prev_class_end,
+			{ buffer = args.buf, desc = "textobjects.move.previous_end.@class.outer" }
+		)
 
 		-- the next one conflicts with next/prev diagnostics
 		--
 		-- Go to either the start or the end, whichever is closer.
 		-- Use if you want more granular movements
 		-- vim.keymap.set({ "n", "x", "o" }, "]d", function()
-		-- 	require("nvim-treesitter-textobjects.move").goto_next("@conditional.outer", "textobjects")
+		-- 	move.goto_next("@conditional.outer", "textobjects")
 		-- end, { buffer = args.buf, desc = "textobjects.move.next.@conditional.outer" })
 		-- vim.keymap.set({ "n", "x", "o" }, "[d", function()
-		-- 	require("nvim-treesitter-textobjects.move").goto_previous("@conditional.outer", "textobjects")
+		-- 	move.goto_previous("@conditional.outer", "textobjects")
 		-- end, { buffer = args.buf, desc = "textobjects.move.previous.@conditional.outer" })
 	end,
 })

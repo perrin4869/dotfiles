@@ -14,11 +14,15 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, get_opts({ desc = "d
 local make_repeatable_pair = require("repeatable")
 local next_move = require("nvim-next.move")
 
-local prev_diag, next_diag = next_move.make_repeatable_pair(make_repeatable_pair("d", function()
-	vim.diagnostic.jump({ count = -vim.v.count1 })
-end, function()
-	vim.diagnostic.jump({ count = vim.v.count1 })
-end, { desc_repeat = "Repeat diagnostic prev/next with 'd'" }))
+local prev_diag, next_diag = make_repeatable_pair(
+	"d",
+	{ desc_repeat = "Repeat diagnostic prev/next with 'd'" },
+	next_move.make_repeatable_pair(function()
+		vim.diagnostic.jump({ count = -vim.v.count1 })
+	end, function()
+		vim.diagnostic.jump({ count = vim.v.count1 })
+	end)
+)
 vim.keymap.set("n", "[d", prev_diag, { silent = true, desc = "Go to previous diagnostic" })
 vim.keymap.set("n", "]d", next_diag, { silent = true, desc = "Go to next diagnostic" })
 

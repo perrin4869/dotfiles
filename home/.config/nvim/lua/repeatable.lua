@@ -1,5 +1,5 @@
 -- General repeatable prev/next mapping with descriptions
-return function(repeat_key, action_prev, action_next, opts)
+return function(repeat_key, opts, action_prev, action_next)
 	opts = opts or {}
 	local timeout = opts.timeout or 1000
 	---@type uv.uv_timer_t|nil

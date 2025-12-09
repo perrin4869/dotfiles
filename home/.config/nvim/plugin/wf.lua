@@ -54,7 +54,11 @@ vim.keymap.set(
 local wk_map = {
 	["<Leader>"] = "<Leader>",
 	["<Leader>b"] = "buffers",
-	["<Leader><Leader>"] = "telescope",
+	["<Leader>h"] = "hunks",
+	["<Leader>d"] = "dap",
+	["<Leader>m"] = "treesj",
+	["<Leader>q"] = "persistence",
+	[require("settings").telesope_prefix] = "telescope",
 }
 
 for key, desc in pairs(wk_map) do

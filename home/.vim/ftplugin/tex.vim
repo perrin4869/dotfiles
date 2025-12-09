@@ -5,7 +5,7 @@ setlocal sw=2
 setlocal ts=2
 
 " vimtex uses <localleader> on their default mappings
-let maplocalleader=',' 
+let maplocalleader=' '
 
 let g:vimtex_fold_enabled=1
 let g:vimtex_compiler_latexmk={

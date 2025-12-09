@@ -1,12 +1,10 @@
 -- General repeatable prev/next mapping with descriptions
-local function repeatable_unimpaired(prev_mapping, next_mapping, repeat_key, action_prev, action_next, opts)
+local function make_unimpaired_pair(repeat_key, action_prev, action_next, opts)
 	opts = opts or {}
 	local timeout = opts.timeout or 1000
 	---@type uv.uv_timer_t|nil
 	local timer = nil
 
-	local desc_prev = opts.desc_prev or ("Repeatable prev for " .. prev_mapping)
-	local desc_next = opts.desc_next or ("Repeatable next for " .. next_mapping)
 	local desc_repeat = opts.desc_repeat or ("Repeat last action with " .. repeat_key)
 
 	local function unmap()
@@ -48,40 +46,30 @@ local function repeatable_unimpaired(prev_mapping, next_mapping, repeat_key, act
 	end
 
 	-- Create prefix mappings with descriptions
-	vim.keymap.set("n", prev_mapping, function()
+	return function()
 		map("prev")
 		action_prev()
-	end, { silent = true, desc = desc_prev })
-
-	vim.keymap.set("n", next_mapping, function()
+	end, function()
 		map("next")
 		action_next()
-	end, { silent = true, desc = desc_next })
+	end
 end
 
 local next_move = require("nvim-next.move")
 
-local prev_buffers, next_buffers = next_move.make_repeatable_pair(function()
+-- buffers
+local prev_buffers, next_buffers = next_move.make_repeatable_pair(make_unimpaired_pair("b", function()
 	vim.cmd("bprevious")
 end, function()
 	vim.cmd("bnext")
-end)
+end, { desc = "Repeat buffer prev/next with 'b'" }))
+vim.keymap.set("n", "[b", prev_buffers, { silent = true, desc = "Go to previous buffer" })
+vim.keymap.set("n", "]b", next_buffers, { silent = true, desc = "Go to next buffer" })
 
--- buffers
-repeatable_unimpaired("[b", "]b", "b", prev_buffers, next_buffers, {
-	desc_prev = "Go to previous buffer",
-	desc_next = "Go to next buffer",
-	desc_repeat = "Repeat buffer prev/next with 'b'",
-})
-
-local prev_diag, next_diag = next_move.make_repeatable_pair(function()
+local prev_diag, next_diag = next_move.make_repeatable_pair(make_unimpaired_pair("d", function()
 	vim.diagnostic.jump({ count = -vim.v.count1 })
 end, function()
 	vim.diagnostic.jump({ count = vim.v.count1 })
-end)
-
-repeatable_unimpaired("[d", "]d", "d", prev_diag, next_diag, {
-	desc_prev = "Go to previous diagnostic",
-	desc_next = "Go to next diagnostic",
-	desc_repeat = "Repeat diagnostic prev/next with 'd'",
-})
+end, { desc_repeat = "Repeat diagnostic prev/next with 'd'" }))
+vim.keymap.set("n", "[d", prev_diag, { silent = true, desc = "Go to previous diagnostic" })
+vim.keymap.set("n", "]d", next_diag, { silent = true, desc = "Go to next diagnostic" })

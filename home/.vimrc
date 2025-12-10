@@ -94,7 +94,7 @@ vno <up> <Nop>
 
 "close current buffer with bufkill
 nnoremap <silent> <C-q> <cmd>BD<CR>
-nnoremap <silent> <Leader>Q <cmd>Bdelete hidden<CR>
+nnoremap <silent> <C-g>q <cmd>Bdelete hidden<CR>
 
 "I really hate that things don't auto-center
 " nnoremap G Gzz

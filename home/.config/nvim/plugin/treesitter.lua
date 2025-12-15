@@ -13,7 +13,8 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
 		vim.treesitter.start()
-		vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+		vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+		vim.wo[0][0].foldmethod = "expr"
 
 		-- scala for example doesn't have indents yet
 		-- https://github.com/nvim-treesitter/nvim-treesitter/tree/42fc28ba918343ebfd5565147a42a26580579482/queries/scala

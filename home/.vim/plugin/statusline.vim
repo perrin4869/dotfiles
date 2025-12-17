@@ -6,6 +6,14 @@ if (has('nvim'))
   " neovim is using cokeline
   let g:lightline.enable = {}
   let g:lightline.enable.tabline = 0
+
+  function! LspStatus() abort
+    return luaeval("require'lsp-progress'.progress()")
+  endfunction
+
+  function! MetalsStatus() abort
+    return get(g:, 'metals_status', '') .. ' ' .. get(g:, 'bsp_status', '')
+  endfunction
 end
 
 let g:lightline.colorscheme = g:colors_name " help colorscheme
@@ -27,7 +35,6 @@ let g:lightline.component_function = {
       \   'gitbranch': 'LightLineFugitive',
       \   'gitgutter': 'LightLineGitGutter',
       \   'lsp': 'LightLineLsp',
-      \   'currentfunction': 'LightLineLspCurrentFunction',
       \   'metals': 'LightLineMetals',
       \   'vimtex': 'LightLineVimTex',
       \   'gutentags': 'gutentags#statusline',
@@ -92,14 +99,6 @@ endfunction
 function! LightLineLsp()
   if exists('*LspStatus')
     return LspStatus()
-  endif
-
-  return ''
-endfunction
-
-function! LightLineLspCurrentFunction()
-  if exists('*LspCurrentFunction')
-    return LspCurrentFunction()
   endif
 
   return ''

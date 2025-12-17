@@ -1,1 +1,0 @@
-../../../../../../../.vim/pack/default/start/lightline.vim

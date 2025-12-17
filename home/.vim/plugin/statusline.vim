@@ -2,19 +2,6 @@
 set showtabline=2
 
 let g:lightline = {}
-if (has('nvim'))
-  " neovim is using cokeline
-  let g:lightline.enable = {}
-  let g:lightline.enable.tabline = 0
-
-  function! LspStatus() abort
-    return luaeval("require'lsp-progress'.progress()")
-  endfunction
-
-  function! MetalsStatus() abort
-    return get(g:, 'metals_status', '') .. ' ' .. get(g:, 'bsp_status', '')
-  endfunction
-end
 
 let g:lightline.colorscheme = g:colors_name " help colorscheme
 let g:lightline.active = {
@@ -93,22 +80,6 @@ function! LightLineGitGutter()
     let [ added, modified, removed ] = GitGutterGetHunkSummary()
     return printf('+%d ~%d -%d', added, modified, removed)
   endif
-  return ''
-endfunction
-
-function! LightLineLsp()
-  if exists('*LspStatus')
-    return LspStatus()
-  endif
-
-  return ''
-endfunction
-
-function! LightLineMetals()
-  if exists('*MetalsStatus')
-    return MetalsStatus()
-  endif
-
   return ''
 endfunction
 

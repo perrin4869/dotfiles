@@ -582,3 +582,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter
 	url = https://github.com/nvim-treesitter/nvim-treesitter.git
+[submodule "home/.local/share/nvim/site/pack/default/start/lualine.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/lualine.nvim
+	url = https://github.com/nvim-lualine/lualine.nvim.git

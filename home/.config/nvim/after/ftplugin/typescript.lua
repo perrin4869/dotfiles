@@ -10,10 +10,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			local bufnum = args.buf
 			local opts = { noremap = true, silent = true, buffer = bufnum }
 
-			vim.keymap.set("n", "<leader>o", function()
+			vim.keymap.set("n", require("lsp").keymaps.organize_imports, function()
 				require("vtsls").commands.organize_imports(bufnum)
 			end, opts)
 			vim.api.nvim_buf_create_user_command(bufnum, "OR", "VtsExec organize_imports", { nargs = 0 })
 		end
+		-- TODO: add organize imports for tsgo
+		-- https://github.com/microsoft/typescript-go/issues/1615
 	end,
 })

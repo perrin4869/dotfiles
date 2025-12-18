@@ -40,7 +40,7 @@ metals_config.init_options.statusBarProvider = "on"
 metals_config.handlers = {
 	["metals/status"] = function(...)
 		handlers["metals/status"](...)
-		vim.fn["lightline#update"]()
+		require("lualine").refresh()
 	end,
 }
 metals_config.settings = {

@@ -51,12 +51,24 @@ local function vimtex()
 	return status
 end
 
+local function diff_source()
+	local gitsigns = vim.b.gitsigns_status_dict
+	if gitsigns then
+		return {
+			added = gitsigns.added,
+			modified = gitsigns.changed,
+			removed = gitsigns.removed,
+		}
+	end
+end
+
 require("lualine").setup({
 	sections = {
 		lualine_a = { "mode", paste },
 		lualine_b = {
 			{
-				"branch",
+				"b:gitsigns_head", -- "branch" external source
+				icon = "",
 				fmt = function(s)
 					if #s > 0 then
 						return s .. "⚡"
@@ -64,7 +76,7 @@ require("lualine").setup({
 					return s
 				end,
 			},
-			"diff",
+			{ "diff", source = diff_source },
 			{ "diagnostics", sources = { "nvim_diagnostic", "nvim_lsp" } },
 		},
 		lualine_c = {

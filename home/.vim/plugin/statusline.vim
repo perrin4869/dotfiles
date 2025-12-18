@@ -7,7 +7,6 @@ let g:lightline.colorscheme = g:colors_name " help colorscheme
 let g:lightline.active = {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitgutter', 'gitbranch' ],
-      \             [ 'lsp', 'metals' ],
       \             [ 'vimtex', 'gutentags' ],
       \             [ 'readonly', 'filename', 'modified' ] ],
       \   'right': [ [ 'lineinfo' ],
@@ -21,8 +20,6 @@ let g:lightline.component = {
 let g:lightline.component_function = {
       \   'gitbranch': 'LightLineFugitive',
       \   'gitgutter': 'LightLineGitGutter',
-      \   'lsp': 'LightLineLsp',
-      \   'metals': 'LightLineMetals',
       \   'vimtex': 'LightLineVimTex',
       \   'gutentags': 'gutentags#statusline',
       \   'readonly': 'LightLineReadonly',

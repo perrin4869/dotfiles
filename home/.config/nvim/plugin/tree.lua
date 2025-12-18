@@ -22,8 +22,8 @@ require("nvim-tree").setup({
 local opts = { noremap = true, silent = true }
 local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set("n", "gN", api.tree.toggle, get_opts({ desc = "nvim-tree.toggle" }))
-vim.keymap.set("n", "gF", function()
+vim.keymap.set("n", "<leader>nn", api.tree.toggle, get_opts({ desc = "nvim-tree.toggle" }))
+vim.keymap.set("n", "<leader>nf", function()
 	api.tree.find_file({ focus = true, open = true })
 end, get_opts({ desc = "nvim-tree.find_file" }))
 

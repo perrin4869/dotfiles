@@ -58,6 +58,7 @@ local wk_map = {
 	["<Leader>d"] = "dap",
 	["<Leader>m"] = "treesj",
 	["<Leader>q"] = "persistence",
+	["<Leader>n"] = "nvim-tree",
 	[require("settings").telesope_prefix] = "telescope",
 }
 

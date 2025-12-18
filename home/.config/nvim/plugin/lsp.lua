@@ -92,7 +92,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				end,
 			})
 
-			vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, get_opts({ desc = "lsp.codelens.run" }))
+			vim.keymap.set("n", "grc", vim.lsp.codelens.run, get_opts({ desc = "lsp.codelens.run" }))
 		end
 	end,
 })

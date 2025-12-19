@@ -47,6 +47,15 @@ function M.with(name)
 	end
 end
 
+function M.call(method)
+	return function(module)
+		if method then
+			return module[method]()
+		end
+		return module()
+	end
+end
+
 function M.lazy(fn)
 	local value
 	local ran = false

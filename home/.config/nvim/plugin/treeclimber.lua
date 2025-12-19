@@ -31,11 +31,8 @@ local select_top_level = plug("<Plug>(treeclimber-select-top-level)")
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
-		local opts = { buffer = args.buf, silent = true }
-
 		local function map(modes, lhs, thunk, desc)
-			opts.desc = desc
-			vim.keymap.set(modes, lhs, thunk, opts)
+			vim.keymap.set(modes, lhs, thunk, { buffer = args.buf, silent = true, desc = desc })
 		end
 
 		map("n", "<leader>k", show_control_flow, "treeclimber: control flow")

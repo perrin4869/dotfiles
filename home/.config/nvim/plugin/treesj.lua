@@ -8,15 +8,9 @@ end) -- "treesj")
 
 local with_tsj = defer.with("treesj")
 
-local toggle = with_tsj(function(t)
-	t.toggle()
-end)
-local join = with_tsj(function(t)
-	t.join()
-end)
-local split = with_tsj(function(t)
-	t.split()
-end)
+local toggle = with_tsj(defer.call("toggle"))
+local join = with_tsj(defer.call("join"))
+local split = with_tsj(defer.call("split"))
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),

@@ -1,91 +1,60 @@
-require("nvim-treeclimber").setup({})
+local defer = require("defer")
+
+defer.on_load("nvim-treeclimber", function(treeclimber)
+	treeclimber.setup({})
+end) -- "nvim_treesitter")
+
+local with_tc = defer.with("nvim-treeclimber")
+
+local function plug(name)
+	return with_tc(function()
+		local code = vim.api.nvim_replace_termcodes(name, true, true, true)
+		vim.api.nvim_feedkeys(code, "m", true)
+	end)
+end
+
+local show_control_flow = plug("<Plug>(treeclimber-show-control-flow)")
+local select_node = plug("<Plug>(treeclimber-select-current-node)")
+local select_expand = plug("<Plug>(treeclimber-select-expand)")
+local select_forward_end = plug("<Plug>(treeclimber-select-forward-end)")
+local select_backward = plug("<Plug>(treeclimber-select-backward)")
+local select_previous = plug("<Plug>(treeclimber-select-previous)")
+local select_shrink = plug("<Plug>(treeclimber-select-shrink)")
+local select_parent = plug("<Plug>(treeclimber-select-parent)")
+local select_next = plug("<Plug>(treeclimber-select-next)")
+local grow_forward = plug("<Plug>(treeclimber-select-grow-forward)")
+local grow_backward = plug("<Plug>(treeclimber-select-grow-backward)")
+local siblings_backward = plug("<Plug>(treeclimber-select-siblings-backward)")
+local siblings_forward = plug("<Plug>(treeclimber-select-siblings-forward)")
+local select_top_level = plug("<Plug>(treeclimber-select-top-level)")
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
-		vim.keymap.set(
-			"n",
-			"<leader>k",
-			"<Plug>(treeclimber-show-control-flow)",
-			{ buffer = args.buf, desc = "treeclimber-show-control-flow" }
-		)
-		vim.keymap.set(
-			{ "x", "o" },
-			"i.",
-			"<Plug>(treeclimber-select-current-node)",
-			{ buffer = args.buf, desc = "treeclimber-select-current-node" }
-		)
-		vim.keymap.set(
-			{ "x", "o" },
-			"a.",
-			"<Plug>(treeclimber-select-expand)",
-			{ buffer = args.buf, desc = "treeclimber-select-expand" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-e>",
-			"<Plug>(treeclimber-select-forward-end)",
-			{ buffer = args.buf, desc = "treeclimber-select-forward-end" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-b>",
-			"<Plug>(treeclimber-select-backward)",
-			{ buffer = args.buf, desc = "treeclimber-select-backward" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-h>",
-			"<Plug>(treeclimber-select-previous)",
-			{ buffer = args.buf, desc = "treeclimber-select-previous" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-j>",
-			"<Plug>(treeclimber-select-shrink)",
-			{ buffer = args.buf, desc = "treeclimber-select-shrink" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-k>",
-			"<Plug>(treeclimber-select-parent)",
-			{ buffer = args.buf, desc = "treeclimber-select-parent" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-l>",
-			"<Plug>(treeclimber-select-next)",
-			{ buffer = args.buf, desc = "treeclimber-select-next" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-L>",
-			"<Plug>(treeclimber-select-grow-forward)",
-			{ buffer = args.buf, desc = "treeclimber-select-grow-forward" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-H>",
-			"<Plug>(treeclimber-select-grow-backward)",
-			{ buffer = args.buf, desc = "treeclimber-select-grow-backward" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-[>",
-			"<Plug>(treeclimber-select-siblings-backward)",
-			{ buffer = args.buf, desc = "treeclimber-select-siblings-backward" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-]>",
-			"<Plug>(treeclimber-select-siblings-forward)",
-			{ buffer = args.buf, desc = "treeclimber-select-siblings-forward" }
-		)
-		vim.keymap.set(
-			{ "n", "x", "o" },
-			"<M-g>",
-			"<Plug>(treeclimber-select-top-level)",
-			{ buffer = args.buf, desc = "treeclimber-select-top-level" }
-		)
+		local opts = { buffer = args.buf, silent = true }
+
+		local function map(modes, lhs, thunk, desc)
+			opts.desc = desc
+			vim.keymap.set(modes, lhs, thunk, opts)
+		end
+
+		map("n", "<leader>k", show_control_flow, "treeclimber: control flow")
+
+		map({ "x", "o" }, "i.", select_node, "treeclimber: select node")
+		map({ "x", "o" }, "a.", select_expand, "treeclimber: expand")
+
+		map({ "n", "x", "o" }, "<M-e>", select_forward_end, "treeclimber: forward end")
+		map({ "n", "x", "o" }, "<M-b>", select_backward, "treeclimber: backward")
+		map({ "n", "x", "o" }, "<M-h>", select_previous, "treeclimber: previous")
+		map({ "n", "x", "o" }, "<M-j>", select_shrink, "treeclimber: shrink")
+		map({ "n", "x", "o" }, "<M-k>", select_parent, "treeclimber: parent")
+		map({ "n", "x", "o" }, "<M-l>", select_next, "treeclimber: next")
+
+		map({ "n", "x", "o" }, "<M-L>", grow_forward, "treeclimber: grow forward")
+		map({ "n", "x", "o" }, "<M-H>", grow_backward, "treeclimber: grow backward")
+
+		map({ "n", "x", "o" }, "<M-[>", siblings_backward, "treeclimber: siblings backward")
+		map({ "n", "x", "o" }, "<M-]>", siblings_forward, "treeclimber: siblings forward")
+		map({ "n", "x", "o" }, "<M-g>", select_top_level, "treeclimber: top level")
 	end,
 })

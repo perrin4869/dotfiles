@@ -41,7 +41,7 @@ func! TagbarRemoveTrailingWhiteSpace()
   end
 endfunc
 
-nmap <silent> gq <cmd>call ToggleQuickFix()<CR>
+nmap <silent> <leader>tq <cmd>call ToggleQuickFix()<CR>
 
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -51,7 +51,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap <silent> gl <cmd>call ToggleLocList()<CR>
+nmap <silent> <leader>tl <cmd>call ToggleLocList()<CR>
 
 function! ToggleLocList()
     if empty(filter(getwininfo(), 'v:val.loclist'))

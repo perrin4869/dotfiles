@@ -19,3 +19,24 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- https://github.com/microsoft/typescript-go/issues/1615
 	end,
 })
+
+local typescript_lsp = "tsserver"
+if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
+	if vim.env.LSP_TYPESCRIPT == "vtsls" then
+		typescript_lsp = "vtsls"
+
+		vim.api.nvim_create_autocmd("FileType", {
+			once = true,
+			pattern = vim.lsp.config.vtsls.filetypes,
+			callback = function()
+				vim.cmd([[
+					packadd nvim-vtsls
+				]])
+			end,
+		})
+	else
+		typescript_lsp = "tsgo" -- TODO: remove tsserver and vtsls once tsgo is stable
+	end
+end
+
+vim.lsp.enable(typescript_lsp)

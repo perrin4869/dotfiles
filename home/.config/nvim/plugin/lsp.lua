@@ -102,52 +102,10 @@ require("mason").setup({
 		"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
 	},
 })
-require("ccls").setup()
 
 vim.lsp.config("*", {
 	capabilities = lsp.capabilities,
 })
-
-vim.api.nvim_create_autocmd("FileType", {
-	once = true,
-	pattern = "lua",
-	callback = function()
-		vim.cmd([[
-			packadd lazydev.nvim
-			packadd luvit-meta
-		]])
-
-		require("lazydev").setup({
-			library = {
-				-- Library items can be absolute paths
-				-- "~/projects/my-awesome-lib",
-				-- Or relative, which means they will be resolved as a plugin
-				-- "LazyVim",
-				-- When relative, you can also provide a path to the library in the plugin dir
-				"luvit-meta/library", -- see below
-			},
-		})
-	end,
-})
-
-local typescript_lsp = "tsserver"
-if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
-	if vim.env.LSP_TYPESCRIPT == "vtsls" then
-		typescript_lsp = "vtsls"
-
-		vim.api.nvim_create_autocmd("FileType", {
-			once = true,
-			pattern = "typescript",
-			callback = function()
-				vim.cmd([[
-					packadd nvim-vtsls
-				]])
-			end,
-		})
-	else
-		typescript_lsp = "tsgo" -- TODO: remove tsserver and vtsls once tsgo is stable
-	end
-end
 
 vim.lsp.enable({
 	"bashls",
@@ -157,7 +115,4 @@ vim.lsp.enable({
 	"cssls",
 	"jsonls",
 	"sqlls",
-	"lua_ls",
-	"ccls",
-	typescript_lsp,
 })

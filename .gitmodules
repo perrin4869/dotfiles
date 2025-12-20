@@ -477,7 +477,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/one-small-step-for-vimkind
 	url = https://github.com/jbyuki/one-small-step-for-vimkind.git
 [submodule "home/.local/share/nvim/site/pack/default/start/ccls.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/ccls.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/ccls.nvim
 	url = https://github.com/ranjithshegde/ccls.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context

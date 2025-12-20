@@ -514,7 +514,7 @@
 	path = home/.local/share/tmux/tmux-sensible
 	url = https://github.com/tmux-plugins/tmux-sensible.git
 [submodule "home/.local/share/nvim/site/pack/default/start/render-markdown.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/render-markdown.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/render-markdown.nvim
 	url = https://github.com/MeanderingProgrammer/render-markdown.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/live-preview.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/live-preview.nvim

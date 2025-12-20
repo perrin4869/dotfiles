@@ -1,9 +1,11 @@
+local defer = require("defer")
 local project_files = require("project_files")
 local persistence = require("persistence")
 
-local function toggle_tree()
+local with_tree = defer.with("nvim-tree")
+local toggle_tree = with_tree(function()
 	require("nvim-tree.api").tree.toggle({ focus = false })
-end
+end)
 
 require("workspaces").setup({
 	auto_open = true,

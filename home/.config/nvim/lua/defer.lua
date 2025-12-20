@@ -42,7 +42,9 @@ end
 function M.with(name)
 	return function(callback)
 		return function(...)
-			return callback(ensure(name), ...)
+			if type(callback) == "function" then
+				return callback(ensure(name), ...)
+			end
 		end
 	end
 end

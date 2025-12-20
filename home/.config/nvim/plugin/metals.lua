@@ -1,46 +1,45 @@
-local _config = nil
-local function metals_config()
-	if _config == nil then
-		local lsp = require("lsp")
-		local metals = require("metals")
-		local handlers = require("metals.handlers")
+local defer = require("defer")
 
-		_config = metals.bare_config()
-		_config.capabilities = lsp.capabilities
-		_config.init_options.statusBarProvider = "on"
-		_config.handlers = {
-			["metals/status"] = function(...)
-				handlers["metals/status"](...)
-				require("lualine").refresh()
-			end,
-		}
-		_config.settings = {
-			useGlobalExecutable = true,
-			verboseCompilation = true,
-			enableSemanticHighlighting = true,
-			superMethodLensesEnabled = true,
-			-- enables using MetalsSelectTestSuite and MetalsSelectTestCase
-			-- but deactivates code lenses for test classes.
-			-- testUserInterface = "Test Explorer",
-			defaultBspToBuildTool = true,
-			enableBestEffort = true,
-			inlayHints = {
-				namedParameters = { enable = true },
-				byNameParameters = { enable = true },
-				hintsInPatternMatch = { enable = true },
-				implicitArguments = { enable = true },
-				implicitConversions = { enable = true },
-				inferredTypes = { enable = true },
-				typeParameters = { enable = true },
-				hintsXRayMode = { enable = true },
-				closingLabels = { enable = true },
-			},
-		}
+local metals_config = defer.lazy(function()
+	local lsp = require("lsp")
+	local metals = require("metals")
+	local handlers = require("metals.handlers")
 
-		metals.setup_dap()
-	end
-	return _config
-end
+	local config = metals.bare_config()
+	config.capabilities = lsp.capabilities
+	config.init_options.statusBarProvider = "on"
+	config.handlers = {
+		["metals/status"] = function(...)
+			handlers["metals/status"](...)
+			require("lualine").refresh()
+		end,
+	}
+	config.settings = {
+		useGlobalExecutable = true,
+		verboseCompilation = true,
+		enableSemanticHighlighting = true,
+		superMethodLensesEnabled = true,
+		-- enables using MetalsSelectTestSuite and MetalsSelectTestCase
+		-- but deactivates code lenses for test classes.
+		-- testUserInterface = "Test Explorer",
+		defaultBspToBuildTool = true,
+		enableBestEffort = true,
+		inlayHints = {
+			namedParameters = { enable = true },
+			byNameParameters = { enable = true },
+			hintsInPatternMatch = { enable = true },
+			implicitArguments = { enable = true },
+			implicitConversions = { enable = true },
+			inferredTypes = { enable = true },
+			typeParameters = { enable = true },
+			hintsXRayMode = { enable = true },
+			closingLabels = { enable = true },
+		},
+	}
+
+	metals.setup_dap()
+	return config
+end)
 
 local group = vim.api.nvim_create_augroup("Initialize_metals", {})
 

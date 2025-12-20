@@ -5,7 +5,7 @@ defer.on_load("flash", function(flash)
 	flash.setup({
 		modes = { char = { enabled = false } },
 	})
-end) -- , "flash.nvim") -- "flash.nvim" is the folder name in pack/*/opt/
+end)
 local with_flash = defer.with("flash")
 
 local jump = with_flash(defer.call("jump"))
@@ -25,6 +25,7 @@ vim.keymap.set("c", "<C-s>", toggle, get_opts({ desc = "flash.toggle" }))
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
+		-- duplicate functionality with tree-hopper
 		vim.keymap.set(
 			{ "n", "x", "o" },
 			"<leader>S",

@@ -1,5 +1,5 @@
+local defer = require("defer")
 local dap = require("dap")
-local dapui = require("dapui")
 local utils = require("utils")
 
 dap.adapters["pwa-node"] = {
@@ -94,6 +94,7 @@ vim.fn.sign_define("DapBreakpointRejected", { text = "🟦", texthl = "", linehl
 vim.fn.sign_define("DapStopped", { text = "⭐️", texthl = "", linehl = "", numhl = "" })
 
 -- Mappings.
+local prefix = "<leader>d"
 local opts = { noremap = true, silent = true }
 local get_opts = utils.create_get_opts(opts)
 
@@ -108,38 +109,38 @@ local function focus_repl()
 	return false
 end
 
-vim.keymap.set("n", "<leader>dt", dap.toggle_breakpoint, get_opts({ desc = "dap.toggle_breakpoint" }))
-vim.keymap.set("n", "<leader>dH", function()
+vim.keymap.set("n", prefix .. "t", dap.toggle_breakpoint, get_opts({ desc = "dap.toggle_breakpoint" }))
+vim.keymap.set("n", prefix .. "H", function()
 	dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
 end, get_opts({ desc = "dap.set_breakpoint" }))
 vim.keymap.set("n", "<c-k>", dap.step_out, get_opts({ desc = "dap.step_out" }))
 vim.keymap.set("n", "<c-l>", dap.step_into, get_opts({ desc = "dap.step_into" }))
 vim.keymap.set("n", "<c-j>", dap.step_over, get_opts({ desc = "dap.step_over" }))
 vim.keymap.set("n", "<c-h>", dap.continue, get_opts({ desc = "dap.continue" }))
-vim.keymap.set("n", "<leader>dk", dap.up, get_opts({ desc = "dap.up" }))
-vim.keymap.set("n", "<leader>dj", dap.down, get_opts({ desc = "dap.down" }))
-vim.keymap.set("n", "<leader>dd", function()
+vim.keymap.set("n", prefix .. "k", dap.up, get_opts({ desc = "dap.up" }))
+vim.keymap.set("n", prefix .. "j", dap.down, get_opts({ desc = "dap.down" }))
+vim.keymap.set("n", prefix .. "d", function()
 	dap.disconnect({ terminateDebuggee = true })
 	dap.close()
 end, get_opts({ desc = "dap.disconnect" }))
-vim.keymap.set("n", "<leader>dr", function()
+vim.keymap.set("n", prefix .. "r", function()
 	if focus_repl() == false then
 		local _, win = dap.repl.open({}, "vsplit")
 		vim.api.nvim_set_current_win(win)
 		vim.cmd('exe Resize("vertical", "", "35%")')
 	end
 end, get_opts({ desc = "dap.repl.open_focus" }))
-vim.keymap.set("n", "<leader>dR", function()
+vim.keymap.set("n", prefix .. "R", function()
 	dap.repl.toggle({}, "vsplit")
 	vim.cmd('wincmd h | exe Resize("vertical", "", "35%")')
 end, get_opts({ desc = "dap.repl.toggle" }))
-vim.keymap.set("n", "<leader>de", function()
+vim.keymap.set("n", prefix .. "e", function()
 	dap.set_exception_breakpoints({ "all" })
 end, get_opts({ desc = "dap.set_exception_breakpoints" }))
-vim.keymap.set("n", "<leader>di", function()
+vim.keymap.set("n", prefix .. "i", function()
 	require("dap.ui.widgets").hover(require("dap.utils").get_visual_selection_text())
 end, get_opts({ desc = "dap.ui.widgets.hover" }))
-vim.keymap.set("n", "<leader>d?", function()
+vim.keymap.set("n", prefix .. "?", function()
 	require("dap.ui.widgets").cursor_float(require("dap.ui.widgets").scopes)
 end, get_opts({ desc = "dap.ui.widgets.scopes" }))
 
@@ -180,29 +181,33 @@ vim.api.nvim_create_autocmd("FileType", {
 
 require("nvim-dap-virtual-text").setup()
 
--- nvim-dap-ui
-dapui.setup()
-vim.keymap.set("n", "<leader>du", require("dapui").toggle, get_opts({ desc = "dapui.toggle" }))
+defer.hook("dapui", function()
+	-- nvim-dap-ui
+	require("dapui").setup()
+end)
+
+vim.keymap.set("n", prefix .. "u", function()
+	require("dapui").toggle()
+end, get_opts({ desc = "dapui.toggle" }))
 
 dap.listeners.before.attach.dapui_config = function()
-	dapui.open()
+	require("dapui").open()
 end
 dap.listeners.before.launch.dapui_config = function()
-	dapui.open()
+	require("dapui").open()
 end
 dap.listeners.before.event_terminated["dapui_config"] = function()
 	focus_repl()
 
 	-- closing is too intrusive - cannot inspect the output
-	-- dapui.close()
+	-- require("dapui").close()
 end
 -- dap.listeners.before.event_exited["dapui_config"] = function()
--- 	dapui.close()
+-- 	require("dapui").close()
 -- end
 
 -- telescope-dap
 local pickers = require("pickers")
-local prefix = "<leader>d"
 pickers.map(prefix .. "c", function(telescope)
 	telescope.commands()
 end, { prefix = false, desc = "dap.commands" })

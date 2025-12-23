@@ -7,27 +7,11 @@ local preloaders = {}
 ---@type table<string, any>
 local cache = {}
 
-local M = {}
-
----@param name string
----@param fn function
----@param pack string?
-function M.on_load(name, fn, pack)
-	if not loaders[name] then
-		loaders[name] = {}
-	end
-	table.insert(loaders[name], fn)
-
-	if pack then
-		pkgs[name] = pack
-	end
-end
-
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
 ---@param name string The module name target
 ---@param fn function
-function M.on_preload(name, fn)
+local function on_preload(name, fn)
 	if not preloaders[name] then
 		preloaders[name] = {}
 	end
@@ -36,7 +20,7 @@ end
 
 ---@param name string
 ---@return any
-function M.ensure(name)
+local function ensure(name)
 	if cache[name] then
 		return cache[name]
 	end
@@ -72,6 +56,22 @@ function M.ensure(name)
 	return module
 end
 
+local M = {}
+
+---@param name string
+---@param fn function
+---@param pack string?
+function M.on_load(name, fn, pack)
+	if not loaders[name] then
+		loaders[name] = {}
+	end
+	table.insert(loaders[name], fn)
+
+	if pack then
+		pkgs[name] = pack
+	end
+end
+
 --- Wraps a module for lazy execution via a callback.
 ---@param name string
 ---@return fun(callback: fun(m: any, ...): any): fun(...): any
@@ -79,7 +79,7 @@ function M.with(name)
 	return function(callback)
 		return function(...)
 			if type(callback) == "function" then
-				return callback(M.ensure(name), ...)
+				return callback(ensure(name), ...)
 			end
 		end
 	end
@@ -122,12 +122,12 @@ function M.cmd(name, module)
 	end
 
 	-- Clean up the placeholder BEFORE the plugin defines its own
-	M.on_preload(module, function()
+	on_preload(module, function()
 		pcall(vim.api.nvim_del_user_command, name)
 	end)
 
 	vim.api.nvim_create_user_command(name, function(opts)
-		M.ensure(module)
+		ensure(module)
 		local bang = opts.bang and "!" or ""
 		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
 		vim.cmd(name .. bang .. args)
@@ -136,7 +136,7 @@ function M.cmd(name, module)
 		range = true,
 		bang = true,
 		complete = function(_, cmd_line, _)
-			M.ensure(module)
+			ensure(module)
 			return vim.fn.getcompletion(cmd_line, "cmdline")
 		end,
 	})

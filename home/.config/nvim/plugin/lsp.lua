@@ -47,18 +47,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
 		-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 		-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
-		vim.keymap.set(
-			"n",
-			"<leader>ds",
-			require("telescope.builtin").lsp_document_symbols,
-			get_opts({ desc = "telescope.lsp_document_symbols" })
-		)
-		vim.keymap.set(
-			"n",
-			"<leader>ws",
-			require("telescope.builtin").lsp_dynamic_workspace_symbols,
-			get_opts({ desc = "telescope.lsp_dynamic_workspace_symbols" })
-		)
+		local pickers = require("pickers")
+		pickers.map("<leader>ds", "lsp_document_symbols", { prefix = false })
+		pickers.map("<leader>ws", "lsp_dynamic_workspace_symbols", { prefix = false })
 		-- https://github.com/nvim-telescope/telescope.nvim/issues/964
 		-- uses dynamic because most language servers return an empty list on an empty query
 

@@ -1,6 +1,5 @@
 local dap = require("dap")
 local dapui = require("dapui")
-local telescope = require("telescope").extensions.dap
 local utils = require("utils")
 
 dap.adapters["pwa-node"] = {
@@ -202,7 +201,17 @@ end
 -- end
 
 -- telescope-dap
-vim.keymap.set("n", "<leader>dc", telescope.commands, get_opts({ desc = "telescope.dap.commands" }))
-vim.keymap.set("n", "<leader>db", telescope.list_breakpoints, get_opts({ desc = "telescope.dap.list_breakpoints" }))
-vim.keymap.set("n", "<leader>dv", telescope.variables, get_opts({ desc = "telescope.dap.variables" }))
-vim.keymap.set("n", "<leader>df", telescope.frames, get_opts({ desc = "telescope.dap.frames" }))
+local pickers = require("pickers")
+local prefix = "<leader>d"
+pickers.map(prefix .. "c", function(telescope)
+	telescope.commands()
+end, { prefix = false, desc = "dap.commands" })
+pickers.map(prefix .. "b", function(telescope)
+	telescope.list_breakpoints()
+end, { prefix = false, desc = "dap.list_breakpoints" })
+pickers.map(prefix .. "v", function(telescope)
+	telescope.variables()
+end, { prefix = false, desc = "dap.variables" })
+pickers.map(prefix .. "f", function(telescope)
+	telescope.frames()
+end, { prefix = false, desc = "dap.frames" })

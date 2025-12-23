@@ -70,4 +70,33 @@ function M.lazy(fn)
 	end
 end
 
+function M.cmd(name, module)
+	local function load()
+		-- Remove placeholder so the real plugin can claim the command name
+		pcall(vim.api.nvim_del_user_command, name)
+		return ensure(module)
+	end
+
+	if vim.fn.exists(":" .. name) ~= 0 then
+		error("defer.cmd: '" .. name .. "' already exists")
+		return
+	end
+
+	vim.api.nvim_create_user_command(name, function(opts)
+		load()
+
+		local bang = opts.bang and "!" or ""
+		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
+		vim.cmd(name .. bang .. args)
+	end, {
+		nargs = "*",
+		range = true,
+		bang = true,
+		complete = function(_, cmd_line, _)
+			load()
+			return vim.fn.getcompletion(cmd_line, "cmdline")
+		end,
+	})
+end
+
 return M

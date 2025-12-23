@@ -59,7 +59,7 @@ local wk_map = {
 	["<Leader>m"] = "treesj",
 	["<Leader>q"] = "persistence",
 	["<Leader>n"] = "nvim-tree",
-	[require("settings").telesope_prefix] = "telescope",
+	[require("pickers").prefix] = "telescope",
 }
 
 for key, desc in pairs(wk_map) do

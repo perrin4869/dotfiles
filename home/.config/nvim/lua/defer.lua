@@ -1,25 +1,34 @@
 local M = {}
 
 -- Stores setup functions and package names
-local initializers = {}
+local loaders = {}
+local preloaders = {}
 -- Cache for loaded modules
 local cache = {}
 
 --- Defines the initialization logic for a plugin
 --- @param name string The module name to require
---- @param setup_fn function The function to run once the module is required
---- @param package string? Optional: The folder name in 'opt/' to packadd
-function M.on_load(name, setup_fn, package)
-	initializers[name] = {
-		setup = setup_fn,
-		package = package,
+--- @param fn function The function to run once the module is required
+--- @param pack string? Optional: The folder name in 'opt/' to packadd
+function M.on_load(name, fn, pack)
+	loaders[name] = {
+		setup = fn,
+		package = pack,
 	}
+end
+
+function M.on_preload(name, fn)
+	preloaders[name] = fn
 end
 
 --- Internal: Bootstraps the plugin on demand
 local function ensure(name)
 	if not cache[name] then
-		local config = initializers[name]
+		if preloaders[name] then
+			preloaders()
+		end
+
+		local config = loaders[name]
 
 		-- Load from opt/ if a package name was provided
 		if config and config.package then
@@ -71,19 +80,17 @@ function M.lazy(fn)
 end
 
 function M.cmd(name, module)
-	local function load()
-		-- Remove placeholder so the real plugin can claim the command name
-		pcall(vim.api.nvim_del_user_command, name)
-		return ensure(module)
-	end
-
 	if vim.fn.exists(":" .. name) ~= 0 then
 		error("defer.cmd: '" .. name .. "' already exists")
 		return
 	end
 
+	M.on_preload(name, function()
+		pcall(vim.api.nvim_del_user_command, name)
+	end)
+
 	vim.api.nvim_create_user_command(name, function(opts)
-		load()
+		ensure(module)
 
 		local bang = opts.bang and "!" or ""
 		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
@@ -93,7 +100,7 @@ function M.cmd(name, module)
 		range = true,
 		bang = true,
 		complete = function(_, cmd_line, _)
-			load()
+			ensure(module)
 			return vim.fn.getcompletion(cmd_line, "cmdline")
 		end,
 	})

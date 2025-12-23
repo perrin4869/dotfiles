@@ -142,4 +142,35 @@ function M.cmd(name, module)
 	})
 end
 
+---@type table<string, function>
+local hooks = {}
+
+function M.hook(modname, fn)
+	hooks[modname] = fn
+end
+
+local function loader(modname)
+	for curmod, load in pairs(hooks) do
+		if modname == curmod then
+			-- 1. Remove from the lazy list so we don't loop
+			hooks[curmod] = nil
+
+			local mod = require(modname)
+			-- 2. Run the user's loader function
+			-- This usually triggers packadd/setup via your defer module
+			load()
+
+			-- 3. Return a "searcher" function.
+			-- Lua expects a function that returns the module.
+			return function()
+				return mod
+			end
+		end
+	end
+
+	return nil
+end
+
+table.insert(package.loaders, 2, loader)
+
 return M

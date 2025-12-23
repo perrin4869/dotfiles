@@ -1,63 +1,93 @@
-local M = {}
-
--- Stores setup functions and package names
+---@type table<string, function[]>
 local loaders = {}
+---@type table<string, string> -- Separate table for pack names to avoid mutation errors
+local pkgs = {}
+---@type table<string, function[]>
 local preloaders = {}
--- Cache for loaded modules
+---@type table<string, any>
 local cache = {}
 
---- Defines the initialization logic for a plugin
---- @param name string The module name to require
---- @param fn function The function to run once the module is required
---- @param pack string? Optional: The folder name in 'opt/' to packadd
+local M = {}
+
+---@param name string
+---@param fn function
+---@param pack string?
 function M.on_load(name, fn, pack)
-	loaders[name] = {
-		setup = fn,
-		package = pack,
-	}
-end
-
-function M.on_preload(name, fn)
-	preloaders[name] = fn
-end
-
---- Internal: Bootstraps the plugin on demand
-local function ensure(name)
-	if not cache[name] then
-		if preloaders[name] then
-			preloaders()
-		end
-
-		local config = loaders[name]
-
-		-- Load from opt/ if a package name was provided
-		if config and config.package then
-			vim.cmd("packadd " .. config.package)
-		end
-
-		local module = require(name)
-
-		-- Run setup if it exists
-		if config and config.setup then
-			config.setup(module)
-		end
-
-		cache[name] = module
+	if not loaders[name] then
+		loaders[name] = {}
 	end
-	return cache[name]
+	table.insert(loaders[name], fn)
+
+	if pack then
+		pkgs[name] = pack
+	end
 end
 
---- Curried wrapper for lazy execution
+--- Registers a function to run BEFORE packadd or require.
+--- Useful for clearing placeholder commands/mappings.
+---@param name string The module name target
+---@param fn function
+function M.on_preload(name, fn)
+	if not preloaders[name] then
+		preloaders[name] = {}
+	end
+	table.insert(preloaders[name], fn)
+end
+
+---@param name string
+---@return any
+function M.ensure(name)
+	if cache[name] then
+		return cache[name]
+	end
+
+	-- 1. Pre-load logic
+	local pre = preloaders[name]
+	if pre then
+		for _, fn in ipairs(pre) do
+			fn()
+		end
+		preloaders[name] = nil
+	end
+
+	-- 2. Handle package (using separate table lookup)
+	local pack = pkgs[name]
+	if pack then
+		vim.cmd("packadd " .. pack)
+		pkgs[name] = nil -- Deleting from a basic table is always fine
+	end
+
+	local module = require(name)
+
+	-- 3. Post-load logic
+	local config = loaders[name]
+	if config then
+		for _, fn in ipairs(config) do
+			fn(module)
+		end
+		loaders[name] = nil -- Wipe the whole entry instead of a field
+	end
+
+	cache[name] = module
+	return module
+end
+
+--- Wraps a module for lazy execution via a callback.
+---@param name string
+---@return fun(callback: fun(m: any, ...): any): fun(...): any
 function M.with(name)
 	return function(callback)
 		return function(...)
 			if type(callback) == "function" then
-				return callback(ensure(name), ...)
+				return callback(M.ensure(name), ...)
 			end
 		end
 	end
 end
 
+--- Calls a method from a parameter.
+---@param method string
+---@return fun(callback: fun(m: any): any): fun(...): any
 function M.call(method)
 	return function(module)
 		if method then
@@ -67,6 +97,10 @@ function M.call(method)
 	end
 end
 
+--- Memoizes a function result.
+---@generic T
+---@param fn fun(...): T
+---@return fun(...): T
 function M.lazy(fn)
 	local value
 	local ran = false
@@ -79,19 +113,21 @@ function M.lazy(fn)
 	end
 end
 
+--- Creates a lazy command trigger.
+---@param name string The command name
+---@param module string The module to load
 function M.cmd(name, module)
 	if vim.fn.exists(":" .. name) ~= 0 then
 		error("defer.cmd: '" .. name .. "' already exists")
-		return
 	end
 
-	M.on_preload(name, function()
+	-- Clean up the placeholder BEFORE the plugin defines its own
+	M.on_preload(module, function()
 		pcall(vim.api.nvim_del_user_command, name)
 	end)
 
 	vim.api.nvim_create_user_command(name, function(opts)
-		ensure(module)
-
+		M.ensure(module)
 		local bang = opts.bang and "!" or ""
 		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
 		vim.cmd(name .. bang .. args)
@@ -100,7 +136,7 @@ function M.cmd(name, module)
 		range = true,
 		bang = true,
 		complete = function(_, cmd_line, _)
-			ensure(module)
+			M.ensure(module)
 			return vim.fn.getcompletion(cmd_line, "cmdline")
 		end,
 	})

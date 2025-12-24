@@ -173,4 +173,23 @@ end
 
 table.insert(package.loaders, 2, loader)
 
+---@param fn function
+function M.very_lazy(fn)
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "VeryLazy",
+		once = true, -- Tasks usually only need to run once
+		callback = fn,
+	})
+end
+
+-- In defer.lua's initialization:
+vim.api.nvim_create_autocmd("UIEnter", {
+	once = true,
+	callback = function()
+		vim.schedule(function()
+			vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy" })
+		end)
+	end,
+})
+
 return M

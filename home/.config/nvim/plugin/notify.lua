@@ -1,11 +1,17 @@
-local notify = require("notify")
+local defer = require("defer")
 
-notify.setup({
-	stages = "fade_in_slide_out",
-	background_colour = "FloatShadow",
-	timeout = 3000,
-})
+-- since noice also uses nvim-notify, add as a hook
+defer.hook("notify", function()
+	require("notify").setup({
+		stages = "fade_in_slide_out",
+		background_colour = "FloatShadow",
+		timeout = 3000,
+	})
+end)
 
--- luacheck:ignore 122
-vim.notify = notify
-vim.notify_once = notify
+local lazy_notify = function(...)
+	return require("notify")(...)
+end
+
+vim.notify = lazy_notify
+vim.notify_once = lazy_notify

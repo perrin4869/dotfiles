@@ -1,5 +1,7 @@
 local defer = require("defer")
-defer.on_event(function()
+defer.very_lazy(function()
+	vim.cmd.packadd("vim-unimpaired")
+
 	local next_move = require("nvim-next.move")
 
 	-- buffers
@@ -14,4 +16,4 @@ defer.on_event(function()
 
 	-- see help [q and help ]q for the default mappings in neovim >= 0.11
 	require("nvim-next.integrations").quickfix().setup()
-end, "BufEnter", { name = "unimpaired" })
+end)

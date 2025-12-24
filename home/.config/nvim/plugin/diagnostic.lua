@@ -1,5 +1,5 @@
 local defer = require("defer")
-defer.on_event(function()
+defer.very_lazy(function()
 	local util = require("utils")
 
 	local opts = { noremap = true, silent = true }
@@ -30,4 +30,4 @@ defer.on_event(function()
 	-- 		vim.diagnostic.open_float({ focusable = false })
 	-- 	end,
 	-- })
-end, { "BufReadPost", "BufNewFile" }, { name = "diagnostic" })
+end)

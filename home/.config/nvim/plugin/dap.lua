@@ -181,10 +181,11 @@ vim.api.nvim_create_autocmd("FileType", {
 
 require("nvim-dap-virtual-text").setup()
 
-defer.hook("dapui", function(dapui)
+defer.on_load("dapui", function(dapui)
 	-- nvim-dap-ui
 	dapui.setup()
 end)
+defer.hook("dapui")
 
 vim.keymap.set("n", prefix .. "u", function()
 	require("dapui").toggle()

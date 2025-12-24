@@ -1,7 +1,6 @@
 local defer = require("defer")
-local function setup(refactoring)
+defer.on_load("refactoring", function(refactoring)
 	refactoring.setup()
-end
-defer.on_load("refactoring", setup, "refactoring.nvim")
-defer.hook("refactoring", setup, "refactoring.nvim")
+end, "refactoring.nvim")
+defer.hook("refactoring")
 defer.cmd("Refactor", "refactoring")

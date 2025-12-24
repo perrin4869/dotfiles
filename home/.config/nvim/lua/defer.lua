@@ -5,17 +5,7 @@ local pkgs = {}
 ---@type table<string, function[]>
 local preloaders = {}
 ---@type table<string, any>
-local cache = {}
----@type table<string, function>
 local hooks = {}
-
-local function ensure_pack(name)
-	local pack = pkgs[name]
-	if pack then
-		vim.cmd("packadd " .. pack)
-		pkgs[name] = nil -- Deleting from a basic table is always fine
-	end
-end
 
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
@@ -31,32 +21,36 @@ end
 ---@param name string
 ---@return any
 local function ensure(name)
-	if cache[name] then
-		return cache[name]
+	if loaders[name] == nil then
+		return require(name)
 	end
-
+	local config = loaders[name]
 	local pre = preloaders[name]
+
+	loaders[name] = nil -- wipe the whole entry instead of a field
+	preloaders[name] = nil
+	hooks[name] = nil -- in case both hooks and loaders are registered for the same module
+
 	if pre then
 		for _, fn in ipairs(pre) do
 			fn()
 		end
-		preloaders[name] = nil
 	end
 
-	ensure_pack(name)
+	local pack = pkgs[name]
+	if pack then
+		vim.cmd("packadd " .. pack)
+		pkgs[name] = nil -- Deleting from a basic table is always fine
+	end
 
-	local module = require(name)
-	local config = loaders[name]
+	local mod = require(name)
 	if config then
 		for _, fn in ipairs(config) do
-			fn(module)
+			fn(mod)
 		end
-		loaders[name] = nil -- wipe the whole entry instead of a field
-		hooks[name] = nil -- in case both hooks and loaders are registered for the same module
 	end
 
-	cache[name] = module
-	return module
+	return mod
 end
 
 local M = {}
@@ -145,29 +139,19 @@ function M.cmd(name, module)
 	})
 end
 
-function M.hook(modname, fn, pack)
-	hooks[modname] = fn
-	if pack then
-		pkgs[modname] = pack
-	end
+function M.hook(modname)
+	hooks[modname] = true
 end
 
 local function loader(modname)
-	for curmod, load in pairs(hooks) do
-		if modname == curmod then
-			-- remove from the lazy list so we don't loop
-			hooks[curmod] = nil
-			loaders[curmod] = nil -- in case both a loader and a hook are defined
+	if hooks[modname] then
+		-- remove from the lazy list so we don't loop
+		hooks[modname] = nil
 
-			ensure_pack(modname)
-
-			local mod = require(modname)
-			load(mod)
-
-			-- lua expects a function that returns the module.
-			return function()
-				return mod
-			end
+		local mod = ensure(modname)
+		-- lua expects a function that returns the module.
+		return function()
+			return mod
 		end
 	end
 

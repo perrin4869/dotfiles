@@ -186,11 +186,13 @@ function M.on_event(name, events, opts)
 end
 
 ---@param fn function
-function M.very_lazy(fn)
+function M.very_lazy(loader)
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "VeryLazy",
 		once = true, -- Tasks usually only need to run once
-		callback = fn,
+		callback = function()
+			ensure(loader)
+		end,
 	})
 end
 

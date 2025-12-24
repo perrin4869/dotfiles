@@ -168,18 +168,27 @@ end
 
 table.insert(package.loaders, 2, hook)
 
----@param name string
+---@param name string|function
 ---@param events string|string[]
----@param opts? { pattern?: string|string[] }
+---@param opts? { pattern?: string|string[], name?: string }
 function M.on_event(name, events, opts)
 	opts = opts or {}
+	local fn
+	if type(name) == "function" then
+		fn = name
+		name = opts.name
+	else
+		fn = function()
+			ensure(name)
+		end
+	end
 	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
 		pattern = opts.pattern, -- Allows filtering by filetype or file glob
 		callback = function()
-			ensure(name)
+			fn()
 			vim.api.nvim_del_augroup_by_id(group_id)
 		end,
 	})

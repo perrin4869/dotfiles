@@ -1,6 +1,6 @@
 local defer = require("defer")
 
-defer.very_lazy(function()
+defer.on_event(function()
 	local lsp = require("lsp")
 	local utils = require("utils")
 
@@ -106,4 +106,4 @@ defer.very_lazy(function()
 		"jsonls",
 		"sqlls",
 	})
-end)
+end, "BufReadPost", { name = "lsp" })

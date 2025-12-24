@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("gitsigns", function()
-	require("gitsigns").setup({
+defer.on_load("gitsigns", function(gitsigns)
+	gitsigns.setup({
 		on_attach = function(bufnr)
 			local gs = package.loaded.gitsigns
 

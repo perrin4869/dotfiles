@@ -55,11 +55,15 @@ function M.ensure(name)
 end
 
 ---@param name string
----@param fn function
+---@param fn function|string?
 ---@param pack string?
 function M.on_load(name, fn, pack)
 	if not loaders[name] then
 		loaders[name] = {}
+	end
+	if type(fn) == "string" then
+		pack = fn
+		fn = function() end
 	end
 	table.insert(loaders[name], fn)
 

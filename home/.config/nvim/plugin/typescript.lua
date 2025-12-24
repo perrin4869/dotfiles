@@ -29,14 +29,17 @@ if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
 	end
 end
 
-vim.api.nvim_create_autocmd("FileType", {
-	once = true,
-	pattern = vim.lsp.config[typescript_lsp].filetypes,
-	callback = function()
-		if typescript_lsp == "vtsls" then
-			vim.cmd.packadd("nvim-vtsls")
-		end
-	end,
+local defer = require("defer")
+defer.very_lazy(function()
+	vim.api.nvim_create_autocmd("FileType", {
+		once = true,
+		pattern = vim.lsp.config[typescript_lsp].filetypes,
+		callback = function()
+			if typescript_lsp == "vtsls" then
+				vim.cmd.packadd("nvim-vtsls")
+			end
+		end,
 
-	vim.lsp.enable(typescript_lsp),
-})
+		vim.lsp.enable(typescript_lsp),
+	})
+end)

@@ -7,5 +7,6 @@ defer.on_load("mason", function(mason)
 		},
 	})
 end)
+defer.cmd("MasonInstall", "mason")
 defer.hook("mason")
 defer.very_lazy("mason")

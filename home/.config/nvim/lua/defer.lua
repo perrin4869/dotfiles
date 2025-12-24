@@ -7,6 +7,15 @@ local preloaders = {}
 ---@type table<string, string>
 local hooks = {}
 
+---@param f1 function
+---@param f2 function
+local function zip(f1, f2)
+	return function(...)
+		f1(...)
+		f2(...)
+	end
+end
+
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
 ---@param name string The module name target
@@ -16,15 +25,6 @@ local function on_preload(name, fn)
 		preloaders[name] = zip(preloaders[name], fn)
 	else
 		preloaders[name] = fn
-	end
-end
-
----@param f1 function
----@param f2 function
-local function zip(f1, f2)
-	return function(...)
-		f1(...)
-		f2(...)
 	end
 end
 

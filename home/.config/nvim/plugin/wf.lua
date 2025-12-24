@@ -1,21 +1,31 @@
-local which_key = require("wf.builtin.which_key")
-local register = require("wf.builtin.register")
-local bookmark = require("wf.builtin.bookmark")
-local buffer = require("wf.builtin.buffer")
-local mark = require("wf.builtin.mark")
+local defer = require("defer")
 
-require("wf").setup()
+defer.on_load("wf", function(wf)
+	wf.setup()
+end)
+local with_wf = defer.with("wf")
 
 -- Register
+local register = defer.lazy(function()
+	return require("wf.builtin.register")()
+end)
 vim.keymap.set(
 	"n",
 	"<Space>wr",
 	-- register(opts?: table) -> function
 	-- opts?: option
-	register(),
+	with_wf(function(_, ...)
+		return register()(...)
+	end),
 	{ noremap = true, silent = true, desc = "[wf.nvim] register" }
 )
 
+local bookmark = defer.lazy(function()
+	return require("wf.builtin.bookmark")({
+		nvim = "~/.config/nvim",
+		zsh = "~/.zshrc",
+	})
+end)
 -- Bookmark
 vim.keymap.set(
 	"n",
@@ -23,30 +33,39 @@ vim.keymap.set(
 	-- bookmark(bookmark_dirs: table, opts?: table) -> function
 	-- bookmark_dirs: directory or file paths
 	-- opts?: option
-	bookmark({
-		nvim = "~/.config/nvim",
-		zsh = "~/.zshrc",
-	}),
+	with_wf(function(_, ...)
+		return bookmark()(...)
+	end),
 	{ noremap = true, silent = true, desc = "[wf.nvim] bookmark" }
 )
 
 -- Buffer
+local buffer = defer.lazy(function()
+	return require("wf.builtin.buffer")()
+end)
 vim.keymap.set(
 	"n",
 	"<Space>wbu",
 	-- buffer(opts?: table) -> function
 	-- opts?: option
-	buffer(),
+	with_wf(function(_, ...)
+		return buffer()(...)
+	end),
 	{ noremap = true, silent = true, desc = "[wf.nvim] buffer" }
 )
 
 -- Mark
+local mark = defer.lazy(function()
+	return require("wf.builtin.mark")()
+end)
 vim.keymap.set(
 	"n",
 	"'",
 	-- mark(opts?: table) -> function
 	-- opts?: option
-	mark(),
+	with_wf(function(_, ...)
+		return mark()(...)
+	end),
 	{ nowait = true, noremap = true, silent = true, desc = "[wf.nvim] mark" }
 )
 
@@ -63,12 +82,17 @@ local wk_map = {
 }
 
 for key, desc in pairs(wk_map) do
+	local cached = defer.lazy(function()
+		return require("wf.builtin.which_key")({ text_insert_in_advance = key })
+	end)
 	vim.keymap.set(
 		"n",
 		key,
 		-- mark(opts?: table) -> function
 		-- opts?: option
-		which_key({ text_insert_in_advance = key }),
+		with_wf(function()
+			return cached()()
+		end),
 		{ noremap = true, silent = true, desc = "[wf.nvim] which-key " .. desc }
 	)
 end

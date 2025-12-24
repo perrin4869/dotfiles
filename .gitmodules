@@ -453,7 +453,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/cmp-cmdline
 	url = https://github.com/hrsh7th/cmp-cmdline.git
 [submodule "home/.local/share/nvim/site/pack/default/start/vim-illuminate"]
-	path = home/.local/share/nvim/site/pack/default/start/vim-illuminate
+	path = home/.local/share/nvim/site/pack/default/opt/vim-illuminate
 	url = https://github.com/RRethy/vim-illuminate.git
 [submodule "home/.local/share/nvim/mason-registry"]
 	path = home/.local/share/nvim/mason-registry

@@ -1,22 +1,27 @@
-local flash = require("flash")
+local defer = require("defer")
 local utils = require("utils")
 
-flash.setup({
-	modes = {
-		char = {
-			-- disables f/F/t/T, would need to integrate with nvim-next
-			enabled = false,
-		},
-	},
-})
+defer.on_load("flash", function(flash)
+	flash.setup({
+		modes = { char = { enabled = false } },
+	})
+end)
+local with_flash = defer.with("flash")
+
+local jump = with_flash(defer.call("jump"))
+local remote = with_flash(defer.call("remote"))
+local toggle = with_flash(defer.call("toggle"))
+local treesitter = with_flash(defer.call("treesitter"))
+local treesitter_search = with_flash(defer.call("treesitter_search"))
 
 local opts = { silent = true }
 local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set({ "n", "x", "o" }, "<leader>s", flash.jump, get_opts({ desc = "flash.jump" }))
-vim.keymap.set("o", "r", flash.remote, get_opts({ desc = "flash.remote" }))
-vim.keymap.set("c", "<C-s>", flash.toggle, get_opts({ desc = "flash.toggle" }))
+vim.keymap.set({ "n", "x", "o" }, "<leader>s", jump, get_opts({ desc = "flash.jump" }))
+vim.keymap.set("o", "r", remote, get_opts({ desc = "flash.remote" }))
+vim.keymap.set("c", "<C-s>", toggle, get_opts({ desc = "flash.toggle" }))
 
+-- Treesitter logic
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = require("nvim-treesitter").get_installed(),
 	callback = function(args)
@@ -24,14 +29,14 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set(
 			{ "n", "x", "o" },
 			"<leader>S",
-			flash.treesitter,
+			treesitter,
 			get_opts({ buffer = args.buf, desc = "flash.treesitter" })
 		)
 
 		vim.keymap.set(
 			{ "o", "x" },
 			"R",
-			flash.treesitter_search,
+			treesitter_search,
 			get_opts({ buffer = args.buf, desc = "flash.treesitter_search" })
 		)
 	end,

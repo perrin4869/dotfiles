@@ -1,1 +1,5 @@
-require("neoclip").setup()
+local defer = require("defer")
+defer.on_load("neoclip", function(neoclip)
+	neoclip.setup()
+end)
+defer.very_lazy("neoclip")

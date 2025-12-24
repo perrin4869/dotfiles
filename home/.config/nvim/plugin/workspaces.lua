@@ -1,9 +1,5 @@
-local project_files = require("project_files")
+local pickers = require("pickers")
 local persistence = require("persistence")
-
-local function toggle_tree()
-	require("nvim-tree.api").tree.toggle({ focus = false })
-end
 
 require("workspaces").setup({
 	auto_open = true,
@@ -27,13 +23,12 @@ require("workspaces").setup({
 				for _, w in ipairs(wins) do
 					local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
 					if bufname:match("NvimTree_") ~= nil then
-						toggle_tree()
+						require("nvim-tree.api").tree.toggle({ focus = false })
 						break
 					end
 				end
 			else
-				toggle_tree()
-				project_files()
+				pickers.project_files()
 			end
 		end,
 	},

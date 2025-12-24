@@ -1,22 +1,25 @@
-local hlargs = require("hlargs")
+local defer = require("defer")
 
-hlargs.setup({
-	disable = function(_, bufnr)
-		if vim.b[bufnr].semantic_tokens then
-			return true
-		end
-
-		local clients = vim.lsp.get_clients({ bufnr = bufnr })
-		for _, c in pairs(clients) do
-			local caps = c.server_capabilities
-			if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
-				-- cache languages that were already resolved
-				vim.b[bufnr].semantic_tokens = true
-				return vim.b[bufnr].semantic_tokens
+defer.on_load("hlargs", function(hlargs)
+	hlargs.setup({
+		disable = function(_, bufnr)
+			if vim.b[bufnr].semantic_tokens then
+				return true
 			end
-		end
-	end,
-})
+
+			local clients = vim.lsp.get_clients({ bufnr = bufnr })
+			for _, c in pairs(clients) do
+				local caps = c.server_capabilities
+				if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+					-- cache languages that were already resolved
+					vim.b[bufnr].semantic_tokens = true
+					return vim.b[bufnr].semantic_tokens
+				end
+			end
+		end,
+	})
+end)
+defer.on_event("hlargs", { "BufReadPost", "BufNewFile" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspAttach_hlargs", {}),
@@ -34,7 +37,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local caps = client.server_capabilities
 		if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
 			vim.b[bufnr].semantic_tokens = true
-			hlargs.disable_buf(bufnr)
+			defer.ensure("hlargs").disable_buf(bufnr)
 		end
 	end,
 })

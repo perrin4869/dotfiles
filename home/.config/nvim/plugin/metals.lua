@@ -6,7 +6,7 @@ local metals_config = defer.lazy(function()
 	local handlers = require("metals.handlers")
 
 	local config = metals.bare_config()
-	config.capabilities = lsp.capabilities
+	config.capabilities = lsp.get_capabilities()
 	config.init_options.statusBarProvider = "on"
 	config.handlers = {
 		["metals/status"] = function(...)
@@ -72,9 +72,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local opts = { noremap = true, silent = true, buffer = buffer }
 		local get_opts = utils.create_get_opts(opts)
 
-		vim.keymap.set("n", "<leader><leader>m", function()
-			require("telescope").extensions.metals.commands()
-		end, get_opts({ desc = "metals.commands.telescope" }))
+		local pickers = require("pickers")
+		pickers.map("m", function(telescope)
+			telescope.extensions.metals.commands()
+		end, { desc = "metals.commands.telescope" })
 
 		-- Toggle panel with Tree Views
 		vim.keymap.set("n", "<leader>tv", tvp.toggle_tree_view, get_opts({ desc = "metals.tree_view.toggle" }))

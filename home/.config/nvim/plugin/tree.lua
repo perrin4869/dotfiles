@@ -1,30 +1,37 @@
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-local api = require("nvim-tree.api")
+local defer = require("defer")
 local utils = require("utils")
 
-require("nvim-tree").setup({
-	on_attach = function(bufnr)
-		local function opts(desc)
-			return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-		end
+defer.on_load("nvim-tree", function(tree)
+	tree.setup({
+		on_attach = function(bufnr)
+			local function opts(desc)
+				return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+			end
 
-		-- default mappings
-		api.config.mappings.default_on_attach(bufnr)
+			local api = require("nvim-tree.api")
 
-		-- custom mappings
-		vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
-		vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
-	end,
-})
+			-- default mappings
+			api.config.mappings.default_on_attach(bufnr)
+
+			-- custom mappings
+			vim.keymap.set("n", "<C-t>", api.tree.change_root_to_parent, opts("Up"))
+			vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+		end,
+	})
+end)
+defer.hook("nvim-tree.api", "nvim-tree")
 
 local opts = { noremap = true, silent = true }
 local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set("n", "<leader>nn", api.tree.toggle, get_opts({ desc = "nvim-tree.toggle" }))
+vim.keymap.set("n", "<leader>nn", function()
+	require("nvim-tree.api").tree.toggle()
+end, get_opts({ desc = "nvim-tree.toggle" }))
 vim.keymap.set("n", "<leader>nf", function()
-	api.tree.find_file({ focus = true, open = true })
+	require("nvim-tree.api").tree.find_file({ focus = true, open = true })
 end, get_opts({ desc = "nvim-tree.find_file" }))
 
 -- vim.api.nvim_create_autocmd("BufEnter", {

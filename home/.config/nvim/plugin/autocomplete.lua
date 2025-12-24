@@ -1,5 +1,64 @@
 local defer = require("defer")
+
+defer.on_load("cmp_nvim_lsp", "cmp-nvim-lsp")
+defer.on_load("cmp_git", function(cmp_git)
+	cmp_git.setup({
+		-- defaults
+		filetypes = { "gitcommit" },
+		github = {
+			issues = {
+				filter = "all", -- assigned, created, mentioned, subscribed, all, repos
+				limit = 100,
+				state = "open", -- open, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+		},
+		gitlab = {
+			issues = {
+				limit = 100,
+				state = "opened", -- opened, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+			merge_requests = {
+				limit = 100,
+				state = "opened", -- opened, closed, locked, merged
+			},
+		},
+	})
+end, "cmp-git")
+
 defer.on_load("cmp", function(cmp)
+	defer.ensure("cmp_nvim_lsp")
+	defer.ensure("cmp_git")
+	vim.cmd.packadd("cmp-buffer")
+	vim.cmd.packadd("cmp-calc")
+	vim.cmd.packadd("cmp-cmdline")
+	vim.cmd.packadd("cmp-emoji")
+	vim.cmd.packadd("cmp-nvim-lua")
+	vim.cmd.packadd("cmp-path")
+	vim.cmd.packadd("cmp-spell")
+	vim.cmd.packadd("cmp-tmux")
+	vim.cmd.packadd("cmp-treesitter")
+	vim.cmd.packadd("cmp-vsnip")
+
+	-- https://github.com/hrsh7th/cmp-buffer/issues/76
+	-- https://github.com/vim/vim/issues/1994
+	cmp.register_source("buffer", require("cmp_buffer").new())
+	cmp.register_source("calc", require("cmp_calc").new())
+	cmp.register_source("cmdline", require("cmp_cmdline").new())
+	cmp.register_source("emoji", require("cmp_emoji").new())
+	cmp.register_source("nvim_lua", require("cmp_nvim_lua").new())
+	require("cmp_nvim_lsp").setup()
+	cmp.register_source("path", require("cmp_path").new())
+	cmp.register_source("spell", require("cmp-spell").new())
+	cmp.register_source("tmux", require("cmp_tmux").new())
+	cmp.register_source("treesitter", require("cmp_treesitter").new())
+	cmp.register_source("vsnip", require("cmp_vsnip").new())
+
 	local lspkind = require("lspkind")
 
 	local function nav_item(f)
@@ -47,6 +106,8 @@ defer.on_load("cmp", function(cmp)
 			{ name = "nvim_lsp" },
 			{ name = "nvim_lua" },
 			{ name = "treesitter" },
+			{ name = "cmdline" },
+			{ name = "git" },
 			{ name = "vsnip" },
 			{ name = "path" },
 			{ name = "tmux" },
@@ -136,5 +197,5 @@ defer.on_load("cmp", function(cmp)
 		vim.b.matchup_matchparen_enabled = true
 		-- vim.g.matchup_enabled = true
 	end)
-end)
-defer.very_lazy("cmp")
+end, "nvim-cmp")
+defer.on_event("cmp", "BufReadPre")

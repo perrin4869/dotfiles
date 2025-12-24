@@ -94,7 +94,7 @@ defer.on_event(function()
 	defer.ensure("mason")
 
 	vim.lsp.config("*", {
-		capabilities = lsp.capabilities,
+		capabilities = lsp.get_capabilities(),
 	})
 
 	vim.lsp.enable({

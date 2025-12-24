@@ -6,7 +6,7 @@ local metals_config = defer.lazy(function()
 	local handlers = require("metals.handlers")
 
 	local config = metals.bare_config()
-	config.capabilities = lsp.capabilities
+	config.capabilities = lsp.get_capabilities()
 	config.init_options.statusBarProvider = "on"
 	config.handlers = {
 		["metals/status"] = function(...)

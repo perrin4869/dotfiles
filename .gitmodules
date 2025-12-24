@@ -372,7 +372,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treeclimber
 	url = https://github.com/Dkendal/nvim-treeclimber.git
 [submodule "home/.local/share/nvim/site/pack/default/start/cellular-automation.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/cellular-automation.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/cellular-automaton.nvim
 	url = https://github.com/Eandrju/cellular-automaton.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/zone.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/zone.nvim

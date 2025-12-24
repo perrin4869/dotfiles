@@ -1,5 +1,5 @@
 local defer = require("defer")
-defer.very_lazy(function()
+defer.on_event(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,
 		pattern = vim.lsp.config.ccls.filetypes,
@@ -10,4 +10,4 @@ defer.very_lazy(function()
 			vim.lsp.enable("ccls")
 		end,
 	})
-end)
+end, { "BufReadPre", "BufNewFile" }, { name = "ccls" })

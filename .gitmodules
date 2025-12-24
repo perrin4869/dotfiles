@@ -462,7 +462,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/alpha-nvim
 	url = https://github.com/goolord/alpha-nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/conform.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/conform.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/conform.nvim
 	url = https://github.com/stevearc/conform.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lightbulb"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lightbulb

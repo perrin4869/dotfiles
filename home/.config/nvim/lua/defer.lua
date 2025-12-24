@@ -4,7 +4,7 @@ local loaders = {}
 local pkgs = {}
 ---@type table<string, function[]>
 local preloaders = {}
----@type table<string, any>
+---@type table<string, string>
 local hooks = {}
 
 --- Registers a function to run BEFORE packadd or require.
@@ -29,7 +29,6 @@ local function ensure(name)
 
 	loaders[name] = nil -- wipe the whole entry instead of a field
 	preloaders[name] = nil
-	hooks[name] = nil -- in case both hooks and loaders are registered for the same module
 
 	if pre then
 		for _, fn in ipairs(pre) do
@@ -139,26 +138,35 @@ function M.cmd(name, module)
 	})
 end
 
-function M.hook(modname)
-	hooks[modname] = true
+--- Creates a lazy command trigger.
+---@param modname string The command name
+---@param loader string? The module to load
+function M.hook(modname, loader)
+	hooks[modname] = loader or modname
 end
 
-local function loader(modname)
-	if hooks[modname] then
-		-- remove from the lazy list so we don't loop
-		hooks[modname] = nil
-
-		local mod = ensure(modname)
-		-- lua expects a function that returns the module.
-		return function()
-			return mod
-		end
+local function hook(modname)
+	if hooks[modname] == nil then
+		return nil
 	end
 
-	return nil
+	local loader = hooks[modname]
+	-- remove from the lazy list so we don't loop
+	hooks[modname] = nil
+
+	if loaders[loader] == nil then
+		return nil
+	end
+
+	ensure(loader)
+	local mod = require(modname)
+	-- lua expects a function that returns the module.
+	return function()
+		return mod
+	end
 end
 
-table.insert(package.loaders, 2, loader)
+table.insert(package.loaders, 2, hook)
 
 ---@param name string
 ---@param events string|string[]

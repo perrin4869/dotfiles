@@ -4,12 +4,14 @@ vim.g.loaded_netrwPlugin = 1
 local defer = require("defer")
 local utils = require("utils")
 
-defer.on_load("nvim-tree.api", function(api)
-	require("nvim-tree").setup({
+defer.on_load("nvim-tree", function(tree)
+	tree.setup({
 		on_attach = function(bufnr)
 			local function opts(desc)
 				return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
 			end
+
+			local api = require("nvim-tree.api")
 
 			-- default mappings
 			api.config.mappings.default_on_attach(bufnr)
@@ -20,7 +22,7 @@ defer.on_load("nvim-tree.api", function(api)
 		end,
 	})
 end)
-defer.hook("nvim-tree.api")
+defer.hook("nvim-tree.api", "nvim-tree")
 
 local opts = { noremap = true, silent = true }
 local get_opts = utils.create_get_opts(opts)

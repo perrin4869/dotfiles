@@ -6,6 +6,16 @@ local pkgs = {}
 local preloaders = {}
 ---@type table<string, any>
 local cache = {}
+---@type table<string, function>
+local hooks = {}
+
+local function ensure_pack(name)
+	local pack = pkgs[name]
+	if pack then
+		vim.cmd("packadd " .. pack)
+		pkgs[name] = nil -- Deleting from a basic table is always fine
+	end
+end
 
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
@@ -25,7 +35,6 @@ local function ensure(name)
 		return cache[name]
 	end
 
-	-- 1. Pre-load logic
 	local pre = preloaders[name]
 	if pre then
 		for _, fn in ipairs(pre) do
@@ -34,22 +43,16 @@ local function ensure(name)
 		preloaders[name] = nil
 	end
 
-	-- 2. Handle package (using separate table lookup)
-	local pack = pkgs[name]
-	if pack then
-		vim.cmd("packadd " .. pack)
-		pkgs[name] = nil -- Deleting from a basic table is always fine
-	end
+	ensure_pack(name)
 
 	local module = require(name)
-
-	-- 3. Post-load logic
 	local config = loaders[name]
 	if config then
 		for _, fn in ipairs(config) do
 			fn(module)
 		end
-		loaders[name] = nil -- Wipe the whole entry instead of a field
+		loaders[name] = nil -- wipe the whole entry instead of a field
+		hooks[name] = nil -- in case both hooks and loaders are registered for the same module
 	end
 
 	cache[name] = module
@@ -142,26 +145,26 @@ function M.cmd(name, module)
 	})
 end
 
----@type table<string, function>
-local hooks = {}
-
-function M.hook(modname, fn)
+function M.hook(modname, fn, pack)
 	hooks[modname] = fn
+	if pack then
+		pkgs[modname] = pack
+	end
 end
 
 local function loader(modname)
 	for curmod, load in pairs(hooks) do
 		if modname == curmod then
-			-- 1. Remove from the lazy list so we don't loop
+			-- remove from the lazy list so we don't loop
 			hooks[curmod] = nil
+			loaders[curmod] = nil -- in case both a loader and a hook are defined
+
+			ensure_pack(modname)
 
 			local mod = require(modname)
-			-- 2. Run the user's loader function
-			-- This usually triggers packadd/setup via your defer module
-			load()
+			load(mod)
 
-			-- 3. Return a "searcher" function.
-			-- Lua expects a function that returns the module.
+			-- lua expects a function that returns the module.
 			return function()
 				return mod
 			end

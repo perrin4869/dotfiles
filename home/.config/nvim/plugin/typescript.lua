@@ -38,8 +38,7 @@ defer.on_event(function()
 			if typescript_lsp == "vtsls" then
 				vim.cmd.packadd("nvim-vtsls")
 			end
+			vim.lsp.enable(typescript_lsp)
 		end,
-
-		vim.lsp.enable(typescript_lsp),
 	})
 end, { "BufReadPre", "BufNewFile" }, { name = "typescript" })

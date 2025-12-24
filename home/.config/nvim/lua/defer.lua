@@ -204,8 +204,6 @@ function M.on_event(name, events, opts)
 	})
 end
 
-local very_lazy_ran = false
-
 ---@param loader string|function
 function M.very_lazy(loader)
 	local callback = loader
@@ -214,7 +212,7 @@ function M.very_lazy(loader)
 			M.ensure(loader)
 		end
 	end
-	if very_lazy_ran then
+	if vim.v.vim_did_enter == 1 then
 		callback()
 		return
 	end
@@ -232,7 +230,6 @@ vim.api.nvim_create_autocmd("UIEnter", {
 	callback = function()
 		vim.schedule(function()
 			vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy" })
-			very_lazy_ran = true
 		end)
 	end,
 })

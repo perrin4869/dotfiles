@@ -1,1 +1,4 @@
-require("lsp-progress").setup()
+local defer = require("defer")
+defer.on_load("lsp-progress", function(progress)
+	progress.setup()
+end)

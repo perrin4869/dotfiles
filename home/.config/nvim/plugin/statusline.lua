@@ -1,3 +1,4 @@
+local defer = require("defer")
 local function paste()
 	if vim.o.paste then
 		return "PASTE"
@@ -80,7 +81,7 @@ require("lualine").setup({
 			{ "diagnostics", sources = { "nvim_diagnostic", "nvim_lsp" } },
 		},
 		lualine_c = {
-			require("lsp-progress").progress,
+			defer.with("lsp-progress")(defer.call("progress")),
 			"g:metals_status",
 			"g:bsp_status",
 			vimtex,

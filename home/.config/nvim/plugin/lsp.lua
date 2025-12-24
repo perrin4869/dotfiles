@@ -1,6 +1,6 @@
 local defer = require("defer")
 
-defer.on_event(function()
+defer.very_lazy(function()
 	local lsp = require("lsp")
 	local utils = require("utils")
 
@@ -91,11 +91,7 @@ defer.on_event(function()
 		end,
 	})
 
-	require("mason").setup({
-		registries = {
-			"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
-		},
-	})
+	defer.ensure("mason")
 
 	vim.lsp.config("*", {
 		capabilities = lsp.capabilities,
@@ -110,4 +106,4 @@ defer.on_event(function()
 		"jsonls",
 		"sqlls",
 	})
-end, "BufReadPost", { name = "lsp" })
+end)

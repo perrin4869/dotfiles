@@ -1,8 +1,8 @@
----@type table<string, function[]>
+---@type table<string, function>
 local loaders = {}
 ---@type table<string, string> -- Separate table for pack names to avoid mutation errors
 local pkgs = {}
----@type table<string, function[]>
+---@type table<string, function>
 local preloaders = {}
 ---@type table<string, string>
 local hooks = {}
@@ -12,10 +12,20 @@ local hooks = {}
 ---@param name string The module name target
 ---@param fn function
 local function on_preload(name, fn)
-	if not preloaders[name] then
-		preloaders[name] = {}
+	if preloaders[name] then
+		preloaders[name] = zip(preloaders[name], fn)
+	else
+		preloaders[name] = fn
 	end
-	table.insert(preloaders[name], fn)
+end
+
+---@param f1 function
+---@param f2 function
+local function zip(f1, f2)
+	return function(...)
+		f1(...)
+		f2(...)
+	end
 end
 
 local M = {}
@@ -23,19 +33,14 @@ local M = {}
 ---@param name string
 ---@return any
 function M.ensure(name)
-	if loaders[name] == nil then
-		return require(name)
-	end
-	local config = loaders[name]
-	local pre = preloaders[name]
+	local loader = loaders[name]
+	local preloader = preloaders[name]
 
 	loaders[name] = nil -- wipe the whole entry instead of a field
 	preloaders[name] = nil
 
-	if pre then
-		for _, fn in ipairs(pre) do
-			fn()
-		end
+	if preloader then
+		preloader()
 	end
 
 	local pack = pkgs[name]
@@ -45,10 +50,8 @@ function M.ensure(name)
 	end
 
 	local mod = require(name)
-	if config then
-		for _, fn in ipairs(config) do
-			fn(mod)
-		end
+	if loader then
+		loader(mod)
 	end
 
 	return mod
@@ -58,14 +61,17 @@ end
 ---@param fn function|string?
 ---@param pack string?
 function M.on_load(name, fn, pack)
-	if not loaders[name] then
-		loaders[name] = {}
-	end
 	if type(fn) == "string" then
 		pack = fn
-		fn = function() end
+		fn = nil
 	end
-	table.insert(loaders[name], fn)
+	if fn then
+		if loaders[name] then
+			loaders[name] = zip(loaders[name], fn)
+		else
+			loaders[name] = fn
+		end
+	end
 
 	if pack then
 		pkgs[name] = pack
@@ -198,14 +204,25 @@ function M.on_event(name, events, opts)
 	})
 end
 
----@param fn function
+local very_lazy_ran = false
+
+---@param loader string|function
 function M.very_lazy(loader)
+	local callback = loader
+	if type(loader) == "string" then
+		callback = function()
+			M.ensure(loader)
+		end
+	end
+	if very_lazy_ran then
+		callback()
+		return
+	end
+
 	vim.api.nvim_create_autocmd("User", {
 		pattern = "VeryLazy",
 		once = true, -- Tasks usually only need to run once
-		callback = function()
-			M.ensure(loader)
-		end,
+		callback = callback,
 	})
 end
 
@@ -215,6 +232,7 @@ vim.api.nvim_create_autocmd("UIEnter", {
 	callback = function()
 		vim.schedule(function()
 			vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy" })
+			very_lazy_ran = true
 		end)
 	end,
 })

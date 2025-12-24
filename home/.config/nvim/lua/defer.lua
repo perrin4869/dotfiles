@@ -18,9 +18,11 @@ local function on_preload(name, fn)
 	table.insert(preloaders[name], fn)
 end
 
+local M = {}
+
 ---@param name string
 ---@return any
-local function ensure(name)
+function M.ensure(name)
 	if loaders[name] == nil then
 		return require(name)
 	end
@@ -52,8 +54,6 @@ local function ensure(name)
 	return mod
 end
 
-local M = {}
-
 ---@param name string
 ---@param fn function
 ---@param pack string?
@@ -75,7 +75,7 @@ function M.with(name)
 	return function(callback)
 		return function(...)
 			if type(callback) == "function" then
-				return callback(ensure(name), ...)
+				return callback(M.ensure(name), ...)
 			end
 		end
 	end
@@ -123,7 +123,7 @@ function M.cmd(name, module)
 	end)
 
 	vim.api.nvim_create_user_command(name, function(opts)
-		ensure(module)
+		M.ensure(module)
 		local bang = opts.bang and "!" or ""
 		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
 		vim.cmd(name .. bang .. args)
@@ -132,7 +132,7 @@ function M.cmd(name, module)
 		range = true,
 		bang = true,
 		complete = function(_, cmd_line, _)
-			ensure(module)
+			M.ensure(module)
 			return vim.fn.getcompletion(cmd_line, "cmdline")
 		end,
 	})
@@ -158,7 +158,7 @@ local function hook(modname)
 		return nil
 	end
 
-	ensure(loader)
+	M.ensure(loader)
 	local mod = require(modname)
 	-- lua expects a function that returns the module.
 	return function()
@@ -179,7 +179,7 @@ function M.on_event(name, events, opts)
 		name = opts.name
 	else
 		fn = function()
-			ensure(name)
+			M.ensure(name)
 		end
 	end
 	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
@@ -200,7 +200,7 @@ function M.very_lazy(loader)
 		pattern = "VeryLazy",
 		once = true, -- Tasks usually only need to run once
 		callback = function()
-			ensure(loader)
+			M.ensure(loader)
 		end,
 	})
 end

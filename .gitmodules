@@ -228,9 +228,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-metals"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lsp-smag"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-lsp-smag
-	url = https://github.com/weilbith/nvim-lsp-smag
 [submodule "deps/mpv-mpris"]
 	path = deps/mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris

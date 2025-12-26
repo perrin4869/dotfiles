@@ -45,7 +45,7 @@ function M.ensure(name)
 
 	local pack = pkgs[name]
 	if pack then
-		vim.cmd("packadd " .. pack)
+		vim.cmd.packadd(pack)
 		pkgs[name] = nil -- Deleting from a basic table is always fine
 	end
 
@@ -94,12 +94,14 @@ end
 --- Calls a method from a parameter.
 ---@param method string
 ---@return fun(callback: fun(m: any): any): fun(...): any
-function M.call(method)
+function M.call(method, ...)
+	local args = { ... }
+	local nargs = select("#", ...) -- Get the count to handle nil correctly
 	return function(module)
 		if method then
-			return module[method]()
+			return module[method](table.unpack(args, 1, nargs))
 		end
-		return module()
+		return module(table.unpack(args, 1, nargs))
 	end
 end
 

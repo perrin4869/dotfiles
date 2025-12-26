@@ -1,12 +1,13 @@
 " Toggle undo tree
-nmap <silent> gu <cmd>UndotreeToggle<CR>
+nmap <silent> <leader>tu <cmd>UndotreeToggle<CR>
 
 " Toggle tagbar
-nmap <silent> gT <cmd>TagbarToggle<CR>
+nmap <silent> <leader>tt <cmd>TagbarToggle<CR>
 
 " <C-r> is by default used in insert mode for pasting registers so let's not
 " meddle with that
-imap <silent> <C-l> <C-o>:call ToggleRl()<CR>
+imap <silent> <C-l> <cmd>call ToggleRl()<CR>
+nmap <silent> <leader>tr <cmd>call ToggleRl()<CR>
 
 func! ToggleRl()
   if &rl
@@ -20,24 +21,13 @@ endfunc
 nmap <silent> ]r <cmd>set rl<CR>
 nmap <silent> [r <cmd>set norl<CR>
 
-nmap <silent> <leader>p <cmd>call TogglePaste()<CR>
+nmap <silent> <leader>tp <cmd>call TogglePaste()<CR>
 
 func! TogglePaste()
   if &paste
     set nopaste
   else
     set paste
-  end
-endfunc
-
-" Toggle tagbar
-nmap <silent> gws <cmd>call TagbarRemoveTrailingWhiteSpace()<CR>
-
-func! TagbarRemoveTrailingWhiteSpace()
-  if b:strip_trailing_whitespace_enabled
-    let b:strip_trailing_whitespace_enabled=0
-  else
-    let b:strip_trailing_whitespace_enabled=1
   end
 endfunc
 

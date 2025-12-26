@@ -423,7 +423,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/workspaces.nvim
 	url = https://github.com/natecraddock/workspaces.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/persistence.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/persistence.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/persistence.nvim
 	url = https://github.com/folke/persistence.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim

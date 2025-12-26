@@ -582,3 +582,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/lualine.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/lualine.nvim
 	url = https://github.com/nvim-lualine/lualine.nvim.git
+[submodule "home/.local/share/nvim/site/pack/opt/close-buffers.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/close-buffers.nvim
+	url = https://github.com/kazhala/close-buffers.nvim.git

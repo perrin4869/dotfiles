@@ -429,7 +429,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim
 	url = https://github.com/davvid/telescope-git-grep.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/rainbow-delimiters.nvim
 	url = https://github.com/HiPhish/rainbow-delimiters.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-cokeline"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-cokeline

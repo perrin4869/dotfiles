@@ -511,7 +511,7 @@
 	path = home/.local/share/nvim/site/pack/default/opt/render-markdown.nvim
 	url = https://github.com/MeanderingProgrammer/render-markdown.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/live-preview.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/live-preview.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/live-preview.nvim
 	url = https://github.com/brianhuster/live-preview.nvim.git
 [submodule "home/.local/share/tmux/catppuccin"]
 	path = home/.local/share/tmux/catppuccin

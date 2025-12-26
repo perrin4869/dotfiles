@@ -422,9 +422,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/workspaces.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/workspaces.nvim
 	url = https://github.com/natecraddock/workspaces.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-tree"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-tree
-	url = https://github.com/nvim-tree/nvim-tree.lua.git
 [submodule "home/.local/share/nvim/site/pack/default/start/persistence.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/persistence.nvim
 	url = https://github.com/folke/persistence.nvim.git
@@ -585,3 +582,6 @@
 [submodule "home/.local/share/nvim/site/pack/opt/close-buffers.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/close-buffers.nvim
 	url = https://github.com/kazhala/close-buffers.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim
+	url = https://github.com/nvim-neo-tree/neo-tree.nvim.git

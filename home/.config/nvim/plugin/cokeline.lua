@@ -22,12 +22,12 @@ local function setup()
 		},
 
 		sidebar = {
-			filetype = "NvimTree",
+			filetype = "neo-tree",
 			components = {
 				{
-					text = "  NvimTree",
+					text = "  neo-tree",
 					fg = yellow,
-					bg = get_hex("NvimTreeNormal", "bg"),
+					bg = get_hex("NeoTreeNormal", "bg"),
 					style = "bold",
 				},
 			},

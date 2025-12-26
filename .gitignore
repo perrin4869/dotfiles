@@ -15,6 +15,7 @@ home/.local/share/nvim/shada/
 home/.local/share/nvim/workspaces
 home/.local/share/nvim/project_nvim/
 home/.local/share/nvim/mason/
+home/.local/share/nvim/neo-tree.nvim.log
 
 # treesitter
 home/.local/share/nvim/site/parser-info/

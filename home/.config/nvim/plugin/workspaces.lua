@@ -21,9 +21,13 @@ require("workspaces").setup({
 
 				local wins = vim.api.nvim_list_wins()
 				for _, w in ipairs(wins) do
-					local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
-					if bufname:match("NvimTree_") ~= nil then
-						require("nvim-tree.api").tree.toggle({ focus = false })
+					-- ex bufname neo-tree filesystem [1]
+					local bufnr = vim.api.nvim_win_get_buf(w)
+					local bufname = vim.api.nvim_buf_get_name(bufnr)
+					if bufname:match("neo%-tree filesystem") ~= nil then
+						vim.api.nvim_win_close(w, true)
+						vim.api.nvim_buf_delete(bufnr, { force = true })
+						vim.cmd.Neotree("show")
 						break
 					end
 				end

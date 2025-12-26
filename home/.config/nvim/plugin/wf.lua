@@ -77,7 +77,7 @@ local wk_map = {
 	["<Leader>d"] = "dap",
 	["<Leader>m"] = "treesj",
 	["<Leader>q"] = "persistence",
-	["<Leader>n"] = "nvim-tree",
+	["<Leader>n"] = "neotree",
 	[require("pickers").prefix] = "telescope",
 }
 

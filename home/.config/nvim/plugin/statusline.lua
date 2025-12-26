@@ -101,7 +101,7 @@ defer.on_load("lualine", function(lualine)
 			lualine_y = { "progress" },
 			lualine_z = { "location" },
 		},
-		extensions = { "fugitive", "mason", "nvim-tree", "oil", "quickfix", "trouble", "nvim-dap-ui" },
+		extensions = { "fugitive", "mason", "neo-tree", "oil", "quickfix", "trouble", "nvim-dap-ui" },
 	})
 end)
 

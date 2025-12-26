@@ -156,21 +156,42 @@ function M.hook(modname, loader)
 end
 
 local function hook(modname)
-	if hooks[modname] == nil then
+	local match_key = nil
+	local loader_key = nil
+
+	if hooks[modname] then
+		match_key = modname
+		loader_key = hooks[modname]
+	else
+		-- prefix match
+		for hook_mod, target_id in pairs(hooks) do
+			local escaped = hook_mod:gsub("%-", "%%-")
+			if modname:match("^" .. escaped .. "%.") then
+				-- only match prefix if a package exists for this loader
+				-- this way, if a plugin/ script was loaded and requires a lua
+				-- module in the plugin, it won't trigger the load
+				if pkgs[target_id] ~= nil then
+					match_key = hook_mod
+					loader_key = target_id
+					break
+				end
+			end
+		end
+	end
+
+	-- no match found, or prefix match didn't meet the 'pkgs' requirement
+	if not match_key then
 		return nil
 	end
 
-	local loader = hooks[modname]
-	-- remove from the lazy list so we don't loop
-	hooks[modname] = nil
+	hooks[match_key] = nil
 
-	if loaders[loader] == nil then
-		return nil
-	end
+	---@cast loader_key string
+	M.ensure(loader_key)
 
-	M.ensure(loader)
+	-- now that the RTP is updated and pre-configs run, require the actual module
 	local mod = require(modname)
-	-- lua expects a function that returns the module.
+
 	return function()
 		return mod
 	end

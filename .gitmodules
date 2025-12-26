@@ -246,7 +246,7 @@
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
 [submodule "home/.local/share/nvim/site/pack/default/start/trouble.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/trouble.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
 	url = https://github.com/folke/trouble.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring

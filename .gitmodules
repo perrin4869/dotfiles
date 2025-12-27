@@ -267,7 +267,7 @@
 	path = home/.vim/pack/default/start/close-buffers.vim
 	url = https://github.com/Asheq/close-buffers.vim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/plenary.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/plenary.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-cmp"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-cmp

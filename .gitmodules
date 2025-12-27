@@ -588,3 +588,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/multicursor.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/multicursor.nvim
 	url = https://github.com/jake-stewart/multicursor.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-surround"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-surround
+	url = https://github.com/kylechui/nvim-surround.git

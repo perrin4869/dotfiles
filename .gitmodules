@@ -591,3 +591,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-surround"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-surround
 	url = https://github.com/kylechui/nvim-surround.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/substitute.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/substitute.nvim
+	url = https://github.com/gbprod/substitute.nvim.git

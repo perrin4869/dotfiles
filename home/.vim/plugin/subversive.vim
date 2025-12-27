@@ -1,6 +1,6 @@
 " Replace operator operator
-nmap <Leader>r <plug>(SubversiveSubstitute)
-nmap <Leader>rr <plug>(SubversiveSubstituteLine)
-nmap <Leader>R <plug>(SubversiveSubstituteToEndOfLine)
+nmap <leader>r <plug>(SubversiveSubstitute)
+nmap <leader>rr <plug>(SubversiveSubstituteLine)
+nmap <leader>R <plug>(SubversiveSubstituteToEndOfLine)
 
 xmap <leader>r <plug>(SubversiveSubstitute)

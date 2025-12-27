@@ -1,1 +1,0 @@
-../../../.vim/plugin/subversive.vim

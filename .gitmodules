@@ -585,3 +585,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim
 	url = https://github.com/nvim-neo-tree/neo-tree.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/multicursor.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/multicursor.nvim
+	url = https://github.com/jake-stewart/multicursor.nvim.git

@@ -19,9 +19,9 @@ defer.on_event(function()
 			local utils = require("utils")
 			local get_opts = utils.create_get_opts({ buffer = args.buf, silent = true })
 
-			vim.keymap.set("n", "<leader>mm", toggle, get_opts({ desc = "treesj.toggle" }))
-			vim.keymap.set("n", "<leader>mj", join, get_opts({ desc = "treesj.join" }))
-			vim.keymap.set("n", "<leader>ms", split, get_opts({ desc = "treesj.split" }))
+			vim.keymap.set("n", "<leader>ts", toggle, get_opts({ desc = "treesj.toggle" }))
+			vim.keymap.set("n", "<C-j>", join, get_opts({ desc = "treesj.join" }))
+			vim.keymap.set("n", "<C-k>", split, get_opts({ desc = "treesj.split" }))
 		end,
 	})
 end, "BufEnter", { name = "treesitter-treesj" })

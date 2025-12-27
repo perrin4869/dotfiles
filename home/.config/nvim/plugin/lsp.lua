@@ -67,7 +67,7 @@ defer.on_event(function()
 			end
 
 			if client ~= nil and client.server_capabilities.inlayHintProvider then
-				vim.keymap.set("n", "<leader>i", function()
+				vim.keymap.set("n", "<leader>ti", function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 				end, { silent = true, buffer = bufnr, desc = "lsp.inlayhints.toggle" })
 				-- this is too verbose, so do not enable this by default

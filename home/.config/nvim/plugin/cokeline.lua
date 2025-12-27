@@ -83,7 +83,7 @@ local function setup()
 		},
 	})
 
-	vim.keymap.set("n", "<leader>o", function()
+	vim.keymap.set("n", "<leader>p", function()
 		pick("focus")
 	end, { silent = true, noremap = true, desc = "cokeline.pick.focus" })
 end

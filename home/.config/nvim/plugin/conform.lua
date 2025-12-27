@@ -68,7 +68,7 @@ defer.on_load("conform", function(conform)
 			end
 		end)
 	end, get_opts({ desc = "conform.format" }))
-	vim.keymap.set("n", "<leader>ft", toggle_autoformat, get_opts({ desc = "conform.toggle_autoformat" }))
+	vim.keymap.set("n", "<leader>tf", toggle_autoformat, get_opts({ desc = "conform.toggle_autoformat" }))
 
 	vim.api.nvim_create_user_command("Format", function(args)
 		local range = nil

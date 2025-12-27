@@ -73,10 +73,12 @@ vim.keymap.set(
 local wk_map = {
 	["<Leader>"] = "<Leader>",
 	["<Leader>b"] = "buffers",
-	["<Leader>h"] = "hunks",
+	["<Leader>c"] = "osc52",
 	["<Leader>d"] = "dap",
-	["<Leader>q"] = "persistence",
+	["<Leader>h"] = "hunks",
 	["<Leader>n"] = "neotree",
+	["<Leader>t"] = "toggle",
+	["<Leader>q"] = "persistence",
 	[require("pickers").prefix] = "telescope",
 }
 

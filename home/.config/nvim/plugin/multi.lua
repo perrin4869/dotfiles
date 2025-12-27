@@ -1,6 +1,7 @@
 local utils = require("utils")
 local defer = require("defer")
-defer.on_load("multicursor-nvim", function(mc)
+defer.on_load("multicursor-nvim", function()
+	local mc = require("multicursor-nvim")
 	mc.setup()
 
 	-- Mappings defined in a keymap layer only apply when there are
@@ -32,7 +33,8 @@ defer.on_load("multicursor-nvim", function(mc)
 	hl(0, "MultiCursorDisabledCursor", { reverse = true })
 	hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
 	hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
-end, "multicursor.nvim")
+end)
+defer.pack("multicursor-nvim", "multicursor.nvim")
 
 local call = defer.call
 local with_mc = defer.with("multicursor-nvim")

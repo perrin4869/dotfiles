@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("gitsigns", function(gitsigns)
-	gitsigns.setup({
+defer.on_load("gitsigns", function()
+	require("gitsigns").setup({
 		on_attach = function(bufnr)
 			local gs = package.loaded.gitsigns
 
@@ -75,6 +75,6 @@ defer.on_load("gitsigns", function(gitsigns)
 			map({ "o", "x" }, "ih", gs.select_hunk, { desc = "gitsigns.select_hunk" })
 		end,
 	})
-end, "gitsigns.nvim")
-
+end)
+defer.pack("gitsigns", "gitsigns.nvim")
 defer.on_event("gitsigns", { "BufReadPost", "BufWritePost" })

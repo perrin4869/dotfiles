@@ -3,7 +3,8 @@ local defer = require("defer")
 local utils = require("utils")
 local pickers = require("pickers")
 
-defer.on_load("telescope", function(telescope)
+defer.on_load("telescope", function()
+	local telescope = require("telescope")
 	telescope.setup({
 		pickers = {
 			find_files = { hidden = true },
@@ -15,7 +16,8 @@ defer.on_load("telescope", function(telescope)
 	for _, ext in ipairs(extensions) do
 		telescope.load_extension(ext)
 	end
-end, "telescope.nvim")
+end)
+defer.pack("telescope", "telescope.nvim")
 defer.cmd("Telescope", "telescope")
 
 -- Mappings.

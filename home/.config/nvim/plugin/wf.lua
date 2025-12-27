@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("wf", function(wf)
-	wf.setup()
+defer.on_load("wf", function()
+	require("wf").setup()
 end)
 local with_wf = defer.with("wf")
 

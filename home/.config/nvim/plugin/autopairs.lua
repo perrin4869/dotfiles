@@ -1,5 +1,6 @@
 local defer = require("defer")
-defer.on_load("nvim-autopairs", function(npairs)
+defer.on_load("nvim-autopairs", function()
+	local npairs = require("nvim-autopairs")
 	local Rule = require("nvim-autopairs.rule")
 	local cond = require("nvim-autopairs.conds")
 

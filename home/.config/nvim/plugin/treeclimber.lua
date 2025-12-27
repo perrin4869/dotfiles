@@ -1,8 +1,9 @@
 local defer = require("defer")
 
-defer.on_load("nvim-treeclimber", function(treeclimber)
-	treeclimber.setup({})
-end, "nvim-treeclimber")
+defer.on_load("nvim-treeclimber", function()
+	require("nvim-treeclimber").setup({})
+end)
+defer.pack("nvim-treeclimber", "nvim-treeclimber")
 
 local with_tc = defer.with("nvim-treeclimber")
 

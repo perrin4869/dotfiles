@@ -1,8 +1,8 @@
 local defer = require("defer")
 local utils = require("utils")
 
-defer.on_load("flash", function(flash)
-	flash.setup({
+defer.on_load("flash", function()
+	require("flash").setup({
 		modes = { char = { enabled = false } },
 	})
 end)

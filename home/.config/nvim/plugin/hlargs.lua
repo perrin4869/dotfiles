@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("hlargs", function(hlargs)
-	hlargs.setup({
+defer.on_load("hlargs", function()
+	require("hlargs").setup({
 		disable = function(_, bufnr)
 			if vim.b[bufnr].semantic_tokens then
 				return true
@@ -37,7 +37,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local caps = client.server_capabilities
 		if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
 			vim.b[bufnr].semantic_tokens = true
-			defer.ensure("hlargs").disable_buf(bufnr)
+			defer.require("hlargs").disable_buf(bufnr)
 		end
 	end,
 })

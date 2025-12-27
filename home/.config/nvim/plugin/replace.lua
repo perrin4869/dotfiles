@@ -1,8 +1,9 @@
 local defer = require("defer")
 
-defer.on_load("substitute", function(substitute)
-	substitute.setup()
-end, "substitute.nvim")
+defer.on_load("substitute", function()
+	require("substitute").setup()
+end)
+defer.pack("substitute", "substitute.nvim")
 local with = defer.with("substitute")
 local call = defer.call
 

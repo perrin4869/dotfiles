@@ -1,6 +1,6 @@
 local defer = require("defer")
-defer.on_load("nvim-lightbulb", function(lightbulb)
-	lightbulb.setup({
+defer.on_load("nvim-lightbulb", function()
+	require("nvim-lightbulb").setup({
 		autocmd = { enabled = true },
 	})
 end)

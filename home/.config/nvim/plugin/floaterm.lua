@@ -1,0 +1,7 @@
+local defer = require("defer")
+defer.pack("floaterm", "vim-floaterm")
+defer.cmd("FloatermToggle", "floaterm")
+defer.cmd("FloatermNew", "floaterm")
+defer.cmd("FloatermPrev", "floaterm")
+defer.cmd("FloatermNext", "floaterm")
+defer.cmd("FloatermKill", "floaterm")

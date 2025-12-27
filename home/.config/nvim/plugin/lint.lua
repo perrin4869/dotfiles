@@ -1,6 +1,6 @@
 local defer = require("defer")
-defer.on_load("lint", function(lint)
-	lint.linters_by_ft = {
+defer.on_load("lint", function()
+	require("lint").linters_by_ft = {
 		lua = { "luacheck" },
 		css = { "stylelint" },
 		javascript = { "eslint_d" },
@@ -9,7 +9,8 @@ defer.on_load("lint", function(lint)
 		typescriptreact = { "eslint_d" },
 		json = { "jsonlint" },
 	}
-end, "nvim-lint")
+end)
+defer.pack("lint", "nvim-lint")
 
 -- BufEnter is probably overkill
 vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost", "TextChanged" }, {

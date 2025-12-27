@@ -1,9 +1,10 @@
 local defer = require("defer")
 local utils = require("utils")
 
-defer.on_load("persistence", function(persistence)
-	persistence.setup()
-end, "persistence.nvim")
+defer.on_load("persistence", function()
+	require("persistence").setup()
+end)
+defer.pack("persistence", "persistence.nvim")
 defer.hook("persistence")
 defer.on_event("persistence", "BufReadPre")
 

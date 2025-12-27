@@ -183,9 +183,9 @@ defer.on_event(function()
 
 	require("nvim-dap-virtual-text").setup()
 
-	defer.on_load("dapui", function(dapui)
+	defer.on_load("dapui", function()
 		-- nvim-dap-ui
-		dapui.setup()
+		require("dapui").setup()
 	end)
 	defer.hook("dapui")
 

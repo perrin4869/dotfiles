@@ -1,9 +1,10 @@
 local defer = require("defer")
 local utils = require("utils")
 
-defer.on_load("trouble", function(trouble)
-	trouble.setup()
-end, "trouble.nvim")
+defer.on_load("trouble", function()
+	require("trouble").setup()
+end)
+defer.pack("trouble", "trouble.nvim")
 defer.cmd("Trouble", "trouble")
 local with_trouble = defer.with("trouble")
 

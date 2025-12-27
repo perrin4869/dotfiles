@@ -4,9 +4,10 @@ local utils = require("utils")
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-defer.on_load("neo-tree", function(tree)
-	tree.setup({})
-end, "neo-tree.nvim")
+defer.on_load("neo-tree", function()
+	require("neo-tree").setup({})
+end)
+defer.pack("neo-tree", "neo-tree.nvim")
 defer.cmd("Neotree", "neo-tree")
 
 local opts = { noremap = true, silent = true }

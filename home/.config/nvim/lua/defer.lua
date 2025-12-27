@@ -49,22 +49,21 @@ function M.ensure(name)
 		pkgs[name] = nil -- Deleting from a basic table is always fine
 	end
 
-	local mod = require(name)
 	if loader then
-		loader(mod)
+		loader()
 	end
-
-	return mod
 end
 
 ---@param name string
----@param fn function|string?
----@param pack string?
-function M.on_load(name, fn, pack)
-	if type(fn) == "string" then
-		pack = fn
-		fn = nil
-	end
+---@return any
+function M.require(name)
+	M.ensure(name)
+	return require(name)
+end
+
+---@param name string
+---@param fn function
+function M.on_load(name, fn)
 	if fn then
 		if loaders[name] then
 			loaders[name] = zip(loaders[name], fn)
@@ -72,10 +71,14 @@ function M.on_load(name, fn, pack)
 			loaders[name] = fn
 		end
 	end
+end
 
-	if pack then
-		pkgs[name] = pack
+function M.pack(name, pack)
+	if not pack then
+		pack = name
 	end
+
+	pkgs[name] = pack
 end
 
 --- Wraps a module for lazy execution via a callback.
@@ -85,7 +88,7 @@ function M.with(name)
 	return function(callback)
 		return function(...)
 			if type(callback) == "function" then
-				return callback(M.ensure(name), ...)
+				return callback(M.require(name), ...)
 			end
 		end
 	end

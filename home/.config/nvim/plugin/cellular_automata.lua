@@ -1,6 +1,6 @@
 local defer = require("defer")
 
-defer.on_load("cellular-automaton", "cellular-automaton.nvim")
+defer.pack("cellular-automaton", "cellular-automaton.nvim")
 defer.hook("cellular-automaton")
 defer.cmd("CellularAutomaton", "cellular-automaton")
 

@@ -1,6 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("conform", function(conform)
+defer.on_load("conform", function()
+	local conform = require("conform")
 	local utils = require("utils")
 
 	local json = { "prettierd", "prettier", stop_after_first = true }
@@ -93,5 +94,6 @@ defer.on_load("conform", function(conform)
 		toggle_autoformat,
 		{ desc = "Toggle autoformat-on-save", bang = true }
 	)
-end, "conform.nvim")
+end)
+defer.pack("conform", "conform.nvim")
 defer.on_event("conform", "BufReadPost")

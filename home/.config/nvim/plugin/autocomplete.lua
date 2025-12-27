@@ -1,8 +1,9 @@
 local defer = require("defer")
 
-defer.on_load("cmp_nvim_lsp", "cmp-nvim-lsp")
-defer.on_load("cmp_git", function(cmp_git)
-	cmp_git.setup({
+defer.pack("cmp_nvim_lsp", "cmp-nvim-lsp")
+defer.on_load("cmp_git", function()
+	local git = require("cmp_git")
+	git.setup({
 		-- defaults
 		filetypes = { "gitcommit" },
 		github = {
@@ -29,9 +30,12 @@ defer.on_load("cmp_git", function(cmp_git)
 			},
 		},
 	})
-end, "cmp-git")
+end)
+defer.pack("cmp_git", "cmp-git")
 
-defer.on_load("cmp", function(cmp)
+defer.on_load("cmp", function()
+	local cmp = require("cmp")
+
 	defer.ensure("cmp_nvim_lsp")
 	defer.ensure("cmp_git")
 	vim.cmd.packadd("cmp-buffer")
@@ -197,5 +201,6 @@ defer.on_load("cmp", function(cmp)
 		vim.b.matchup_matchparen_enabled = true
 		-- vim.g.matchup_enabled = true
 	end)
-end, "nvim-cmp")
+end)
+defer.pack("cmp", "nvim-cmp")
 defer.on_event("cmp", "BufReadPre")

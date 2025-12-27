@@ -1,6 +1,6 @@
 local defer = require("defer")
-defer.on_load("nvim-next", function(next)
-	next.setup({
+defer.on_load("nvim-next", function()
+	require("nvim-next").setup({
 		default_mappings = {
 			repeat_style = "original",
 		},

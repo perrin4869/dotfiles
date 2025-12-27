@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("nvim-treesitter-textobjects", function(textobjects)
-	textobjects.setup({
+defer.on_load("nvim-treesitter-textobjects", function()
+	require("nvim-treesitter-textobjects").setup({
 		select = {
 			-- Automatically jump forward to textobj, similar to targets.vim
 			lookahead = true,

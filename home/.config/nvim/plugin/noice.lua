@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("noice", function(noice)
-	noice.setup({
+defer.on_load("noice", function()
+	require("noice").setup({
 		lsp = {
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {

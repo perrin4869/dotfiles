@@ -1,7 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("treesj", function(tsj)
-	tsj.setup({
+defer.on_load("treesj", function()
+	require("treesj").setup({
 		use_default_keymaps = false,
 	})
 end)

@@ -1,6 +1,7 @@
 local defer = require("defer")
 
-defer.on_load("lualine", function(lualine)
+defer.on_load("lualine", function()
+	local lualine = require("lualine")
 	local function paste()
 		if vim.o.paste then
 			return "PASTE"

@@ -4,6 +4,8 @@ defer.on_load("nvim-autopairs", function(npairs)
 	local cond = require("nvim-autopairs.conds")
 
 	npairs.setup({
+		-- https://github.com/windwp/nvim-autopairs/issues/314
+		enable_abbr = true,
 		check_ts = true,
 		fast_wrap = {
 			map = "<M-e>",
@@ -21,24 +23,20 @@ defer.on_load("nvim-autopairs", function(npairs)
 	local brackets = { { "(", ")" }, { "[", "]" }, { "{", "}" } }
 	npairs.add_rules({
 		Rule(" ", " ")
-			:with_pair(function(opts)
+			:with_pair(cond.done())
+			:replace_endpair(function(opts)
 				local pair = opts.line:sub(opts.col - 1, opts.col)
-				return vim.tbl_contains({
-					brackets[1][1] .. brackets[1][2],
-					brackets[2][1] .. brackets[2][2],
-					brackets[3][1] .. brackets[3][2],
-				}, pair)
+				if vim.tbl_contains({ "()", "{}", "[]" }, pair) then
+					return " " -- it return space here
+				end
+				return "" -- return empty
 			end)
 			:with_move(cond.none())
 			:with_cr(cond.none())
 			:with_del(function(opts)
 				local col = vim.api.nvim_win_get_cursor(0)[2]
 				local context = opts.line:sub(col - 1, col + 2)
-				return vim.tbl_contains({
-					brackets[1][1] .. "  " .. brackets[1][2],
-					brackets[2][1] .. "  " .. brackets[2][2],
-					brackets[3][1] .. "  " .. brackets[3][2],
-				}, context)
+				return vim.tbl_contains({ "(  )", "{  }", "[  ]" }, context)
 			end),
 	})
 	for _, bracket in pairs(brackets) do

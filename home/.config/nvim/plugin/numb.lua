@@ -1,1 +1,5 @@
-require("numb").setup()
+local defer = require("defer")
+defer.on_load("numb", function(numb)
+	numb.setup()
+end, "numb.nvim")
+defer.very_lazy("numb")

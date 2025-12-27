@@ -438,7 +438,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
 	url = https://github.com/mason-org/mason.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-lint
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-lint
 	url = https://github.com/mfussenegger/nvim-lint.git
 [submodule "home/.local/share/nvim/site/pack/default/start/cmp-git"]
 	path = home/.local/share/nvim/site/pack/default/opt/cmp-git
@@ -484,7 +484,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/nvim-nio
 	url = https://github.com/nvim-neotest/nvim-nio.git
 [submodule "home/.local/share/nvim/site/pack/default/start/numb.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/numb.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/numb.nvim
 	url = https://github.com/nacro90/numb.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/oil.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/oil.nvim

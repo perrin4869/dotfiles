@@ -390,7 +390,7 @@
 	path = home/.vim/pack/default/start/vim-matchup
 	url = https://github.com/andymass/vim-matchup.git
 [submodule "home/.local/share/nvim/site/pack/default/start/dropbar.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/dropbar.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/dropbar.nvim
 	url = https://github.com/Bekaboo/dropbar.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/hlargs.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/hlargs.nvim

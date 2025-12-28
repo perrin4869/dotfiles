@@ -1,8 +1,9 @@
-local utils = require("utils")
+local defer = require("defer")
+defer.pack("dropbar", "dropbar.nvim")
+defer.on_event("dropbar", { "BufEnter" })
 
-local opts = { noremap = true, silent = true }
-local get_opts = utils.create_get_opts(opts)
-
-vim.keymap.set("n", "<C-g>b", function()
+local map = vim.keymap.set
+local pick = defer.with("dropbar")(function()
 	require("dropbar.api").pick()
-end, get_opts({ desc = "dropbar.pick" }))
+end)
+map("n", "<leader>o", pick, { noremap = true, silent = true, desc = "dropbar.pick" })

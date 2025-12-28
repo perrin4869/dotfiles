@@ -128,9 +128,6 @@ nnoremap <silent> <leader>g <C-^>
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <backspace> <cmd>noh<CR>
 
-xnoremap ae :<C-u>normal! ggVG<CR>
-onoremap ae :execute "normal! vae"<CR>
-
 " nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 " vnoremap <Space> zf
 

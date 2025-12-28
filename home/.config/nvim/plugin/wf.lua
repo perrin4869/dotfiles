@@ -73,7 +73,7 @@ vim.keymap.set(
 local wk_map = {
 	["<Leader>"] = "<Leader>",
 	["<Leader>b"] = "buffers",
-	["<Leader>c"] = "osc52",
+	-- ["<Leader>c"] = "osc52",
 	["<Leader>d"] = "dap",
 	["<Leader>h"] = "hunks",
 	["<Leader>n"] = "neotree",

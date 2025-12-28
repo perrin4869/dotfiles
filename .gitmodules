@@ -315,16 +315,16 @@
 	path = home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 	url = https://github.com/nvim-telescope/telescope-fzf-native.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-dap
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap
 	url = https://github.com/mfussenegger/nvim-dap.git
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-dap.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-dap.nvim
 	url = https://github.com/nvim-telescope/telescope-dap.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap-virtual-text"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-dap-virtual-text
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text
 	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap-ui"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-dap-ui
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui
 	url = https://github.com/rcarriga/nvim-dap-ui.git
 [submodule "home/.vim/pack/default/start/vim-floaterm"]
 	path = home/.vim/pack/default/start/vim-floaterm

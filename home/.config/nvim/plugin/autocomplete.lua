@@ -1,73 +1,5 @@
 local defer = require("defer")
 
-defer.on_load("cmp_git", function()
-	require("cmp_git").setup({
-		-- defaults
-		filetypes = { "gitcommit" },
-		github = {
-			issues = {
-				filter = "all", -- assigned, created, mentioned, subscribed, all, repos
-				limit = 100,
-				state = "open", -- open, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
-		},
-		gitlab = {
-			issues = {
-				limit = 100,
-				state = "opened", -- opened, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
-			merge_requests = {
-				limit = 100,
-				state = "opened", -- opened, closed, locked, merged
-			},
-		},
-	})
-end)
-defer.pack("cmp_git", "cmp-git")
-defer.pack("cmp_buffer", "cmp-buffer")
-defer.after("cmp_buffer")
-defer.pack("cmp_calc", "cmp-calc")
-defer.after("cmp_calc")
-defer.pack("cmp_cmdline", "cmp-cmdline")
-defer.after("cmp_cmdline")
-defer.pack("cmp_emoji", "cmp-emoji")
-defer.after("cmp_emoji")
-defer.pack("cmp_nvim_lsp", "cmp-nvim-lsp")
-defer.after("cmp_nvim_lsp")
-defer.pack("cmp_nvim_lua", "cmp-nvim-lua")
-defer.after("cmp_nvim_lua")
-defer.pack("cmp_path", "cmp-path")
-defer.after("cmp_path")
-defer.pack("cmp_spell", "cmp-spell")
-defer.after("cmp_spell")
-defer.pack("cmp_tmux", "cmp-tmux")
-defer.after("cmp_tmux")
-defer.pack("cmp_treesitter", "cmp-treesitter")
-defer.after("cmp_treesitter")
-defer.pack("cmp_vsnip", "cmp-vsnip")
-defer.after("cmp_vsnip")
-
-defer.on_postload("cmp", function()
-	defer.ensure("cmp_git")
-	defer.ensure("cmp_buffer")
-	defer.ensure("cmp_calc")
-	defer.ensure("cmp_cmdline")
-	defer.ensure("cmp_emoji")
-	defer.ensure("cmp_nvim_lsp")
-	defer.ensure("cmp_nvim_lua")
-	defer.ensure("cmp_path")
-	defer.ensure("cmp-spell")
-	defer.ensure("cmp_tmux")
-	defer.ensure("cmp_treesitter")
-	defer.ensure("cmp_vsnip")
-end)
-
 defer.on_load("cmp", function()
 	local cmp = require("cmp")
 	local lspkind = require("lspkind")
@@ -210,4 +142,73 @@ defer.on_load("cmp", function()
 	end)
 end)
 defer.pack("cmp", "nvim-cmp")
-defer.on_event("cmp", "BufReadPre")
+defer.on_event("cmp", { "BufReadPost", "BufNewFile" })
+
+defer.on_load("cmp_git", function()
+	require("cmp_git").setup({
+		-- defaults
+		filetypes = { "gitcommit" },
+		github = {
+			issues = {
+				filter = "all", -- assigned, created, mentioned, subscribed, all, repos
+				limit = 100,
+				state = "open", -- open, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+		},
+		gitlab = {
+			issues = {
+				limit = 100,
+				state = "opened", -- opened, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+			merge_requests = {
+				limit = 100,
+				state = "opened", -- opened, closed, locked, merged
+			},
+		},
+	})
+end)
+defer.pack("cmp_git", "cmp-git")
+defer.pack("cmp_buffer", "cmp-buffer")
+defer.after("cmp_buffer")
+defer.pack("cmp_calc", "cmp-calc")
+defer.after("cmp_calc")
+defer.pack("cmp_cmdline", "cmp-cmdline")
+defer.after("cmp_cmdline")
+defer.pack("cmp_emoji", "cmp-emoji")
+defer.after("cmp_emoji")
+defer.pack("cmp_nvim_lsp", "cmp-nvim-lsp")
+defer.after("cmp_nvim_lsp")
+defer.pack("cmp_nvim_lua", "cmp-nvim-lua")
+defer.after("cmp_nvim_lua")
+defer.pack("cmp_path", "cmp-path")
+defer.after("cmp_path")
+defer.pack("cmp_spell", "cmp-spell")
+defer.after("cmp_spell")
+defer.pack("cmp_tmux", "cmp-tmux")
+defer.after("cmp_tmux")
+defer.pack("cmp_treesitter", "cmp-treesitter")
+defer.after("cmp_treesitter")
+defer.pack("cmp_vsnip", "cmp-vsnip")
+defer.after("cmp_vsnip")
+
+defer.on_load("cmp_sources", function()
+	defer.ensure("cmp_git")
+	defer.ensure("cmp_buffer")
+	defer.ensure("cmp_calc")
+	defer.ensure("cmp_cmdline")
+	defer.ensure("cmp_emoji")
+	defer.ensure("cmp_nvim_lsp")
+	defer.ensure("cmp_nvim_lua")
+	defer.ensure("cmp_path")
+	defer.ensure("cmp-spell")
+	defer.ensure("cmp_tmux")
+	defer.ensure("cmp_treesitter")
+	defer.ensure("cmp_vsnip")
+end)
+defer.on_event("cmp_sources", "InsertEnter", { name = "cmp_sources" })

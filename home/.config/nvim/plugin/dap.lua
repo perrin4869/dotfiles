@@ -140,6 +140,8 @@ defer.on_load("dap", function()
 		end
 
 		vim.keymap.set("n", "K", require("dap.ui.widgets").hover, { silent = true })
+
+		defer.ensure("nvim-dap-virtual-text")
 	end
 
 	dap.listeners.after["event_terminated"]["me"] = function()
@@ -161,7 +163,6 @@ defer.on_load("dap", function()
 		end,
 	})
 
-	defer.ensure("nvim-dap-virtual-text")
 	defer.on_postload("telescope", function()
 		require("telescope").load_extension("dap")
 	end)

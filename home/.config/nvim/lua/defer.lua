@@ -121,9 +121,11 @@ function M.ensure(name)
 	mod.loaded = true
 
 	-- if some of the deps fails to load, abort
-	if not vim.iter(mod.deps):all(M.ensure) then
-		mod.disabled = true
-		return false
+	for _, dep in ipairs(mod.deps) do
+		if not M.ensure(dep) then
+			mod.disabled = true
+			return false
+		end
 	end
 
 	if mod.pre then

@@ -1,7 +1,8 @@
 local defer = require("defer")
-defer.on_event(function()
+defer.on_load("rainbow-delimiters", function()
 	vim.cmd.packadd("rainbow-delimiters.nvim")
-end, "BufEnter", { name = "rainbow-delimiters" })
+end)
+defer.on_event("rainbow-delimiters", "BufEnter")
 
 vim.g.rainbow_delimiters = {
 	strategy = {

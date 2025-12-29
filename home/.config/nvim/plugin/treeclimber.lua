@@ -29,7 +29,7 @@ local siblings_backward = plug("<Plug>(treeclimber-select-siblings-backward)")
 local siblings_forward = plug("<Plug>(treeclimber-select-siblings-forward)")
 local select_top_level = plug("<Plug>(treeclimber-select-top-level)")
 
-defer.on_event(function()
+defer.on_load("treesitter-treeclimber", function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
@@ -57,4 +57,5 @@ defer.on_event(function()
 			map({ "n", "x", "o" }, "<M-g>", select_top_level, "treeclimber: top level")
 		end,
 	})
-end, "BufEnter", { name = "treesitter-treeclimber" })
+end)
+defer.on_event("treesitter-treeclimber", "BufEnter")

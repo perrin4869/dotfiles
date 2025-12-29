@@ -1,4 +1,5 @@
 local defer = require("defer")
+defer.deps("ccls", "lspconfig")
 defer.on_load("ccls", function()
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,

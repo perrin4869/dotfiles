@@ -10,10 +10,6 @@ M.prefix = "<leader><leader>"
 local get_opts = utils.create_get_opts({ noremap = true, silent = true })
 M.map = function(lhs, rhs, opts)
 	opts = opts or {}
-	if opts.prefix ~= false then
-		lhs = M.prefix .. lhs
-	end
-	opts.prefix = nil
 
 	if type(rhs) == "function" then
 		vim.keymap.set("n", lhs, with_telescope(rhs), get_opts({ desc = "telescope." .. opts.desc }))

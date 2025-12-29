@@ -51,8 +51,8 @@ defer.on_event(function()
 			-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 			-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
 			local pickers = require("pickers")
-			pickers.map("<leader>ds", "lsp_document_symbols", { prefix = false })
-			pickers.map("<leader>ws", "lsp_dynamic_workspace_symbols", { prefix = false })
+			pickers.map("<leader>ds", "lsp_document_symbols")
+			pickers.map("<leader>ws", "lsp_dynamic_workspace_symbols")
 			-- https://github.com/nvim-telescope/telescope.nvim/issues/964
 			-- uses dynamic because most language servers return an empty list on an empty query
 

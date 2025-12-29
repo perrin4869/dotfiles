@@ -73,7 +73,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local get_opts = utils.create_get_opts(opts)
 
 		local pickers = require("pickers")
-		pickers.map("m", function(telescope)
+		pickers.map(pickers.prefix .. "m", function(telescope)
 			telescope.extensions.metals.commands()
 		end, { desc = "metals.commands.telescope" })
 

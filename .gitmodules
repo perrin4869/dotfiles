@@ -226,7 +226,7 @@
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lspconfig
 	url = https://github.com/neovim/nvim-lspconfig
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-metals"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-metals
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-metals
 	url = https://github.com/scalameta/nvim-metals
 [submodule "deps/mpv-mpris"]
 	path = deps/mpv-mpris

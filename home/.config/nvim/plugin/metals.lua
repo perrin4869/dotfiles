@@ -1,5 +1,7 @@
 local defer = require("defer")
 
+defer.pack("metals", "nvim-metals")
+local with_metals = defer.with("metals")
 local metals_config = defer.lazy(function()
 	local lsp = require("lsp")
 	local metals = require("metals")
@@ -37,7 +39,9 @@ local metals_config = defer.lazy(function()
 		},
 	}
 
-	metals.setup_dap()
+	defer.with("dap")(function()
+		metals.setup_dap()
+	end)
 	return config
 end)
 
@@ -46,9 +50,9 @@ local group = vim.api.nvim_create_augroup("Initialize_metals", {})
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "scala", "sbt", "java" },
 	group = group,
-	callback = function()
-		require("metals").initialize_or_attach(metals_config())
-	end,
+	callback = with_metals(function(metals)
+		metals.initialize_or_attach(metals_config())
+	end),
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
@@ -71,31 +75,25 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local buffer = args.buf
 		local opts = { noremap = true, silent = true, buffer = buffer }
 		local get_opts = utils.create_get_opts(opts)
+		local map = function(mode, lhs, rhs, desc)
+			vim.keymap.set(mode, lhs, rhs, get_opts({ desc = "metals." .. desc }))
+		end
 
 		local pickers = require("pickers")
-		pickers.map(pickers.prefix .. "m", function(telescope)
+		pickers.map(pickers.prefix .. "l", function(telescope)
 			telescope.extensions.metals.commands()
 		end, { desc = "metals.commands.telescope" })
 
+		local prefix = "<leader>l"
 		-- Toggle panel with Tree Views
-		vim.keymap.set("n", "<leader>tv", tvp.toggle_tree_view, get_opts({ desc = "metals.tree_view.toggle" }))
+		map("n", prefix .. "v", tvp.toggle_tree_view, "tree_view.toggle")
 		-- Reveal current current class (trait or object) in Tree View 'metalsPackages'
-		vim.keymap.set("n", "<leader>tf", tvp.reveal_in_tree, get_opts({ desc = "metals.tree_view.reveal_in_tree" }))
+		map("n", prefix .. "f", tvp.reveal_in_tree, "tree_view.reveal_in_tree")
 
-		vim.keymap.set(
-			"n",
-			"<leader>tt",
-			vim.cmd.MetalsSelectTestSuite,
-			get_opts({ desc = "metals.select_test_suite" })
-		)
-		vim.keymap.set("n", "<leader>tc", vim.cmd.MetalsSelectTestCase, get_opts({ desc = "metals.select_test_case" }))
+		map("n", prefix .. "t", vim.cmd.MetalsSelectTestSuite, "select_test_suite")
+		map("n", prefix .. "c", vim.cmd.MetalsSelectTestCase, "select_test_case")
 
-		vim.keymap.set(
-			"n",
-			lsp.keymaps.organize_imports,
-			metals.organize_imports,
-			get_opts({ desc = "metals.organize_imports" })
-		)
+		map("n", lsp.keymaps.organize_imports, metals.organize_imports, "organize_imports")
 		vim.api.nvim_buf_create_user_command(buffer, "OR", metals.organize_imports, { nargs = 0 })
 	end,
 })

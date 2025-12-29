@@ -102,9 +102,9 @@ function M.call(method, ...)
 	local nargs = select("#", ...) -- Get the count to handle nil correctly
 	return function(module)
 		if method then
-			return module[method](table.unpack(args, 1, nargs))
+			return module[method](unpack(args, 1, nargs))
 		end
-		return module(table.unpack(args, 1, nargs))
+		return module(unpack(args, 1, nargs))
 	end
 end
 

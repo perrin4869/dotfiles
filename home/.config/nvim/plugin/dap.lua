@@ -185,7 +185,7 @@ local map = function(mode, lhs, rhs, desc)
 	elseif t == "string" then
 		vim.keymap.set(mode, lhs, with_dap(call(rhs)), get_opts({ desc = "dap." .. rhs }))
 	else -- table
-		vim.keymap.set(mode, lhs, with_dap(call(table.unpack(rhs))), get_opts({ desc = "dap." .. rhs[1] }))
+		vim.keymap.set(mode, lhs, with_dap(call(unpack(rhs))), get_opts({ desc = "dap." .. rhs[1] }))
 	end
 end
 

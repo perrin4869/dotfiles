@@ -41,11 +41,15 @@ end
 
 -- https://github.com/lumen-oss/lz.n/wiki/lazy‐loading-nvim‐cmp-and-its-extensions
 local function trigger_load_with_after(plugin_name)
+	local res, rtp = pcall(require, "rtp_nvim")
+	if not res then
+		return
+	end
 	for _, dir in ipairs(vim.opt.packpath:get()) do
 		local glob = vim.fs.joinpath("pack", "*", "opt", plugin_name)
 		local plugin_dirs = vim.fn.globpath(dir, glob, nil, true, true)
 		if not vim.tbl_isempty(plugin_dirs) then
-			require("rtp_nvim").source_after_plugin_dir(plugin_dirs[1])
+			rtp.source_after_plugin_dir(plugin_dirs[1])
 			return
 		end
 	end

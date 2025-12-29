@@ -12,7 +12,7 @@ defer.on_load("telescope", function()
 	})
 
 	-- Load extensions only after telescope itself is initialized
-	local extensions = { "fzf", "dap", "neoclip", "file_browser", "workspaces", "git_grep" }
+	local extensions = { "fzf", "neoclip", "file_browser", "workspaces", "git_grep" }
 	for _, ext in ipairs(extensions) do
 		telescope.load_extension(ext)
 	end

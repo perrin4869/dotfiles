@@ -142,7 +142,7 @@ defer.on_load("cmp", function()
 	end)
 end)
 defer.pack("cmp", "nvim-cmp")
-defer.on_event("cmp", { "BufReadPost", "BufNewFile" })
+defer.on_bufreadpost("cmp")
 
 defer.on_load("cmp_git", function()
 	require("cmp_git").setup({

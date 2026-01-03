@@ -322,34 +322,44 @@ function M.on_event(name, events, opts)
 	})
 end
 
-local on_insert_cb = nil
----@param name string|function
-function M.on_insert(name)
-	local fn
-	if type(name) == "function" then
-		fn = name
-	else
-		fn = function()
-			M.ensure(name)
+local function create_on_event(event)
+	local cb
+	---@param name string|function
+	return function(name)
+		local fn
+		if type(name) == "function" then
+			fn = name
+		else
+			fn = function()
+				M.ensure(name)
+			end
 		end
+
+		if cb then
+			cb = zip(cb, fn)
+			return
+		end
+
+		cb = fn
+		local event_str = event
+		if type(event) == "table" then
+			event_str = table.concat(event, "_")
+		end
+		local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. event_str, { clear = true })
+
+		vim.api.nvim_create_autocmd(event, {
+			group = group_id,
+			once = true,
+			callback = function()
+				cb()
+			end,
+		})
 	end
-
-	if on_insert_cb then
-		on_insert_cb = zip(on_insert_cb, fn)
-		return
-	end
-
-	on_insert_cb = fn
-	local group_id = vim.api.nvim_create_augroup("Defer_Event_InsertEnter", { clear = true })
-
-	vim.api.nvim_create_autocmd("InsertEnter", {
-		group = group_id,
-		once = true,
-		callback = function()
-			on_insert_cb()
-		end,
-	})
 end
+
+M.on_bufenter = create_on_event("BufEnter")
+M.on_bufreadpost = create_on_event({ "BufReadPost", "BufNewFile" })
+M.on_insert = create_on_event("InsertEnter")
 
 ---@param loader string|function
 function M.very_lazy(loader)

@@ -11,7 +11,7 @@ local function has_indent(ft)
 	return indent_cache[lang]
 end
 
-defer.on_load("treesitter_base", function()
+defer.on_bufenter(function()
 	vim.cmd.packadd("nvim-treesitter-endwise")
 	vim.cmd.packadd("nvim-ts-context-commentstring")
 	vim.cmd.packadd("nvim-treesitter-context")
@@ -34,4 +34,3 @@ defer.on_load("treesitter_base", function()
 		end,
 	})
 end)
-defer.on_event("treesitter_base", "BufEnter")

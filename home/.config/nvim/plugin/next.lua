@@ -10,4 +10,4 @@ defer.on_load("nvim-next", function()
 		},
 	})
 end)
-defer.on_event("nvim-next", "BufEnter")
+defer.very_lazy("nvim-next")

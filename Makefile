@@ -319,11 +319,10 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(te
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
-			 -c "lua require('nvim-treesitter').install({ $(treesitter-langs-params) }):wait(300000)" \
-			 -c "lua require('nvim-treesitter').update({ $(treesitter-langs-params) }):wait(300000)" \
+			 -c "lua require('nvim-treesitter').install({ $(treesitter-langs-params) }):wait(30000000)" \
+			 -c "lua require('nvim-treesitter').update({ $(treesitter-langs-params) }):wait(30000000)" \
 			 -c q )
 	touch $(treesitter-targets)
-	@# nvim --headless +TSUpdateSync +qa exits immediately
 treesitter: $(treesitter-targets)
 
 .PHONY: eslint_d

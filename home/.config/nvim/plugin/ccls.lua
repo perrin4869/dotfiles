@@ -12,4 +12,4 @@ defer.on_load("ccls", function()
 		end,
 	})
 end)
-defer.on_event("ccls", { "BufReadPre", "BufNewFile" })
+defer.on_bufreadpre("ccls")

@@ -30,7 +30,7 @@ if vim.env.LSP_TYPESCRIPT ~= "tsserver" then
 end
 
 local defer = require("defer")
-defer.on_load("typescript_lsp", function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,
 		pattern = vim.lsp.config[typescript_lsp].filetypes,
@@ -42,4 +42,3 @@ defer.on_load("typescript_lsp", function()
 		end,
 	})
 end)
-defer.on_event("typescript_lsp", { "BufReadPre", "BufNewFile" })

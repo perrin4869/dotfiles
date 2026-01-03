@@ -358,6 +358,7 @@ local function create_on_event(event)
 end
 
 M.on_bufenter = create_on_event("BufEnter")
+M.on_bufreadpre = create_on_event({ "BufReadPre", "BufNewFile" })
 M.on_bufreadpost = create_on_event({ "BufReadPost", "BufNewFile" })
 M.on_insert = create_on_event("InsertEnter")
 

@@ -1,5 +1,5 @@
 local defer = require("defer")
-defer.on_load("lazydev", function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		once = true,
 		group = vim.api.nvim_create_augroup("Initialize_lazydev", {}),
@@ -25,4 +25,3 @@ defer.on_load("lazydev", function()
 		end,
 	})
 end)
-defer.on_event("lazydev", { "BufReadPre", "BufNewFile" })

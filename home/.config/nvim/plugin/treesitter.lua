@@ -11,14 +11,14 @@ local function has_indent(ft)
 	return indent_cache[lang]
 end
 
-defer.on_bufenter(function()
-	vim.cmd.packadd("nvim-treesitter-endwise")
-	vim.cmd.packadd("nvim-ts-context-commentstring")
-	vim.cmd.packadd("nvim-treesitter-context")
-
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
+			vim.cmd.packadd("nvim-treesitter-endwise")
+			vim.cmd.packadd("nvim-ts-context-commentstring")
+			vim.cmd.packadd("nvim-treesitter-context")
+
 			vim.treesitter.start()
 			vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
 			vim.wo[0][0].foldmethod = "expr"

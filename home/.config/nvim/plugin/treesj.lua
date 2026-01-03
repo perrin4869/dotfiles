@@ -12,7 +12,7 @@ local toggle = with_tsj(defer.call("toggle"))
 local join = with_tsj(defer.call("join"))
 local split = with_tsj(defer.call("split"))
 
-defer.on_bufenter(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)

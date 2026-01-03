@@ -338,6 +338,8 @@ vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,$(VIM_JSDOC_ROOT)))
 $(vim_jsdoc): $(vim_jsdoc_head_file)
 	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
+	touch $(vim_jsdoc)
+	git -C $(VIM_JSDOC_ROOT) restore lib/yarn.lock
 vim_jsdoc: $(vim_jsdoc)
 
 .PHONY: gitflow

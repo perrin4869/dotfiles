@@ -310,17 +310,43 @@ table.insert(package.loaders, 2, hook)
 ---@param opts? { pattern?: string|string[] }
 function M.on_event(name, events, opts)
 	opts = opts or {}
-	local fn = function()
-		M.ensure(name)
-	end
 	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
 		pattern = opts.pattern, -- Allows filtering by filetype or file glob
 		callback = function()
-			fn()
+			M.ensure(name)
 			vim.api.nvim_del_augroup_by_id(group_id)
+		end,
+	})
+end
+
+local on_insert_cb = nil
+---@param name string|function
+function M.on_insert(name)
+	local fn
+	if type(name) == "function" then
+		fn = name
+	else
+		fn = function()
+			M.ensure(name)
+		end
+	end
+
+	if on_insert_cb then
+		on_insert_cb = zip(on_insert_cb, fn)
+		return
+	end
+
+	on_insert_cb = fn
+	local group_id = vim.api.nvim_create_augroup("Defer_Event_InsertEnter", { clear = true })
+
+	vim.api.nvim_create_autocmd("InsertEnter", {
+		group = group_id,
+		once = true,
+		callback = function()
+			on_insert_cb()
 		end,
 	})
 end

@@ -1,3 +1,4 @@
 .local/state
+.local/share/fonts/.+\.zip
 .cache
 .npm

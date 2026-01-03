@@ -1,6 +1,6 @@
 local defer = require("defer")
 defer.pack("dropbar", "dropbar.nvim")
-defer.on_bufenter("dropbar")
+defer.on_bufreadpre("dropbar")
 
 local map = vim.keymap.set
 local pick = defer.with("dropbar")(function()

@@ -36,7 +36,7 @@ defer.on_load("nvim-treesitter-textobjects", function()
 end)
 defer.on_bufreadpost("nvim-treesitter-textobjects")
 
-defer.on_bufenter(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)

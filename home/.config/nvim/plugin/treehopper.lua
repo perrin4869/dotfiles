@@ -1,6 +1,6 @@
 local defer = require("defer")
 defer.pack("tsht", "nvim-treehopper")
-defer.on_bufenter(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)

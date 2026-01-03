@@ -1,6 +1,6 @@
 local defer = require("defer")
 defer.pack("rainbow-delimiters", "rainbow-delimiters.nvim")
-defer.on_bufenter("rainbow-delimiters")
+defer.on_bufreadpre("rainbow-delimiters")
 
 vim.g.rainbow_delimiters = {
 	strategy = {

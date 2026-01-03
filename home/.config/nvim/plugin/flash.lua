@@ -22,7 +22,7 @@ vim.keymap.set("o", "r", remote, get_opts({ desc = "flash.remote" }))
 vim.keymap.set("c", "<C-s>", toggle, get_opts({ desc = "flash.toggle" }))
 
 -- Treesitter logic
-defer.on_bufenter(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)

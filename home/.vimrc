@@ -79,10 +79,10 @@ nnoremap <silent> <C-s> <cmd>w<CR>
 inoremap <M-;> <ESC>:
 
 " Unmap the arrow keys
-no <down> ddp
+no <s-down> ddp
 no <left> <Nop>
 no <right> <Nop>
-no <up> ddkP
+no <s-up> ddkP
 ino <down> <Nop>
 ino <left> <Nop>
 ino <right> <Nop>

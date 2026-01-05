@@ -1,5 +1,5 @@
 " Since S-Tab is not recognized in console mode map to another keyB
-silent! imap <unique> <C-n> <Plug>(SkipItForward)
-silent! imap <unique> <C-p> <Plug>(SkipItBack)
-silent! imap <unique> <C-g>n <Plug>(SkipAllForward)
-silent! imap <unique> <C-g>p <Plug>(SkipAllBack)
+silent! imap <unique> <C-Right> <Plug>(SkipItForward)
+silent! imap <unique> <C-Left> <Plug>(SkipItBack)
+silent! imap <unique> <S-Right> <Plug>(SkipAllForward)
+silent! imap <unique> <S-Left> <Plug>(SkipAllBack)

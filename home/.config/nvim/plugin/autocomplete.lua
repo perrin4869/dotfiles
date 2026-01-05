@@ -36,8 +36,8 @@ defer.on_load("cmp", function()
 			-- help complete_CTRL-Y
 			["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 
-			["<C-n>"] = cmp.config.disable,
-			["<C-p>"] = cmp.config.disable,
+			-- ["<C-n>"] = cmp.config.disable,
+			-- ["<C-p>"] = cmp.config.disable,
 
 			["<C-k>"] = cmp.mapping(prev_item, { "i", "c" }),
 			["<C-j>"] = cmp.mapping(next_item, { "i", "c" }),

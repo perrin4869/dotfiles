@@ -78,19 +78,22 @@ nnoremap <silent> <C-s> <cmd>w<CR>
 " If you type <ESC>; quickly enough, the key sequence generated will be <M-;>
 inoremap <M-;> <ESC>:
 
-" Unmap the arrow keys
 no <s-down> ddp
-no <left> <Nop>
-no <right> <Nop>
 no <s-up> ddkP
-ino <down> <Nop>
-ino <left> <Nop>
-ino <right> <Nop>
-ino <up> <Nop>
-vno <down> <Nop>
-vno <left> <Nop>
-vno <right> <Nop>
-vno <up> <Nop>
+
+" Unmap the arrow keys (useful for practice)
+"no <up> <Nop>
+"no <down> <Nop>
+"no <left> <Nop>
+"no <right> <Nop>
+"ino <down> <Nop>
+"ino <left> <Nop>
+"ino <right> <Nop>
+"ino <up> <Nop>
+"vno <down> <Nop>
+"vno <left> <Nop>
+"vno <right> <Nop>
+"vno <up> <Nop>
 
 "I really hate that things don't auto-center
 " nnoremap G Gzz

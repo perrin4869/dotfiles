@@ -372,7 +372,7 @@
 	path = home/.local/share/nvim/site/pack/default/opt/cellular-automaton.nvim
 	url = https://github.com/Eandrju/cellular-automaton.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/zone.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/zone.nvim
+	path = home/.local/share/nvim/site/pack/default/opt/zone.nvim
 	url = https://github.com/tamton-aquib/zone.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/treesj"]
 	path = home/.local/share/nvim/site/pack/default/start/treesj

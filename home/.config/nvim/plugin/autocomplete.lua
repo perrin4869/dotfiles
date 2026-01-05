@@ -22,6 +22,8 @@ defer.on_load("cmp", function()
 		cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
 	end)
 
+	local window_config = cmp.config.window.bordered({ border = "rounded" })
+
 	cmp.setup({
 		snippet = {
 			expand = function(args)
@@ -61,9 +63,12 @@ defer.on_load("cmp", function()
 			{ name = "lazydev", group_index = 0 }, -- set group index to 0 to skip loading LuaLS completions
 		},
 		window = {
-			completion = cmp.config.window.bordered(),
-			documentation = cmp.config.window.bordered(),
+			completion = window_config,
+			documentation = window_config,
 		},
+		-- view = {
+		-- 	entries = "native",
+		-- },
 		experimental = {
 			ghost_text = true,
 		},

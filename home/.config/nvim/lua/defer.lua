@@ -1,12 +1,35 @@
----@type table<string, function>
-local loaders = {}
----@type table<string, string> -- Separate table for pack names to avoid mutation errors
-local pkgs = {}
----@type table<string, function>
-local preloaders = {}
+---@class Defer.Entry
+---@field pack string|nil The name of the package for packadd
+---@field post function|nil Function to run after loading (setup)
+---@field load function|nil Function to run to load (setup)
+---@field pre function|nil Function to run before loading
+---@field after boolean If set, will load the after directory after packadd
+---@field deps string[] List of module names this entry depends on
+---@field disabled boolean Whether the module is prevented from loading
+---@field loaded boolean Internal state to track if ensure has already run
+
+---@type table<string, Defer.Entry>
+local registry = {}
 ---@type table<string, string>
 local hooks = {}
 
+---@param name string
+---@return Defer.Entry
+local function entry(name)
+	if not registry[name] then
+		registry[name] = {
+			pack = nil,
+			post = nil,
+			load = nil,
+			pre = nil,
+			after = false,
+			deps = {},
+			disabled = false,
+			loaded = false,
+		}
+	end
+	return registry[name]
+end
 ---@param f1 function
 ---@param f2 function
 local function zip(f1, f2)
@@ -16,69 +39,146 @@ local function zip(f1, f2)
 	end
 end
 
+-- https://github.com/lumen-oss/lz.n/wiki/lazy‐loading-nvim‐cmp-and-its-extensions
+local function trigger_load_with_after(plugin_name)
+	local res, rtp = pcall(require, "rtp_nvim")
+	if not res then
+		return
+	end
+	for _, dir in ipairs(vim.opt.packpath:get()) do
+		local glob = vim.fs.joinpath("pack", "*", "opt", plugin_name)
+		local plugin_dirs = vim.fn.globpath(dir, glob, nil, true, true)
+		if not vim.tbl_isempty(plugin_dirs) then
+			rtp.source_after_plugin_dir(plugin_dirs[1])
+			return
+		end
+	end
+end
+
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
 ---@param name string The module name target
 ---@param fn function
 local function on_preload(name, fn)
-	if preloaders[name] then
-		preloaders[name] = zip(preloaders[name], fn)
+	local mod = entry(name)
+	if mod.pre then
+		mod.pre = zip(mod.pre, fn)
 	else
-		preloaders[name] = fn
+		mod.pre = fn
 	end
 end
 
 local M = {}
 
 ---@param name string
+---@param fn function
+function M.on_load(name, fn)
+	local mod = entry(name)
+	if mod.load then
+		mod.load = zip(mod.load, fn)
+	else
+		mod.load = fn
+	end
+end
+
+---@param name string
+---@param fn function
+function M.on_postload(name, fn)
+	local mod = entry(name)
+	if mod.loaded then
+		fn()
+	elseif mod.post then
+		mod.post = zip(mod.post, fn)
+	else
+		mod.post = fn
+	end
+end
+
+---@param name string
+function M.after(name)
+	local mod = entry(name)
+	mod.after = true
+end
+
+---@param name string
+function M.disable(name)
+	local mod = entry(name)
+	mod.disabled = true
+end
+
+---@param name string
 ---@return any
 function M.ensure(name)
-	local loader = loaders[name]
-	local preloader = preloaders[name]
-
-	loaders[name] = nil -- wipe the whole entry instead of a field
-	preloaders[name] = nil
-
-	if preloader then
-		preloader()
+	local mod = registry[name]
+	if not mod or mod.disabled then
+		return false
 	end
 
-	local pack = pkgs[name]
-	if pack then
-		vim.cmd.packadd(pack)
-		pkgs[name] = nil -- Deleting from a basic table is always fine
+	if mod.loaded then
+		return true
 	end
 
-	if loader then
-		loader()
+	mod.loaded = true
+
+	-- if some of the deps fails to load, abort
+	for _, dep in ipairs(mod.deps) do
+		if not M.ensure(dep) then
+			mod.disabled = true
+			return false
+		end
 	end
+
+	if mod.pre then
+		mod.pre()
+	end
+	if mod.pack then
+		vim.cmd.packadd(mod.pack)
+		if mod.after then
+			trigger_load_with_after(mod.pack)
+		end
+	end
+
+	if mod.load then
+		mod.load()
+	end
+
+	if mod.post then
+		mod.post()
+	end
+
+	return true
 end
 
 ---@param name string
 ---@return any
 function M.require(name)
-	M.ensure(name)
-	return require(name)
-end
-
----@param name string
----@param fn function
-function M.on_load(name, fn)
-	if fn then
-		if loaders[name] then
-			loaders[name] = zip(loaders[name], fn)
-		else
-			loaders[name] = fn
-		end
+	if M.ensure(name) then
+		return require(name)
 	end
+	return false
 end
 
 function M.pack(name, pack)
+	local mod = entry(name)
 	if not pack then
 		pack = name
 	end
 
-	pkgs[name] = pack
+	mod.pack = pack
+end
+
+--- Registers dependencies for a module.
+---@param name string
+---@param deps string|string[]
+function M.deps(name, deps)
+	local mod = entry(name)
+	if type(deps) == "string" then
+		table.insert(mod.deps, deps)
+	else
+		for _, d in ipairs(deps) do
+			table.insert(mod.deps, d)
+		end
+	end
 end
 
 --- Wraps a module for lazy execution via a callback.
@@ -87,7 +187,7 @@ end
 function M.with(name)
 	return function(callback)
 		return function(...)
-			if type(callback) == "function" then
+			if type(callback) == "function" and M.ensure(name) then
 				return callback(M.require(name), ...)
 			end
 		end
@@ -100,11 +200,11 @@ end
 function M.call(method, ...)
 	local args = { ... }
 	local nargs = select("#", ...) -- Get the count to handle nil correctly
-	return function(module)
+	return function(mod)
 		if method then
-			return module[method](unpack(args, 1, nargs))
+			return mod[method](unpack(args, 1, nargs))
 		end
-		return module(unpack(args, 1, nargs))
+		return mod(unpack(args, 1, nargs))
 	end
 end
 
@@ -169,15 +269,16 @@ local function hook(modname)
 		loader_key = hooks[modname]
 	else
 		-- prefix match
-		for hook_mod, target_id in pairs(hooks) do
+		for hook_mod, target_mod in pairs(hooks) do
 			local escaped = hook_mod:gsub("%-", "%%-")
 			if modname:match("^" .. escaped .. "%.") then
 				-- only match prefix if a package exists for this loader
 				-- this way, if a plugin/ script was loaded and requires a lua
 				-- module in the plugin, it won't trigger the load
-				if pkgs[target_id] ~= nil then
+				local mod = registry[target_mod]
+				if mod and mod.pack then
 					match_key = hook_mod
-					loader_key = target_id
+					loader_key = target_mod
 					break
 				end
 			end
@@ -204,31 +305,62 @@ end
 
 table.insert(package.loaders, 2, hook)
 
----@param name string|function
+---@param name string
 ---@param events string|string[]
----@param opts? { pattern?: string|string[], name?: string }
+---@param opts? { pattern?: string|string[] }
 function M.on_event(name, events, opts)
 	opts = opts or {}
-	local fn
-	if type(name) == "function" then
-		fn = name
-		name = opts.name
-	else
-		fn = function()
-			M.ensure(name)
-		end
-	end
 	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
 		pattern = opts.pattern, -- Allows filtering by filetype or file glob
 		callback = function()
-			fn()
+			M.ensure(name)
 			vim.api.nvim_del_augroup_by_id(group_id)
 		end,
 	})
 end
+
+local function create_on_event(event)
+	local cb
+	---@param name string|function
+	return function(name)
+		local fn
+		if type(name) == "function" then
+			fn = name
+		else
+			fn = function()
+				M.ensure(name)
+			end
+		end
+
+		if cb then
+			cb = zip(cb, fn)
+			return
+		end
+
+		cb = fn
+		local event_str = event
+		if type(event) == "table" then
+			event_str = table.concat(event, "_")
+		end
+		local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. event_str, { clear = true })
+
+		vim.api.nvim_create_autocmd(event, {
+			group = group_id,
+			once = true,
+			callback = function()
+				cb()
+			end,
+		})
+	end
+end
+
+M.on_bufenter = create_on_event("BufEnter")
+M.on_bufreadpre = create_on_event({ "BufReadPre", "BufNewFile" })
+M.on_bufreadpost = create_on_event({ "BufReadPost", "BufNewFile" })
+M.on_insert = create_on_event("InsertEnter")
 
 ---@param loader string|function
 function M.very_lazy(loader)

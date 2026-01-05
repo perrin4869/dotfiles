@@ -19,7 +19,8 @@ defer.on_load("nvim-dap-virtual-text", function()
 	require("nvim-dap-virtual-text").setup()
 end)
 
-defer.pack("dap-ui", "nvim-dap-ui")
+defer.pack("dapui", "nvim-dap-ui")
+defer.deps("dapui", { "dap" })
 defer.on_load("dapui", function()
 	-- nvim-dap-ui
 	require("dapui").setup()
@@ -139,6 +140,8 @@ defer.on_load("dap", function()
 		end
 
 		vim.keymap.set("n", "K", require("dap.ui.widgets").hover, { silent = true })
+
+		defer.ensure("nvim-dap-virtual-text")
 	end
 
 	dap.listeners.after["event_terminated"]["me"] = function()
@@ -160,7 +163,9 @@ defer.on_load("dap", function()
 		end,
 	})
 
-	defer.ensure("nvim-dap-virtual-text")
+	defer.on_postload("telescope", function()
+		require("telescope").load_extension("dap")
+	end)
 
 	dap.listeners.before.attach.dapui_config = with_dapui(call("open"))
 	dap.listeners.before.launch.dapui_config = with_dapui(call("open"))

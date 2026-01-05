@@ -34,9 +34,9 @@ defer.on_load("nvim-treesitter-textobjects", function()
 		},
 	})
 end)
-defer.on_event("nvim-treesitter-textobjects", { "BufReadPost", "BufNewFile" })
+defer.on_bufreadpost("nvim-treesitter-textobjects")
 
-defer.on_event(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
@@ -214,4 +214,4 @@ defer.on_event(function()
 			-- end, { buffer = args.buf, desc = "textobjects.move.previous.@conditional.outer" })
 		end,
 	})
-end, "BufEnter", { name = "treesitter-textobjects" })
+end)

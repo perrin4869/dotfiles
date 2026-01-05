@@ -1,0 +1,27 @@
+local defer = require("defer")
+local packadd = vim.cmd.packadd
+
+defer.very_lazy(function()
+	packadd("vim-caser")
+	packadd("vim-illuminate")
+	packadd("vim-floaterm")
+	packadd("vim-fugitive")
+	packadd("tagbar")
+	packadd("vim-speeddating")
+	packadd("vim-dispatch")
+	packadd("vim-abolish")
+	packadd("undotree")
+	packadd("targets.vim")
+	packadd("vim-exchange")
+	packadd("vim-easy-align")
+end)
+
+defer.on_bufreadpre(function()
+	packadd("ragtag")
+	packadd("vim-sleuth")
+	packadd("vim-gutentags")
+end)
+
+defer.on_insert(function()
+	packadd("vim-fat-finger")
+end)

@@ -1,6 +1,6 @@
 local defer = require("defer")
 defer.pack("tsht", "nvim-treehopper")
-defer.on_event(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
@@ -21,7 +21,7 @@ defer.on_event(function()
 			)
 		end,
 	})
-end, "BufEnter", { name = "treesitter-treehopper" })
+end)
 
 -- omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
 -- xnoremap <silent> m :lua require('tsht').nodes()<CR>

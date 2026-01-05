@@ -19,7 +19,7 @@ defer.on_load("hlargs", function()
 		end,
 	})
 end)
-defer.on_event("hlargs", { "BufReadPost", "BufNewFile" })
+defer.on_bufreadpost("hlargs")
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspAttach_hlargs", {}),

@@ -1,6 +1,6 @@
 local defer = require("defer")
 
-defer.on_event(function()
+defer.on_load("lsp", function()
 	local lsp = require("lsp")
 	local utils = require("utils")
 
@@ -91,8 +91,6 @@ defer.on_event(function()
 		end,
 	})
 
-	defer.ensure("mason")
-
 	vim.lsp.config("*", {
 		capabilities = lsp.get_capabilities(),
 	})
@@ -106,4 +104,8 @@ defer.on_event(function()
 		"jsonls",
 		"sqlls",
 	})
-end, "BufReadPost", { name = "lsp" })
+end)
+defer.deps("lsp", { "lspconfig", "mason" })
+defer.on_bufreadpost("lsp")
+defer.pack("lspconfig", "nvim-lspconfig")
+defer.on_bufreadpre("lspconfig")

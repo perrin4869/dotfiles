@@ -1,68 +1,7 @@
 local defer = require("defer")
 
-defer.pack("cmp_nvim_lsp", "cmp-nvim-lsp")
-defer.on_load("cmp_git", function()
-	local git = require("cmp_git")
-	git.setup({
-		-- defaults
-		filetypes = { "gitcommit" },
-		github = {
-			issues = {
-				filter = "all", -- assigned, created, mentioned, subscribed, all, repos
-				limit = 100,
-				state = "open", -- open, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
-		},
-		gitlab = {
-			issues = {
-				limit = 100,
-				state = "opened", -- opened, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
-			merge_requests = {
-				limit = 100,
-				state = "opened", -- opened, closed, locked, merged
-			},
-		},
-	})
-end)
-defer.pack("cmp_git", "cmp-git")
-
 defer.on_load("cmp", function()
 	local cmp = require("cmp")
-
-	defer.ensure("cmp_nvim_lsp")
-	defer.ensure("cmp_git")
-	vim.cmd.packadd("cmp-buffer")
-	vim.cmd.packadd("cmp-calc")
-	vim.cmd.packadd("cmp-cmdline")
-	vim.cmd.packadd("cmp-emoji")
-	vim.cmd.packadd("cmp-nvim-lua")
-	vim.cmd.packadd("cmp-path")
-	vim.cmd.packadd("cmp-spell")
-	vim.cmd.packadd("cmp-tmux")
-	vim.cmd.packadd("cmp-treesitter")
-	vim.cmd.packadd("cmp-vsnip")
-
-	-- https://github.com/hrsh7th/cmp-buffer/issues/76
-	-- https://github.com/vim/vim/issues/1994
-	cmp.register_source("buffer", require("cmp_buffer").new())
-	cmp.register_source("calc", require("cmp_calc").new())
-	cmp.register_source("cmdline", require("cmp_cmdline").new())
-	cmp.register_source("emoji", require("cmp_emoji").new())
-	cmp.register_source("nvim_lua", require("cmp_nvim_lua").new())
-	require("cmp_nvim_lsp").setup()
-	cmp.register_source("path", require("cmp_path").new())
-	cmp.register_source("spell", require("cmp-spell").new())
-	cmp.register_source("tmux", require("cmp_tmux").new())
-	cmp.register_source("treesitter", require("cmp_treesitter").new())
-	cmp.register_source("vsnip", require("cmp_vsnip").new())
-
 	local lspkind = require("lspkind")
 
 	local function nav_item(f)
@@ -203,4 +142,82 @@ defer.on_load("cmp", function()
 	end)
 end)
 defer.pack("cmp", "nvim-cmp")
-defer.on_event("cmp", "BufReadPre")
+defer.on_bufreadpost("cmp")
+
+defer.on_load("cmp_git", function()
+	require("cmp_git").setup({
+		-- defaults
+		filetypes = { "gitcommit" },
+		github = {
+			issues = {
+				filter = "all", -- assigned, created, mentioned, subscribed, all, repos
+				limit = 100,
+				state = "open", -- open, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+		},
+		gitlab = {
+			issues = {
+				limit = 100,
+				state = "opened", -- opened, closed, all
+			},
+			mentions = {
+				limit = 100,
+			},
+			merge_requests = {
+				limit = 100,
+				state = "opened", -- opened, closed, locked, merged
+			},
+		},
+	})
+end)
+defer.pack("cmp_git", "cmp-git")
+defer.deps("cmp_git", "cmp")
+defer.pack("cmp_buffer", "cmp-buffer")
+defer.after("cmp_buffer")
+defer.deps("cmp_buffer", "cmp")
+defer.pack("cmp_calc", "cmp-calc")
+defer.after("cmp_calc")
+defer.deps("cmp_calc", "cmp")
+defer.pack("cmp_cmdline", "cmp-cmdline")
+defer.after("cmp_cmdline")
+defer.deps("cmp_cmdline", "cmp")
+defer.pack("cmp_emoji", "cmp-emoji")
+defer.after("cmp_emoji")
+defer.deps("cmp_emoji", "cmp")
+defer.pack("cmp_nvim_lsp", "cmp-nvim-lsp")
+defer.after("cmp_nvim_lsp")
+defer.deps("cmp_nvim_lsp", "cmp")
+defer.pack("cmp_nvim_lua", "cmp-nvim-lua")
+defer.after("cmp_nvim_lua")
+defer.deps("cmp_nvim_lua", "cmp")
+defer.pack("cmp_path", "cmp-path")
+defer.after("cmp_path")
+defer.deps("cmp_path", "cmp")
+defer.pack("cmp_spell", "cmp-spell")
+defer.after("cmp_spell")
+defer.deps("cmp_spell", "cmp")
+defer.pack("cmp_tmux", "cmp-tmux")
+defer.after("cmp_tmux")
+defer.deps("cmp_tmux", "cmp")
+defer.pack("cmp_treesitter", "cmp-treesitter")
+defer.after("cmp_treesitter")
+defer.deps("cmp_treesitter", "cmp")
+defer.pack("cmp_vsnip", "cmp-vsnip")
+defer.after("cmp_vsnip")
+defer.deps("cmp_vsnip", "cmp")
+
+defer.on_insert("cmp_git")
+defer.on_insert("cmp_buffer")
+defer.on_insert("cmp_calc")
+defer.on_insert("cmp_cmdline")
+defer.on_insert("cmp_emoji")
+defer.on_insert("cmp_nvim_lsp")
+defer.on_insert("cmp_nvim_lua")
+defer.on_insert("cmp_path")
+defer.on_insert("cmp-spell")
+defer.on_insert("cmp_tmux")
+defer.on_insert("cmp_treesitter")
+defer.on_insert("cmp_vsnip")

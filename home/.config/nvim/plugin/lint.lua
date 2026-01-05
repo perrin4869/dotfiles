@@ -1,4 +1,5 @@
 local defer = require("defer")
+defer.deps("lint", "meson")
 defer.on_load("lint", function()
 	require("lint").linters_by_ft = {
 		lua = { "luacheck" },

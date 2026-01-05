@@ -39,7 +39,7 @@ local metals_config = defer.lazy(function()
 		},
 	}
 
-	defer.with("dap")(function()
+	defer.on_postload("dap", function()
 		metals.setup_dap()
 	end)
 	return config
@@ -80,6 +80,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		local pickers = require("pickers")
+		defer.on_postload("telescope", function()
+			require("telescope").load_extension("metals")
+		end)
 		pickers.map(pickers.prefix .. "l", function(telescope)
 			telescope.extensions.metals.commands()
 		end, { desc = "metals.commands.telescope" })

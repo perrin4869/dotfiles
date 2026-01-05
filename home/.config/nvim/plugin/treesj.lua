@@ -12,7 +12,7 @@ local toggle = with_tsj(defer.call("toggle"))
 local join = with_tsj(defer.call("join"))
 local split = with_tsj(defer.call("split"))
 
-defer.on_event(function()
+defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
@@ -24,4 +24,4 @@ defer.on_event(function()
 			vim.keymap.set("n", "<C-k>", split, get_opts({ desc = "treesj.split" }))
 		end,
 	})
-end, "BufEnter", { name = "treesitter-treesj" })
+end)

@@ -1,6 +1,3 @@
-" Toggle undo tree
-nmap <silent> <leader>tu <cmd>UndotreeToggle<CR>
-
 " Toggle tagbar
 nmap <silent> <leader>tt <cmd>TagbarToggle<CR>
 

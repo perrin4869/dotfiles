@@ -5,9 +5,9 @@ defer.pack("undotree")
 local with_undotree = defer.with("undotree")
 local call = defer.call
 
-local opts = utils.create_get_opts({ noremap = true, silent = true })
+local get_opts = utils.create_get_opts({ noremap = true, silent = true })
 local map = function(mode, lhs, fname)
-	vim.keymap.set(mode, lhs, with_undotree(call(fname)), opts({ desc = "undotree." .. fname }))
+	vim.keymap.set(mode, lhs, with_undotree(call(fname)), get_opts({ desc = "undotree." .. fname }))
 end
 
 map("n", "<leader>tu", "toggle")

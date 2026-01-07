@@ -12,7 +12,7 @@ defer.on_load("telescope", function()
 	})
 
 	-- Load extensions only after telescope itself is initialized
-	local extensions = { "fzf", "neoclip", "file_browser", "workspaces", "git_grep" }
+	local extensions = { "fzf", "neoclip", "file_browser", "git_grep" }
 	for _, ext in ipairs(extensions) do
 		telescope.load_extension(ext)
 	end
@@ -49,9 +49,6 @@ end, { desc = "neoclip" })
 pickers.map(prefix .. "t", function(telescope)
 	telescope.extensions.file_browser.file_browser()
 end, { desc = "file_browser" })
-pickers.map(prefix .. "w", function(telescope)
-	telescope.extensions.workspaces.workspaces()
-end, { desc = "workspaces" }) -- r for ripgrep
 
 -- git
 local git_grep_conditional = function()

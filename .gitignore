@@ -12,7 +12,6 @@ home/.config/coc/extensions/*
 home/.local/share/nvim/view/
 home/.local/share/nvim/undo/
 home/.local/share/nvim/shada/
-home/.local/share/nvim/workspaces
 home/.local/share/nvim/project_nvim/
 home/.local/share/nvim/mason/
 home/.local/share/nvim/neo-tree.nvim.log

@@ -58,6 +58,7 @@ In Slackware:
 Here are two configs used in the zen browser, found in `~/.zen/{profile_dir}>/prefs.js`:
 
 ```
+user_pref("browser.tabs.insertAfterCurrent", true)
 user_pref("zen.theme.content-element-separation", 0);
 user_pref("zen.view.experimental-force-window-controls-left", true);
 ```

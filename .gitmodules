@@ -606,3 +606,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/neoscroll.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/neoscroll.nvim
 	url = https://github.com/karb94/neoscroll.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/difftastic.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/difftastic.nvim
+	url = https://github.com/clabby/difftastic.nvim.git

@@ -51,6 +51,7 @@ TREESITTER_PARSERS = $(NVIM_DATA_DIRECTORY)/site/parser
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
 MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
+NVIM_DIFFTASTIC_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/opt/difftastic.nvim
 VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
@@ -85,7 +86,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin difftastic_nvim
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -331,6 +332,13 @@ $(eval $(call git_submodule,eslint_d,$(ESLINT_D_ROOT)))
 $(eslint_d): $(eslint_d_head_file)
 	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
 eslint_d: $(eslint_d)
+
+.PHONY: difftastic_nvim
+difftastic_nvim = $(NVIM_DIFFTASTIC_ROOT)/target/release/libdifftastic_nvim.so
+$(eval $(call git_submodule,difftastic_nvim,$(NVIM_DIFFTASTIC_ROOT)))
+$(difftastic_nvim): $(difftastic_nvim_head_file)
+	cd $(NVIM_DIFFTASTIC_ROOT) && cargo build --release
+difftastic_nvim: $(difftastic_nvim)
 
 .PHONY: vim_jsdoc
 vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre

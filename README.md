@@ -47,6 +47,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `yq`
 - `spot`
 - `zen`
+- `difftastic`
 - `helvum`
 
 In Slackware:

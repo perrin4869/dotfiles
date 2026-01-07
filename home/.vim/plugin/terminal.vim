@@ -1,24 +1,14 @@
-nnoremap <silent> <M-t> <cmd>FloatermToggle<CR>
-tnoremap <silent> <M-t> <cmd>FloatermToggle<CR>
+nnoremap <silent> <M-t> <cmd>FloatermToggle<cr>
+tnoremap <silent> <M-t> <cmd>FloatermToggle<cr>
 
-nnoremap   <silent>   <F6>    :FloatermNew<CR>
-tnoremap   <silent>   <F6>    <C-\><C-n>:FloatermNew<CR>
-nnoremap   <silent>   <F7>    :FloatermPrev<CR>
-tnoremap   <silent>   <F7>    <C-\><C-n>:FloatermPrev<CR>
-nnoremap   <silent>   <F8>    :FloatermNext<CR>
-tnoremap   <silent>   <F8>    <C-\><C-n>:FloatermNext<CR>
-nnoremap   <silent>   <F12>   :FloatermToggle<CR>
-tnoremap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
+nnoremap   <silent>   <F6>    <cmd>FloatermNew<cr>
+tnoremap   <silent>   <F6>    <cmd>FloatermNew<cr>
+nnoremap   <silent>   <F7>    <cmd>FloatermPrev<cr>
+tnoremap   <silent>   <F7>    <cmd>FloatermPrev<cr>
+nnoremap   <silent>   <F8>    <cmd>FloatermNext<cr>
+tnoremap   <silent>   <F8>    <cmd>FloatermNext<cr>
+nnoremap   <silent>   <F12>   <cmd>FloatermToggle<cr>
+tnoremap   <silent>   <F12>   <cmd>FloatermToggle<cr>
 
-nnoremap   <silent>   <F9>   :FloatermKill<CR>
-tnoremap   <silent>   <F9>   <C-\><C-n>:FloatermKill<CR>
-
-if has("nvim")
-  " Make escape work in the Neovim terminal.
-  " Esc is useful in zsh in vim-mode, so use <C-o> instead
-  " <Esc><Esc> makes a single <Esc> be delayed, so not ideal
-  tnoremap <C-o> <C-\><C-n>
-
-  " Prefer Neovim terminal insert mode to normal mode.
-  autocmd TermOpen * startinsert
-endif
+nnoremap   <silent>   <F9>   <cmd>FloatermKill<cr>
+tnoremap   <silent>   <F9>   <cmd>FloatermKill<cr>

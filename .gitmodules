@@ -609,3 +609,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/project.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/project.nvim
 	url = https://github.com/DrKJeff16/project.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/resolved.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/resolved.nvim
+	url = https://github.com/noamsto/resolved.nvim.git

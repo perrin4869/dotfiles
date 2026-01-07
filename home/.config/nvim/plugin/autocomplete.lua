@@ -41,6 +41,9 @@ defer.on_load("cmp", function()
 			-- ["<C-n>"] = cmp.config.disable,
 			-- ["<C-p>"] = cmp.config.disable,
 
+			["<C-n>"] = cmp.mapping(next_item, { "i", "c" }),
+			["<C-p>"] = cmp.mapping(prev_item, { "i", "c" }),
+
 			["<C-k>"] = cmp.mapping(prev_item, { "i", "c" }),
 			["<C-j>"] = cmp.mapping(next_item, { "i", "c" }),
 		}),
@@ -87,24 +90,30 @@ defer.on_load("cmp", function()
 		-- you can select an item if none has been selected yet by using `Tab`
 		["<C-k>"] = cmp.mapping(prev_item, { "i", "c" }),
 		["<C-j>"] = cmp.mapping(next_item, { "i", "c" }),
-		["<C-n>"] = cmp.config.disable,
-		["<C-p>"] = cmp.config.disable,
 
 		-- the idea behind the mappings below was ta allow navigating commands up and down
 		-- while also allowing navigating completions up and down when in focus
-		--
-		-- ["<C-n>"] = cmp.mapping(function(fallback)
-		-- 	if cmp.visible() and cmp.get_selected_entry() then
-		-- 		return cmp.select_next_item()
-		-- 	end
-		-- 	fallback()
-		-- end, { "i", "c" }),
-		-- ["<C-p>"] = cmp.mapping(function(fallback)
-		-- 	if cmp.visible() and cmp.get_selected_entry() then
-		-- 		return cmp.select_prev_item()
-		-- 	end
-		-- 	fallback()
-		-- end, { "i", "c" }),
+		["<C-n>"] = cmp.mapping(function(fallback)
+			if cmp.visible() and cmp.get_selected_entry() then
+				next_item()
+				-- wrap
+				if not cmp.get_selected_entry() then
+					next_item()
+				end
+			end
+			fallback()
+		end, { "i", "c" }),
+		["<C-p>"] = cmp.mapping(function(fallback)
+			if cmp.visible() and cmp.get_selected_entry() then
+				prev_item()
+				-- wrap
+				if not cmp.get_selected_entry() then
+					prev_item()
+				end
+			end
+			fallback()
+		end, { "i", "c" }),
+
 		["<CR>"] = cmp.mapping(function(fallback)
 			if cmp.visible() and cmp.get_selected_entry() then
 				return cmp.confirm()

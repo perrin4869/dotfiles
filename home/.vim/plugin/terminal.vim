@@ -1,5 +1,5 @@
-nnoremap <silent> <M-t> <cmd>FloatermToggle<cr>
-tnoremap <silent> <M-t> <cmd>FloatermToggle<cr>
+nnoremap <silent> <leader><cr> <cmd>FloatermToggle<cr>
+tnoremap <silent> <leader><cr> <cmd>FloatermToggle<cr>
 
 nnoremap   <silent>   <F6>    <cmd>FloatermNew<cr>
 tnoremap   <silent>   <F6>    <cmd>FloatermNew<cr>

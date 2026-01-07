@@ -31,6 +31,44 @@ local with_dap = defer.with("dap")
 local with_dapui = defer.with("dapui")
 local call = defer.call
 
+local debug_layer = defer.lazy(defer.with("layers")(function()
+	local layer = require("layers").mode.new()
+	layer:auto_show_help()
+	layer:keymaps({
+		n = {
+			{
+				"K",
+				function()
+					require("dap.ui.widgets").hover()
+				end,
+				{ silent = true, desc = "dap.hover" },
+			},
+			{
+				"<up>",
+				with_dap(call("step_out")),
+				{ silent = true, desc = "dap.step_out" },
+			},
+			{
+				"<down>",
+				with_dap(call("step_into")),
+				{ silent = true, desc = "dap.step_into" },
+			},
+			{
+				"<right>",
+				with_dap(call("step_over")),
+				{ silent = true, desc = "dap.step_over" },
+			},
+			{
+				"c",
+				with_dap(call("continue")),
+				{ silent = true, desc = "dap.continue" },
+			},
+		},
+	})
+
+	return layer
+end))
+
 defer.pack("dap", "nvim-dap")
 defer.on_load("dap", function()
 	local dap = require("dap")
@@ -127,29 +165,24 @@ defer.on_load("dap", function()
 	vim.fn.sign_define("DapStopped", { text = "⭐️", texthl = "", linehl = "", numhl = "" })
 
 	-- Map K to hover while session is active.
-	local keymap_restore = {}
 	dap.listeners.after["event_initialized"]["me"] = function()
-		for _, buf in pairs(vim.api.nvim_list_bufs()) do
-			local keymaps = vim.api.nvim_buf_get_keymap(buf, "n")
-			for _, keymap in pairs(keymaps) do
-				if keymap.lhs == "K" then
-					table.insert(keymap_restore, keymap)
-					vim.api.nvim_buf_del_keymap(buf, "n", "K")
-				end
-			end
-		end
-
-		vim.keymap.set("n", "K", require("dap.ui.widgets").hover, { silent = true })
-
 		defer.ensure("nvim-dap-virtual-text")
+
+		if not debug_layer():active() then
+			debug_layer():activate()
+		end
 	end
 
 	dap.listeners.after["event_terminated"]["me"] = function()
-		for _, keymap in pairs(keymap_restore) do
-			local rhs = keymap.callback ~= nil and keymap.callback or keymap.rhs
-			vim.keymap.set(keymap.mode, keymap.lhs, rhs, { buffer = keymap.buffer, silent = keymap.silent == 1 })
+		if debug_layer():active() then
+			debug_layer():deactivate()
 		end
-		keymap_restore = {}
+	end
+
+	dap.listeners.after["event_exited"]["me"] = function()
+		if debug_layer():active() then
+			debug_layer():deactivate()
+		end
 	end
 
 	-- autocmd FileType dap-float nnoremap <buffer><silent> q <cmd>close!<CR>
@@ -226,10 +259,7 @@ end)
 
 map("n", prefix .. "t", "toggle_breakpoint")
 map("n", prefix .. "H", set_breakpoint, "set_breakpoint")
-map("n", "<c-k>", "step_out")
-map("n", "<c-l>", "step_into")
-map("n", "<c-j>", "step_over")
-map("n", "<c-h>", "continue")
+map("n", prefix .. "<cr>", "continue")
 map("n", prefix .. "k", "up")
 map("n", prefix .. "j", "down")
 map("n", prefix .. "d", disconnect, "disconnect")

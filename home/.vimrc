@@ -126,10 +126,10 @@ nmap <M-0> g^
 " see help expand (or run :echo expand("#"))
 " # is the alternate file name
 " nnoremap <silent> <leader>g <cmd>b#<CR>
-nnoremap <silent> <leader>g <C-^>
+nnoremap <silent> <leader><bs> <C-^>
 
 "This unsets the "last search pattern" register by hitting return
-nnoremap <silent> <backspace> <cmd>noh<CR>
+nnoremap <silent> <esc><esc> <cmd>noh<CR>
 
 " nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 " vnoremap <Space> zf

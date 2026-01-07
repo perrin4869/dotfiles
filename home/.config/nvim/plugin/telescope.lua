@@ -36,8 +36,8 @@ pickers.map(prefix .. "s", "grep_string")
 pickers.map(prefix .. "r", "live_grep")
 pickers.map(prefix .. "k", "keymaps")
 pickers.map(prefix .. "a", "autocommands")
+pickers.map(prefix .. "b", "buffers")
 
-pickers.map("<leader><CR>", "buffers")
 pickers.map("<leader>?", "oldfiles")
 
 pickers.map(prefix .. "o", function()

@@ -5,6 +5,7 @@
 [commit]
   gpgsign = true
 [diff]
+  external = difft
   tool = vimdiff
 [difftool]
   prompt = false

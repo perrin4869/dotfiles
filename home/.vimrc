@@ -126,7 +126,7 @@ nmap <M-0> g^
 " see help expand (or run :echo expand("#"))
 " # is the alternate file name
 " nnoremap <silent> <leader>g <cmd>b#<CR>
-nnoremap <silent> <leader><bs> <C-^>
+nnoremap <silent> <leader>. <C-^>
 
 "This unsets the "last search pattern" register by hitting return
 nnoremap <silent> <esc><esc> <cmd>noh<CR>

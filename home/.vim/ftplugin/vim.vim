@@ -1,3 +1,3 @@
-nnoremap <buffer> <C-g>x <cmd>.source<CR>
-nnoremap <buffer> <C-g>X <cmd>source %<CR>
-xnoremap <buffer> <C-g>x <cmd>'<'>source<CR>
+nnoremap <buffer> <leader>ex <cmd>.source<CR>
+nnoremap <buffer> <leader>eX <cmd>source %<CR>
+xnoremap <buffer> <leader>e <cmd>'<'>source<CR>

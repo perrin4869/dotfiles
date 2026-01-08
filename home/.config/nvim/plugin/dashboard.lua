@@ -180,7 +180,7 @@ defer.on_load("alpha", function()
 	dashboard.opts.opts.autostart = false
 
 	alpha.setup(dashboard.opts)
-	alpha.start() -- do so manually so we can load alpha on VimEnter
+	alpha.start(true, dashboard.opts) -- do so manually so we can load alpha on VimEnter
 end)
 
 defer.on_event("alpha", "VimEnter", { nested = true })

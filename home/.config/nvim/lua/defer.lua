@@ -307,14 +307,15 @@ table.insert(package.loaders, 2, hook)
 
 ---@param name string
 ---@param events string|string[]
----@param opts? { pattern?: string|string[] }
+---@param opts? { pattern?: string|string[], nested?: boolean }
 function M.on_event(name, events, opts)
 	opts = opts or {}
 	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
-		pattern = opts.pattern, -- Allows filtering by filetype or file glob
+		pattern = opts.pattern,
+		nested = opts.nested or false,
 		callback = function()
 			M.ensure(name)
 			vim.api.nvim_del_augroup_by_id(group_id)
@@ -325,7 +326,9 @@ end
 local function create_on_event(event)
 	local cb
 	---@param name string|function
-	return function(name)
+	---@param opts? { pattern?: string|string[], nested?: boolean }
+	return function(name, opts)
+		opts = opts or {}
 		local fn
 		if type(name) == "function" then
 			fn = name
@@ -349,6 +352,8 @@ local function create_on_event(event)
 
 		vim.api.nvim_create_autocmd(event, {
 			group = group_id,
+			pattern = opts.pattern,
+			nested = opts.nested or false,
 			once = true,
 			callback = function()
 				cb()

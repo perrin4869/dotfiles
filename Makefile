@@ -57,7 +57,7 @@ VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules-deps = $(addsuffix /.git, $(submodules-paths))
 
-helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start -maxdepth 2 -mindepth 2 -type d -name doc)
+helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start $(NVIM_DATA_DIRECTORY)/site/pack/default/opt -maxdepth 2 -mindepth 2 -type d -name doc)
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags = $(addsuffix /tags, $(helptags-paths))
 
@@ -305,7 +305,9 @@ $(eval $(call mason_package,tree-sitter-cli,true))
 .PHONY: helptags
 $(helptags)&: $(helptags-deps) $(telescope-fzf-native)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( unset XDG_CONFIG_HOME && HOME=home nvim --headless -c "helptags ALL" -c q )
+	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
+			-c "set runtimepath+=$(NVIM_DATA_DIRECTORY)/site/pack/default/opt/*" \
+			-c "helptags ALL" -c q )
 helptags: $(helptags)
 
 .PHONY: treesitter

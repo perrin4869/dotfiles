@@ -9,7 +9,10 @@ local function select_entire_buffer()
 
 	-- enter visual mode (linewise 'V' is usually best for "entire buffer")
 	-- this satisfies the "If mapping ends in visual mode, operate on it" rule.
-	vim.cmd.normal({ "V", bang = true })
+	local mode = vim.api.nvim_get_mode().mode
+	if mode ~= "V" and mode ~= "v" and mode ~= "\22" then
+		vim.cmd.normal({ "V", bang = true })
+	end
 
 	vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
 	vim.cmd.normal({ "o", bang = true }) -- Swap cursor to other end

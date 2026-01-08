@@ -72,12 +72,6 @@ set exrc
 
 let mapleader=' '
 
-" Convenience
-nnoremap <silent> <C-s> <cmd>w<CR>
-" https://github.com/neovim/neovim/issues/13086
-" If you type <ESC>; quickly enough, the key sequence generated will be <M-;>
-inoremap <M-;> <ESC>:
-
 no <s-down> ddp
 no <s-up> ddkP
 
@@ -129,7 +123,7 @@ nmap <M-0> g^
 nnoremap <silent> <leader>. <C-^>
 
 "This unsets the "last search pattern" register by hitting return
-nnoremap <silent> <esc><esc> <cmd>noh<CR>
+nnoremap <silent> <esc> <cmd>noh<CR>
 
 " nnoremap <silent> <Space><Space> @=(foldlevel('.')?'za':"\<Space>\<Space>")<CR>
 " vnoremap <Space> zf

@@ -45,10 +45,10 @@ local map = function(mode, lhs, args, desc)
 end
 
 -- Add or skip cursor above/below the main cursor.
-map({ "n", "x" }, "<up>", { "lineAddCursor", -1 }, "multicursor.add_line_up")
-map({ "n", "x" }, "<down>", { "lineAddCursor", 1 }, "multicursor.add_line_down")
-map({ "n", "x" }, "<leader><up>", { "lineSkipCursor", -1 }, "multicursor.skip_line_up")
-map({ "n", "x" }, "<leader><down>", { "lineSkipCursor", 1 }, "multicursor.skip_line_down")
+map({ "n", "x" }, "<c-up>", { "lineAddCursor", -1 }, "multicursor.add_line_up")
+map({ "n", "x" }, "<c-down>", { "lineAddCursor", 1 }, "multicursor.add_line_down")
+map({ "n", "x" }, "<c-s-up>", { "lineSkipCursor", -1 }, "multicursor.skip_line_up")
+map({ "n", "x" }, "<c-s-down>", { "lineSkipCursor", 1 }, "multicursor.skip_line_down")
 
 -- Add or skip adding a new cursor by matching word/selection
 map({ "n", "x" }, "<C-n>", { "matchAddCursor", 1 }, "multicursor.match_add_cursor_down")
@@ -65,5 +65,5 @@ map("n", "<c-leftrelease>", { "handleMouseRelease" }, "multicursor.handle_mouse_
 map({ "n", "x" }, "<leader>m", { "operator" }, "multicursor.operator")
 
 -- Disable and enable cursors.
-map({ "n", "x" }, "<leader>tm", { "toggleCursor" }, "multicursor.toggleCursor")
--- official is <c-q>
+map({ "n", "x" }, "<c-q>", { "toggleCursor" }, "multicursor.toggleCursor")
+-- consider also <leader>tm

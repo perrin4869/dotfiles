@@ -8,12 +8,15 @@ autocmd User fugitive
 " For autocleaning of fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>gr :Gread<CR>
-nnoremap <silent> <leader>gc :Git commit<CR>
-nnoremap <silent> <leader>gC :Git commit --amend<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
-nnoremap <silent> <leader>gP :Git push --force<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gs :Git status<CR>
-nnoremap <silent> <leader>gl :Git log<CR>
+nnoremap <silent> <leader>gw <cmd>Gwrite<CR>
+nnoremap <silent> <leader>gr <cmd>Gread<CR>
+nnoremap <silent> <leader>gc <cmd>Git commit<CR>
+nnoremap <silent> <leader>gC <cmd>Git commit --amend<CR>
+nnoremap <silent> <leader>gp <cmd>Git push<CR>
+nnoremap <silent> <leader>gP <cmd>Git push --force<CR>
+nnoremap <silent> <leader>gd <cmd>Gdiff<CR>
+nnoremap <silent> <leader>gs <cmd>Git status<CR>
+nnoremap <silent> <leader>gl <cmd>Git log<CR>
+
+" Convenience
+nnoremap <silent> <M-s> <cmd>Gwrite<CR>

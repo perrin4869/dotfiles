@@ -10,7 +10,7 @@ defer.very_lazy(function()
 		virtual_text = { current_line = true },
 	})
 
-	vim.keymap.set("n", "<leader>,", vim.diagnostic.open_float, get_opts({ desc = "diagnostic.open_float" }))
+	vim.keymap.set("n", "<leader>.", vim.diagnostic.open_float, get_opts({ desc = "diagnostic.open_float" }))
 	vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, get_opts({ desc = "diagnostic.setloclist" }))
 
 	local next_move = require("nvim-next.move")

@@ -17,9 +17,9 @@ local utils = require("utils")
 local opts = { silent = true, noremap = true }
 local get_opts = utils.create_get_opts(opts)
 
-vim.keymap.set("n", "<leader><esc>", function()
+vim.keymap.set("n", "<leader><bs>", function()
 	require("close_buffers").delete({ type = "this" })
 end, get_opts({ desc = "close_buffers.delete_this" }))
-vim.keymap.set("n", "<leader><bs>", function()
+vim.keymap.set("n", "<leader><esc>", function()
 	require("close_buffers").delete({ type = "hidden" })
 end, get_opts({ desc = "close_buffers.delete_hidden" }))

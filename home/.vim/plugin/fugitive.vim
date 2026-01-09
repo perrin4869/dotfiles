@@ -20,3 +20,4 @@ nnoremap <silent> <leader>gl <cmd>Git log<CR>
 
 " Convenience
 nnoremap <silent> <M-s> <cmd>Gwrite<CR>
+nnoremap <silent> <leader>W <cmd>Gwrite<CR>

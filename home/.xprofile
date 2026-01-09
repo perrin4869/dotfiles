@@ -43,6 +43,7 @@ picom -b $PICOM_VSYNC
 
 # If autorandr-launcher is installed (presumably because udev was not) then daemonize
 command -v autorandr-launcher && autorandr-launcher --daemonize
+command -v joystickwake && joystickwake --loglevel debug &
 
 # if pipewire in available in the system, enable it
 if [[ -x "$(command -v pipewire)" ]]; then

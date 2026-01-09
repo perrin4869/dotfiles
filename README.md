@@ -48,6 +48,7 @@ Other 3rd party dependencies to be installed by the OS dependency manager:
 - `spot`
 - `zen`
 - `difftastic`
+- `joystickwake` (with optional `python-dbus-fast` and `python-xlib` on `X11`)
 - `helvum`
 
 In Slackware:

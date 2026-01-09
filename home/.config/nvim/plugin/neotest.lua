@@ -55,3 +55,11 @@ map(
 	end),
 	"attach"
 )
+
+map(
+	"<leader>ts",
+	with_neotest(function(neotest)
+		neotest.summary.toggle()
+	end),
+	"attach"
+)

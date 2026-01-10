@@ -67,12 +67,5 @@ defer.on_load("project", function()
 	end, { desc = "projects" })
 end)
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-	pattern = "*",
-	group = vim.api.nvim_create_augroup("ProjectVimEnter", {}),
-	nested = true,
-	callback = function()
-		-- it's possible to lazy load because in manual mode we don't set "BufEnter" aucmds
-		defer.ensure("project")
-	end,
-})
+-- it's possible to lazy load because in manual mode we don't set "BufEnter" aucmds
+defer.on_event("project", "VimEnter", { nested = true })

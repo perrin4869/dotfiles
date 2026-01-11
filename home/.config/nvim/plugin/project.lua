@@ -16,7 +16,12 @@ local function on_attach()
 				vim.api.nvim_win_close(w, true)
 				vim.api.nvim_buf_delete(bufnr, { force = true })
 				vim.cmd.Neotree("show")
-				break
+			elseif bufname:match("Neotest Summary") ~= nil then
+				vim.api.nvim_win_close(w, true)
+				vim.api.nvim_buf_delete(bufnr, { force = true })
+				defer.on_postload("neotest", function()
+					require("neotest").summary.toggle()
+				end)
 			end
 		end
 	else

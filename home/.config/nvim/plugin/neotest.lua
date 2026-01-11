@@ -1,15 +1,15 @@
 local defer = require("defer")
 
 defer.pack("neotest")
-defer.very_lazy("neotest")
+defer.on_bufreadpre("neotest", { nested = true })
 defer.on_load("neotest", function()
 	require("neotest").setup({})
 end)
 
 defer.pack("neotest-mocha")
-defer.deps("neotest-mocha", "neotest")
+defer.deps("neotest", { "neotest-mocha" })
 
--- leave
+---@type Defer.With<neotest>
 local with_neotest = defer.with("neotest")
 
 local function map(lhs, rhs, desc)
@@ -60,6 +60,14 @@ map(
 	"<leader>ts",
 	with_neotest(function(neotest)
 		neotest.summary.toggle()
+	end),
+	"attach"
+)
+
+map(
+	"<leader>to",
+	with_neotest(function(neotest)
+		neotest.output_panel.toggle()
 	end),
 	"attach"
 )

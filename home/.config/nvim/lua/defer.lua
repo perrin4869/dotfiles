@@ -181,9 +181,12 @@ function M.deps(name, deps)
 	end
 end
 
+---@alias Defer.With<T> fun(callback: fun(m: T, ...): any): fun(...): any
+---
 --- Wraps a module for lazy execution via a callback.
+---@generic T
 ---@param name string
----@return fun(callback: fun(m: any, ...): any): fun(...): any
+---@return Defer.With<T>
 function M.with(name)
 	return function(callback)
 		return function(...)

@@ -49,3 +49,47 @@ require("test").setup(debug.getinfo(1, "S"), function(root)
 	}
 end)
 ```
+
+## 2. Monorepo Services (Mocha + NPM Workspaces)
+**Structure:** `services/{service_name}/.../{file}.{spec|integration|e2e}.ts` **Behavior**: Maps `spec` to `unit` and executes the specific workspace script.
+
+```lua
+-- luacheck: globals vim
+require("test").setup(debug.getinfo(1, "S"), function(root)
+	return {
+		require("neotest-mocha")({
+			is_test_file = require("neotest-mocha.util").create_test_file_extensions_matcher(
+				{ "spec", "integration", "e2e" },
+				{ "ts" }
+			),
+			command = function(path)
+				local relpath = vim.fs.relpath(root, path)
+				if not relpath then
+					return
+				end
+				local test_type = relpath:match("%.([^%.]+)%.ts$")
+				if not test_type then
+					return
+				end
+				test_type = (test_type == "spec") and "unit" or test_type
+				local parts = vim.split(relpath, "/", { trimempty = true })
+				return "npm run test:" .. test_type .. " -w @services/" .. parts[2] .. " --"
+			end,
+			command_args = function(context)
+				local relpath = vim.fs.relpath(root, context.path)
+				return {
+					"--full-trace",
+					"--reporter=json",
+					"--reporter-options=output=" .. context.results_path,
+					"--grep=" .. context.test_name_pattern,
+					relpath or context.path,
+				}
+			end,
+			env = { CI = true },
+			cwd = function()
+				return root
+			end,
+		}),
+	}
+end)
+```

@@ -71,3 +71,17 @@ map(
 	end),
 	"attach"
 )
+
+local restore = require("restore")
+restore.add_quitpre_ft("neotest-summary")
+restore.add_buf_match("Neotest Summary", function()
+	defer.on_postload("neotest", function()
+		require("neotest").summary.toggle()
+	end)
+end)
+restore.add_quitpre_ft("neotest-output-panel")
+restore.add_buf_match("Neotest Output Panel", function()
+	defer.on_postload("neotest", function()
+		require("neotest").output_panel.toggle()
+	end)
+end)

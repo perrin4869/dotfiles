@@ -17,3 +17,9 @@ vim.keymap.set("n", "<leader>nf", function()
 	vim.cmd.Neotree("reveal_file=%:p")
 	-- require("nvim-tree.api").tree.find_file({ focus = true, open = true })
 end, get_opts({ desc = "neo-tree.focus-file" }))
+
+-- ex bufname neo-tree filesystem [1]
+require("restore").add_quitpre_ft("neo-tree")
+require("restore").add_buf_match("neo%-tree filesystem", function()
+	vim.cmd.Neotree("show")
+end)

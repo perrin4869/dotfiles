@@ -12,9 +12,7 @@ defer.deps("neotest", { "neotest-mocha" })
 ---@type Defer.With<neotest>
 local with_neotest = defer.with("neotest")
 
-local function map(lhs, rhs, desc)
-	vim.keymap.set("n", lhs, rhs, { desc = "neotest." .. desc, silent = true, noremap = true })
-end
+local map = require("config").create_map({ mode = "n", desc = "neotest" })
 
 map(
 	"<leader>ii",

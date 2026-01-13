@@ -1,4 +1,5 @@
 local defer = require("defer")
+local map = require("config").map
 defer.very_lazy(function()
 	vim.cmd.packadd("vim-unimpaired")
 
@@ -11,8 +12,8 @@ defer.very_lazy(function()
 		vim.cmd("bnext")
 	end)
 
-	vim.keymap.set("n", "[b", prev_buffers, { silent = true, desc = "Go to previous buffer" })
-	vim.keymap.set("n", "]b", next_buffers, { silent = true, desc = "Go to next buffer" })
+	map("n", "[b", prev_buffers, "Go to previous buffer")
+	map("n", "]b", next_buffers, "Go to next buffer")
 
 	-- see help [q and help ]q for the default mappings in neovim >= 0.11
 	require("nvim-next.integrations").quickfix().setup()

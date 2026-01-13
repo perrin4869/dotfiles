@@ -7,17 +7,13 @@ defer.pack("trouble", "trouble.nvim")
 defer.cmd("Trouble", "trouble")
 local with_trouble = defer.with("trouble")
 
----@param lhs string
----@param args string|table
----@param desc string
----@param buf integer|nil
-local function map(lhs, args, desc, buf)
-	local opts = { silent = true, desc = "trouble." .. desc }
-	if buf then
-		opts.buffer = buf
-	end
-	vim.keymap.set("n", lhs, with_trouble(defer.call("toggle", args)), opts)
-end
+local map = require("config").create_map({
+	mode = "n",
+	desc = "trouble",
+	rhs = function(args)
+		return with_trouble(defer.call("toggle", args))
+	end,
+})
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspAttach_trouble", { clear = true }),
@@ -30,7 +26,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		---@param opts string|table
 		---@param desc string
 		local function map_lsp(lhs, opts, desc)
-			map(lhs, opts, desc, args.buf)
+			map(lhs, opts, { desc = desc, buffer = args.buf })
 		end
 
 		map_lsp("<leader>cs", { mode = "symbols" }, "symbols")

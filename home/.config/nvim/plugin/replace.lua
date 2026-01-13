@@ -7,16 +7,15 @@ defer.pack("substitute", "substitute.nvim")
 local with = defer.with("substitute")
 local call = defer.call
 
-local map = function(mode, lhs, func_name)
-	vim.keymap.set(
-		mode,
-		"<leader>r" .. lhs,
-		with(call(func_name)),
-		{ silent = true, noremap = true, desc = "substitute." .. func_name }
-	)
-end
+local map = require("config").create_map({
+	desc = "substitute",
+	rhs = function(fname)
+		return with(call(fname))
+	end,
+})
 
-map("n", "", "operator")
-map("n", "r", "line")
-map("n", "R", "eol")
-map("x", "", "visual")
+local prefix = "<leader>r"
+map("n", prefix .. "", "operator")
+map("n", prefix .. "r", "line")
+map("n", prefix .. "R", "eol")
+map("x", prefix .. "", "visual")

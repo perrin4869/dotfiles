@@ -33,28 +33,30 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			local function map(modes, lhs, thunk, desc)
-				vim.keymap.set(modes, lhs, thunk, { buffer = args.buf, silent = true, desc = desc })
-			end
+			local map = require("config").create_map({
+				buffer = args.buf,
+				desc = "treeclimber",
+				desc_separator = ": ",
+			})
 
-			map("n", "<leader>k", show_control_flow, "treeclimber: control flow")
+			map("n", "<leader>k", show_control_flow, "control flow")
 
-			map({ "x", "o" }, "i.", select_node, "treeclimber: select node")
-			map({ "x", "o" }, "a.", select_expand, "treeclimber: expand")
+			map({ "x", "o" }, "i.", select_node, "select node")
+			map({ "x", "o" }, "a.", select_expand, "expand")
 
-			map({ "n", "x", "o" }, "<M-e>", select_forward_end, "treeclimber: forward end")
-			map({ "n", "x", "o" }, "<M-b>", select_backward, "treeclimber: backward")
-			map({ "n", "x", "o" }, "<M-h>", select_previous, "treeclimber: previous")
-			map({ "n", "x", "o" }, "<M-j>", select_shrink, "treeclimber: shrink")
-			map({ "n", "x", "o" }, "<M-k>", select_parent, "treeclimber: parent")
-			map({ "n", "x", "o" }, "<M-l>", select_next, "treeclimber: next")
+			map({ "n", "x", "o" }, "<M-e>", select_forward_end, "forward end")
+			map({ "n", "x", "o" }, "<M-b>", select_backward, "backward")
+			map({ "n", "x", "o" }, "<M-h>", select_previous, "previous")
+			map({ "n", "x", "o" }, "<M-j>", select_shrink, "shrink")
+			map({ "n", "x", "o" }, "<M-k>", select_parent, "parent")
+			map({ "n", "x", "o" }, "<M-l>", select_next, "next")
 
-			map({ "n", "x", "o" }, "<M-L>", grow_forward, "treeclimber: grow forward")
-			map({ "n", "x", "o" }, "<M-H>", grow_backward, "treeclimber: grow backward")
+			map({ "n", "x", "o" }, "<M-L>", grow_forward, "grow forward")
+			map({ "n", "x", "o" }, "<M-H>", grow_backward, "grow backward")
 
-			map({ "n", "x", "o" }, "<M-[>", siblings_backward, "treeclimber: siblings backward")
-			map({ "n", "x", "o" }, "<M-]>", siblings_forward, "treeclimber: siblings forward")
-			map({ "n", "x", "o" }, "<M-g>", select_top_level, "treeclimber: top level")
+			map({ "n", "x", "o" }, "<M-[>", siblings_backward, "siblings backward")
+			map({ "n", "x", "o" }, "<M-]>", siblings_forward, "siblings forward")
+			map({ "n", "x", "o" }, "<M-g>", select_top_level, "top level")
 		end,
 	})
 end)

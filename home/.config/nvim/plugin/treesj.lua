@@ -12,14 +12,14 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			local map = function(lhs, fname)
-				vim.keymap.set(
-					"n",
-					lhs,
-					with_tsj(defer.call(fname)),
-					{ buffer = args.buf, silent = true, desc = "treesj." .. fname }
-				)
-			end
+			local map = require("config").create_map({
+				mode = "n",
+				desc = "treesj",
+				buffer = args.buf,
+				rhs = function(fname)
+					return with_tsj(defer.call(fname))
+				end,
+			})
 
 			map("<leader>j", "toggle")
 			map("<C-j>", "split")

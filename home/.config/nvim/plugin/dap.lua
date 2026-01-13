@@ -1,4 +1,5 @@
 local defer = require("defer")
+local config = require("config")
 
 local function focus_repl()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -28,37 +29,19 @@ local with_dap = defer.with("dap")
 local with_dapui = defer.with("dapui")
 local call = defer.call
 
---- @param mode string|string[]
---- @param lhs string
---- @param rhs function
---- @param desc string
-local function base_map(mode, lhs, rhs, desc)
-	vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, desc = desc })
-end
-
---- @param mode string|string[]
---- @param lhs string
---- @param rhs function|string|table
---- @param desc string|nil
-local function map(mode, lhs, rhs, desc)
-	local t = type(rhs)
-	if t == "string" then
-		desc = rhs
-		rhs = with_dap(call(rhs))
-	elseif t == "table" then
-		desc = rhs[1]
-		rhs = with_dap(call(unpack(rhs)))
-	end
-	base_map(mode, lhs, rhs, "dap." .. desc)
-end
-
---- @param mode string|string[]
---- @param lhs string
---- @param func_name string
---- @param desc string
-local function map_dapui(mode, lhs, func_name, desc)
-	base_map(mode, lhs, with_dapui(call(func_name)), "dapui." .. desc)
-end
+local map = config.create_map({
+	desc = "dap",
+	rhs = function(args)
+		local t = type(args)
+		if t == "function" then
+			return args
+		elseif t == "string" then
+			return with_dap(call(args))
+		elseif t == "table" then
+			return with_dap(call(unpack(args)))
+		end
+	end,
+})
 
 local debug_layer = defer.lazy(defer.with("layers")(function()
 	local layer = require("layers").mode.new()
@@ -288,7 +271,7 @@ map("n", prefix .. "e", { "set_exception_breakpoints", { "all" } })
 map("n", prefix .. "i", ui_widgets_hover, "ui.widgets.hover")
 map("n", prefix .. "?", ui_widgets_scopes, "ui.widgets.scopes")
 
-map_dapui("n", prefix .. "u", "toggle", "dapui.toggle")
+config.map("n", prefix .. "u", with_dapui(call("toggle")), "dapui.toggle")
 
 -- telescope-dap
 local pickers = require("pickers")
@@ -296,19 +279,19 @@ pickers.map(pickers.prefix .. "dc", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.commands()
 	end)()
-end, { prefix = false, desc = "dap.commands" })
+end, "dap.commands")
 pickers.map(pickers.prefix .. "db", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.list_breakpoints()
 	end)()
-end, { prefix = false, desc = "dap.list_breakpoints" })
+end, "dap.list_breakpoints")
 pickers.map(pickers.prefix .. "dv", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.variables()
 	end)()
-end, { prefix = false, desc = "dap.variables" })
+end, "dap.variables")
 pickers.map(pickers.prefix .. "df", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.frames()
 	end)()
-end, { prefix = false, desc = "dap.frames" })
+end, "dap.frames")

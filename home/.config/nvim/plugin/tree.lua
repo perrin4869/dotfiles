@@ -6,14 +6,15 @@ end)
 defer.pack("neo-tree", "neo-tree.nvim")
 defer.cmd("Neotree", "neo-tree")
 
---- @param lhs string
---- @param args string
---- @param desc string
-local function map(lhs, args, desc)
-	vim.keymap.set("n", lhs, function()
-		vim.cmd.Neotree(args)
-	end, { noremap = true, silent = true, desc = "neo-tree." .. desc })
-end
+local map = require("config").create_map({
+	mode = "n",
+	desc = "neo-tree",
+	rhs = function(args)
+		return function()
+			vim.cmd.Neotree(args)
+		end
+	end,
+})
 
 local prefix = "<leader>n"
 map(prefix .. "n", "toggle", "toggle")

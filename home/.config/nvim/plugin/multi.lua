@@ -38,30 +38,33 @@ defer.pack("multicursor-nvim", "multicursor.nvim")
 local call = defer.call
 local with_mc = defer.with("multicursor-nvim")
 
-local map = function(mode, lhs, args, desc)
-	vim.keymap.set(mode, lhs, with_mc(call(unpack(args))), { silent = true, desc = desc })
-end
+local map = require("config").create_map({
+	desc = "multicursor",
+	rhs = function(args)
+		return with_mc(call(unpack(args)))
+	end,
+})
 
 -- Add or skip cursor above/below the main cursor.
-map({ "n", "x" }, "<c-up>", { "lineAddCursor", -1 }, "multicursor.add_line_up")
-map({ "n", "x" }, "<c-down>", { "lineAddCursor", 1 }, "multicursor.add_line_down")
-map({ "n", "x" }, "<c-s-up>", { "lineSkipCursor", -1 }, "multicursor.skip_line_up")
-map({ "n", "x" }, "<c-s-down>", { "lineSkipCursor", 1 }, "multicursor.skip_line_down")
+map({ "n", "x" }, "<c-up>", { "lineAddCursor", -1 }, "add_line_up")
+map({ "n", "x" }, "<c-down>", { "lineAddCursor", 1 }, "add_line_down")
+map({ "n", "x" }, "<c-s-up>", { "lineSkipCursor", -1 }, "skip_line_up")
+map({ "n", "x" }, "<c-s-down>", { "lineSkipCursor", 1 }, "skip_line_down")
 
 -- Add or skip adding a new cursor by matching word/selection
-map({ "n", "x" }, "<C-n>", { "matchAddCursor", 1 }, "multicursor.match_add_cursor_down")
-map({ "n", "x" }, "<C-s>", { "matchSkipCursor", 1 }, "multicursor.match_skip_cursor_down")
-map({ "n", "x" }, "<C-M-n>", { "matchAddCursor", -1 }, "multicursor.match_add_cursor_up")
-map({ "n", "x" }, "<C-M-s>", { "matchSkipCursor", -1 }, "multicursor.match_skip_cursor_up")
+map({ "n", "x" }, "<C-n>", { "matchAddCursor", 1 }, "match_add_cursor_down")
+map({ "n", "x" }, "<C-s>", { "matchSkipCursor", 1 }, "match_skip_cursor_down")
+map({ "n", "x" }, "<C-M-n>", { "matchAddCursor", -1 }, "match_add_cursor_up")
+map({ "n", "x" }, "<C-M-s>", { "matchSkipCursor", -1 }, "match_skip_cursor_up")
 -- the official mappings above are <leader>n, <leader>s, <leader>N, <leader>S
 
 -- Add and remove cursors with control + left click.
-map("n", "<c-leftmouse>", { "handleMouse" }, "multicursor.handle_mouse")
-map("n", "<c-leftdrag>", { "handleMouseDrag" }, "multicursor.handle_mouse_drag")
-map("n", "<c-leftrelease>", { "handleMouseRelease" }, "multicursor.handle_mouse_release")
+map("n", "<c-leftmouse>", { "handleMouse" }, "handle_mouse")
+map("n", "<c-leftdrag>", { "handleMouseDrag" }, "handle_mouse_drag")
+map("n", "<c-leftrelease>", { "handleMouseRelease" }, "handle_mouse_release")
 
-map({ "n", "x" }, "<leader>m", { "operator" }, "multicursor.operator")
+map({ "n", "x" }, "<leader>m", { "operator" }, "operator")
 
 -- Disable and enable cursors.
-map({ "n", "x" }, "<c-q>", { "toggleCursor" }, "multicursor.toggleCursor")
+map({ "n", "x" }, "<c-q>", { "toggleCursor" }, "toggleCursor")
 -- consider also <leader>tm

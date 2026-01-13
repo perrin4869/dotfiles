@@ -16,9 +16,7 @@ defer.on_load("lsp", function()
 			vim.api.nvim_set_option_value("omnifunc", "v:lua.vim.lsp.omnifunc", { buf = bufnr })
 
 			-- Mappings.
-			local function map(lhs, rhs, desc)
-				vim.keymap.set("n", lhs, rhs, { silent = true, buffer = bufnr, desc = "lsp." .. desc })
-			end
+			local map = require("config").create_map({ mode = "n", desc = "lsp", buffer = bufnr })
 
 			map("gD", vim.lsp.buf.declaration, "declaration")
 			map("gd", vim.lsp.buf.definition, "definition")

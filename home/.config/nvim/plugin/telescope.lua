@@ -19,7 +19,7 @@ defer.pack("telescope", "telescope.nvim")
 defer.cmd("Telescope", "telescope")
 
 -- Mappings.
-vim.keymap.set("n", "<C-p>", pickers.project_files, { noremap = true, silent = true, desc = "project_files" })
+pickers.map("<C-p>", pickers.project_files, "project_files")
 
 local prefix = pickers.prefix
 
@@ -57,7 +57,7 @@ local git_grep_conditional = function()
 	end
 end
 
-pickers.map(prefix .. "p", git_grep_conditional, { desc = "git_grep" })
+pickers.map(prefix .. "p", git_grep_conditional, "git_grep")
 pickers.map(prefix .. "gb", "git_branches")
 pickers.map(prefix .. "gc", "git_commits")
 pickers.map(prefix .. "gs", "git_status")

@@ -13,13 +13,15 @@ defer.cmd("BDelete", "close_buffers")
 defer.cmd("BWipeout", "close_buffers")
 defer.hook("close_buffers")
 
---- @param lhs string
---- @param type string
-local function map(lhs, type)
-	vim.keymap.set("n", lhs, function()
-		require("close_buffers").delete({ type = type })
-	end, { silent = true, noremap = true, desc = "close_buffers." .. type })
-end
+local map = require("config").create_map({
+	mode = "n",
+	desc = "close_buffers",
+	rhs = function(type)
+		return function()
+			require("close_buffers").delete({ type = type })
+		end
+	end,
+})
 
 map("<leader><bs>", "this")
 map("<leader><c-h>", "hidden") -- <C-BS> sends <C-h>

@@ -2,7 +2,6 @@ local defer = require("defer")
 
 defer.on_load("conform", function()
 	local conform = require("conform")
-	local utils = require("utils")
 
 	local json = { "prettierd", "prettier", stop_after_first = true }
 	local js = { "eslint_d" }
@@ -57,9 +56,7 @@ defer.on_load("conform", function()
 		end
 	end
 
-	local function map(mode, lhs, rhs, desc)
-		vim.keymap.set(mode, lhs, rhs, { silent = true, desc = "conform." .. desc })
-	end
+	local map = require("config").create_map({ desc = "conform" })
 	map({ "n", "x" }, "<leader>ff", function()
 		require("conform").format({}, function(err)
 			if not err then

@@ -5,11 +5,10 @@ defer.on_load("gitsigns", function()
 		on_attach = function(bufnr)
 			local gs = package.loaded.gitsigns
 
-			local function map(mode, l, r, opts)
-				opts = opts or {}
-				opts.buffer = bufnr
-				vim.keymap.set(mode, l, r, opts)
-			end
+			local map = require("config").create_map({
+				desc = "gitsigns",
+				buffer = bufnr,
+			})
 
 			local next_integrations = require("nvim-next.integrations")
 			local nngs = next_integrations.gitsigns(gs)
@@ -24,7 +23,7 @@ defer.on_load("gitsigns", function()
 					nngs.next_hunk()
 				end)
 				return "<Ignore>"
-			end, { expr = true, desc = "gitsigns.next_hunk" })
+			end, { expr = true, desc = "next_hunk" })
 
 			map("n", "[c", function()
 				if vim.wo.diff then
@@ -34,45 +33,45 @@ defer.on_load("gitsigns", function()
 					nngs.prev_hunk()
 				end)
 				return "<Ignore>"
-			end, { expr = true, desc = "gitsigns.prev_hunk" })
+			end, { expr = true, desc = "prev_hunk" })
 
 			-- Actions
-			map("n", "<leader>hs", gs.stage_hunk, { desc = "gitsigns.stage_hunk" })
-			map("n", "<leader>hr", gs.reset_hunk, { desc = "gitsigns.reset_hunk" })
+			map("n", "<leader>hs", gs.stage_hunk, "stage_hunk")
+			map("n", "<leader>hr", gs.reset_hunk, "reset_hunk")
 
 			map("v", "<leader>hs", function()
 				gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-			end, { desc = "gitsigns.stage_hunk" })
+			end, "stage_hunk")
 
 			map("v", "<leader>hr", function()
 				gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-			end, { desc = "gitsigns.reset_hunk" })
+			end, "reset_hunk")
 
-			map("n", "<leader>hS", gs.stage_buffer, { desc = "gitsigns.stage_buffer" })
-			map("n", "<leader>hR", gs.reset_buffer, { desc = "gitsigns.reset_buffer" })
-			map("n", "<leader>hp", gs.preview_hunk, { desc = "gitsigns.preview_hunk" })
-			map("n", "<leader>hi", gs.preview_hunk_inline, { desc = "gitsigns.preview_hunk_inline" })
+			map("n", "<leader>hS", gs.stage_buffer, "stage_buffer")
+			map("n", "<leader>hR", gs.reset_buffer, "reset_buffer")
+			map("n", "<leader>hp", gs.preview_hunk, "preview_hunk")
+			map("n", "<leader>hi", gs.preview_hunk_inline, "preview_hunk_inline")
 
 			map("n", "<leader>hb", function()
 				gs.blame_line({ full = true })
-			end, { desc = "gitsigns.blame_line" })
+			end, "blame_line")
 
-			map("n", "<leader>hd", gs.diffthis, { desc = "gitsigns.diffthis" })
+			map("n", "<leader>hd", gs.diffthis, "diffthis")
 
 			map("n", "<leader>hD", function()
 				gs.diffthis("~")
-			end, { desc = "gitsigns.diffthis_~" })
+			end, "diffthis_~")
 
 			map("n", "<leader>hQ", function()
 				gs.setqflist("all")
-			end, { desc = "gitsigns.setqflist_all" })
-			map("n", "<leader>hq", gs.setqflist, { desc = "gitsigns.setqflist" })
+			end, "setqflist_all")
+			map("n", "<leader>hq", gs.setqflist, "setqflist")
 
-			map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "gitsigns.toggle_current_line_blame" })
-			map("n", "<leader>tw", gs.toggle_word_diff, { desc = "gitsigns.toggle_word_diff" })
+			map("n", "<leader>tb", gs.toggle_current_line_blame, "toggle_current_line_blame")
+			map("n", "<leader>tw", gs.toggle_word_diff, "toggle_word_diff")
 
 			-- Text object
-			map({ "o", "x" }, "ih", gs.select_hunk, { desc = "gitsigns.select_hunk" })
+			map({ "o", "x" }, "ih", gs.select_hunk, "select_hunk")
 		end,
 	})
 end)

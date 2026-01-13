@@ -68,15 +68,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		local lsp = require("lsp")
-		local utils = require("utils")
 		local metals = require("metals")
 		local tvp = require("metals.tvp")
 
 		local buffer = args.buf
-		local opts = { noremap = true, silent = true, buffer = buffer }
-		local get_opts = utils.create_get_opts(opts)
 		local map = function(mode, lhs, rhs, desc)
-			vim.keymap.set(mode, lhs, rhs, get_opts({ desc = "metals." .. desc }))
+			vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true, buffer = buffer, desc = "metals." .. desc })
 		end
 
 		local pickers = require("pickers")

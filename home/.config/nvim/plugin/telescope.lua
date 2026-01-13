@@ -1,6 +1,4 @@
 local defer = require("defer")
-
-local utils = require("utils")
 local pickers = require("pickers")
 
 defer.on_load("telescope", function()
@@ -21,9 +19,7 @@ defer.pack("telescope", "telescope.nvim")
 defer.cmd("Telescope", "telescope")
 
 -- Mappings.
-local get_opts = utils.create_get_opts({ noremap = true, silent = true })
-
-vim.keymap.set("n", "<C-p>", pickers.project_files, get_opts({ desc = "project_files" }))
+vim.keymap.set("n", "<C-p>", pickers.project_files, { noremap = true, silent = true, desc = "project_files" })
 
 local prefix = pickers.prefix
 

@@ -1,5 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
 
 local M = {}
 
@@ -7,12 +6,17 @@ local with_telescope = defer.with("telescope")
 
 -- gg would be nice but then you can't jump to the top of the file
 M.prefix = "<leader><leader>"
-local get_opts = utils.create_get_opts({ noremap = true, silent = true })
+--- map a new picker
+--- @param lhs string
+--- @param rhs function|string
+--- @param opts nil|{ desc: string }
 M.map = function(lhs, rhs, opts)
 	opts = opts or {}
+	local desc = opts.desc or rhs
+	opts = { noremap = true, silent = true, desc = "telescope." .. desc }
 
 	if type(rhs) == "function" then
-		vim.keymap.set("n", lhs, with_telescope(rhs), get_opts({ desc = "telescope." .. opts.desc }))
+		vim.keymap.set("n", lhs, with_telescope(rhs), opts)
 	else
 		vim.keymap.set(
 			"n",
@@ -20,7 +24,7 @@ M.map = function(lhs, rhs, opts)
 			with_telescope(function()
 				require("telescope.builtin")[rhs]()
 			end),
-			get_opts({ desc = "telescope." .. rhs })
+			opts
 		)
 	end
 end

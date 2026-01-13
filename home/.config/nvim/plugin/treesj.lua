@@ -12,10 +12,13 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			local utils = require("utils")
-			local get_opts = utils.create_get_opts({ buffer = args.buf, silent = true })
 			local map = function(lhs, fname)
-				vim.keymap.set("n", lhs, with_tsj(defer.call(fname)), get_opts({ desc = "treesj." .. fname }))
+				vim.keymap.set(
+					"n",
+					lhs,
+					with_tsj(defer.call(fname)),
+					{ buffer = args.buf, silent = true, desc = "treesj." .. fname }
+				)
 			end
 
 			map("<leader>j", "toggle")

@@ -1,17 +1,21 @@
 local defer = require("defer")
 defer.very_lazy(function()
-	local util = require("utils")
-
-	local opts = { noremap = true, silent = true }
-	local get_opts = util.create_get_opts(opts)
+	local function map(lhs, func_name)
+		vim.keymap.set(
+			"n",
+			lhs,
+			vim.diagnostic[func_name],
+			{ noremap = true, silent = true, desc = "diagnostic." .. func_name }
+		)
+	end
 
 	vim.diagnostic.config({
-		float = { border = util.border },
+		float = { border = require("config").border },
 		virtual_text = { current_line = true },
 	})
 
-	vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, get_opts({ desc = "diagnostic.open_float" }))
-	vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, get_opts({ desc = "diagnostic.setloclist" }))
+	map("<leader>e", "open_float")
+	map("<leader>q", "setloclist")
 
 	local next_move = require("nvim-next.move")
 

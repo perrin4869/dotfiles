@@ -1,5 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
 
 defer.on_load("neo-tree", function()
 	require("neo-tree").setup({})
@@ -7,16 +6,18 @@ end)
 defer.pack("neo-tree", "neo-tree.nvim")
 defer.cmd("Neotree", "neo-tree")
 
-local opts = { noremap = true, silent = true }
-local get_opts = utils.create_get_opts(opts)
+--- @param lhs string
+--- @param args string
+--- @param desc string
+local function map(lhs, args, desc)
+	vim.keymap.set("n", lhs, function()
+		vim.cmd.Neotree(args)
+	end, { noremap = true, silent = true, desc = "neo-tree." .. desc })
+end
 
-vim.keymap.set("n", "<leader>nn", function()
-	vim.cmd.Neotree("toggle")
-end, get_opts({ desc = "neo-tree.toggle" }))
-vim.keymap.set("n", "<leader>nf", function()
-	vim.cmd.Neotree("reveal_file=%:p")
-	-- require("nvim-tree.api").tree.find_file({ focus = true, open = true })
-end, get_opts({ desc = "neo-tree.focus-file" }))
+local prefix = "<leader>n"
+map(prefix .. "n", "toggle", "toggle")
+map(prefix .. "f", "reveal_file=%:p", "focus-file")
 
 -- ex bufname neo-tree filesystem [1]
 require("restore").add_quitpre_ft("neo-tree")

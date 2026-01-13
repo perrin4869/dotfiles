@@ -1,4 +1,3 @@
-local utils = require("utils")
 local defer = require("defer")
 defer.on_load("multicursor-nvim", function()
 	local mc = require("multicursor-nvim")
@@ -39,9 +38,8 @@ defer.pack("multicursor-nvim", "multicursor.nvim")
 local call = defer.call
 local with_mc = defer.with("multicursor-nvim")
 
-local opts = utils.create_get_opts({ silent = true })
 local map = function(mode, lhs, args, desc)
-	vim.keymap.set(mode, lhs, with_mc(call(unpack(args))), opts({ desc = desc }))
+	vim.keymap.set(mode, lhs, with_mc(call(unpack(args))), { silent = true, desc = desc })
 end
 
 -- Add or skip cursor above/below the main cursor.

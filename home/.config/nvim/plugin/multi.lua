@@ -38,7 +38,7 @@ defer.pack("multicursor-nvim", "multicursor.nvim")
 local call = defer.call
 local with_mc = defer.with("multicursor-nvim")
 
-local map = require("config").create_map({
+local map = require("map").create({
 	desc = "multicursor",
 	rhs = function(args)
 		return with_mc(call(unpack(args)))

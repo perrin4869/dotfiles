@@ -1,7 +1,7 @@
 -- Make escape work in the Neovim terminal.
 -- Esc is useful in zsh in vim-mode, so use <C-o> instead
 -- <Esc><Esc> makes a single <Esc> be delayed, so not ideal
-require("config").map("t", "<C-o>", "<C-\\><C-n>")
+require("map").map("t", "<C-o>", "<C-\\><C-n>")
 
 -- autocmd TermOpen * startinsert
 -- Prefer Neovim terminal insert mode to normal mode.

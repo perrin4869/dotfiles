@@ -1,5 +1,4 @@
 local defer = require("defer")
-local config = require("config")
 
 local function focus_repl()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -29,7 +28,7 @@ local with_dap = defer.with("dap")
 local with_dapui = defer.with("dapui")
 local call = defer.call
 
-local map = config.create_map({
+local map = require("map").create({
 	desc = "dap",
 	rhs = function(args)
 		local t = type(args)
@@ -271,7 +270,7 @@ map("n", prefix .. "e", { "set_exception_breakpoints", { "all" } })
 map("n", prefix .. "i", ui_widgets_hover, "ui.widgets.hover")
 map("n", prefix .. "?", ui_widgets_scopes, "ui.widgets.scopes")
 
-config.map("n", prefix .. "u", with_dapui(call("toggle")), "dapui.toggle")
+require("map").map("n", prefix .. "u", with_dapui(call("toggle")), "dapui.toggle")
 
 -- telescope-dap
 local pickers = require("pickers")

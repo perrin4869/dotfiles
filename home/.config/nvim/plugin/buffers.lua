@@ -13,7 +13,7 @@ defer.cmd("BDelete", "close_buffers")
 defer.cmd("BWipeout", "close_buffers")
 defer.hook("close_buffers")
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = "n",
 	desc = "close_buffers",
 	rhs = function(type)

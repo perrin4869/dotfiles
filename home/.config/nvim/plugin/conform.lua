@@ -56,7 +56,7 @@ defer.on_load("conform", function()
 		end
 	end
 
-	local map = require("config").create_map({ desc = "conform" })
+	local map = require("map").create({ desc = "conform" })
 	map({ "n", "x" }, "<leader>ff", function()
 		require("conform").format({}, function(err)
 			if not err then

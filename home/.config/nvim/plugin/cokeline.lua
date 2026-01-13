@@ -83,7 +83,7 @@ local function setup()
 		},
 	})
 
-	require("config").map("n", "<leader>p", function()
+	require("map").map("n", "<leader>p", function()
 		pick("focus")
 	end, "cokeline.pick.focus")
 end

@@ -5,7 +5,7 @@ defer.on_load("wf", function()
 end)
 local with_wf = defer.with("wf")
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = "n",
 	desc = "[wf.nvim]",
 	desc_separator = " ",

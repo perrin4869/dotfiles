@@ -10,7 +10,7 @@ defer.on_event("persistence", "BufReadPre")
 local with_persistence = defer.with("persistence")
 local call = defer.call
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = "n",
 	desc = "persistence",
 	rhs = function(args)

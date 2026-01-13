@@ -43,7 +43,7 @@ defer.on_bufreadpre(function()
 			local next_move = require("nvim-next.move")
 			local move = require("nvim-treesitter-textobjects.move")
 
-			local map = require("config").create_map({
+			local map = require("map").create({
 				desc = "textobjects",
 				buffer = args.buf,
 			})

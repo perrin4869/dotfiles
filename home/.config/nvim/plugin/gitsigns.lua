@@ -5,7 +5,7 @@ defer.on_load("gitsigns", function()
 		on_attach = function(bufnr)
 			local gs = package.loaded.gitsigns
 
-			local map = require("config").create_map({
+			local map = require("map").create({
 				desc = "gitsigns",
 				buffer = bufnr,
 			})

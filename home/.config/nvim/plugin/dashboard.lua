@@ -137,7 +137,7 @@ defer.on_load("alpha", function()
 		pattern = "alpha",
 		group = vim.api.nvim_create_augroup("alpha_keymaps", { clear = true }),
 		callback = function(opts)
-			require("config").map("n", "i", function()
+			require("map").map("n", "i", function()
 				vim.cmd.ene()
 				vim.cmd.startinsert()
 			end, { buffer = opts.buf, desc = "alpha.exit_and_edit" })

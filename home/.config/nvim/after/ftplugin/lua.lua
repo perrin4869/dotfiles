@@ -4,7 +4,7 @@ end, { desc = "Launch osv" })
 
 vim.api.nvim_create_user_command("OsvStop", require("osv").stop, { desc = "Stop osv" })
 
-local map = require("config").create_map({
+local map = require("map").create({
 	desc = "execute lua",
 	desc_separator = " ",
 	buffer = true,

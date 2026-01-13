@@ -23,7 +23,7 @@ local with_floaterm_api = function(cb)
 	end)
 end
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = { "n", "t" },
 	desc = "floaterm",
 })

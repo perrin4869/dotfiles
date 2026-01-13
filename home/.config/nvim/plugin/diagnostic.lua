@@ -1,8 +1,6 @@
 local defer = require("defer")
 defer.very_lazy(function()
-	local config = require("config")
-
-	local map = config.create_map({
+	local map = require("map").create({
 		mode = "n",
 		desc = "diagnostic",
 		rhs = function(func_name)
@@ -25,8 +23,8 @@ defer.very_lazy(function()
 	end, function()
 		vim.diagnostic.jump({ count = vim.v.count1 })
 	end)
-	config.map("n", "[d", prev_diag, "Go to previous diagnostic")
-	config.map("n", "]d", next_diag, "Go to next diagnostic")
+	require("map").map("n", "[d", prev_diag, "Go to previous diagnostic")
+	require("map").map("n", "]d", next_diag, "Go to next diagnostic")
 
 	-- This is nicer than having virtual text
 	-- https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/

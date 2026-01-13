@@ -1,5 +1,5 @@
 local defer = require("defer")
-local map = require("config").map
+local map = require("map").map
 defer.very_lazy(function()
 	vim.cmd.packadd("vim-unimpaired")
 

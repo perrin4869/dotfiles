@@ -1,4 +1,4 @@
-local map = require("config").create_map({ buffer = true })
+local map = require("map").create({ buffer = true })
 
 map("n", "<leader>l", function()
 	vim.cmd("LivePreview start")

@@ -7,7 +7,7 @@ defer.pack("trouble", "trouble.nvim")
 defer.cmd("Trouble", "trouble")
 local with_trouble = defer.with("trouble")
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = "n",
 	desc = "trouble",
 	rhs = function(args)

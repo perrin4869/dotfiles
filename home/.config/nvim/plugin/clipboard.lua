@@ -47,7 +47,7 @@ local function create_osc52(mode)
 	end
 end
 
-local map = require("config").create_map({
+local map = require("map").create({
 	desc = "OSC52",
 	desc_separator = " ",
 })

@@ -7,7 +7,7 @@ local with_telescope = defer.with("telescope")
 -- gg would be nice but then you can't jump to the top of the file
 M.prefix = "<leader><leader>"
 --- map a new picker
-M.map = require("config").create_map({
+M.map = require("map").create({
 	mode = "n",
 	desc = "telescope",
 	rhs = function(rhs)

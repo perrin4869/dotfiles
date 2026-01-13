@@ -12,7 +12,7 @@ defer.deps("neotest", { "neotest-mocha" })
 ---@type Defer.With<neotest>
 local with_neotest = defer.with("neotest")
 
-local map = require("config").create_map({ mode = "n", desc = "neotest" })
+local map = require("map").create({ mode = "n", desc = "neotest" })
 
 map(
 	"<leader>ii",

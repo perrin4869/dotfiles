@@ -19,4 +19,4 @@ local function select_entire_buffer()
 	vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
 end
 
-require("config").map({ "x", "o" }, "ae", select_entire_buffer, "Entire buffer (operator)")
+require("map").map({ "x", "o" }, "ae", select_entire_buffer, "Entire buffer (operator)")

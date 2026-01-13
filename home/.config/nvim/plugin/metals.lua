@@ -72,7 +72,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local tvp = require("metals.tvp")
 
 		local buffer = args.buf
-		local map = require("config").create_map({
+		local map = require("map").create({
 			mode = "n",
 			buffer = buffer,
 			desc = "metals",

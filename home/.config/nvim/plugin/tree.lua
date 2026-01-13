@@ -6,7 +6,7 @@ end)
 defer.pack("neo-tree", "neo-tree.nvim")
 defer.cmd("Neotree", "neo-tree")
 
-local map = require("config").create_map({
+local map = require("map").create({
 	mode = "n",
 	desc = "neo-tree",
 	rhs = function(args)

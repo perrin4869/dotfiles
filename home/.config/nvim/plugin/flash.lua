@@ -14,7 +14,7 @@ local treesitter = with_flash(defer.call("treesitter"))
 local treesitter_search = with_flash(defer.call("treesitter_search"))
 
 local desc = "flash"
-local map = require("config").create_map({
+local map = require("map").create({
 	desc = desc,
 })
 
@@ -27,7 +27,7 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			local map_buf = require("config").create_map({
+			local map_buf = require("map").create({
 				desc = desc,
 				buffer = args.buf,
 			})

@@ -12,7 +12,7 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			local map = require("config").create_map({
+			local map = require("map").create({
 				mode = "n",
 				desc = "treesj",
 				buffer = args.buf,

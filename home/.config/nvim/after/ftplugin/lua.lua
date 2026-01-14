@@ -4,12 +4,17 @@ end, { desc = "Launch osv" })
 
 vim.api.nvim_create_user_command("OsvStop", require("osv").stop, { desc = "Stop osv" })
 
-vim.keymap.set("n", "<leader>.x", function()
+local map = require("map").create({
+	desc = "execute lua",
+	desc_separator = " ",
+	buffer = true,
+})
+map("n", "<leader>.x", function()
 	vim.cmd(".source")
-end, { noremap = true, buffer = true, silent = true, desc = "execute lua lua" })
-vim.keymap.set("n", "<leader>.X", function()
+end, "lua")
+map("n", "<leader>.X", function()
 	vim.cmd("source %")
-end, { noremap = true, buffer = true, silent = true, desc = "execute lua file" })
-vim.keymap.set("x", "<leader>.", function()
+end, "file")
+map("x", "<leader>.", function()
 	vim.cmd("'<'>source")
-end, { noremap = true, buffer = true, silent = true, desc = "execute lua visual" })
+end, "visual")

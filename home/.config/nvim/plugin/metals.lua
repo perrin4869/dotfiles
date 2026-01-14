@@ -67,17 +67,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			return
 		end
 
-		local lsp = require("lsp")
-		local utils = require("utils")
 		local metals = require("metals")
 		local tvp = require("metals.tvp")
 
 		local buffer = args.buf
-		local opts = { noremap = true, silent = true, buffer = buffer }
-		local get_opts = utils.create_get_opts(opts)
-		local map = function(mode, lhs, rhs, desc)
-			vim.keymap.set(mode, lhs, rhs, get_opts({ desc = "metals." .. desc }))
-		end
+		local map = require("map").create({
+			mode = "n",
+			buffer = buffer,
+			desc = "metals",
+		})
 
 		local pickers = require("pickers")
 		defer.on_postload("telescope", function()
@@ -89,14 +87,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		local prefix = "<leader>l"
 		-- Toggle panel with Tree Views
-		map("n", prefix .. "v", tvp.toggle_tree_view, "tree_view.toggle")
+		map(prefix .. "v", tvp.toggle_tree_view, "tree_view.toggle")
 		-- Reveal current current class (trait or object) in Tree View 'metalsPackages'
-		map("n", prefix .. "f", tvp.reveal_in_tree, "tree_view.reveal_in_tree")
+		map(prefix .. "f", tvp.reveal_in_tree, "tree_view.reveal_in_tree")
 
-		map("n", prefix .. "t", vim.cmd.MetalsSelectTestSuite, "select_test_suite")
-		map("n", prefix .. "c", vim.cmd.MetalsSelectTestCase, "select_test_case")
+		map(prefix .. "t", vim.cmd.MetalsSelectTestSuite, "select_test_suite")
+		map(prefix .. "c", vim.cmd.MetalsSelectTestCase, "select_test_case")
 
-		map("n", lsp.keymaps.organize_imports, metals.organize_imports, "organize_imports")
-		vim.api.nvim_buf_create_user_command(buffer, "OR", metals.organize_imports, { nargs = 0 })
+		require("lsp").organize_imports(metals.organize_imports, buffer)
 	end,
 })

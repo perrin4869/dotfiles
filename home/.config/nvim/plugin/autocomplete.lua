@@ -22,7 +22,7 @@ defer.on_load("cmp", function()
 		cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
 	end)
 
-	local window_config = cmp.config.window.bordered({ border = "rounded" })
+	local window_config = cmp.config.window.bordered({ border = require("config").border })
 
 	cmp.setup({
 		snippet = {

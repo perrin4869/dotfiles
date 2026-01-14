@@ -13,13 +13,15 @@ defer.cmd("BDelete", "close_buffers")
 defer.cmd("BWipeout", "close_buffers")
 defer.hook("close_buffers")
 
-local utils = require("utils")
-local opts = { silent = true, noremap = true }
-local get_opts = utils.create_get_opts(opts)
+local map = require("map").create({
+	mode = "n",
+	desc = "close_buffers",
+	rhs = function(type)
+		return function()
+			require("close_buffers").delete({ type = type })
+		end
+	end,
+})
 
-vim.keymap.set("n", "<leader><bs>", function()
-	require("close_buffers").delete({ type = "this" })
-end, get_opts({ desc = "close_buffers.delete_this" }))
-vim.keymap.set("n", "<leader><c-h>", function() -- <C-BS> sends <C-h>
-	require("close_buffers").delete({ type = "hidden" })
-end, get_opts({ desc = "close_buffers.delete_hidden" }))
+map("<leader><bs>", "this")
+map("<leader><c-h>", "hidden") -- <C-BS> sends <C-h>

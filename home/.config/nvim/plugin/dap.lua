@@ -1,7 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
-local opts = { noremap = true, silent = true }
-local get_opts = utils.create_get_opts(opts)
 
 local function focus_repl()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -30,6 +27,20 @@ defer.hook("dapui")
 local with_dap = defer.with("dap")
 local with_dapui = defer.with("dapui")
 local call = defer.call
+
+local map = require("map").create({
+	desc = "dap",
+	rhs = function(args)
+		local t = type(args)
+		if t == "function" then
+			return args
+		elseif t == "string" then
+			return with_dap(call(args))
+		elseif t == "table" then
+			return with_dap(call(unpack(args)))
+		end
+	end,
+})
 
 local debug_layer = defer.lazy(defer.with("layers")(function()
 	local layer = require("layers").mode.new()
@@ -190,9 +201,9 @@ defer.on_load("dap", function()
 		group = vim.api.nvim_create_augroup("dap_float", { clear = true }),
 		pattern = "dap-float",
 		callback = function()
-			vim.keymap.set("n", "q", function()
+			map("n", "q", function()
 				vim.cmd("close!")
-			end, get_opts({ desc = "dap.close_float" }))
+			end, "close_float")
 		end,
 	})
 
@@ -216,16 +227,6 @@ defer.very_lazy("dap")
 
 -- Mappings.
 local prefix = "<leader>d"
-local map = function(mode, lhs, rhs, desc)
-	local t = type(rhs)
-	if t == "function" then
-		vim.keymap.set(mode, lhs, rhs, get_opts({ desc = "dap." .. desc }))
-	elseif t == "string" then
-		vim.keymap.set(mode, lhs, with_dap(call(rhs)), get_opts({ desc = "dap." .. rhs }))
-	else -- table
-		vim.keymap.set(mode, lhs, with_dap(call(unpack(rhs))), get_opts({ desc = "dap." .. rhs[1] }))
-	end
-end
 
 local set_breakpoint = with_dap(function(dap)
 	dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
@@ -269,7 +270,7 @@ map("n", prefix .. "e", { "set_exception_breakpoints", { "all" } })
 map("n", prefix .. "i", ui_widgets_hover, "ui.widgets.hover")
 map("n", prefix .. "?", ui_widgets_scopes, "ui.widgets.scopes")
 
-vim.keymap.set("n", prefix .. "u", with_dapui(call("toggle")), get_opts({ desc = "dapui.toggle" }))
+require("map").map("n", prefix .. "u", with_dapui(call("toggle")), "dapui.toggle")
 
 -- telescope-dap
 local pickers = require("pickers")
@@ -277,19 +278,19 @@ pickers.map(pickers.prefix .. "dc", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.commands()
 	end)()
-end, { prefix = false, desc = "dap.commands" })
+end, "dap.commands")
 pickers.map(pickers.prefix .. "db", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.list_breakpoints()
 	end)()
-end, { prefix = false, desc = "dap.list_breakpoints" })
+end, "dap.list_breakpoints")
 pickers.map(pickers.prefix .. "dv", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.variables()
 	end)()
-end, { prefix = false, desc = "dap.variables" })
+end, "dap.variables")
 pickers.map(pickers.prefix .. "df", function(telescope)
 	with_dap(function()
 		telescope.extensions.dap.frames()
 	end)()
-end, { prefix = false, desc = "dap.frames" })
+end, "dap.frames")

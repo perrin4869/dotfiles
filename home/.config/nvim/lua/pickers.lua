@@ -1,5 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
 
 local M = {}
 
@@ -7,23 +6,20 @@ local with_telescope = defer.with("telescope")
 
 -- gg would be nice but then you can't jump to the top of the file
 M.prefix = "<leader><leader>"
-local get_opts = utils.create_get_opts({ noremap = true, silent = true })
-M.map = function(lhs, rhs, opts)
-	opts = opts or {}
-
-	if type(rhs) == "function" then
-		vim.keymap.set("n", lhs, with_telescope(rhs), get_opts({ desc = "telescope." .. opts.desc }))
-	else
-		vim.keymap.set(
-			"n",
-			lhs,
-			with_telescope(function()
+--- map a new picker
+M.map = require("map").create({
+	mode = "n",
+	desc = "telescope",
+	rhs = function(rhs)
+		if type(rhs) == "function" then
+			return with_telescope(rhs)
+		else
+			return with_telescope(function()
 				require("telescope.builtin")[rhs]()
-			end),
-			get_opts({ desc = "telescope." .. rhs })
-		)
-	end
-end
+			end)
+		end
+	end,
+})
 
 M.project_files = with_telescope(function()
 	local opts = {} -- define here if you want to define something

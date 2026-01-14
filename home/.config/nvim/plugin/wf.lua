@@ -5,19 +5,27 @@ defer.on_load("wf", function()
 end)
 local with_wf = defer.with("wf")
 
+local map = require("map").create({
+	mode = "n",
+	desc = "[wf.nvim]",
+	desc_separator = " ",
+	rhs = function(rhs)
+		return with_wf(rhs)
+	end,
+})
+
 -- Register
 local register = defer.lazy(function()
 	return require("wf.builtin.register")()
 end)
-vim.keymap.set(
-	"n",
+map(
 	"<Space>wr",
 	-- register(opts?: table) -> function
 	-- opts?: option
-	with_wf(function(_, ...)
+	function(_, ...)
 		return register()(...)
-	end),
-	{ noremap = true, silent = true, desc = "[wf.nvim] register" }
+	end,
+	"register"
 )
 
 local bookmark = defer.lazy(function()
@@ -27,46 +35,43 @@ local bookmark = defer.lazy(function()
 	})
 end)
 -- Bookmark
-vim.keymap.set(
-	"n",
+map(
 	"<Space>wbo",
 	-- bookmark(bookmark_dirs: table, opts?: table) -> function
 	-- bookmark_dirs: directory or file paths
 	-- opts?: option
-	with_wf(function(_, ...)
+	function(_, ...)
 		return bookmark()(...)
-	end),
-	{ noremap = true, silent = true, desc = "[wf.nvim] bookmark" }
+	end,
+	"bookmark"
 )
 
 -- Buffer
 local buffer = defer.lazy(function()
 	return require("wf.builtin.buffer")()
 end)
-vim.keymap.set(
-	"n",
+map(
 	"<Space>wbu",
 	-- buffer(opts?: table) -> function
 	-- opts?: option
-	with_wf(function(_, ...)
+	function(_, ...)
 		return buffer()(...)
-	end),
-	{ noremap = true, silent = true, desc = "[wf.nvim] buffer" }
+	end,
+	"buffer"
 )
 
 -- Mark
 local mark = defer.lazy(function()
 	return require("wf.builtin.mark")()
 end)
-vim.keymap.set(
-	"n",
+map(
 	"'",
 	-- mark(opts?: table) -> function
 	-- opts?: option
-	with_wf(function(_, ...)
+	function(_, ...)
 		return mark()(...)
-	end),
-	{ nowait = true, noremap = true, silent = true, desc = "[wf.nvim] mark" }
+	end,
+	{ nowait = true, desc = "mark" }
 )
 
 -- Which Key
@@ -81,6 +86,7 @@ local wk_map = {
 	["<Leader>n"] = "neotree",
 	["<Leader>t"] = "toggle",
 	["<Leader>q"] = "persistence",
+	["<Leader>."] = "execute",
 	[require("pickers").prefix] = "telescope",
 }
 
@@ -88,14 +94,13 @@ for key, desc in pairs(wk_map) do
 	local cached = defer.lazy(function()
 		return require("wf.builtin.which_key")({ text_insert_in_advance = key })
 	end)
-	vim.keymap.set(
-		"n",
+	map(
 		key,
 		-- mark(opts?: table) -> function
 		-- opts?: option
-		with_wf(function()
+		function()
 			return cached()()
-		end),
-		{ noremap = true, silent = true, desc = "[wf.nvim] which-key " .. desc }
+		end,
+		"which-key " .. desc
 	)
 end

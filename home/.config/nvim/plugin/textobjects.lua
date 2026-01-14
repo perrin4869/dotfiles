@@ -43,32 +43,37 @@ defer.on_bufreadpre(function()
 			local next_move = require("nvim-next.move")
 			local move = require("nvim-treesitter-textobjects.move")
 
-			-- keymaps
-			-- You can use the capture groups defined in `textobjects.scm`
-			vim.keymap.set({ "x", "o" }, "af", function()
-				require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
-			end, { buffer = args.buf, desc = "textobjects.select.@function.outer" })
-			vim.keymap.set({ "x", "o" }, "if", function()
-				require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
-			end, { buffer = args.buf, desc = "textobjects.select.@function.inner" })
-			vim.keymap.set({ "x", "o" }, "ac", function()
-				require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
-			end, { buffer = args.buf, desc = "textobjects.select.@class.outer" })
-			vim.keymap.set({ "x", "o" }, "ic", function()
-				require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
-			end, { buffer = args.buf, desc = "textobjects.select.@class.inner" })
-			-- You can also use captures from other query groups like `locals.scm`
-			vim.keymap.set({ "x", "o" }, "as", function()
-				require("nvim-treesitter-textobjects.select").select_textobject("@local.scope", "locals")
-			end, { buffer = args.buf, desc = "textobjects.select.@local.scope" })
+			local map = require("map").create({
+				desc = "textobjects",
+				buffer = args.buf,
+			})
 
 			-- keymaps
-			vim.keymap.set("n", "<leader>a", function()
+			-- You can use the capture groups defined in `textobjects.scm`
+			map({ "x", "o" }, "af", function()
+				require("nvim-treesitter-textobjects.select").select_textobject("@function.outer", "textobjects")
+			end, "select.@function.outer")
+			map({ "x", "o" }, "if", function()
+				require("nvim-treesitter-textobjects.select").select_textobject("@function.inner", "textobjects")
+			end, "select.@function.inner")
+			map({ "x", "o" }, "ac", function()
+				require("nvim-treesitter-textobjects.select").select_textobject("@class.outer", "textobjects")
+			end, "select.@class.outer")
+			map({ "x", "o" }, "ic", function()
+				require("nvim-treesitter-textobjects.select").select_textobject("@class.inner", "textobjects")
+			end, "select.@class.inner")
+			-- You can also use captures from other query groups like `locals.scm`
+			map({ "x", "o" }, "as", function()
+				require("nvim-treesitter-textobjects.select").select_textobject("@local.scope", "locals")
+			end, "select.@local.scope")
+
+			-- keymaps
+			map("n", "<leader>a", function()
 				require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner")
-			end, { buffer = args.buf, desc = "textobjects.swap.next.@parameter.inner" })
-			vim.keymap.set("n", "<leader>A", function()
+			end, "swap.next.@parameter.inner")
+			map("n", "<leader>A", function()
 				require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.outer")
-			end, { buffer = args.buf, desc = "textobjects.swap.previous.@parameter.outer" })
+			end, "swap.previous.@parameter.outer")
 
 			-- https://alpha2phi.medium.com/neovim-101-tree-sitter-usage-fa3e8bed921a
 			local swap_objects = {
@@ -78,12 +83,12 @@ defer.on_bufreadpre(function()
 			}
 
 			for key, obj in pairs(swap_objects) do
-				vim.keymap.set("n", string.format("<A-n><A-%s>", key), function()
+				map("n", string.format("<A-n><A-%s>", key), function()
 					require("nvim-treesitter-textobjects.swap").swap_next(obj)
-				end, { buffer = args.buf, desc = string.format("textobjects.swap.next.%s", obj) })
-				vim.keymap.set("n", string.format("<A-p><A-%s>", key), function()
+				end, string.format("swap.next.%s", obj))
+				map("n", string.format("<A-p><A-%s>", key), function()
 					require("nvim-treesitter-textobjects.swap").swap_previous(obj)
-				end, { buffer = args.buf, desc = string.format("textobjects.swap.previous.%s", obj) })
+				end, string.format("swap.previous.%s", obj))
 			end
 
 			local prev_func_start, next_func_start = next_move.make_repeatable_pair(function()
@@ -130,88 +135,33 @@ defer.on_bufreadpre(function()
 
 			-- keymaps
 			-- You can use the capture groups defined in `textobjects.scm`
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]m",
-				next_func_start,
-				{ buffer = args.buf, desc = "textobjects.move.next_start.@function.outer" }
-			)
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]]",
-				next_class_start,
-				{ buffer = args.buf, desc = "textobjects.move.next_start.@class.outer" }
-			)
+			map({ "n", "x", "o" }, "]m", next_func_start, "move.next_start.@function.outer")
+			map({ "n", "x", "o" }, "]]", next_class_start, "move.next_start.@class.outer")
 			-- You can also pass a list to group multiple queries.
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]o",
-				next_loop,
-				{ buffer = args.buf, desc = "textobjects.move.next_start.@loop.inner" }
-			)
+			map({ "n", "x", "o" }, "]o", next_loop, "move.next_start.@loop.inner")
 			-- You can also use captures from other query groups like `locals.scm` or `folds.scm`
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]s",
-				next_scope,
-				{ buffer = args.buf, desc = "textobjects.move.next_start.@local.scope" }
-			)
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]z",
-				next_fold,
-				{ buffer = args.buf, desc = "textobjects.move.next_start.@fold" }
-			)
+			map({ "n", "x", "o" }, "]s", next_scope, "move.next_start.@local.scope")
+			map({ "n", "x", "o" }, "]z", next_fold, "move.next_start.@fold")
 
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"]M",
-				next_func_end,
-				{ buffer = args.buf, desc = "textobjects.move.next_end.@function.outer" }
-			)
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"][",
-				next_class_end,
-				{ buffer = args.buf, desc = "textobjects.move.next_end.@class.outer" }
-			)
+			map({ "n", "x", "o" }, "]M", next_func_end, "move.next_end.@function.outer")
+			map({ "n", "x", "o" }, "][", next_class_end, "move.next_end.@class.outer")
 
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"[m",
-				prev_func_start,
-				{ buffer = args.buf, desc = "textobjects.move.previous_start.@function.outer" }
-			)
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"[[",
-				prev_class_start,
-				{ buffer = args.buf, desc = "textobjects.move.previous_start.@class.outer" }
-			)
+			map({ "n", "x", "o" }, "[m", prev_func_start, "move.previous_start.@function.outer")
+			map({ "n", "x", "o" }, "[[", prev_class_start, "move.previous_start.@class.outer")
 
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"[M",
-				prev_func_end,
-				{ buffer = args.buf, desc = "textobjects.move.previous_end.@function.outer" }
-			)
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"[]",
-				prev_class_end,
-				{ buffer = args.buf, desc = "textobjects.move.previous_end.@class.outer" }
-			)
+			map({ "n", "x", "o" }, "[M", prev_func_end, "move.previous_end.@function.outer")
+			map({ "n", "x", "o" }, "[]", prev_class_end, "move.previous_end.@class.outer")
 
 			-- the next one conflicts with next/prev diagnostics
 			--
 			-- Go to either the start or the end, whichever is closer.
 			-- Use if you want more granular movements
-			-- vim.keymap.set({ "n", "x", "o" }, "]d", function()
+			-- map({ "n", "x", "o" }, "]d", function()
 			-- 	move.goto_next("@conditional.outer", "textobjects")
-			-- end, { buffer = args.buf, desc = "textobjects.move.next.@conditional.outer" })
-			-- vim.keymap.set({ "n", "x", "o" }, "[d", function()
+			-- end, "move.next.@conditional.outer")
+			-- map({ "n", "x", "o" }, "[d", function()
 			-- 	move.goto_previous("@conditional.outer", "textobjects")
-			-- end, { buffer = args.buf, desc = "textobjects.move.previous.@conditional.outer" })
+			-- end, "move.previous.@conditional.outer")
 		end,
 	})
 end)

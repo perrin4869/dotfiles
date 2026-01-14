@@ -1,18 +1,20 @@
-local utils = require("utils")
 local defer = require("defer")
 defer.pack("undotree")
 
 local with_undotree = defer.with("undotree")
 local call = defer.call
 
-local get_opts = utils.create_get_opts({ noremap = true, silent = true })
-local map = function(mode, lhs, fname)
-	vim.keymap.set(mode, lhs, with_undotree(call(fname)), get_opts({ desc = "undotree." .. fname }))
-end
+local map = require("map").create({
+	mode = "n",
+	desc = "undotree",
+	rhs = function(fname)
+		return with_undotree(call(fname))
+	end,
+})
 
-map("n", "<leader>tu", "toggle")
-map("n", "<leader>uo", "open")
-map("n", "<leader>uc", "close")
+map("<leader>tu", "toggle")
+map("<leader>uo", "open")
+map("<leader>uc", "close")
 
 vim.api.nvim_create_user_command("Undotree", function(opts)
 	local args = opts.fargs

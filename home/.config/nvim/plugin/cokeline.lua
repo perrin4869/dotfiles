@@ -83,9 +83,9 @@ local function setup()
 		},
 	})
 
-	vim.keymap.set("n", "<leader>p", function()
+	require("map").map("n", "<leader>p", function()
 		pick("focus")
-	end, { silent = true, noremap = true, desc = "cokeline.pick.focus" })
+	end, "cokeline.pick.focus")
 end
 
 local group = vim.api.nvim_create_augroup("LazyLoadCokeline", { clear = true })

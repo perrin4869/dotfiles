@@ -12,4 +12,4 @@ local fml = function()
 	local animations = get_animations()
 	require("cellular-automaton").start_animation(animations[math.random(1, #animations)])
 end
-vim.keymap.set("n", "<leader>fml", fml, { noremap = true, silent = true })
+require("map").map("n", "<leader>fml", fml, "fml")

@@ -47,7 +47,11 @@ local function create_osc52(mode)
 	end
 end
 
+local map = require("map").create({
+	desc = "OSC52",
+	desc_separator = " ",
+})
 -- The Mappings
-vim.keymap.set("n", "<leader>c", create_osc52("op"), { expr = true, desc = "OSC52 Operator" })
-vim.keymap.set("n", "<leader>cc", create_osc52("line"), { desc = "OSC52 Yank Line" })
-vim.keymap.set("v", "<leader>c", create_osc52("visual"), { desc = "OSC52 Yank Visual" })
+map("n", "<leader>c", create_osc52("op"), { expr = true, desc = "Operator" })
+map("n", "<leader>cc", create_osc52("line"), "Yank Line")
+map("v", "<leader>c", create_osc52("visual"), "Yank Visual")

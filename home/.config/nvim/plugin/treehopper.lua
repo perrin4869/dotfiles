@@ -4,21 +4,20 @@ defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
+			local map = require("map").create({
+				desc = "treehopper",
+				buffer = args.buf,
+			})
 			-- duplicate functionality with flash.treesitter
-			vim.keymap.set("o", "m", function()
+			map("o", "m", function()
 				defer.require("tsht").nodes()
-			end, { silent = true, buffer = args.buf, desc = "treehopper.nodes" })
+			end, "nodes")
 
-			vim.keymap.set(
-				"x",
-				"m",
-				-- ":<C-u>lua require('tsht').nodes()<CR>",
-				function()
-					vim.cmd.normal({ "!gv" })
-					defer.require("tsht").nodes()
-				end,
-				{ silent = true, noremap = true, buffer = args.buf, desc = "treehopper.nodes" }
-			)
+			-- ":<C-u>lua require('tsht').nodes()<CR>",
+			map("x", "m", function()
+				vim.cmd.normal({ "!gv" })
+				defer.require("tsht").nodes()
+			end, "nodes")
 		end,
 	})
 end)

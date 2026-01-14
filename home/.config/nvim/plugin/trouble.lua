@@ -1,5 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
 
 defer.on_load("trouble", function()
 	require("trouble").setup()
@@ -8,6 +7,14 @@ defer.pack("trouble", "trouble.nvim")
 defer.cmd("Trouble", "trouble")
 local with_trouble = defer.with("trouble")
 
+local map = require("map").create({
+	mode = "n",
+	desc = "trouble",
+	rhs = function(args)
+		return with_trouble(defer.call("toggle", args))
+	end,
+})
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("LspAttach_trouble", { clear = true }),
 	callback = function(args)
@@ -15,51 +22,25 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			return
 		end
 
-		local opts = { silent = true, buffer = args.buf }
-		local get_opts = utils.create_get_opts(opts)
+		---@param lhs string
+		---@param opts string|table
+		---@param desc string
+		local function map_lsp(lhs, opts, desc)
+			map(lhs, opts, { desc = desc, buffer = args.buf })
+		end
 
-		vim.keymap.set(
-			"n",
-			"<leader>cs",
-			with_trouble(defer.call("toggle", { mode = "symbols" })),
-			get_opts({ desc = "trouble.symbols" })
-		)
-		vim.keymap.set(
-			"n",
-			"<leader>cl",
-			with_trouble(defer.call("toggle", {
-				mode = "lsp",
-				win = { position = "right", size = { width = 0.3 } },
-			})),
-			get_opts({ desc = "trouble.lsp" })
-		)
-		vim.keymap.set(
-			"n",
-			"<leader>xr",
-			with_trouble(defer.call("toggle", { mode = "lsp_references", focus = true })),
-			get_opts({ desc = "trouble.lsp_references" })
-		)
-		vim.keymap.set(
-			"n",
-			"<leader>xi",
-			with_trouble(defer.call("toggle", { mode = "lsp_implementations", focus = true })),
-			get_opts({ desc = "trouble.lsp_implementations" })
-		)
+		map_lsp("<leader>cs", { mode = "symbols" }, "symbols")
+		map_lsp("<leader>cl", {
+			mode = "lsp",
+			win = { position = "right", size = { width = 0.3 } },
+		}, "lsp")
+		map_lsp("<leader>xr", { mode = "lsp_references", focus = true }, "lsp_references")
+		map_lsp("<leader>xi", { mode = "lsp_implementations", focus = true }, "lsp_implementations")
 	end,
 })
 
-local get_opts = utils.create_get_opts({ silent = true })
-vim.keymap.set(
-	"n",
-	"<leader>xx",
-	with_trouble(defer.call("toggle", { mode = "diagnostics" })),
-	get_opts({ desc = "trouble.workspace_diagnostics" })
-)
-vim.keymap.set(
-	"n",
-	"<leader>xX",
-	with_trouble(defer.call("toggle", { mode = "diagnostics", filter = { buf = 0 } })),
-	get_opts({ desc = "trouble.document_diagnostics" })
-)
-vim.keymap.set("n", "<leader>xL", with_trouble(defer.call("toggle", "loclist")), get_opts({ desc = "trouble.loclist" }))
-vim.keymap.set("n", "<leader>xQ", with_trouble(defer.call("toggle", "qflist")), get_opts({ desc = "trouble.quickfix" }))
+local prefix = "<leader>x"
+map(prefix .. "x", { mode = "diagnostics" }, "workspace_diagnostics")
+map(prefix .. "X", { mode = "diagnostics", filter = { buf = 0 } }, "document_diagnostics")
+map(prefix .. "L", "loclist", "loclist")
+map(prefix .. "Q", "qflist", "quickfix")

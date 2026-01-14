@@ -1,5 +1,4 @@
 local defer = require("defer")
-local utils = require("utils")
 
 defer.on_load("flash", function()
 	require("flash").setup({
@@ -14,32 +13,28 @@ local toggle = with_flash(defer.call("toggle"))
 local treesitter = with_flash(defer.call("treesitter"))
 local treesitter_search = with_flash(defer.call("treesitter_search"))
 
-local opts = { silent = true }
-local get_opts = utils.create_get_opts(opts)
+local desc = "flash"
+local map = require("map").create({
+	desc = desc,
+})
 
-vim.keymap.set({ "n", "x", "o" }, "<leader>s", jump, get_opts({ desc = "flash.jump" }))
-vim.keymap.set("o", "r", remote, get_opts({ desc = "flash.remote" }))
-vim.keymap.set("c", "<C-s>", toggle, get_opts({ desc = "flash.toggle" }))
+map({ "n", "x", "o" }, "<leader>s", jump, "jump")
+map("o", "r", remote, "remote")
+map("c", "<C-s>", toggle, "toggle")
 
 -- Treesitter logic
 defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd("FileType", {
 		pattern = require("nvim-treesitter").get_installed(),
 		callback = function(args)
-			-- duplicate functionality with tree-hopper
-			vim.keymap.set(
-				{ "n", "x", "o" },
-				"<leader>S",
-				treesitter,
-				get_opts({ buffer = args.buf, desc = "flash.treesitter" })
-			)
+			local map_buf = require("map").create({
+				desc = desc,
+				buffer = args.buf,
+			})
 
-			vim.keymap.set(
-				{ "o", "x" },
-				"R",
-				treesitter_search,
-				get_opts({ buffer = args.buf, desc = "flash.treesitter_search" })
-			)
+			-- duplicate functionality with tree-hopper
+			map_buf({ "n", "x", "o" }, "<leader>S", treesitter, "treesitter")
+			map_buf({ "o", "x" }, "R", treesitter_search, "treesitter_search")
 		end,
 	})
 end)

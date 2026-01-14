@@ -2,7 +2,6 @@ local defer = require("defer")
 
 defer.on_load("lsp", function()
 	local lsp = require("lsp")
-	local utils = require("utils")
 
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("LspAttach_general", { clear = true }),
@@ -17,38 +16,18 @@ defer.on_load("lsp", function()
 			vim.api.nvim_set_option_value("omnifunc", "v:lua.vim.lsp.omnifunc", { buf = bufnr })
 
 			-- Mappings.
-			local opts = { silent = true, buffer = bufnr }
-			local get_opts = utils.create_get_opts(opts)
+			local map = require("map").create({ mode = "n", desc = "lsp", buffer = bufnr })
 
-			local signature_help = function()
-				vim.lsp.buf.signature_help({ border = utils.border })
-			end
+			map("gD", vim.lsp.buf.declaration, "declaration")
+			map("gd", vim.lsp.buf.definition, "definition")
+			map("K", require("lsp").hover, "hover")
+			map("grk", require("lsp").signature_help, "signature_help")
+			map("<leader>wa", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
+			map("<leader>wr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")
+			map("<leader>wl", require("lsp").list_workspace_folders, "list_workspace_folders")
+			-- map('<leader>ds', vim.lsp.buf.document_symbol, "document_symbol")
+			-- map('<leader>ws', vim.lsp.buf.workspace_symbol, "workspace_symbol")
 
-			local hover = function()
-				vim.lsp.buf.hover({ border = utils.border })
-			end
-
-			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, get_opts({ desc = "lsp.declaration" }))
-			vim.keymap.set("n", "gd", vim.lsp.buf.definition, get_opts({ desc = "lsp.definition" }))
-			vim.keymap.set("n", "K", hover, get_opts({ desc = "lsp.hover" }))
-			vim.keymap.set("n", "gk", signature_help, get_opts({ desc = "lsp.signature_help" }))
-			vim.keymap.set(
-				"n",
-				"<leader>wa",
-				vim.lsp.buf.add_workspace_folder,
-				get_opts({ desc = "lsp.add_workspace_folder" })
-			)
-			vim.keymap.set(
-				"n",
-				"<leader>wr",
-				vim.lsp.buf.remove_workspace_folder,
-				get_opts({ desc = "lsp.remove_workspace_folder" })
-			)
-			vim.keymap.set("n", "<leader>wl", function()
-				print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-			end, get_opts({ desc = "lsp.list_workspace_folders" }))
-			-- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
-			-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
 			-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
 			local pickers = require("pickers")
 			pickers.map("<leader>ds", "lsp_document_symbols")
@@ -67,14 +46,14 @@ defer.on_load("lsp", function()
 			end
 
 			if client ~= nil and client.server_capabilities.inlayHintProvider then
-				vim.keymap.set("n", "<leader>ti", function()
+				map("<leader>ti", function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
-				end, { silent = true, buffer = bufnr, desc = "lsp.inlayhints.toggle" })
+				end, "inlayhints.toggle")
 				-- this is too verbose, so do not enable this by default
 				-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 			end
 
-			if client ~= nil and client:supports_method("textDocument/codeLens", { bufnr = bufnr }) then
+			if client ~= nil and client:supports_method("textDocument/codeLens", bufnr) then
 				local group = vim.api.nvim_create_augroup("lsp_codelens", { clear = false })
 				vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
 				-- https://github.com/LunarVim/LunarVim/pull/2600
@@ -86,7 +65,7 @@ defer.on_load("lsp", function()
 					end,
 				})
 
-				vim.keymap.set("n", "grc", vim.lsp.codelens.run, get_opts({ desc = "lsp.codelens.run" }))
+				map("grc", vim.lsp.codelens.run, "codelens.run")
 			end
 		end,
 	})

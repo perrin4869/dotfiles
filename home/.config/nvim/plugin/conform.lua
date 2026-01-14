@@ -2,7 +2,6 @@ local defer = require("defer")
 
 defer.on_load("conform", function()
 	local conform = require("conform")
-	local utils = require("utils")
 
 	local json = { "prettierd", "prettier", stop_after_first = true }
 	local js = { "eslint_d" }
@@ -57,9 +56,8 @@ defer.on_load("conform", function()
 		end
 	end
 
-	local opts = { silent = true }
-	local get_opts = utils.create_get_opts(opts)
-	vim.keymap.set({ "n", "x" }, "<leader>ff", function()
+	local map = require("map").create({ desc = "conform" })
+	map({ "n", "x" }, "<leader>ff", function()
 		require("conform").format({}, function(err)
 			if not err then
 				local mode = vim.api.nvim_get_mode().mode
@@ -68,8 +66,8 @@ defer.on_load("conform", function()
 				end
 			end
 		end)
-	end, get_opts({ desc = "conform.format" }))
-	vim.keymap.set("n", "<leader>tf", toggle_autoformat, get_opts({ desc = "conform.toggle_autoformat" }))
+	end, "format")
+	map("n", "<leader>tf", toggle_autoformat, "toggle_autoformat")
 
 	vim.api.nvim_create_user_command("Format", function(args)
 		local range = nil

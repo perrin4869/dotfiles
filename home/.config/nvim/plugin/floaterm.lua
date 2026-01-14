@@ -23,9 +23,10 @@ local with_floaterm_api = function(cb)
 	end)
 end
 
-local function map(lhs, rhs, desc)
-	vim.keymap.set({ "n", "t" }, lhs, rhs, { desc = "floaterm." .. desc, silent = true, noremap = true })
-end
+local map = require("map").create({
+	mode = { "n", "t" },
+	desc = "floaterm",
+})
 
 map("<M-t>", with_floaterm(call("toggle")), "toggle")
 

@@ -1,17 +1,20 @@
 local defer = require("defer")
 defer.very_lazy(function()
-	local util = require("utils")
-
-	local opts = { noremap = true, silent = true }
-	local get_opts = util.create_get_opts(opts)
+	local map = require("map").create({
+		mode = "n",
+		desc = "diagnostic",
+		rhs = function(func_name)
+			return vim.diagnostic[func_name]
+		end,
+	})
 
 	vim.diagnostic.config({
-		float = { border = util.border },
+		float = { border = require("config").border },
 		virtual_text = { current_line = true },
 	})
 
-	vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, get_opts({ desc = "diagnostic.open_float" }))
-	vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, get_opts({ desc = "diagnostic.setloclist" }))
+	map("<leader>e", "open_float")
+	map("<leader>q", "setloclist")
 
 	local next_move = require("nvim-next.move")
 
@@ -20,8 +23,8 @@ defer.very_lazy(function()
 	end, function()
 		vim.diagnostic.jump({ count = vim.v.count1 })
 	end)
-	vim.keymap.set("n", "[d", prev_diag, { silent = true, desc = "Go to previous diagnostic" })
-	vim.keymap.set("n", "]d", next_diag, { silent = true, desc = "Go to next diagnostic" })
+	require("map").map("n", "[d", prev_diag, "Go to previous diagnostic")
+	require("map").map("n", "]d", next_diag, "Go to next diagnostic")
 
 	-- This is nicer than having virtual text
 	-- https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/

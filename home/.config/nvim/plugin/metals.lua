@@ -67,7 +67,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			return
 		end
 
-		local lsp = require("lsp")
 		local metals = require("metals")
 		local tvp = require("metals.tvp")
 
@@ -95,7 +94,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		map(prefix .. "t", vim.cmd.MetalsSelectTestSuite, "select_test_suite")
 		map(prefix .. "c", vim.cmd.MetalsSelectTestCase, "select_test_case")
 
-		map(lsp.keymaps.organize_imports, metals.organize_imports, "organize_imports")
-		vim.api.nvim_buf_create_user_command(buffer, "OR", metals.organize_imports, { nargs = 0 })
+		require("lsp").organize_imports(metals.organize_imports, buffer)
 	end,
 })

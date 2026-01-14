@@ -7,10 +7,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 		if client ~= nil and client.name == "vtsls" then
-			require("map").map("n", require("lsp").keymaps.organize_imports, function()
+			require("lsp").organize_imports(function()
 				require("vtsls").commands.organize_imports(args.buf)
-			end, { buffer = args.buf, desc = "lsp.organize_imports" })
-			vim.api.nvim_buf_create_user_command(args.buf, "OR", "VtsExec organize_imports", { nargs = 0 })
+			end, args.buf)
 		end
 		-- TODO: add organize imports for tsgo
 		-- https://github.com/microsoft/typescript-go/issues/1615

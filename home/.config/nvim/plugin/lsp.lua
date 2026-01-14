@@ -20,19 +20,13 @@ defer.on_load("lsp", function()
 
 			map("gD", vim.lsp.buf.declaration, "declaration")
 			map("gd", vim.lsp.buf.definition, "definition")
-			map("K", function()
-				vim.lsp.buf.hover({ border = require("config").border })
-			end, "hover")
-			map("grk", function()
-				vim.lsp.buf.signature_help({ border = require("config").border })
-			end, "signature_help")
+			map("K", require("lsp").hover, "hover")
+			map("grk", require("lsp").signature_help, "signature_help")
 			map("<leader>wa", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
 			map("<leader>wr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")
-			map("<leader>wl", function()
-				print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-			end, "list_workspace_folders")
-			-- buf_set_keymap('n', '<leader>ds', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', opts)
-			-- buf_set_keymap('n', '<leader>ws', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', opts)
+			map("<leader>wl", require("lsp").list_workspace_folders, "list_workspace_folders")
+			-- map('<leader>ds', vim.lsp.buf.document_symbol, "document_symbol")
+			-- map('<leader>ws', vim.lsp.buf.workspace_symbol, "workspace_symbol")
 
 			-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
 			local pickers = require("pickers")
@@ -54,7 +48,7 @@ defer.on_load("lsp", function()
 			if client ~= nil and client.server_capabilities.inlayHintProvider then
 				map("<leader>ti", function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
-				end, "lsp.inlayhints.toggle")
+				end, "inlayhints.toggle")
 				-- this is too verbose, so do not enable this by default
 				-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 			end

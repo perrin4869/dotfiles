@@ -41,12 +41,12 @@ end
 
 -- https://github.com/lumen-oss/lz.n/wiki/lazy‐loading-nvim‐cmp-and-its-extensions
 local function trigger_load_with_after(plugin_name)
-	local res, rtp = pcall(require, "rtp_nvim")
+	local res, rtp = pcall(require, 'rtp_nvim')
 	if not res then
 		return
 	end
 	for _, dir in ipairs(vim.opt.packpath:get()) do
-		local glob = vim.fs.joinpath("pack", "*", "opt", plugin_name)
+		local glob = vim.fs.joinpath('pack', '*', 'opt', plugin_name)
 		local plugin_dirs = vim.fn.globpath(dir, glob, nil, true, true)
 		if not vim.tbl_isempty(plugin_dirs) then
 			rtp.source_after_plugin_dir(plugin_dirs[1])
@@ -172,7 +172,7 @@ end
 ---@param deps string|string[]
 function M.deps(name, deps)
 	local mod = entry(name)
-	if type(deps) == "string" then
+	if type(deps) == 'string' then
 		table.insert(mod.deps, deps)
 	else
 		for _, d in ipairs(deps) do
@@ -190,7 +190,7 @@ end
 function M.with(name)
 	return function(callback)
 		return function(...)
-			if type(callback) == "function" and M.ensure(name) then
+			if type(callback) == 'function' and M.ensure(name) then
 				return callback(M.require(name), ...)
 			end
 		end
@@ -202,7 +202,7 @@ end
 ---@return fun(callback: fun(m: any): any): fun(...): any
 function M.call(method, ...)
 	local args = { ... }
-	local nargs = select("#", ...) -- Get the count to handle nil correctly
+	local nargs = select('#', ...) -- Get the count to handle nil correctly
 	return function(mod)
 		if method then
 			return mod[method](unpack(args, 1, nargs))
@@ -231,7 +231,7 @@ end
 ---@param name string The command name
 ---@param module string The module to load
 function M.cmd(name, module)
-	if vim.fn.exists(":" .. name) ~= 0 then
+	if vim.fn.exists(':' .. name) ~= 0 then
 		error("defer.cmd: '" .. name .. "' already exists")
 	end
 
@@ -242,16 +242,16 @@ function M.cmd(name, module)
 
 	vim.api.nvim_create_user_command(name, function(opts)
 		M.ensure(module)
-		local bang = opts.bang and "!" or ""
-		local args = (opts.args and opts.args ~= "") and (" " .. opts.args) or ""
+		local bang = opts.bang and '!' or ''
+		local args = (opts.args and opts.args ~= '') and (' ' .. opts.args) or ''
 		vim.cmd(name .. bang .. args)
 	end, {
-		nargs = "*",
+		nargs = '*',
 		range = true,
 		bang = true,
 		complete = function(_, cmd_line, _)
 			M.ensure(module)
-			return vim.fn.getcompletion(cmd_line, "cmdline")
+			return vim.fn.getcompletion(cmd_line, 'cmdline')
 		end,
 	})
 end
@@ -273,8 +273,8 @@ local function hook(modname)
 	else
 		-- prefix match
 		for hook_mod, target_mod in pairs(hooks) do
-			local escaped = hook_mod:gsub("%-", "%%-")
-			if modname:match("^" .. escaped .. "%.") then
+			local escaped = hook_mod:gsub('%-', '%%-')
+			if modname:match('^' .. escaped .. '%.') then
 				-- only match prefix if a package exists for this loader
 				-- this way, if a plugin/ script was loaded and requires a lua
 				-- module in the plugin, it won't trigger the load
@@ -313,7 +313,7 @@ table.insert(package.loaders, 2, hook)
 ---@param opts? { pattern?: string|string[], nested?: boolean }
 function M.on_event(name, events, opts)
 	opts = opts or {}
-	local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. name, { clear = true })
+	local group_id = vim.api.nvim_create_augroup('Defer_Event_' .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
@@ -333,7 +333,7 @@ local function create_on_event(event)
 	return function(name, opts)
 		opts = opts or {}
 		local fn
-		if type(name) == "function" then
+		if type(name) == 'function' then
 			fn = name
 		else
 			fn = function()
@@ -348,10 +348,10 @@ local function create_on_event(event)
 
 		cb = fn
 		local event_str = event
-		if type(event) == "table" then
-			event_str = table.concat(event, "_")
+		if type(event) == 'table' then
+			event_str = table.concat(event, '_')
 		end
-		local group_id = vim.api.nvim_create_augroup("Defer_Event_" .. event_str, { clear = true })
+		local group_id = vim.api.nvim_create_augroup('Defer_Event_' .. event_str, { clear = true })
 
 		vim.api.nvim_create_autocmd(event, {
 			group = group_id,
@@ -365,16 +365,16 @@ local function create_on_event(event)
 	end
 end
 
-M.on_bufenter = create_on_event("BufEnter")
-M.on_bufreadpre = create_on_event({ "BufReadPre", "BufNewFile" })
-M.on_bufreadpost = create_on_event({ "BufReadPost", "BufNewFile" })
-M.on_insert = create_on_event({ "InsertEnter" })
-M.on_cmdline = create_on_event({ "CmdlineEnter" })
+M.on_bufenter = create_on_event('BufEnter')
+M.on_bufreadpre = create_on_event({ 'BufReadPre', 'BufNewFile' })
+M.on_bufreadpost = create_on_event({ 'BufReadPost', 'BufNewFile' })
+M.on_insert = create_on_event({ 'InsertEnter' })
+M.on_cmdline = create_on_event({ 'CmdlineEnter' })
 
 ---@param loader string|function
 function M.very_lazy(loader)
 	local callback = loader
-	if type(loader) == "string" then
+	if type(loader) == 'string' then
 		callback = function()
 			M.ensure(loader)
 		end
@@ -384,19 +384,19 @@ function M.very_lazy(loader)
 		return
 	end
 
-	vim.api.nvim_create_autocmd("User", {
-		pattern = "VeryLazy",
+	vim.api.nvim_create_autocmd('User', {
+		pattern = 'VeryLazy',
 		once = true, -- Tasks usually only need to run once
 		callback = callback,
 	})
 end
 
 -- In defer.lua's initialization:
-vim.api.nvim_create_autocmd("UIEnter", {
+vim.api.nvim_create_autocmd('UIEnter', {
 	once = true,
 	callback = function()
 		vim.schedule(function()
-			vim.api.nvim_exec_autocmds("User", { pattern = "VeryLazy" })
+			vim.api.nvim_exec_autocmds('User', { pattern = 'VeryLazy' })
 		end)
 	end,
 })

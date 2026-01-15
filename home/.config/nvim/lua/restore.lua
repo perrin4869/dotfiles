@@ -38,8 +38,8 @@ function M.restore()
 				return false
 			end)
 			--- do not restore empty buffers (no bufname and no filetype)
-			and bufname == ""
-			and vim.bo[bufnr].filetype == ""
+			and bufname == ''
+			and vim.bo[bufnr].filetype == ''
 		then
 			vim.api.nvim_win_close(w, true)
 			vim.api.nvim_buf_delete(bufnr, { force = true })

@@ -1,85 +1,85 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.pack("neotest")
-defer.on_bufreadpre("neotest", { nested = true })
-defer.on_load("neotest", function()
-	require("neotest").setup({})
+defer.pack('neotest')
+defer.on_bufreadpre('neotest', { nested = true })
+defer.on_load('neotest', function()
+	require('neotest').setup({})
 end)
 
-defer.pack("neotest-mocha")
-defer.deps("neotest", { "neotest-mocha" })
+defer.pack('neotest-mocha')
+defer.deps('neotest', { 'neotest-mocha' })
 
 ---@type Defer.With<neotest>
-local with_neotest = defer.with("neotest")
+local with_neotest = defer.with('neotest')
 
-local map = require("map").create({ mode = "n", desc = "neotest" })
+local map = require('map').create({ mode = 'n', desc = 'neotest' })
 
 map(
-	"<leader>ii",
+	'<leader>ii',
 	with_neotest(function(neotest)
 		neotest.run.run()
 	end),
-	"run"
+	'run'
 )
 
 map(
-	"<leader>if", -- entire file
+	'<leader>if', -- entire file
 	with_neotest(function(neotest)
-		neotest.run.run(vim.fn.expand("%"))
+		neotest.run.run(vim.fn.expand('%'))
 	end),
-	"run_file"
+	'run_file'
 )
 
 map(
-	"<leader>id",
+	'<leader>id',
 	with_neotest(function(neotest)
-		neotest.run.run({ strategy = "dap" })
+		neotest.run.run({ strategy = 'dap' })
 	end),
-	"run_dap"
+	'run_dap'
 )
 
 map(
-	"<leader>is",
+	'<leader>is',
 	with_neotest(function(neotest)
 		neotest.run.stop()
 	end),
-	"stop"
+	'stop'
 )
 
 map(
-	"<leader>ia",
+	'<leader>ia',
 	with_neotest(function(neotest)
 		neotest.run.attach()
 	end),
-	"attach"
+	'attach'
 )
 
 map(
-	"<leader>ts",
+	'<leader>ts',
 	with_neotest(function(neotest)
 		neotest.summary.toggle()
 	end),
-	"attach"
+	'attach'
 )
 
 map(
-	"<leader>to",
+	'<leader>to',
 	with_neotest(function(neotest)
 		neotest.output_panel.toggle()
 	end),
-	"attach"
+	'attach'
 )
 
-local restore = require("restore")
-restore.add_quitpre_ft("neotest-summary")
-restore.add_buf_match("Neotest Summary", function()
-	defer.on_postload("neotest", function()
-		require("neotest").summary.toggle()
+local restore = require('restore')
+restore.add_quitpre_ft('neotest-summary')
+restore.add_buf_match('Neotest Summary', function()
+	defer.on_postload('neotest', function()
+		require('neotest').summary.toggle()
 	end)
 end)
-restore.add_quitpre_ft("neotest-output-panel")
-restore.add_buf_match("Neotest Output Panel", function()
-	defer.on_postload("neotest", function()
-		require("neotest").output_panel.toggle()
+restore.add_quitpre_ft('neotest-output-panel')
+restore.add_buf_match('Neotest Output Panel', function()
+	defer.on_postload('neotest', function()
+		require('neotest').output_panel.toggle()
 	end)
 end)

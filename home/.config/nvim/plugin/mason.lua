@@ -1,12 +1,12 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.on_load("mason", function()
-	require("mason").setup({
+defer.on_load('mason', function()
+	require('mason').setup({
 		registries = {
-			"file:" .. vim.fs.joinpath(vim.fn.stdpath("data"), "mason-registry"),
+			'file:' .. vim.fs.joinpath(vim.fn.stdpath('data'), 'mason-registry'),
 		},
 	})
 end)
-defer.cmd("MasonInstall", "mason")
-defer.hook("mason")
-defer.very_lazy("mason")
+defer.cmd('MasonInstall', 'mason')
+defer.hook('mason')
+defer.very_lazy('mason')

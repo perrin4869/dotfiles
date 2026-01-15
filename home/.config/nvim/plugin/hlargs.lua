@@ -1,7 +1,7 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.on_load("hlargs", function()
-	require("hlargs").setup({
+defer.on_load('hlargs', function()
+	require('hlargs').setup({
 		disable = function(_, bufnr)
 			if vim.b[bufnr].semantic_tokens then
 				return true
@@ -19,10 +19,10 @@ defer.on_load("hlargs", function()
 		end,
 	})
 end)
-defer.on_bufreadpost("hlargs")
+defer.on_bufreadpost('hlargs')
 
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("LspAttach_hlargs", {}),
+vim.api.nvim_create_autocmd('LspAttach', {
+	group = vim.api.nvim_create_augroup('LspAttach_hlargs', {}),
 	callback = function(args)
 		local bufnr = args.buf
 		if vim.b[bufnr].semantic_tokens then
@@ -37,7 +37,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local caps = client.server_capabilities
 		if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
 			vim.b[bufnr].semantic_tokens = true
-			defer.require("hlargs").disable_buf(bufnr)
+			defer.require('hlargs').disable_buf(bufnr)
 		end
 	end,
 })

@@ -1,13 +1,13 @@
-local defer = require("defer")
-defer.on_load("nvim-next", function()
-	require("nvim-next").setup({
+local defer = require('defer')
+defer.on_load('nvim-next', function()
+	require('nvim-next').setup({
 		default_mappings = {
-			repeat_style = "original",
+			repeat_style = 'original',
 		},
 		items = {
-			require("nvim-next.builtins").f,
-			require("nvim-next.builtins").t,
+			require('nvim-next.builtins').f,
+			require('nvim-next.builtins').t,
 		},
 	})
 end)
-defer.very_lazy("nvim-next")
+defer.very_lazy('nvim-next')

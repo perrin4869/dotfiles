@@ -15,11 +15,6 @@ jobs:
         uses: leafo/gh-actions-lua@v12
       - name: install luarocks
         uses: leafo/gh-actions-luarocks@v6
-      - name: install rust toolchain
-        uses: actions-rs/toolchain@v1 # atuin
-        with:
-          toolchain: stable
-          override: true
       - name: install luacheck
         run: luarocks install luacheck
       - name: lint
@@ -57,6 +52,11 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
+      - name: install rust toolchain
+        uses: actions-rs/toolchain@v1 # atuin
+        with:
+          toolchain: stable
+          override: true
       - name: install node.js # various dependencies
         uses: actions/setup-node@v6
         with:

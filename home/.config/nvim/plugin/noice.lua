@@ -1,13 +1,13 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.on_load("noice", function()
-	require("noice").setup({
+defer.on_load('noice', function()
+	require('noice').setup({
 		lsp = {
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {
-				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-				["vim.lsp.util.stylize_markdown"] = true,
-				["cmp.entry.get_documentation"] = true,
+				['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+				['vim.lsp.util.stylize_markdown'] = true,
+				['cmp.entry.get_documentation'] = true,
 			},
 		},
 		-- you can enable a preset for easier configuration
@@ -22,18 +22,18 @@ defer.on_load("noice", function()
 			{
 				filter = {
 					blocking = true,
-					kind = { "", "echo", "echomsg" },
+					kind = { '', 'echo', 'echomsg' },
 				},
-				view = "notify",
+				view = 'notify',
 			},
 			{
 				filter = {
 					cmdline = true,
 					min_height = 2,
 				},
-				view = "popup",
+				view = 'popup',
 			},
 		},
 	})
 end)
-defer.very_lazy("noice")
+defer.very_lazy('noice')

@@ -1,55 +1,55 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.on_load("lualine", function()
-	local lualine = require("lualine")
+defer.on_load('lualine', function()
+	local lualine = require('lualine')
 	local function paste()
 		if vim.o.paste then
-			return "PASTE"
+			return 'PASTE'
 		end
-		return ""
+		return ''
 	end
 
-	vim.api.nvim_create_autocmd("OptionSet", {
-		pattern = "paste",
+	vim.api.nvim_create_autocmd('OptionSet', {
+		pattern = 'paste',
 		callback = function()
-			require("lualine").refresh()
+			require('lualine').refresh()
 		end,
 	})
 
 	local function vimtex()
-		local status = ""
+		local status = ''
 
 		local buf = vim.api.nvim_get_current_buf()
 		local vt_local = vim.b[buf].vimtex_local or {}
 
 		if next(vt_local) ~= nil then
 			if vt_local.active then
-				status = status .. "l"
+				status = status .. 'l'
 			else
-				status = status .. "m"
+				status = status .. 'm'
 			end
 		end
 
 		local viewer = (vim.b[buf].vimtex or {}).viewer or {}
 		if viewer.xwin_id then
-			status = status .. "v"
+			status = status .. 'v'
 		end
 
 		local compiler = (vim.b[buf].vimtex or {}).compiler or {}
 		if next(compiler) ~= nil then
 			-- compiler.is_running is a vimscript function, in lua it returned as vim.NIL
 			-- this does not work: vim.api.nvim_call_dict_function(compiler, "is_running", {})
-			if vim.api.nvim_eval("b:vimtex.compiler.is_running()") == 1 then
+			if vim.api.nvim_eval('b:vimtex.compiler.is_running()') == 1 then
 				if compiler.continuous then
-					status = status .. "c"
+					status = status .. 'c'
 				else
-					status = status .. "c₁"
+					status = status .. 'c₁'
 				end
 			end
 		end
 
-		if status ~= "" then
-			status = "{" .. status .. "}"
+		if status ~= '' then
+			status = '{' .. status .. '}'
 		end
 
 		return status
@@ -68,42 +68,42 @@ defer.on_load("lualine", function()
 
 	lualine.setup({
 		sections = {
-			lualine_a = { "mode", paste },
+			lualine_a = { 'mode', paste },
 			lualine_b = {
 				{
-					"b:gitsigns_head", -- "branch" external source
-					icon = "",
+					'b:gitsigns_head', -- "branch" external source
+					icon = '',
 					fmt = function(s)
 						if #s > 0 then
-							return s .. "⚡"
+							return s .. '⚡'
 						end
 						return s
 					end,
 				},
-				{ "diff", source = diff_source },
-				{ "diagnostics", sources = { "nvim_diagnostic", "nvim_lsp" } },
+				{ 'diff', source = diff_source },
+				{ 'diagnostics', sources = { 'nvim_diagnostic', 'nvim_lsp' } },
 			},
 			lualine_c = {
-				defer.with("lsp-progress")(defer.call("progress")),
-				"g:metals_status",
-				"g:bsp_status",
+				defer.with('lsp-progress')(defer.call('progress')),
+				'g:metals_status',
+				'g:bsp_status',
 				vimtex,
 				{
-					"filename",
+					'filename',
 					fmt = function(s)
-						if #s > 0 and vim.bo.readonly and vim.bo.ft ~= "help" then
-							return "" .. s
+						if #s > 0 and vim.bo.readonly and vim.bo.ft ~= 'help' then
+							return '' .. s
 						end
 						return s
 					end,
 				},
 			},
-			lualine_x = { "encoding", "fileformat", "filetype" },
-			lualine_y = { "progress" },
-			lualine_z = { "location" },
+			lualine_x = { 'encoding', 'fileformat', 'filetype' },
+			lualine_y = { 'progress' },
+			lualine_z = { 'location' },
 		},
-		extensions = { "fugitive", "mason", "neo-tree", "oil", "quickfix", "trouble", "nvim-dap-ui" },
+		extensions = { 'fugitive', 'mason', 'neo-tree', 'oil', 'quickfix', 'trouble', 'nvim-dap-ui' },
 	})
 end)
 
-defer.very_lazy("lualine")
+defer.very_lazy('lualine')

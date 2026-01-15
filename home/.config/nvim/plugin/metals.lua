@@ -1,19 +1,19 @@
-local defer = require("defer")
+local defer = require('defer')
 
-defer.pack("metals", "nvim-metals")
-local with_metals = defer.with("metals")
+defer.pack('metals', 'nvim-metals')
+local with_metals = defer.with('metals')
 local metals_config = defer.lazy(function()
-	local lsp = require("lsp")
-	local metals = require("metals")
-	local handlers = require("metals.handlers")
+	local lsp = require('lsp')
+	local metals = require('metals')
+	local handlers = require('metals.handlers')
 
 	local config = metals.bare_config()
 	config.capabilities = lsp.get_capabilities()
-	config.init_options.statusBarProvider = "on"
+	config.init_options.statusBarProvider = 'on'
 	config.handlers = {
-		["metals/status"] = function(...)
-			handlers["metals/status"](...)
-			require("lualine").refresh()
+		['metals/status'] = function(...)
+			handlers['metals/status'](...)
+			require('lualine').refresh()
 		end,
 	}
 	config.settings = {
@@ -39,23 +39,23 @@ local metals_config = defer.lazy(function()
 		},
 	}
 
-	defer.on_postload("dap", function()
+	defer.on_postload('dap', function()
 		metals.setup_dap()
 	end)
 	return config
 end)
 
-local group = vim.api.nvim_create_augroup("Initialize_metals", {})
+local group = vim.api.nvim_create_augroup('Initialize_metals', {})
 
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "scala", "sbt", "java" },
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = { 'scala', 'sbt', 'java' },
 	group = group,
 	callback = with_metals(function(metals)
 		metals.initialize_or_attach(metals_config())
 	end),
 })
 
-vim.api.nvim_create_autocmd("LspAttach", {
+vim.api.nvim_create_autocmd('LspAttach', {
 	group = group,
 	callback = function(args)
 		if not (args.data and args.data.client_id) then
@@ -63,37 +63,37 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if client == nil or client.name ~= "metals" then
+		if client == nil or client.name ~= 'metals' then
 			return
 		end
 
-		local metals = require("metals")
-		local tvp = require("metals.tvp")
+		local metals = require('metals')
+		local tvp = require('metals.tvp')
 
 		local buffer = args.buf
-		local map = require("map").create({
-			mode = "n",
+		local map = require('map').create({
+			mode = 'n',
 			buffer = buffer,
-			desc = "metals",
+			desc = 'metals',
 		})
 
-		local pickers = require("pickers")
-		defer.on_postload("telescope", function()
-			require("telescope").load_extension("metals")
+		local pickers = require('pickers')
+		defer.on_postload('telescope', function()
+			require('telescope').load_extension('metals')
 		end)
-		pickers.map(pickers.prefix .. "l", function(telescope)
+		pickers.map(pickers.prefix .. 'l', function(telescope)
 			telescope.extensions.metals.commands()
-		end, { desc = "metals.commands.telescope" })
+		end, { desc = 'metals.commands.telescope' })
 
-		local prefix = "<leader>l"
+		local prefix = '<leader>l'
 		-- Toggle panel with Tree Views
-		map(prefix .. "v", tvp.toggle_tree_view, "tree_view.toggle")
+		map(prefix .. 'v', tvp.toggle_tree_view, 'tree_view.toggle')
 		-- Reveal current current class (trait or object) in Tree View 'metalsPackages'
-		map(prefix .. "f", tvp.reveal_in_tree, "tree_view.reveal_in_tree")
+		map(prefix .. 'f', tvp.reveal_in_tree, 'tree_view.reveal_in_tree')
 
-		map(prefix .. "t", vim.cmd.MetalsSelectTestSuite, "select_test_suite")
-		map(prefix .. "c", vim.cmd.MetalsSelectTestCase, "select_test_case")
+		map(prefix .. 't', vim.cmd.MetalsSelectTestSuite, 'select_test_suite')
+		map(prefix .. 'c', vim.cmd.MetalsSelectTestCase, 'select_test_case')
 
-		require("lsp").organize_imports(metals.organize_imports, buffer)
+		require('lsp').organize_imports(metals.organize_imports, buffer)
 	end,
 })

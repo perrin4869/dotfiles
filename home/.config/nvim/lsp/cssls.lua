@@ -1,13 +1,13 @@
 return {
-  settings = {
-    css = {
-      validate = false,
-    },
-    less = {
-      validate = true,
-    },
-    scss = {
-      validate = true,
-    },
-  },
+	settings = {
+		css = {
+			validate = false,
+		},
+		less = {
+			validate = true,
+		},
+		scss = {
+			validate = true,
+		},
+	},
 }

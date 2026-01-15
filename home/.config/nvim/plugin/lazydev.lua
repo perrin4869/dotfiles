@@ -1,8 +1,8 @@
-local defer = require("defer")
+local defer = require('defer')
 defer.on_bufreadpre(function()
-	vim.api.nvim_create_autocmd("FileType", {
+	vim.api.nvim_create_autocmd('FileType', {
 		once = true,
-		group = vim.api.nvim_create_augroup("Initialize_lazydev", {}),
+		group = vim.api.nvim_create_augroup('Initialize_lazydev', {}),
 		pattern = vim.lsp.config.lua_ls.filetypes,
 		callback = function()
 			vim.cmd([[
@@ -10,18 +10,18 @@ defer.on_bufreadpre(function()
 			packadd luvit-meta
 		]])
 
-			require("lazydev").setup({
+			require('lazydev').setup({
 				library = {
 					-- Library items can be absolute paths
 					-- "~/projects/my-awesome-lib",
 					-- Or relative, which means they will be resolved as a plugin
 					-- "LazyVim",
 					-- When relative, you can also provide a path to the library in the plugin dir
-					"luvit-meta/library", -- see below
+					'luvit-meta/library', -- see below
 				},
 			})
 
-			vim.lsp.enable("lua_ls")
+			vim.lsp.enable('lua_ls')
 		end,
 	})
 end)

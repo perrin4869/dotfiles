@@ -7,22 +7,22 @@ local OPTS = { silent = true, noremap = true }
 function M.create(opts)
 	opts = opts or {}
 	opts.opts = opts.opts or OPTS
-	opts.desc_separator = opts.desc_separator or "."
+	opts.desc_separator = opts.desc_separator or '.'
 
 	if opts.buffer ~= nil then
-		opts.opts = vim.tbl_extend("force", opts.opts, { buffer = opts.buffer })
+		opts.opts = vim.tbl_extend('force', opts.opts, { buffer = opts.buffer })
 	end
 
 	local function map(mode, lhs, rhs, o)
 		o = o or {}
-		if type(o) == "string" then
+		if type(o) == 'string' then
 			o = { desc = o }
 		end
 
 		if not o.desc then
-			if type(rhs) == "string" then
+			if type(rhs) == 'string' then
 				o.desc = rhs
-			elseif type(rhs) == "table" and type(rhs[1]) == "string" then
+			elseif type(rhs) == 'table' and type(rhs[1]) == 'string' then
 				o.desc = rhs[1]
 			else
 				o.desc = lhs
@@ -35,7 +35,7 @@ function M.create(opts)
 			rhs = opts.rhs(rhs)
 		end
 
-		vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", opts.opts, o, desc))
+		vim.keymap.set(mode, lhs, rhs, vim.tbl_extend('force', opts.opts, o, desc))
 	end
 
 	if opts.mode then

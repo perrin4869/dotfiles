@@ -7,12 +7,16 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v6
+      - name: checkout
+        uses: actions/checkout@v6
         with:
           submodules: recursive
-      - uses: leafo/gh-actions-lua@v12
-      - uses: leafo/gh-actions-luarocks@v6
-      - uses: actions-rs/toolchain@v1 # atuin
+      - name: install lua
+        uses: leafo/gh-actions-lua@v12
+      - name: install luarocks
+        uses: leafo/gh-actions-luarocks@v6
+      - name: install rust toolchain
+        uses: actions-rs/toolchain@v1 # atuin
         with:
           toolchain: stable
           override: true
@@ -20,7 +24,8 @@ jobs:
         run: luarocks install luacheck
       - name: lint
         run: luacheck home
-      - uses: JohnnyMorganz/stylua-action@v4
+      - name: style
+        uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
@@ -33,16 +38,17 @@ jobs:
           # dbus-x11 dconf-cli - ibus
           # libclang-17-dev - ccls
           version: 1.0
-      - name: yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
+      - name: install yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master
-      - name: neovim
+      - name: install neovim
         uses: rhysd/action-setup-vim@v1
         with:
           # apt neovim is too old
           neovim: true
           # version: v0.11.3
           version: nightly
-      - uses: actions/cache@v5
+      - name: cache
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
@@ -51,10 +57,10 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
-      - name: deps - node.js # various dependencies
+      - name: install node.js # various dependencies
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
       - name: build
         run: make
       - name: test build

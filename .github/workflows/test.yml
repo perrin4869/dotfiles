@@ -12,14 +12,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v6
-      - name: install lua
-        uses: leafo/gh-actions-lua@v12
-      - name: install luarocks
-        uses: leafo/gh-actions-luarocks@v6
-      - name: install luacheck
-        run: luarocks install luacheck
       - name: lint
-        run: luacheck home
+        uses: lunarmodules/luacheck@v1
       - name: style
         uses: JohnnyMorganz/stylua-action@v4
         with:

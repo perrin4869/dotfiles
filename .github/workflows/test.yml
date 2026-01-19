@@ -58,18 +58,39 @@ jobs:
           neovim: true
           # version: v0.11.3
           version: nightly
-      - name: cache
+      - name: cache cargo
         uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            deps/atuin/target
-            deps/ccls/Release
-            home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock', 'deps/ccls/Release/CMakeCache.txt', 'home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ runner.os }}-cargo
+      - name: cache atuin
+        uses: actions/cache@v5
+        with:
+          path: |
+            deps/atuin/target
+          key: ${{ runner.os }}-atuin-${{ hashFiles('deps/atuin/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-atuin-
+      - name: cache ccls
+        uses: actions/cache@v5
+        with:
+          path: |
+            deps/ccls/Release
+          key: ${{ runner.os }}-ccls-${{ hashFiles('deps/ccls/Release/CMakeCache.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-ccls-
+      - name: cache difftastic
+        uses: actions/cache@v5
+        with:
+          path: |
+            home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
+          key: ${{ runner.os }}-difftastic-${{ hashFiles('home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-difftastic-
       - name: build
         run: make
       - name: test build

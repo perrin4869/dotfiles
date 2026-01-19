@@ -64,7 +64,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('.git/modules/deps/atuin/HEAD', '.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
           restore-keys: |
             ${{ runner.os }}-cargo
       - name: cache atuin
@@ -72,7 +72,7 @@ jobs:
         with:
           path: |
             deps/atuin/target
-          key: ${{ runner.os }}-atuin-${{ hashFiles('deps/atuin/Cargo.lock') }}
+          key: ${{ runner.os }}-atuin-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
           restore-keys: |
             ${{ runner.os }}-atuin-
       - name: cache ccls
@@ -80,7 +80,7 @@ jobs:
         with:
           path: |
             deps/ccls/Release
-          key: ${{ runner.os }}-ccls-${{ hashFiles('deps/ccls/Release/CMakeCache.txt') }}
+          key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
           restore-keys: |
             ${{ runner.os }}-ccls-
       - name: cache difftastic
@@ -88,7 +88,7 @@ jobs:
         with:
           path: |
             home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
-          key: ${{ runner.os }}-difftastic-${{ hashFiles('home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock') }}
+          key: ${{ runner.os }}-difftastic-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
           restore-keys: |
             ${{ runner.os }}-difftastic-
       - name: build

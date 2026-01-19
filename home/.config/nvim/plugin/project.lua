@@ -36,7 +36,7 @@ defer.on_load('project', function()
 	end
 
 	local root, method = require('project').get_project_root()
-	if not root then
+	if not root or not method then
 		return
 	end
 

@@ -13,8 +13,8 @@ defer.on_load('gitsigns', function()
 			local next_integrations = require('nvim-next.integrations')
 			local nngs = next_integrations.gitsigns(gs)
 
-			-- Navigation
-			map('n', ']c', function()
+			local trigger = require('trigger').trigger
+			local prev_hunk, next_hunk = trigger('c', function()
 				if vim.wo.diff then
 					return ']c'
 				end
@@ -23,9 +23,7 @@ defer.on_load('gitsigns', function()
 					nngs.next_hunk()
 				end)
 				return '<Ignore>'
-			end, { expr = true, desc = 'next_hunk' })
-
-			map('n', '[c', function()
+			end, function()
 				if vim.wo.diff then
 					return '[c'
 				end
@@ -33,7 +31,11 @@ defer.on_load('gitsigns', function()
 					nngs.prev_hunk()
 				end)
 				return '<Ignore>'
-			end, { expr = true, desc = 'prev_hunk' })
+			end)
+
+			-- Navigation
+			map('n', ']c', prev_hunk, { expr = true, desc = 'next_hunk' })
+			map('n', '[c', next_hunk, { expr = true, desc = 'prev_hunk' })
 
 			-- Actions
 			map('n', '<leader>hs', gs.stage_hunk, 'stage_hunk')

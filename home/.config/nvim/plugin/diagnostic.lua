@@ -17,12 +17,16 @@ defer.very_lazy(function()
 	map('<leader>q', 'setloclist')
 
 	local next_move = require('nvim-next.move')
+	local trigger = require('trigger').trigger
 
-	local prev_diag, next_diag = next_move.make_repeatable_pair(function()
-		vim.diagnostic.jump({ count = -vim.v.count1 })
-	end, function()
-		vim.diagnostic.jump({ count = vim.v.count1 })
-	end)
+	local prev_diag, next_diag = trigger(
+		'd',
+		next_move.make_repeatable_pair(function()
+			vim.diagnostic.jump({ count = -vim.v.count1 })
+		end, function()
+			vim.diagnostic.jump({ count = vim.v.count1 })
+		end)
+	)
 	require('map').map('n', '[d', prev_diag, 'Go to previous diagnostic')
 	require('map').map('n', ']d', next_diag, 'Go to next diagnostic')
 

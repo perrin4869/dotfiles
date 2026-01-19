@@ -4,13 +4,17 @@ defer.very_lazy(function()
 	vim.cmd.packadd('vim-unimpaired')
 
 	local next_move = require('nvim-next.move')
+	local trigger = require('trigger').trigger
 
 	-- buffers
-	local prev_buffers, next_buffers = next_move.make_repeatable_pair(function()
-		vim.cmd('bprevious')
-	end, function()
-		vim.cmd('bnext')
-	end)
+	local prev_buffers, next_buffers = trigger(
+		'b',
+		next_move.make_repeatable_pair(function()
+			vim.cmd('bprevious')
+		end, function()
+			vim.cmd('bnext')
+		end)
+	)
 
 	map('n', '[b', prev_buffers, 'Go to previous buffer')
 	map('n', ']b', next_buffers, 'Go to next buffer')

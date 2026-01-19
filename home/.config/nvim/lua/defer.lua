@@ -211,10 +211,12 @@ function M.call(method, ...)
 	end
 end
 
+---@alias Defer.Lazy<T> fun(...): T
+---
 --- Memoizes a function result.
 ---@generic T
 ---@param fn fun(...): T
----@return fun(...): T
+---@return Defer.Lazy<T>
 function M.lazy(fn)
 	local value
 	local ran = false

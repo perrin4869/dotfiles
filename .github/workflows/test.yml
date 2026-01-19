@@ -65,6 +65,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             deps/atuin/target
+            deps/ccls/Release
           key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-

@@ -7,8 +7,12 @@ defer.on_load('neotest', function()
 	require('neotest').setup({})
 end)
 
-defer.pack('neotest-mocha')
-defer.deps('neotest', { 'neotest-mocha' })
+local function add_adapter(adapter_name)
+	defer.pack(adapter_name)
+	defer.deps('neotest', adapter_name)
+end
+add_adapter('neotest-mocha')
+add_adapter('neotest-busted')
 
 if vim.g.test_get_adapters then
 	defer.on_postload('neotest', function()

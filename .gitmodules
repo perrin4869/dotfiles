@@ -627,3 +627,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/neotest-mocha"]
 	path = home/.local/share/nvim/site/pack/default/opt/neotest-mocha
 	url = https://github.com/adrigzr/neotest-mocha.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/neotest-busted"]
+	path = home/.local/share/nvim/site/pack/default/opt/neotest-busted
+	url = https://github.com/MisanthropicBit/neotest-busted.git

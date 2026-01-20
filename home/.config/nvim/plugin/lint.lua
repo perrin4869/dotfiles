@@ -1,5 +1,9 @@
 local defer = require('defer')
 
+local function explicitly_disabled(linter_name)
+	return vim.g['lint_enable_' .. linter_name] == false
+end
+
 local function add_disable(original_lint_fn)
 	return function(...)
 		local args = { ... }

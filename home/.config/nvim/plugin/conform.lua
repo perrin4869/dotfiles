@@ -4,7 +4,16 @@ defer.on_load('conform', function()
 	local conform = require('conform')
 
 	local json = { 'prettierd', 'prettier', stop_after_first = true }
-	local js = { 'eslint_d' }
+	local js = function(bufnr)
+		local root_markers = require('root_markers')
+		local project_root, _ = require('project').get_project_root()
+
+		if project_root and root_markers.has_marker(bufnr, project_root, root_markers.markers.eslint()) then
+			return { 'eslint_d' }
+		end
+		return {}
+	end
+
 	conform.setup({
 		formatters_by_ft = {
 			lua = { 'stylua' },

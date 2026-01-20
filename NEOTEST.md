@@ -9,7 +9,8 @@ This file catalogs various `neotest` configurations for specific project archite
 
 ```lua
 -- luacheck: globals vim
-require("test").setup(debug.getinfo(1, "S"), function(root)
+vim.g.test_root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ':h')
+vim.g.test_get_adapters = function(root)
 	return {
 		require("neotest-mocha")({
 			is_test_file = function(path)
@@ -47,15 +48,18 @@ require("test").setup(debug.getinfo(1, "S"), function(root)
 			end,
 		}),
 	}
-end)
+end
 ```
+
+Note: if `vim.g.test_root` is not set, we will default to using either the output of `require('project').get_project_root()` or `vim.fn.getcwd()` as fallbacks.
 
 ## 2. Monorepo Services (Mocha + NPM Workspaces)
 **Structure:** `services/{service_name}/.../{file}.{spec|integration|e2e}.ts` **Behavior**: Maps `spec` to `unit` and executes the specific workspace script.
 
 ```lua
 -- luacheck: globals vim
-require("test").setup(debug.getinfo(1, "S"), function(root)
+vim.g.test_root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ':h')
+vim.g.test_get_adapters = function(root)
 	return {
 		require("neotest-mocha")({
 			is_test_file = require("neotest-mocha.util").create_test_file_extensions_matcher(
@@ -91,5 +95,5 @@ require("test").setup(debug.getinfo(1, "S"), function(root)
 			end,
 		}),
 	}
-end)
+end
 ```

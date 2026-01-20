@@ -3,11 +3,24 @@ local defer = require('defer')
 defer.pack('neotest')
 defer.on_bufreadpre('neotest', { nested = true })
 defer.on_load('neotest', function()
+	--- @diagnostic disable-next-line: missing-fields
 	require('neotest').setup({})
 end)
 
 defer.pack('neotest-mocha')
 defer.deps('neotest', { 'neotest-mocha' })
+
+if vim.g.test_get_adapters then
+	defer.on_postload('neotest', function()
+		-- hint: set vim.g.test_root to vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ':h') in .nvim.lua is the safest option
+		local root = vim.g.test_root or defer.require('project').get_project_root() or vim.fn.getcwd()
+
+		--- @diagnostic disable-next-line: missing-fields
+		require('neotest').setup_project(root, {
+			adapters = vim.g.test_get_adapters(root),
+		})
+	end)
+end
 
 ---@type Defer.With<neotest>
 local with_neotest = defer.with('neotest')
@@ -33,6 +46,7 @@ map(
 map(
 	'<leader>id',
 	with_neotest(function(neotest)
+		--- @diagnostic disable-next-line: missing-fields
 		neotest.run.run({ strategy = 'dap' })
 	end),
 	'run_dap'

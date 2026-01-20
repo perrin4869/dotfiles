@@ -65,32 +65,24 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('.git/modules/deps/atuin/HEAD', '.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo
       - name: cache atuin
         uses: actions/cache@v5
         with:
           path: |
             deps/atuin/target
           key: ${{ runner.os }}-atuin-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
-          restore-keys: |
-            ${{ runner.os }}-atuin-
       - name: cache ccls
         uses: actions/cache@v5
         with:
           path: |
             deps/ccls/Release
           key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
-          restore-keys: |
-            ${{ runner.os }}-ccls-
       - name: cache difftastic
         uses: actions/cache@v5
         with:
           path: |
             home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
           key: ${{ runner.os }}-difftastic-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
-          restore-keys: |
-            ${{ runner.os }}-difftastic-
       - name: build
         run: make
       - name: test build

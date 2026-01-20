@@ -123,6 +123,10 @@ bindkey '^E' end-of-line
 bindkey '^U' backward-kill-line
 bindkey '^K' kill-line
 
+# get the default behavior from bash (alt+b and alt+f)
+bindkey '^[b' backward-word
+bindkey '^[f' forward-word
+
 autoload edit-commoand-line; zle -N edit-command-line
 bindkey '^V' edit-command-line
 

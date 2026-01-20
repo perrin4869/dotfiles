@@ -97,3 +97,32 @@ vim.g.test_get_adapters = function(root)
 	}
 end
 ```
+
+## 3. Neovim Plugin (luarocks + busted + nlua)
+**Structure:** `tests/.../{file}_spec.lua`, with locally installed `busted` and `nlua` via `luarocks` **Hint:** run `eval $(./luarocks path --lua-version 5.1 --no-bin) && luarocks test --local` in the root of the project to setup
+
+```lua
+-- luacheck: globals vim
+vim.g.lazydev_enabled = false
+vim.g.lint_enable_luacheck = false
+
+-- Helper to run a command and return trimmed output
+local function lr_cmd(arg)
+	local cmd = string.format('luarocks path %s --lua-version 5.1', arg)
+	return vim.fn.system(cmd):gsub('%s+', '') -- Run and remove whitespace/newlines
+end
+
+local rock_path = lr_cmd('--lr-path')
+local rock_cpath = lr_cmd('--lr-cpath')
+
+vim.g.test_get_adapters = function()
+	return {
+		require('neotest-busted')({
+			busted_command = 'busted',
+			busted_paths = { rock_path },
+			busted_cpaths = { rock_cpath },
+			no_nvim = true,
+		}),
+	}
+end
+```

@@ -99,7 +99,7 @@ end
 ```
 
 ## 3. Neovim Plugin (luarocks + busted + nlua)
-**Structure:** `tests/.../{file}_spec.lua`, with locally installed `busted` and `nlua` via `luarocks` **Hint:** run `eval $(./luarocks path --lua-version 5.1 --no-bin) && luarocks test --local` in the root of the project to setup
+**Structure:** `tests/.../{file}_spec.lua`, with locally installed `busted` and `nlua` via `luarocks` **Hint:** run `luarocks test --prepare` in the root of the project to setup environment
 
 ```lua
 -- luacheck: globals vim
@@ -114,6 +114,10 @@ end
 
 local rock_path = lr_cmd('--lr-path')
 local rock_cpath = lr_cmd('--lr-cpath')
+
+-- useful for running `lurocks test` inside a terminal without setting the path
+vim.env.LUA_PATH = rock_path
+vim.env.LUA_CPATH = rock_cpath
 
 vim.g.test_get_adapters = function()
 	return {

@@ -1,7 +1,3 @@
 --luacheck: ignore
 
 local_by_default = true
-
-variables = {
-	-- LUA = "luajit",
-}

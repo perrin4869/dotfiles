@@ -54,7 +54,8 @@ end
 Note: if `vim.g.test_root` is not set, we will default to using either the output of `require('project').get_project_root()` or `vim.fn.getcwd()` as fallbacks.
 
 ## 2. Monorepo Services (Mocha + NPM Workspaces)
-**Structure:** `services/{service_name}/.../{file}.{spec|integration|e2e}.ts` **Behavior**: Maps `spec` to `unit` and executes the specific workspace script.
+**Structure:** `services/{service_name}/.../{file}.{spec|integration|e2e}.ts`\
+**Behavior**: Maps `spec` to `unit` and executes the specific workspace script.
 
 ```lua
 -- luacheck: globals vim
@@ -99,7 +100,8 @@ end
 ```
 
 ## 3. Neovim Plugin (luarocks + busted + nlua)
-**Structure:** `tests/.../{file}_spec.lua`, with locally installed `busted` and `nlua` via `luarocks` **Hint:** run `luarocks test --prepare` in the root of the project to setup environment
+**Structure:** `tests/.../{file}_spec.lua`, with locally installed `busted` and `nlua` via `luarocks`\
+**Hint:** run `luarocks init --lua-version 5.1 && eval $(luarocks path) && luarocks test --prepare` in the root of the project to setup environment
 
 ```lua
 -- luacheck: globals vim
@@ -108,7 +110,7 @@ vim.g.lint_enable_luacheck = false
 
 -- Helper to run a command and return trimmed output
 local function lr_cmd(arg)
-	local cmd = string.format('luarocks path %s --lua-version 5.1', arg)
+	local cmd = string.format('luarocks path %s', arg)
 	return vim.fn.system(cmd):gsub('%s+', '') -- Run and remove whitespace/newlines
 end
 
@@ -116,6 +118,8 @@ local rock_path = lr_cmd('--lr-path')
 local rock_cpath = lr_cmd('--lr-cpath')
 
 -- useful for running `lurocks test` inside a terminal without setting the path
+-- equivalent to `eval $(luarocks path)` in bash
+vim.env.PATH = vim.env.PATH .. ':' .. lr_cmd('--lr-bin')
 vim.env.LUA_PATH = rock_path
 vim.env.LUA_CPATH = rock_cpath
 

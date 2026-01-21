@@ -340,6 +340,7 @@ difftastic_nvim = $(NVIM_DIFFTASTIC_ROOT)/target/release/libdifftastic_nvim.so
 $(eval $(call git_submodule,difftastic_nvim,$(NVIM_DIFFTASTIC_ROOT)))
 $(difftastic_nvim): $(difftastic_nvim_head_file)
 	cd $(NVIM_DIFFTASTIC_ROOT) && cargo build --release
+	touch $(difftastic_nvim)
 difftastic_nvim: $(difftastic_nvim)
 
 .PHONY: vim_jsdoc

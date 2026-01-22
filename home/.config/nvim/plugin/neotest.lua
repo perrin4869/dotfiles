@@ -36,7 +36,7 @@ local map = require('map').create({ mode = 'n', desc = 'neotest' })
 local prefix = '<leader>t'
 
 map(
-	prefix .. 'i',
+	prefix .. 't',
 	with_neotest(function(neotest)
 		neotest.run.run()
 	end),
@@ -44,7 +44,7 @@ map(
 )
 
 map(
-	prefix .. 'f', -- entire file
+	prefix .. 'e', -- entire file
 	with_neotest(function(neotest)
 		neotest.run.run(vim.fn.expand('%'))
 	end),

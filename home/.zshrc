@@ -181,6 +181,10 @@ if [ -e "$HOME/.local/share/scalacli/completions/zsh" ]; then
   # <<< scala-cli completions <<<
 fi
 
+# expand aliases with tab (`C-x a` the default mapping that calls `_expand_alias`)
+# https://superuser.com/questions/1514569/how-to-expand-aliases-inline-in-zsh
+zstyle ':completion:*' completer _expand_alias _complete _ignored
+
 if command -v carapace &> /dev/null; then
   # ${UserConfigDir}/zsh/.zshrc
   export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense' # optional

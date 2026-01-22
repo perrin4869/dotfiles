@@ -69,8 +69,8 @@ defer.on_load('gitsigns', function()
 			end, 'setqflist_all')
 			map('n', '<leader>hq', gs.setqflist, 'setqflist')
 
-			map('n', '<leader>tb', gs.toggle_current_line_blame, 'toggle_current_line_blame')
-			map('n', '<leader>tw', gs.toggle_word_diff, 'toggle_word_diff')
+			map('n', vim.g.toggle_prefix .. 'b', gs.toggle_current_line_blame, 'toggle_current_line_blame')
+			map('n', vim.g.toggle_prefix .. 'w', gs.toggle_word_diff, 'toggle_word_diff')
 
 			-- Text object
 			map({ 'o', 'x' }, 'ih', gs.select_hunk, 'select_hunk')

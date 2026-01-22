@@ -33,8 +33,10 @@ local with_neotest = defer.with('neotest')
 
 local map = require('map').create({ mode = 'n', desc = 'neotest' })
 
+local prefix = '<leader>t'
+
 map(
-	'<leader>ii',
+	prefix .. 'i',
 	with_neotest(function(neotest)
 		neotest.run.run()
 	end),
@@ -42,7 +44,7 @@ map(
 )
 
 map(
-	'<leader>if', -- entire file
+	prefix .. 'f', -- entire file
 	with_neotest(function(neotest)
 		neotest.run.run(vim.fn.expand('%'))
 	end),
@@ -50,7 +52,7 @@ map(
 )
 
 map(
-	'<leader>id',
+	prefix .. 'd',
 	with_neotest(function(neotest)
 		--- @diagnostic disable-next-line: missing-fields
 		neotest.run.run({ strategy = 'dap' })
@@ -59,7 +61,7 @@ map(
 )
 
 map(
-	'<leader>is',
+	prefix .. 's',
 	with_neotest(function(neotest)
 		neotest.run.stop()
 	end),
@@ -67,7 +69,7 @@ map(
 )
 
 map(
-	'<leader>ia',
+	prefix .. 'a',
 	with_neotest(function(neotest)
 		neotest.run.attach()
 	end),
@@ -75,7 +77,7 @@ map(
 )
 
 map(
-	'<leader>ts',
+	vim.g.toggle_prefix .. 's',
 	with_neotest(function(neotest)
 		neotest.summary.toggle()
 	end),
@@ -83,7 +85,7 @@ map(
 )
 
 map(
-	'<leader>to',
+	vim.g.toggle_prefix .. 'o',
 	with_neotest(function(neotest)
 		neotest.output_panel.toggle()
 	end),

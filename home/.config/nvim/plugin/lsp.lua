@@ -46,7 +46,7 @@ defer.on_load('lsp', function()
 			end
 
 			if client ~= nil and client.server_capabilities.inlayHintProvider then
-				map('<leader>ti', function()
+				map(vim.g.toggle_prefix .. 'i', function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 				end, 'inlayhints.toggle')
 				-- this is too verbose, so do not enable this by default

@@ -67,4 +67,4 @@ map({ 'n', 'x' }, '<leader>m', { 'operator' }, 'operator')
 
 -- Disable and enable cursors.
 map({ 'n', 'x' }, '<c-q>', { 'toggleCursor' }, 'toggleCursor')
--- consider also <leader>tm
+-- consider also vim.g.toggle_prefix .. m

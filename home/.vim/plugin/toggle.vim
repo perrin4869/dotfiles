@@ -1,10 +1,10 @@
 " Toggle tagbar
-nmap <silent> <leader>tt <cmd>TagbarToggle<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 't <cmd>TagbarToggle<CR>'
 
 " <C-r> is by default used in insert mode for pasting registers so let's not
 " meddle with that
 imap <silent> <C-l> <cmd>call ToggleRl()<CR>
-nmap <silent> <leader>tr <cmd>call ToggleRl()<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 'r <cmd>call ToggleRl()<CR>'
 
 func! ToggleRl()
   if &rl
@@ -18,7 +18,7 @@ endfunc
 nmap <silent> ]r <cmd>set rl<CR>
 nmap <silent> [r <cmd>set norl<CR>
 
-nmap <silent> <leader>tp <cmd>call TogglePaste()<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 'p <cmd>call TogglePaste()<CR>'
 
 func! TogglePaste()
   if &paste
@@ -28,7 +28,7 @@ func! TogglePaste()
   end
 endfunc
 
-nmap <silent> <leader>tq <cmd>call ToggleQuickFix()<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 'q <cmd>call ToggleQuickFix()<CR>'
 
 function! ToggleQuickFix()
   if empty(filter(getwininfo(), 'v:val.quickfix'))
@@ -38,7 +38,7 @@ function! ToggleQuickFix()
   endif
 endfunction
 
-nmap <silent> <leader>tl <cmd>call ToggleLocList()<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 'l <cmd>call ToggleLocList()<CR>'
 
 function! ToggleLocList()
     if empty(filter(getwininfo(), 'v:val.loclist'))

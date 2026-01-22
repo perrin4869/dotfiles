@@ -76,17 +76,18 @@ map(
 
 -- Which Key
 local wk_map = {
-	['<Leader>'] = '<Leader>',
-	['<Leader>b'] = 'buffers',
-	-- ["<Leader>c"] = "osc52",
-	['<Leader>d'] = 'dap',
-	['<Leader>e'] = 'execute', -- only lua and vim files
-	['<Leader>g'] = 'fugitive',
-	['<Leader>h'] = 'hunks',
-	['<Leader>n'] = 'neotree',
-	['<Leader>t'] = 'toggle',
-	['<Leader>q'] = 'persistence',
-	['<Leader>.'] = 'execute',
+	['<leader>'] = '<leader>',
+	['<leader>b'] = 'buffers',
+	-- ["<leader>c"] = "osc52",
+	['<leader>d'] = 'dap',
+	['<leader>e'] = 'execute', -- only lua and vim files
+	['<leader>g'] = 'fugitive',
+	['<leader>h'] = 'hunks',
+	['<leader>n'] = 'neotree',
+	['<leader>t'] = 'test',
+	['<leader>q'] = 'persistence',
+	['<leader>.'] = 'execute',
+	['\\'] = 'toggle',
 	[require('pickers').prefix] = 'telescope',
 }
 

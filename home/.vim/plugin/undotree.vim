@@ -1,2 +1,2 @@
 " Toggle undo tree
-nmap <silent> <leader>tu <cmd>UndotreeToggle<CR>
+execute 'nnoremap <silent> ' . g:toggle_prefix . 'u <cmd>UndotreeToggle<CR>'

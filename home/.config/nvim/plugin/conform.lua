@@ -76,7 +76,7 @@ defer.on_load('conform', function()
 			end
 		end)
 	end, 'format')
-	map('n', '<leader>tf', toggle_autoformat, 'toggle_autoformat')
+	map('n', vim.g.toggle_prefix .. 'f', toggle_autoformat, 'toggle_autoformat')
 
 	vim.api.nvim_create_user_command('Format', function(args)
 		local range = nil

@@ -12,7 +12,7 @@ local map = require('map').create({
 	end,
 })
 
-map('<leader>tu', 'toggle')
+map(vim.g.toggle_prefix .. 'u', 'toggle')
 map('<leader>uo', 'open')
 map('<leader>uc', 'close')
 

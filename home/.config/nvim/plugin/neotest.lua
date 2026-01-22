@@ -1,7 +1,6 @@
 local defer = require('defer')
 
 defer.pack('neotest')
-defer.on_bufreadpre('neotest', { nested = true })
 defer.on_load('neotest', function()
 	--- @diagnostic disable-next-line: missing-fields
 	require('neotest').setup({})
@@ -15,6 +14,9 @@ add_adapter('neotest-mocha')
 add_adapter('neotest-busted')
 
 if vim.g.test_get_adapters then
+	-- only load neotest if the project has defined adapters for it
+	defer.on_bufreadpre('neotest', { nested = true })
+
 	defer.on_postload('neotest', function()
 		-- hint: set vim.g.test_root to vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ':h') in .nvim.lua is the safest option
 		local root = vim.g.test_root or defer.require('project').get_project_root() or vim.fn.getcwd()

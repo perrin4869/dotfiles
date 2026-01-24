@@ -3,9 +3,11 @@ EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
 HOME ?= ${HOME}
-XDG_CONFIG_HOME ?= ${HOME}/.config
-XDG_DATA_HOME ?= ${HOME}/.local/share
 PREFIX ?= ${HOME}/.local
+BINDIR  ?= $(PREFIX)/bin
+LIBEXECDIR ?= ${PREFIX}/libexec
+XDG_DATA_HOME ?= ${PREFIX}/share
+XDG_CONFIG_HOME ?= ${HOME}/.config
 
 PYTHON := python3
 
@@ -367,7 +369,7 @@ dconf:
 	dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
 
 .PHONY: dirs
-dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(PREFIX)/bin $(HOME)/.luarocks
+dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks
 $(dirs):
 	mkdir -p $@
 dirs: $(dirs)

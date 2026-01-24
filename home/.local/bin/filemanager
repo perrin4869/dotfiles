@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$HOME/.local/libexec/pick-bin"
+
+exec "$(pick_bin thunar ranger)" "$@"

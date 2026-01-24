@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$HOME/.local/libexec/pick-bin"
+
+exec "$(pick_bin zen firefox chromium-ungoogled chromium brave)" "$@"

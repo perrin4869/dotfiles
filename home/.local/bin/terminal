@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  . "$HOME/.local/libexec/guards"
+  have foot && exec foot "$@"
+fi
+
+. "$HOME/.local/libexec/pick-bin"
+
+exec "$(pick_bin ghostty wezterm kitty alacritty urxvt terminator xfce4-terminal xterm)" "$@"

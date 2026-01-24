@@ -1,0 +1,11 @@
+#!/bin/sh
+
+pick_bin() {
+    for bin in "$@"; do
+        if command -v "$bin" >/dev/null 2>&1; then
+            printf '%s\n' "$bin"
+            return 0
+        fi
+    done
+    return 1
+}

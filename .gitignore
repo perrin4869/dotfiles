@@ -52,7 +52,7 @@ home/.local/share/qutebrowser/
 
 home/.local/share/fonts/NerdFontsSymbolsOnly-3.4.0.tar.xz
 home/.local/share/fonts/NerdFontsSymbolsOnly/
-home/.local/share/fonts/SuperTTC-Iosevka-34.0.0.zip
+home/.local/share/fonts/SuperTTC-Iosevka-34.1.0.zip
 home/.local/share/fonts/Iosevka.ttc
 # this is some weird fc-cache behavior?
 # https://stackoverflow.com/questions/62309818/autogenerating-uuid-files-in-linux-directory

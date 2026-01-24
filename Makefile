@@ -152,7 +152,7 @@ $(nerd_fonts_target) &: $(nerdfonts_source)
 nerd_fonts: $(nerd_fonts_target)
 
 .PHONY: iosevka
-iosevka_version = 34.0.0
+iosevka_version = 34.1.0
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
 	wget https://github.com/be5invis/Iosevka/releases/download/v$(iosevka_version)/SuperTTC-Iosevka-$(iosevka_version).zip -P $(FONTS)

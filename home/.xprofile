@@ -4,11 +4,23 @@ set -u
 
 . "$HOME/.local/libexec/guards"
 
+XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+LOG_DIR="$XDG_STATE_HOME/xsession"
+LOG_FILE="$LOG_DIR/startup.log"
+
+mkdir -p "$LOG_DIR"
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*" }
+warn_missing() { log "missing: $*" }
+run_guarded() { have "$1" && "$@" || warn_missing "$1" }
+run_bg_guarded() { run_guarded "$@" & }
+
 export TERMINAL="${TERMINAL:-terminal}"
 export FILE="${FILE:-filemanager}"
 export MENU="${MENU:-menu}"
-export BROWSER="${BROWSER-browser}"
-export EDITOR="${EDITOR-editor}"
+export BROWSER="${BROWSER:-browser}"
+export EDITOR="${EDITOR:-editor}"
 
 if [[ -z ${IM+x} ]]; then
   if have fcitx5 || have fcitx; then
@@ -19,6 +31,7 @@ if [[ -z ${IM+x} ]]; then
 fi
 
 if [[ -n ${IM:-} ]]; then
+  log "IM auto-detected as $IM"
   export IM
 
   # X Input Method (xim)
@@ -26,10 +39,14 @@ if [[ -n ${IM:-} ]]; then
   export XMODIFIERS=@im=$IM
   export QT_IM_MODULE=$IM # qutebrowser does not support xim
   export GLFW_IM_MODULE=ibus # https://github.com/kovidgoyal/kitty/issues/469
+else
+  log "IM was not auto-detected, skipping IM setup"
 fi
 
-if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} ]] && have dbus-launch; then
-  export $(dbus-launch --exit-with-x11)
+if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} ]]; then
+  have dbus-launch && export $(dbus-launch --exit-with-x11) || warn_missing dbus-launch
+else
+  log "dbus session already existing $DBUS_SESSION_BUS_ADDRESS"
 fi
 
 # SOFTWARE_VSYNC is a user-local option specific to this repository 
@@ -53,12 +70,12 @@ run_bg_guarded udiskie --tray
 run_bg_guarded $GEOCLUE2 # required for redshift
 run_bg_guarded redshift-gtk
 run_bg_guarded joystickwake --loglevel debug
-[[ ${IM:-} == "ibus" ]] && have ibus-daemon && ibus-daemon -d -r --xim
-[[ ${IM:-} == "fcitx" ]] && have $FCITX && $FCITX -d -r
-have picom && picom -b ${PICOM_VSYNC:-}
+[[ ${IM:-} == "ibus" ]] && run_guarded ibus-daemon -d -r --xim
+[[ ${IM:-} == "fcitx" ]] && run_guarded $FCITX -d -r
+run_guarded picom -b ${PICOM_VSYNC:-}
 
 # if autorandr-launcher is installed (presumably because udev was not) then daemonize
-have autorandr-launcher && autorandr-launcher --daemonize
+run_guarded autorandr-launcher --daemonize
 
 # if pipewire in available in the system, enable it
 if have pipewire; then
@@ -72,15 +89,23 @@ if have pipewire; then
   pipewire-pulse &
 
   if have wireplumber; then
+    log "pipewire session manager: running wireplumber"
     wireplumber &
   elif have pipewire-media-session; then
+    log "pipewire session manager: running pipewire-media-session"
     pipewire-media-session &
+  else
+    log "pipewire session manager: not found"
   fi
 fi
 
-if [[ -e "/etc/slackware-version" ]] && have sun; then
-  sun status | grep -q "SUN is running" || sun start
-  sun start --tray
+if [[ -e "/etc/slackware-version" ]]; then
+  if have sun; then
+    sun status | grep -q "SUN is running" || sun start
+    sun start --tray
+  else
+    warn_missing sun
+  fi
 fi
 
 # if NetworkManager is running and nm-applet is installed, run it
@@ -89,7 +114,7 @@ pidof NetworkManager >/dev/null && run_bg_guarded nm-applet
 # bashism
 # a monitor may be connected but not have a resolution
 # match the resultion format with grep to ensure we check a monitor that is being used
-if have xrdb && have xrandr && [[ 
+if have xrandr && [[ 
     "$(
       xrandr | 
       grep " connected" | 
@@ -97,13 +122,17 @@ if have xrdb && have xrandr && [[
       head -n 1
     )" =~ [0-9]{1,4}x([0-9]{1,4})\+[0-9]{1,4}\+[0-9]{1,4} && "${BASH_REMATCH[1]}" -gt "1080" 
 ]]; then
-  xrdb -merge $HOME/.Xresources.hidpi
+  log "detected a hidpi system, setting Xresources.hidpi"
+  run_guarded xrdb -merge "$HOME/.Xresources.hidpi"
 fi
 
-[ -x "$HOME/.screenlayout/default.sh" ] && "$HOME/.screenlayout/default.sh"
+if [ -x "$HOME/.screenlayout/default.sh" ]; then
+  log "detected custom screenlayout configuration, running it"
+  "$HOME/.screenlayout/default.sh"
+fi
 
-if [[ -d ~/.wallpaper ]] && have feh; then
-  feh --bg-fill --randomize ~/.wallpaper/*
+if [[ -d ~/.wallpaper ]]; then
+  run_guarded feh --bg-fill --randomize ~/.wallpaper/*
 fi
 
 if have xwinwrap && have xrandr; then

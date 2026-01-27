@@ -11,10 +11,10 @@ LOG_FILE="$LOG_DIR/startup.log"
 mkdir -p "$LOG_DIR"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*" }
-warn_missing() { log "missing: $*" }
-run_guarded() { have "$1" && "$@" || warn_missing "$1" }
-run_bg_guarded() { run_guarded "$@" & }
+log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*"; }
+warn_missing() { log "missing: $*"; }
+run_guarded() { have "$1" && "$@" || warn_missing "$1"; }
+run_bg_guarded() { have "$1" && ( "$@" & ) || warn_missing "$1"; }
 
 export TERMINAL="${TERMINAL:-terminal}"
 export FILE="${FILE:-filemanager}"

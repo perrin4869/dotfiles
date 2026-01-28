@@ -55,6 +55,13 @@ local function trigger_load_with_after(plugin_name)
 	end
 end
 
+--- returns true if a module is disabled, false otherwise
+--- @param mod Defer.Entry
+--- @return boolean
+local function is_disabled(mod, name)
+	return mod.disabled or vim.env['DEFER_DISABLE_' .. string.upper(string.gsub(name, '-', '_'))] ~= nil
+end
+
 --- Registers a function to run BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
 ---@param name string The module name target
@@ -110,7 +117,7 @@ end
 ---@return any
 function M.ensure(name)
 	local mod = registry[name]
-	if not mod or mod.disabled then
+	if not mod or is_disabled(mod, name) then
 		return false
 	end
 

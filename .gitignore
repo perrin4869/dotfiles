@@ -67,7 +67,9 @@ home/.config/i3status/config
 home/.local/share/tmux/resurrect/
 
 deps/carapace
-deps/carapace-bin_1.6.0_linux_*.tar.gz
+deps/carapace-bin_1.6.1_linux_amd64.tar.gz
+deps/carapace-bin_1.6.1_linux_arm64.tar.gz
+deps/carapace-bin_1.6.1_linux_386.tar.gz
 
 deps/coursier
 deps/metals

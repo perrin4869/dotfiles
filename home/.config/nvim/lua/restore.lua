@@ -24,7 +24,7 @@ end
 --- restore opened windows
 function M.restore()
 	local wins = vim.api.nvim_list_wins()
-	for _, w in ipairs(wins) do
+	for i, w in ipairs(wins) do
 		local bufnr = vim.api.nvim_win_get_buf(w)
 		local bufname = vim.api.nvim_buf_get_name(bufnr)
 		if
@@ -40,6 +40,7 @@ function M.restore()
 			--- do not restore empty buffers (no bufname and no filetype)
 			and bufname == ''
 			and vim.bo[bufnr].filetype == ''
+			and i > 1 -- do not try to close the main window
 		then
 			vim.api.nvim_win_close(w, true)
 			vim.api.nvim_buf_delete(bufnr, { force = true })

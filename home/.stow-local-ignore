@@ -2,3 +2,4 @@
 .local/share/fonts/.+\.zip
 .cache
 .npm
+.+\.in$

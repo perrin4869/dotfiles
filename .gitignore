@@ -9,6 +9,9 @@ home/.config/coc/*
 home/.config/coc/extensions/*
 !home/.config/coc/extensions/package.json
 
+home/.config/logrotate/*
+!home/.config/logrotate/*.in
+
 home/.local/share/nvim/view/
 home/.local/share/nvim/undo/
 home/.local/share/nvim/shada/
@@ -78,3 +81,4 @@ home/.local/bin/metals
 # this is useful if there are local files that are temporarily conflicting, ignore them
 .stowrc
 tmp_bench.log
+*.installed

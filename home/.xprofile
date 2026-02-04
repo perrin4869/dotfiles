@@ -6,12 +6,12 @@ set -u
 
 XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 LOG_DIR="$XDG_STATE_HOME/xsession"
-LOG_FILE="$LOG_DIR/startup.log"
+LOG_FILE="$LOG_DIR/session.log"
 
 mkdir -p "$LOG_DIR"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-log() { printf '[%s] %s\n' "$(date +'%F %T')" "$*"; }
+log() { printf '[%s] ~/.xprofile: %s\n' "$(date +'%F %T')" "$*"; }
 warn_missing() { log "missing: $*"; }
 run_guarded() { have "$1" && "$@" || warn_missing "$1"; }
 run_bg_guarded() { have "$1" && ( "$@" & ) || warn_missing "$1"; }

@@ -1,0 +1,9 @@
+@XDG_STATE_HOME@/xsession/*.log {
+    rotate 7
+    daily
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

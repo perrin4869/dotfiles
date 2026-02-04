@@ -7,10 +7,10 @@ PREFIX ?= ${HOME}/.local
 BINDIR  ?= $(PREFIX)/bin
 LIBEXECDIR ?= ${PREFIX}/libexec
 XDG_DATA_HOME ?= ${PREFIX}/share
+XDG_STATE_HOME ?= ${PREFIX}/state
 XDG_CONFIG_HOME ?= ${HOME}/.config
 
 PYTHON := python3
-
 
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
 PIPX := $(shell command -v pipx 2> /dev/null)
@@ -23,6 +23,7 @@ CMAKE := cmake
 
 DEPS = deps
 DCONF = dconf
+CRON = cron
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
@@ -37,6 +38,7 @@ FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
 COURSIER_ROOT = $(DEPS)/coursier
 METALS_ROOT = $(DEPS)/metals
+CRONTAB_SRC := $(CRON)/crontab
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
@@ -48,6 +50,7 @@ ZEN_CATPPUCCIN_FILES := \
 
 FONTS = home/.local/share/fonts
 NVIM_DATA_DIRECTORY = home/.local/share/nvim
+LOGROTATE_DIR := home/.config/logrotate
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
 TREESITTER_PARSERS = $(NVIM_DATA_DIRECTORY)/site/parser
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
@@ -88,7 +91,7 @@ $1: $($1_target)
 endef
 
 .PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin difftastic_nvim
+all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin difftastic_nvim logrotate
 
 .PHONY: submodules
 $(submodules-deps) &:
@@ -361,6 +364,21 @@ $(gitflow): $(gitflow_head_file)
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 gitflow: $(gitflow)
 
+logrotate-target = $(LOGROTATE_DIR)/xsession.conf
+$(logrotate-target): $(LOGROTATE_DIR)/xsession.conf.in
+	sed 's|@XDG_STATE_HOME@|$(XDG_STATE_HOME)|g' $< > $@
+logrotate: $(logrotate-target)
+
+CRONTAB_STAMP := .crontab.installed
+$(CRONTAB_STAMP): $(CRONTAB_SRC)
+	@if crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
+		touch $@; \
+	else \
+		crontab $(CRONTAB_SRC); \
+		touch $@; \
+	fi
+cron: $(CRONTAB_STAMP)
+
 .PHONY: dconf
 dconf:
 	@# dconf dump /desktop/ibus > ibus.dconf
@@ -369,7 +387,7 @@ dconf:
 	dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
 
 .PHONY: dirs
-dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks
+dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks $(XDG_CONFIG_HOME)/logrotate
 $(dirs):
 	mkdir -p $@
 dirs: $(dirs)
@@ -418,7 +436,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home fonts gitflow dconf coursier metals qmk_cli $(lsps) $(ZEN_PROFILE_TASKS)
+install: home fonts gitflow dconf coursier metals qmk_cli cron $(lsps) $(ZEN_PROFILE_TASKS)
 
 .PHONY: test-build
 test-build:

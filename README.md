@@ -52,6 +52,8 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `difftastic`
 - `joystickwake` (optionally requires `python-dbus-fast` and `python-xlib` when running under X11)
 - `helvum`
+- `logrotate`
+- `cron`
 
 ### Slackware-specific
 

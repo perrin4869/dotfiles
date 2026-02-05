@@ -10,9 +10,25 @@ defer.very_lazy(function()
 	local prev_buffers, next_buffers = trigger(
 		'b',
 		next_move.make_repeatable_pair(function()
-			vim.cmd('bprevious')
+			if package.loaded['cokeline'] then
+				vim.api.nvim_feedkeys(
+					vim.api.nvim_replace_termcodes('<Plug>(cokeline-focus-prev)', true, false, true),
+					'n',
+					false
+				)
+			else
+				vim.cmd('bprevious')
+			end
 		end, function()
-			vim.cmd('bnext')
+			if package.loaded['cokeline'] then
+				vim.api.nvim_feedkeys(
+					vim.api.nvim_replace_termcodes('<Plug>(cokeline-focus-next)', true, false, true),
+					'n',
+					false
+				)
+			else
+				vim.cmd('bnext')
+			end
 		end)
 	)
 

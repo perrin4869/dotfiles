@@ -54,8 +54,9 @@ local function activate_sticky(key, action, timeout)
 
 	-- 2. Create the temporary override
 	vim.keymap.set('n', key, function()
-		action()
+		local ret = action()
 		activate_sticky(key, action, timeout)
+		return ret
 	end, { silent = true, nowait = true, desc = 'Sticky repeat: ' .. key })
 
 	-- 3. Set timer to restore original state

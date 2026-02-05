@@ -1,1 +1,2 @@
-nnoremap <buffer> q <cmd>close<cr>
+" simplify quitting gitblame
+nmap <buffer> q gq

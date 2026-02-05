@@ -16,9 +16,9 @@ function M.ft(ft)
 end
 
 --- @param match string
---- @param restore fun(): nil
+--- @param restore (fun(): nil)|nil
 function M.add_buf_match(match, restore)
-	matches[match] = restore
+	matches[match] = restore or function() end
 end
 
 --- restore opened windows

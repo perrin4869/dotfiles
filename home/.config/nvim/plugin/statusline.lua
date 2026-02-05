@@ -66,6 +66,35 @@ defer.on_load('lualine', function()
 		end
 	end
 
+	local noice = defer.with('noice')(function(noice)
+		if noice.api.status.mode.has() then
+			return noice.api.status.mode.get()
+		end
+		return ''
+	end)
+
+	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227
+	vim.api.nvim_create_autocmd('RecordingEnter', {
+		callback = function()
+			lualine.refresh()
+		end,
+	})
+
+	-- The register does not clean up immediately after
+	-- recording stops, so we wait a bit (50ms) before refreshing.
+	vim.api.nvim_create_autocmd('RecordingLeave', {
+		callback = function()
+			local timer = vim.loop.new_timer()
+			timer:start(
+				50,
+				0,
+				vim.schedule_wrap(function()
+					lualine.refresh()
+				end)
+			)
+		end,
+	})
+
 	lualine.setup({
 		sections = {
 			lualine_a = { 'mode', paste },
@@ -98,7 +127,7 @@ defer.on_load('lualine', function()
 					end,
 				},
 			},
-			lualine_x = { 'encoding', 'fileformat', 'filetype' },
+			lualine_x = { noice, 'encoding', 'fileformat', 'filetype' },
 			lualine_y = { 'progress' },
 			lualine_z = { 'location' },
 		},

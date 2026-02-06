@@ -11,17 +11,40 @@ end)
 defer.pack('close_buffers', 'close-buffers.nvim')
 defer.cmd('BDelete', 'close_buffers')
 defer.cmd('BWipeout', 'close_buffers')
-defer.hook('close_buffers')
 
-local map = require('map').create({
-	mode = 'n',
-	desc = 'close_buffers',
-	rhs = function(type)
+defer.very_lazy(function()
+	local map = require('map').create({
+		mode = 'n',
+		desc = 'close_buffers',
+		rhs = function(type)
+			return defer.with('close_buffers')(defer.call('delete', { type = type }))
+		end,
+	})
+
+	map('<leader><bs>', 'this')
+	map('<leader><c-h>', 'hidden') -- <C-BS> sends <C-h>
+end)
+
+defer.very_lazy(function()
+	local next_move = require('nvim-next.move')
+
+	local function cokeline_or_buf(cokeline_focus_direction, bufcmd)
 		return function()
-			require('close_buffers').delete({ type = type })
+			if package.loaded['cokeline'] then
+				require('cokeline.mappings').by_step('focus', cokeline_focus_direction)
+			else
+				vim.cmd(bufcmd)
+			end
 		end
-	end,
-})
+	end
 
-map('<leader><bs>', 'this')
-map('<leader><c-h>', 'hidden') -- <C-BS> sends <C-h>
+	-- buffers
+	local prev_buffers, next_buffers = require('trigger').trigger(
+		'b',
+		next_move.make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext'))
+	)
+
+	local map = require('map').map
+	map('n', '[b', prev_buffers, 'Go to previous buffer')
+	map('n', ']b', next_buffers, 'Go to next buffer')
+end)

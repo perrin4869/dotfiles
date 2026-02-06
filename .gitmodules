@@ -237,11 +237,6 @@
 [submodule "deps/gruvbox-material-gtk"]
 	path = deps/gruvbox-material-gtk
 	url = https://github.com/sainnhe/gruvbox-material-gtk
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
-	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
-	# https://github.com/nvim-treesitter/nvim-treesitter-textobjects/issues/772
-	branch = main
 [submodule "home/.vim/pack/default/start/vim-sleuth"]
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
@@ -630,3 +625,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/neotest-busted"]
 	path = home/.local/share/nvim/site/pack/default/opt/neotest-busted
 	url = https://github.com/MisanthropicBit/neotest-busted.git
+[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
+	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
+	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git

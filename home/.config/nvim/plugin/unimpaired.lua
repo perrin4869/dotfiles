@@ -6,30 +6,23 @@ defer.very_lazy(function()
 	local next_move = require('nvim-next.move')
 	local trigger = require('trigger').trigger
 
+	local function cokeline_or_buf(cokeline_mapping, bufcmd)
+		return function()
+			if package.loaded['cokeline'] then
+				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(cokeline_mapping, true, false, true), 'n', false)
+			else
+				vim.cmd(bufcmd)
+			end
+		end
+	end
+
 	-- buffers
 	local prev_buffers, next_buffers = trigger(
 		'b',
-		next_move.make_repeatable_pair(function()
-			if package.loaded['cokeline'] then
-				vim.api.nvim_feedkeys(
-					vim.api.nvim_replace_termcodes('<Plug>(cokeline-focus-prev)', true, false, true),
-					'n',
-					false
-				)
-			else
-				vim.cmd('bprevious')
-			end
-		end, function()
-			if package.loaded['cokeline'] then
-				vim.api.nvim_feedkeys(
-					vim.api.nvim_replace_termcodes('<Plug>(cokeline-focus-next)', true, false, true),
-					'n',
-					false
-				)
-			else
-				vim.cmd('bnext')
-			end
-		end)
+		next_move.make_repeatable_pair(
+			cokeline_or_buf('<Plug>(cokeline-focus-prev)', 'bprevious'),
+			cokeline_or_buf('<Plug>(cokeline-focus-next)', 'bnext')
+		)
 	)
 
 	map('n', '[b', prev_buffers, 'Go to previous buffer')

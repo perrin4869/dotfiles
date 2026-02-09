@@ -1,5 +1,4 @@
 # === user crontab (managed by dotfiles) ===
 
 # Rotate X session logs
-0 3 * * * /usr/sbin/logrotate $HOME/.config/logrotate/xsession \
-  >> $HOME/.local/state/xsession/logrotate.log 2>&1
+0 */3 * * * /bin/sh -c "/usr/sbin/logrotate -s $HOME/.local/state/xsession/logrotate.status $HOME/.config/logrotate/xsession.conf >> $HOME/.local/state/xsession/logrotate.log 2>&1"

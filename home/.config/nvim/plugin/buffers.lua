@@ -13,11 +13,37 @@ defer.cmd('BDelete', 'close_buffers')
 defer.cmd('BWipeout', 'close_buffers')
 
 defer.very_lazy(function()
+	local function safe_jump_back()
+		local jumplist, cur_idx = unpack(vim.fn.getjumplist())
+
+		-- cur_idx is 0-indexed. The previous jump is at cur_idx - 1.
+		-- We use +1 because Lua tables are 1-indexed.
+		local prev_jump_idx = cur_idx -- This points to the entry before current in 1-indexing
+
+		if prev_jump_idx > 0 then
+			local prev_jump = jumplist[prev_jump_idx]
+			local bufnr = prev_jump.bufnr
+
+			-- Check if the buffer is valid and loaded in Neovim
+			if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr) then
+				vim.cmd.normal({ vim.api.nvim_replace_termcodes('<C-o>', true, false, true), bang = true })
+			end
+		end
+	end
+
 	local map = require('map').create({
 		mode = 'n',
 		desc = 'close_buffers',
 		rhs = function(type)
-			return defer.with('close_buffers')(defer.call('delete', { type = type }))
+			return defer.with('close_buffers')(function(close_buffers)
+				if type == 'this' and #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then
+					vim.cmd('q')
+				end
+				close_buffers.delete({ type = type })
+				if type == 'this' then
+					safe_jump_back()
+				end
+			end)
 		end,
 	})
 

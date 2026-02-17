@@ -2,7 +2,14 @@ local M = {}
 
 local OPTS = { silent = true, noremap = true }
 --- create a map function that has defaults across the repo
---- @param opts? {desc:string,desc_separator?:string,buffer?:integer|boolean,opts?:vim.keymap.set.Opts,mode?:string|string[],rhs?:fun(arg:any):function}
+--- @param opts? {
+---		desc:string,
+---		desc_separator?:string,
+---		buffer?:integer|boolean,
+---		expr?:boolean,
+---		opts?:vim.keymap.set.Opts,
+---		mode?:string|string[],
+---		rhs?:fun(arg:any):function}
 --- @return function
 function M.create(opts)
 	opts = opts or {}
@@ -11,6 +18,10 @@ function M.create(opts)
 
 	if opts.buffer ~= nil then
 		opts.opts = vim.tbl_extend('force', opts.opts, { buffer = opts.buffer })
+	end
+
+	if opts.expr ~= nil then
+		opts.opts = vim.tbl_extend('force', opts.opts, { expr = opts.expr })
 	end
 
 	local function map(mode, lhs, rhs, o)

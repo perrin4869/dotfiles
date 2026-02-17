@@ -9,12 +9,13 @@ local map = require('map').create({
 	desc_separator = ' ',
 	buffer = true,
 })
-map('n', '<leader>.x', function()
+local prefix = '<leader>.'
+map('n', prefix .. 'x', function()
 	vim.cmd('.source')
 end, 'lua')
-map('n', '<leader>.X', function()
+map('n', prefix .. 'X', function()
 	vim.cmd('source %')
 end, 'file')
-map('x', '<leader>.', function()
+map('x', prefix, function()
 	vim.cmd("'<'>source")
 end, 'visual')

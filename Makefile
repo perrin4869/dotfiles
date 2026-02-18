@@ -2,6 +2,9 @@ COMMA := ,
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
+# the check-submodule-mismatch recipe includes some redirection that requires bash
+SHELL := /bin/bash
+
 HOME ?= ${HOME}
 PREFIX ?= ${HOME}/.local
 BINDIR  ?= $(PREFIX)/bin
@@ -438,6 +441,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 .PHONY: install
 install: home fonts gitflow dconf coursier metals qmk_cli cron $(lsps) $(ZEN_PROFILE_TASKS)
 
+.PHONY: check-submodule-mismatch
 check-submodule-mismatch:
 	@mismatch=0; \
 	while read -r key path; do \

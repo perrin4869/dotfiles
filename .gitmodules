@@ -222,12 +222,6 @@
 [submodule "home/.vim/pack/default/start/vim-fat-finger"]
 	path = home/.vim/pack/default/start/vim-fat-finger
 	url = https://github.com/chip/vim-fat-finger
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lspconfig"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-lspconfig
-	url = https://github.com/neovim/nvim-lspconfig
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-metals"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-metals
-	url = https://github.com/scalameta/nvim-metals
 [submodule "deps/mpv-mpris"]
 	path = deps/mpv-mpris
 	url = https://github.com/hoyon/mpv-mpris
@@ -240,12 +234,6 @@
 [submodule "home/.vim/pack/default/start/vim-sleuth"]
 	path = home/.vim/pack/default/start/vim-sleuth
 	url = https://github.com/tpope/vim-sleuth.git
-[submodule "home/.local/share/nvim/site/pack/default/start/trouble.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
-	url = https://github.com/folke/trouble.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-ts-context-commentstring"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-ts-context-commentstring
-	url = https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-web-devicons"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-web-devicons
 	url = https://github.com/kyazdani42/nvim-web-devicons.git
@@ -264,42 +252,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/plenary.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/plenary.nvim
 	url = https://github.com/nvim-lua/plenary.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-cmp"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-cmp
-	url = https://github.com/hrsh7th/nvim-cmp.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-buffer"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-buffer
-	url = https://github.com/hrsh7th/cmp-buffer.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-nvim-lsp"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lsp
-	url = https://github.com/hrsh7th/cmp-nvim-lsp.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-vsnip"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-vsnip
-	url = https://github.com/hrsh7th/cmp-vsnip.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-emoji"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-emoji
-	url = https://github.com/hrsh7th/cmp-emoji.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-calc"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-calc
-	url = https://github.com/hrsh7th/cmp-calc.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-path"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-path
-	url = https://github.com/hrsh7th/cmp-path.git
 [submodule "home/.local/share/nvim/site/pack/default/start/lspkind-nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/lspkind-nvim
 	url = https://github.com/onsails/lspkind-nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-nvim-lua"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lua
-	url = https://github.com/hrsh7th/cmp-nvim-lua.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-spell"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-spell
-	url = https://github.com/f3fora/cmp-spell.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-treesitter"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-treesitter
-	url = https://github.com/ray-x/cmp-treesitter.git
-[submodule "home/.local/share/nvim/site/pack/default/start/telescope.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/telescope.nvim
-	url = https://github.com/nvim-telescope/telescope.nvim.git
 [submodule "deps/fzy"]
 	path = deps/fzy
 	url = https://github.com/jhawthorn/fzy.git
@@ -309,24 +264,12 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-fzf-native.nvim
 	url = https://github.com/nvim-telescope/telescope-fzf-native.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap
-	url = https://github.com/mfussenegger/nvim-dap.git
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-dap.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-dap.nvim
 	url = https://github.com/nvim-telescope/telescope-dap.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap-virtual-text"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text
-	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-dap-ui"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui
-	url = https://github.com/rcarriga/nvim-dap-ui.git
 [submodule "home/.vim/pack/default/start/vim-floaterm"]
 	path = home/.vim/pack/default/start/vim-floaterm
 	url = https://github.com/voldikss/vim-floaterm.git
-[submodule "home/.local/share/nvim/site/pack/default/start/gitsigns.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/gitsigns.nvim
-	url = https://github.com/lewis6991/gitsigns.nvim.git
 [submodule "home/.vim/pack/default/start/vim-visual-multi"]
 	path = home/.vim/pack/default/start/vim-visual-multi
 	url = https://github.com/mg979/vim-visual-multi.git
@@ -336,9 +279,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-neoclip"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-neoclip
 	url = https://github.com/AckslD/nvim-neoclip.lua
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-tmux"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-tmux
-	url = https://github.com/andersevenrud/cmp-tmux.git
 [submodule "home/.local/share/nvim/site/pack/default/start/gruvbox.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/gruvbox.nvim
 	url = https://github.com/ellisonleao/gruvbox.nvim
@@ -360,15 +300,6 @@
 [submodule "home/.vim/pack/default/start/yats.vim"]
 	path = home/.vim/pack/default/start/yats.vim
 	url = https://github.com/HerringtonDarkholme/yats.vim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treeclimber"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-treeclimber
-	url = https://github.com/Dkendal/nvim-treeclimber.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cellular-automation.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/cellular-automaton.nvim
-	url = https://github.com/Eandrju/cellular-automaton.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/zone.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/zone.nvim
-	url = https://github.com/tamton-aquib/zone.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/treesj"]
 	path = home/.local/share/nvim/site/pack/default/start/treesj
 	url = https://github.com/Wansmer/treesj.git
@@ -384,9 +315,6 @@
 [submodule "home/.vim/pack/default/start/vim-matchup"]
 	path = home/.vim/pack/default/start/vim-matchup
 	url = https://github.com/andymass/vim-matchup.git
-[submodule "home/.local/share/nvim/site/pack/default/start/dropbar.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/dropbar.nvim
-	url = https://github.com/Bekaboo/dropbar.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/hlargs.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/hlargs.nvim
 	url = https://github.com/m-demare/hlargs.nvim.git
@@ -396,9 +324,6 @@
 [submodule "home/.vim/pack/default/start/vim-oscyank"]
 	path = home/.vim/pack/default/start/vim-oscyank
 	url = https://github.com/ojroques/vim-oscyank.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treehopper"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-treehopper
-	url = https://github.com/mfussenegger/nvim-treehopper.git
 [submodule "home/.local/share/nvim/site/pack/default/start/flash.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/flash.nvim
 	url = https://github.com/folke/flash.nvim.git
@@ -414,33 +339,15 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-autopairs"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-autopairs
 	url = https://github.com/windwp/nvim-autopairs.git
-[submodule "home/.local/share/nvim/site/pack/default/start/persistence.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/persistence.nvim
-	url = https://github.com/folke/persistence.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-git-grep.nvim
 	url = https://github.com/davvid/telescope-git-grep.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/rainbow-delimiters.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/rainbow-delimiters.nvim
-	url = https://github.com/HiPhish/rainbow-delimiters.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-cokeline"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-cokeline
 	url = https://github.com/willothy/nvim-cokeline.git
 [submodule "home/.local/share/nvim/site/pack/default/start/mason.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/mason.nvim
 	url = https://github.com/mason-org/mason.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-lint"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-lint
-	url = https://github.com/mfussenegger/nvim-lint.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-git"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-git
-	url = https://github.com/petertriho/cmp-git.git
-[submodule "home/.local/share/nvim/site/pack/default/start/cmp-cmdline"]
-	path = home/.local/share/nvim/site/pack/default/opt/cmp-cmdline
-	url = https://github.com/hrsh7th/cmp-cmdline.git
-[submodule "home/.local/share/nvim/site/pack/default/start/vim-illuminate"]
-	path = home/.local/share/nvim/site/pack/default/opt/vim-illuminate
-	url = https://github.com/RRethy/vim-illuminate.git
 [submodule "home/.local/share/nvim/mason-registry"]
 	path = home/.local/share/nvim/mason-registry
 	url = https://github.com/mason-org/mason-registry.git
@@ -450,24 +357,12 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/alpha-nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/alpha-nvim
 	url = https://github.com/goolord/alpha-nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/conform.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/conform.nvim
-	url = https://github.com/stevearc/conform.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-lightbulb"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-lightbulb
 	url = https://github.com/kosayoda/nvim-lightbulb.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-endwise"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-endwise
-	url = https://github.com/RRethy/nvim-treesitter-endwise.git
 [submodule "home/.local/share/nvim/site/pack/default/start/one-small-step-for-vimkind"]
 	path = home/.local/share/nvim/site/pack/default/start/one-small-step-for-vimkind
 	url = https://github.com/jbyuki/one-small-step-for-vimkind.git
-[submodule "home/.local/share/nvim/site/pack/default/start/ccls.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/ccls.nvim
-	url = https://github.com/ranjithshegde/ccls.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-context"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-context
-	url = https://github.com/nvim-treesitter/nvim-treesitter-context.git
 [submodule "home/.local/share/fonts/monaspace"]
 	path = home/.local/share/fonts/monaspace
 	url = https://github.com/githubnext/monaspace.git
@@ -475,12 +370,6 @@
 	# this is a dependency of nvim-dap-ui
 	path = home/.local/share/nvim/site/pack/default/start/nvim-nio
 	url = https://github.com/nvim-neotest/nvim-nio.git
-[submodule "home/.local/share/nvim/site/pack/default/start/numb.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/numb.nvim
-	url = https://github.com/nacro90/numb.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/oil.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/oil.nvim
-	url = https://github.com/stevearc/oil.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/lazydev.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/lazydev.nvim
 	url = https://github.com/folke/lazydev.nvim.git
@@ -499,12 +388,6 @@
 [submodule "home/.local/share/tmux/tmux-sensible"]
 	path = home/.local/share/tmux/tmux-sensible
 	url = https://github.com/tmux-plugins/tmux-sensible.git
-[submodule "home/.local/share/nvim/site/pack/default/start/render-markdown.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/render-markdown.nvim
-	url = https://github.com/MeanderingProgrammer/render-markdown.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/live-preview.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/live-preview.nvim
-	url = https://github.com/brianhuster/live-preview.nvim.git
 [submodule "home/.local/share/tmux/catppuccin"]
 	path = home/.local/share/tmux/catppuccin
 	url = https://github.com/catppuccin/tmux.git
@@ -535,9 +418,6 @@
 [submodule "home/.local/share/tmux/tmux-resurrect"]
 	path = home/.local/share/tmux/tmux-resurrect
 	url = https://github.com/tmux-plugins/tmux-resurrect.git
-[submodule "home/.local/share/nvim/site/pack/default/start/refactoring.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/refactoring.nvim
-	url = https://github.com/ThePrimeagen/refactoring.nvim.git
 [submodule "deps/catppuccin/zen-browser"]
 	path = deps/catppuccin/zen-browser
 	url = https://github.com/catppuccin/zen-browser.git
@@ -613,9 +493,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/volt"]
 	path = home/.local/share/nvim/site/pack/default/start/volt
 	url = https://github.com/nvzone/volt.git
-[submodule "home/.local/share/nvim/site/pack/default/start/floaterm"]
-	path = home/.local/share/nvim/site/pack/default/opt/floaterm
-	url = https://github.com/nvzone/floaterm.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/neotest"]
 	path = home/.local/share/nvim/site/pack/default/opt/neotest
 	url = https://github.com/nvim-neotest/neotest.git
@@ -628,3 +505,126 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-treesitter-textobjects
 	url = https://github.com/nvim-treesitter/nvim-treesitter-textobjects.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/numb.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/numb.nvim
+	url = https://github.com/nacro90/numb.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/floaterm"]
+	path = home/.local/share/nvim/site/pack/default/opt/floaterm
+	url = https://github.com/nvzone/floaterm.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/refactoring.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/refactoring.nvim
+	url = https://github.com/ThePrimeagen/refactoring.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/live-preview.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/live-preview.nvim
+	url = https://github.com/brianhuster/live-preview.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/render-markdown.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/render-markdown.nvim
+	url = https://github.com/MeanderingProgrammer/render-markdown.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/oil.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/oil.nvim
+	url = https://github.com/stevearc/oil.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-context"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-context
+	url = https://github.com/nvim-treesitter/nvim-treesitter-context.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-endwise"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-treesitter-endwise
+	url = https://github.com/RRethy/nvim-treesitter-endwise.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-lspconfig"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-lspconfig
+	url = https://github.com/neovim/nvim-lspconfig
+[submodule "home/.local/share/nvim/site/pack/default/opt/ccls.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/ccls.nvim
+	url = https://github.com/ranjithshegde/ccls.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/conform.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/conform.nvim
+	url = https://github.com/stevearc/conform.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/vim-illuminate"]
+	path = home/.local/share/nvim/site/pack/default/opt/vim-illuminate
+	url = https://github.com/RRethy/vim-illuminate.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-lint"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-lint
+	url = https://github.com/mfussenegger/nvim-lint.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/rainbow-delimiters.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/rainbow-delimiters.nvim
+	url = https://github.com/HiPhish/rainbow-delimiters.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-metals"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-metals
+	url = https://github.com/scalameta/nvim-metals
+[submodule "home/.local/share/nvim/site/pack/default/opt/persistence.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/persistence.nvim
+	url = https://github.com/folke/persistence.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-treehopper"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-treehopper
+	url = https://github.com/mfussenegger/nvim-treehopper.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/dropbar.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/dropbar.nvim
+	url = https://github.com/Bekaboo/dropbar.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/zone.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/zone.nvim
+	url = https://github.com/tamton-aquib/zone.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cellular-automaton.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/cellular-automaton.nvim
+	url = https://github.com/Eandrju/cellular-automaton.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/gitsigns.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/gitsigns.nvim
+	url = https://github.com/lewis6991/gitsigns.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/telescope.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/telescope.nvim
+	url = https://github.com/nvim-telescope/telescope.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-treeclimber"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-treeclimber
+	url = https://github.com/Dkendal/nvim-treeclimber.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap
+	url = https://github.com/mfussenegger/nvim-dap.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui
+	url = https://github.com/rcarriga/nvim-dap-ui.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text
+	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-ts-context-commentstring"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-ts-context-commentstring
+	url = https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
+	url = https://github.com/folke/trouble.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-cmp"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-cmp
+	url = https://github.com/hrsh7th/nvim-cmp.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-buffer"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-buffer
+	url = https://github.com/hrsh7th/cmp-buffer.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lsp"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lsp
+	url = https://github.com/hrsh7th/cmp-nvim-lsp.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-vsnip"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-vsnip
+	url = https://github.com/hrsh7th/cmp-vsnip.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-emoji"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-emoji
+	url = https://github.com/hrsh7th/cmp-emoji.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-calc"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-calc
+	url = https://github.com/hrsh7th/cmp-calc.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-path"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-path
+	url = https://github.com/hrsh7th/cmp-path.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lua"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-nvim-lua
+	url = https://github.com/hrsh7th/cmp-nvim-lua.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-spell"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-spell
+	url = https://github.com/f3fora/cmp-spell.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-treesitter"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-treesitter
+	url = https://github.com/ray-x/cmp-treesitter.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-tmux"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-tmux
+	url = https://github.com/andersevenrud/cmp-tmux.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-git"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-git
+	url = https://github.com/petertriho/cmp-git.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/cmp-cmdline"]
+	path = home/.local/share/nvim/site/pack/default/opt/cmp-cmdline
+	url = https://github.com/hrsh7th/cmp-cmdline.git

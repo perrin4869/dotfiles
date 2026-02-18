@@ -438,6 +438,17 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 .PHONY: install
 install: home fonts gitflow dconf coursier metals qmk_cli cron $(lsps) $(ZEN_PROFILE_TASKS)
 
+check-submodule-mismatch:
+	@mismatch=0; \
+	while read -r key path; do \
+		name=$$(echo "$$key" | cut -d. -f2- | rev | cut -d. -f2- | rev); \
+		if [ "$$name" != "$$path" ]; then \
+			echo "Mismatch: Name='$$name' != Path='$$path'"; \
+			mismatch=1; \
+		fi; \
+	done < <(git config --file .gitmodules --get-regexp '\.path'); \
+	if [ "$$mismatch" -ne 0 ]; then exit 1; fi
+
 .PHONY: test-build
 test-build:
 	[ -e $(mpv-mpris_target) ] || exit 1
@@ -445,7 +456,7 @@ test-build:
 	[ -x $(tree-sitter-cli_target) ] || exit 1
 
 .PHONY: test
-test:
+test: check-submodule-mismatch
 	# test neovim
 	[ -x $(lua-language-server_target) ] || exit 1
 	# make sure neovim doesn't output errors

@@ -13,27 +13,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
 				end, args.buf)
 			elseif client.name == 'tsgo' then
 				require('lsp').organize_imports(function()
-					local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
-					params.context = {
-						only = { 'source.organizeImports' },
-						diagnostics = {},
-					}
-
-					vim.lsp.buf_request(args.buf, 'textDocument/codeAction', params, function(err, result)
-						if err or not result or vim.tbl_isempty(result) then
-							return
-						end
-
-						local action = result[1]
-
-						if action.edit then
-							vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
-						end
-
-						if action.command then
-							client:exec_cmd(action.command)
-						end
-					end)
+					vim.lsp.buf.code_action({
+						context = { only = { 'source.organizeImports' } },
+						apply = true,
+						filter = function(_, client_id)
+							return client_id == client.id
+						end,
+					})
 				end, args.buf)
 			end
 		end

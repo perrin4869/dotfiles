@@ -64,6 +64,7 @@ VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 
 # Extract Rust version if cargo exists
 HAS_CARGO := $(shell command -v cargo >/dev/null 2>&1 && echo yes || echo no)
+HAS_DCONF:= $(shell command -v dconf >/dev/null 2>&1 && echo yes || echo no)
 
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
@@ -87,7 +88,8 @@ $($1_target): $($1_package_yaml) | dirs
 $1: $($1_target)
 endef
 
-.DEFAULT_GOAL := all
+.PHONY: all
+all: build
 
 submodules_paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules_target = $(addsuffix /.git, $(submodules_paths))
@@ -389,10 +391,19 @@ cron: $(CRONTAB_STAMP)
 
 .PHONY: dconf
 dconf:
-	@# dconf dump /desktop/ibus > ibus.dconf
-	dconf load /desktop/ibus/ < ${DCONF}/ibus.dconf
+ifeq ($(HAS_DCONF),yes)
+# Check if the variable is set AND if the socket path actually exists
+ifneq ($(DBUS_SESSION_BUS_ADDRESS),)
+	@# dconf dump /desktop/ibus/ > ibus.dconf
+	@dconf load /desktop/ibus/ < ${DCONF}/ibus.dconf
 	@# dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
-	dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
+	@dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
+else
+	@echo "⚠️  D-Bus session address not found in environment. Skipping dconf load."
+endif
+else
+	@echo "❌ dbus not found, skipping dbus load"
+endif
 
 .PHONY: dirs
 dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks $(XDG_CONFIG_HOME)/logrotate
@@ -467,24 +478,12 @@ TARGETS = \
 	logrotate \
 	$(lsps)
 
-.PHONY: all
+.PHONY: build
 $(TARGETS): | $(submodules_target) # order-only dependency
-all: $(TARGETS)
+build: $(TARGETS)
 
 .PHONY: install
 install: home fonts gitflow dconf qmk_cli cron $(ZEN_PROFILE_TASKS)
-
-.PHONY: check-submodule-mismatch
-check-submodule-mismatch:
-	@mismatch=0; \
-	while read -r key path; do \
-		name=$$(echo "$$key" | cut -d. -f2- | rev | cut -d. -f2- | rev); \
-		if [ "$$name" != "$$path" ]; then \
-			echo "Mismatch: Name='$$name' != Path='$$path'"; \
-			mismatch=1; \
-		fi; \
-	done < <(git config --file .gitmodules --get-regexp '\.path'); \
-	if [ "$$mismatch" -ne 0 ]; then exit 1; fi
 
 .PHONY: test-build
 test-build:
@@ -504,7 +503,24 @@ test-build:
 		done; ) \
 	exit $$missing
 
+.PHONY: check-submodule-mismatch
+check-submodule-mismatch:
+	@mismatch=0; \
+	while read -r key path; do \
+		name=$$(echo "$$key" | cut -d. -f2- | rev | cut -d. -f2- | rev); \
+		if [ "$$name" != "$$path" ]; then \
+			echo "Mismatch: Name='$$name' != Path='$$path'"; \
+			mismatch=1; \
+		fi; \
+	done < <(git config --file .gitmodules --get-regexp '\.path'); \
+	if [ "$$mismatch" -ne 0 ]; then exit 1; fi
+
+.PHONY: test-ibus-config
+test-ibus-config:
+	@dconf dump /desktop/ibus/ | cmp ${DCONF}/ibus.dconf
+	@dconf dump /org/freedesktop/ibus/ | cmp ${DCONF}/ibus-engine.dconf
+
 .PHONY: test
-test: check-submodule-mismatch
+test: check-submodule-mismatch test-ibus-config
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1

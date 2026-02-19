@@ -79,43 +79,18 @@ define mason_package
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
-$($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
+$($1_target): $($1_package_yaml) | dirs
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
-	( unset XDG_CONFIG_HOME && HOME=home nvim --headless -c "MasonInstall $1" -c q )
+	@# avoid needing telescope-fzf-native built by disabling telescope
+	( unset XDG_CONFIG_HOME && HOME=home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
 
-submodules_paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
-submodules_target = $(addsuffix /.git, $(submodules_paths))
-
 .DEFAULT_GOAL := all
 
-# --keep-going: -k ensures independent branches continue even if one fails.
-# MAKEFLAGS += -k
-TARGETS = \
-	mpv-mpris \
-	xwinwrap \
-	ccls \
-	fzf \
-	fzy \
-	telescope-fzf-native \
-	vim_jsdoc \
-	eslint_d \
-	helptags \
-	nerd_fonts \
-	iosevka \
-	carapace \
-	i3status \
-	treesitter \
-	atuin \
-	difftastic_nvim \
-	logrotate
-
-.PHONY: all
-$(TARGETS): | $(submodules_target) # order-only dependency
-all: $(TARGETS)
-
+submodules_paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
+submodules_target = $(addsuffix /.git, $(submodules_paths))
 $(submodules_target) &:
 	git submodule update --init --recursive
 # Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
@@ -313,7 +288,7 @@ $(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
 telescope-fzf-native: $(telescope-fzf-native_target)
 
 lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls tsgo kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
-PHONY: $(lsps)
+.PHONY: $(lsps)
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
 $(eval $(call mason_package,prettier))
@@ -392,10 +367,10 @@ vim_jsdoc: $(vim_jsdoc_target)
 
 .PHONY: gitflow
 $(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
-gitflow = $(PREFIX)/bin/git-flow
-$(gitflow): $(gitflow_head_file)
+gitflow_target = $(PREFIX)/bin/git-flow
+$(gitflow_target): $(gitflow_head_file)
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
-gitflow: $(gitflow)
+gitflow: $(gitflow_target)
 
 logrotate_target = $(LOGROTATE_DIR)/xsession.conf
 $(logrotate_target): $(LOGROTATE_DIR)/xsession.conf.in
@@ -468,8 +443,36 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval .PHONY: zen-catppuccin-$(ZEN_PROFILE_NAME))\
 )
 
+# --keep-going: -k ensures independent branches continue even if one fails.
+# MAKEFLAGS += -k
+TARGETS = \
+	mpv-mpris \
+	xwinwrap \
+	ccls \
+	fzf \
+	fzy \
+	telescope-fzf-native \
+	vim_jsdoc \
+	eslint_d \
+	helptags \
+	nerd_fonts \
+	iosevka \
+	carapace \
+	i3status \
+	treesitter \
+	atuin \
+	coursier \
+	metals \
+	difftastic_nvim \
+	logrotate \
+	$(lsps)
+
+.PHONY: all
+$(TARGETS): | $(submodules_target) # order-only dependency
+all: $(TARGETS)
+
 .PHONY: install
-install: home fonts gitflow dconf coursier metals qmk_cli cron $(lsps) $(ZEN_PROFILE_TASKS)
+install: home fonts gitflow dconf qmk_cli cron $(ZEN_PROFILE_TASKS)
 
 .PHONY: check-submodule-mismatch
 check-submodule-mismatch:
@@ -495,13 +498,13 @@ test-build:
 			if [ ! -e "$$f" ]; then \
 				echo "Missing: $(t) - $$f"; \
 				missing=1; \
+			else \
+				echo "Found: $(t) - $$f"; \
 			fi; \
 		done; ) \
 	exit $$missing
 
 .PHONY: test
 test: check-submodule-mismatch
-	# test neovim
-	[ -x $(lua-language-server_target) ] || exit 1
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1

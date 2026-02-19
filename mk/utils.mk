@@ -1,3 +1,7 @@
+COMMA := ,
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
 define git_submodule
@@ -10,8 +14,6 @@ endef
 define has_cmd
 $(eval HAS_$1 := $(shell command -v $1 >/dev/null 2>&1 && echo yes || echo no))
 endef
-$(eval $(call has_cmd,cargo))
-$(eval $(call has_cmd,dconf))
 
 define require
 @if [ "$(HAS_$1)" != "yes" ]; then \

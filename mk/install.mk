@@ -1,14 +1,35 @@
-GITFLOW_ROOT = $(DEPS)/gitflow
-CRONTAB_SRC := $(CRON)/crontab
-LOGROTATE_DIR := home/.config/logrotate
+$(eval $(call has_cmd,dconf))
+$(eval $(call has_cmd,stow))
+$(eval $(call has_cmd,crontab))
+$(eval $(call has_cmd,fc-cache))
 
-ZEN_DIR := $(HOME)/.zen
-ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini
-ZEN_CATPPUCCIN := $(DEPS)/catppuccin/zen-browser/themes/Macchiato/Flamingo
-ZEN_CATPPUCCIN_FILES := \
-  userChrome.css \
-  userContent.css \
-  zen-logo-macchiato.svg
+ifdef PIPX_LOCAL_VENVS
+qmk_cli = $(PIPX_LOCAL_VENVS)/qmk/bin/qmk
+else
+qmk_cli = $(PYTHON_SITE_PACKAGES)/qmk.egg-link
+endif
+$(eval $(call git_submodule,qmk_cli,$(QMK_CLI_ROOT)))
+$(qmk_cli): $(qmk_cli_head_file)
+ifdef PIPX_LOCAL_VENVS
+	[ -e $(qmk_cli) ] && pipx upgrade qmk || pipx install $(QMK_CLI_ROOT)
+else
+	pip install --user --editable=$(QMK_CLI_ROOT)
+endif
+qmk_cli: $(qmk_cli)
+
+ifdef PIPX_LOCAL_VENVS
+zmk_cli = $(PIPX_LOCAL_VENVS)/zmk/bin/zmk
+else
+zmk_cli = $(PYTHON_SITE_PACKAGES)/zmk.egg-link
+endif
+$(eval $(call git_submodule,zmk_cli,$(ZMK_CLI_ROOT)))
+$(zmk_cli): $(zmk_cli_head_file)
+ifdef PIPX_LOCAL_VENVS
+	[ -e $(zmk_cli) ] && pipx upgrade zmk || pipx install $(ZMK_CLI_ROOT)
+else
+	pip install --user --editable=$(ZMK_CLI_ROOT)
+endif
+zmk_cli: $(zmk_cli)
 
 .PHONY: gitflow
 $(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
@@ -24,6 +45,7 @@ logrotate: $(logrotate_target)
 
 CRONTAB_STAMP := .crontab.installed
 $(CRONTAB_STAMP): $(CRONTAB_SRC)
+	$(call require,crontab)
 	@if crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
 		touch $@; \
 	else \
@@ -55,10 +77,12 @@ dirs: $(dirs)
 # By default stow stows to `../$(pwd)`, so in CI we need to be more precise
 .PHONY: home
 home: | dirs
+	$(call require,stow)
 	stow -v home -t $(HOME)
 
 .PHONY: fonts
 fonts: home
+	$(call require,fc-cache)
 	@# refresh fonts
 	fc-cache -f
 
@@ -96,4 +120,4 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 .PHONY: install
-install: home fonts gitflow dconf qmk_cli cron $(ZEN_PROFILE_TASKS)
+install: home fonts gitflow dconf qmk_cli zmk_cli cron $(ZEN_PROFILE_TASKS)

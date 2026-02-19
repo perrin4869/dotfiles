@@ -1,24 +1,10 @@
-MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
-XWINWRAP_ROOT = $(DEPS)/xwinwrap
-CCLS_ROOT = $(DEPS)/ccls
-ATUIN_ROOT = $(DEPS)/atuin
-QMK_CLI_ROOT = $(DEPS)/qmk_cli
-ZMK_CLI_ROOT = $(DEPS)/zmk-cli
-ESLINT_D_ROOT = $(DEPS)/eslint_d
-FZF_ROOT = $(DEPS)/fzf
-FZY_ROOT = $(DEPS)/fzy
-NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly
-COURSIER_ROOT = $(DEPS)/coursier
-METALS_ROOT = $(DEPS)/metals
-
-NVIM_DATA_DIRECTORY = home/.local/share/nvim
-TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
-TREESITTER_PARSERS = $(NVIM_DATA_DIRECTORY)/site/parser
-MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
-MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
-TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim
-NVIM_DIFFTASTIC_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/opt/difftastic.nvim
-VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
+$(eval $(call has_cmd,cargo))
+$(eval $(call has_cmd,nvim))
+$(eval $(call has_cmd,wget))
+$(eval $(call has_cmd,git))
+$(eval $(call has_cmd,awk))
+$(eval $(call has_cmd,unzip))
+$(eval $(call has_cmd,$(CMAKE)))
 
 define mason_package
 # sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
@@ -26,6 +12,7 @@ $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
 $(eval $1_target = $(MASON_ROOT)/bin/$(shell yq ".bin|to_entries[0].key" < $($1_package_yaml)))
 # https://www.gnu.org/software/make/manual/make.html#Prerequisite-Types
 $($1_target): $($1_package_yaml) | dirs
+	$(call require,nvim)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	@# avoid needing telescope-fzf-native built by disabling telescope
 	( unset XDG_CONFIG_HOME && HOME=home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
@@ -36,6 +23,7 @@ endef
 submodules_paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
 submodules_target = $(addsuffix /.git, $(submodules_paths))
 $(submodules_target) &:
+	$(call require,git)
 	git submodule update --init --recursive
 # Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
 # $(submodules_target):
@@ -43,6 +31,7 @@ $(submodules_target) &:
 
 .PHONY: submodules
 submodules:
+	$(call require,git)
 	git submodule update --init --recursive
 
 .PHONY: mpv-mpris
@@ -72,6 +61,7 @@ else
 cpu-temperature-device-file-path := path = \"$(amd-cpu-temperature-path)\"\n
 endif
 $(i3status-config): $(i3status-config-template)
+	$(call require,awk)
 	@awk ' \
 		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
 		{ print }' \
@@ -83,6 +73,7 @@ i3status: $(i3status_target)
 ccls_target = $(CCLS_ROOT)/Release/ccls
 $(eval $(call git_submodule,ccls,$(CCLS_ROOT)))
 $(ccls_target): $(ccls_head_file)
+	$(call require,$(CMAKE))
 	cd $(CCLS_ROOT) && \
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
 		$(CMAKE) --build Release
@@ -91,6 +82,7 @@ ccls: $(ccls_target)
 nerdfonts_version = 3.4.0
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
 $(nerdfonts_source):
+	$(call require,wget)
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v$(nerdfonts_version)/NerdFontsSymbolsOnly.tar.xz -O $(nerdfonts_source)
 
 .PHONY: nerd_fonts
@@ -103,9 +95,11 @@ nerd_fonts: $(nerd_fonts_target)
 iosevka_version = 34.1.0
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
+	$(call require,wget)
 	wget https://github.com/be5invis/Iosevka/releases/download/v$(iosevka_version)/SuperTTC-Iosevka-$(iosevka_version).zip -P $(FONTS)
 iosevka_target = $(FONTS)/Iosevka.ttc
 $(iosevka_target): $(iosevka_source)
+	$(call require,unzip)
 	unzip -o -d $(FONTS) $<
 	@touch $@
 iosevka: $(iosevka_target)
@@ -121,6 +115,7 @@ carapace_arch = $(shell case $$(uname -m) in \
 esac)
 carapace_archive = carapace-bin_$(carapace_version)_linux_$(carapace_arch).tar.gz
 $(DEPS)/$(carapace_archive):
+	$(call require,wget)
 	wget https://github.com/carapace-sh/carapace-bin/releases/download/v$(carapace_version)/$(carapace_archive) -P $(DEPS)
 carapace_target = $(DEPS)/carapace/carapace
 $(carapace_target): $(DEPS)/$(carapace_archive)
@@ -142,6 +137,7 @@ atuin: $(atuin_target)
 coursier_version = 2.1.24
 coursier_builder = $(COURSIER_ROOT)/coursier-builder-$(coursier_version)
 $(coursier_builder):
+	$(call require,wget)
 	mkdir -p $(dir $(coursier_builder))
 	wget https://github.com/coursier/coursier/releases/download/v$(coursier_version)/coursier -O $(coursier_builder)
 	chmod +x $(coursier_builder)
@@ -173,34 +169,6 @@ $(metals_target): $(coursier_target)
 $(metals_bin): $(metals_target)
 	ln -sf ../../../$(metals_target) $(metals_bin)
 metals: $(metals_bin)
-
-ifdef PIPX_LOCAL_VENVS
-qmk_cli = $(PIPX_LOCAL_VENVS)/qmk/bin/qmk
-else
-qmk_cli = $(PYTHON_SITE_PACKAGES)/qmk.egg-link
-endif
-$(eval $(call git_submodule,qmk_cli,$(QMK_CLI_ROOT)))
-$(qmk_cli): $(qmk_cli_head_file)
-ifdef PIPX_LOCAL_VENVS
-	[ -e $(qmk_cli) ] && pipx upgrade qmk || pipx install $(QMK_CLI_ROOT)
-else
-	pip install --user --editable=$(QMK_CLI_ROOT)
-endif
-qmk_cli: $(qmk_cli)
-
-ifdef PIPX_LOCAL_VENVS
-zmk_cli = $(PIPX_LOCAL_VENVS)/zmk/bin/zmk
-else
-zmk_cli = $(PYTHON_SITE_PACKAGES)/zmk.egg-link
-endif
-$(eval $(call git_submodule,zmk_cli,$(ZMK_CLI_ROOT)))
-$(zmk_cli): $(zmk_cli_head_file)
-ifdef PIPX_LOCAL_VENVS
-	[ -e $(zmk_cli) ] && pipx upgrade zmk || pipx install $(ZMK_CLI_ROOT)
-else
-	pip install --user --editable=$(ZMK_CLI_ROOT)
-endif
-zmk_cli: $(zmk_cli)
 
 fzf_target = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))
@@ -254,6 +222,7 @@ helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start $(N
 helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
 helptags_target = $(addsuffix /tags, $(helptags-paths))
 $(helptags_target)&: $(helptags-deps) $(telescope-fzf-native)
+	$(call require,nvim)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
 			-c "set runtimepath+=$(NVIM_DATA_DIRECTORY)/site/pack/default/opt/*" \
@@ -268,6 +237,7 @@ treesitter_target = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(trees
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 # also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
 $(treesitter_target) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(telescope-fzf-native) $(tree-sitter-cli_target)
+	$(call require,nvim)
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME

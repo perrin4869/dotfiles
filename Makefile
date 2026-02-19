@@ -405,10 +405,10 @@ logrotate: $(logrotate_target)
 CRONTAB_STAMP := .crontab.installed
 $(CRONTAB_STAMP): $(CRONTAB_SRC)
 	@if crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
-		@touch $@; \
+		touch $@; \
 	else \
 		crontab $(CRONTAB_SRC); \
-		@touch $@; \
+		touch $@; \
 	fi
 cron: $(CRONTAB_STAMP)
 

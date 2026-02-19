@@ -62,12 +62,8 @@ TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/teles
 NVIM_DIFFTASTIC_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/opt/difftastic.nvim
 VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 
-submodules-paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
-submodules-deps = $(addsuffix /.git, $(submodules-paths))
-
-helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start $(NVIM_DATA_DIRECTORY)/site/pack/default/opt -maxdepth 2 -mindepth 2 -type d -name doc)
-helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
-helptags = $(addsuffix /tags, $(helptags-paths))
+# Extract Rust version if cargo exists
+HAS_CARGO := $(shell command -v cargo >/dev/null 2>&1 && echo yes || echo no)
 
 # Accept as an argument the submodule relative to .git/modules directory
 # $(call git_submodule,variable_prefix,module_path,repo_path)
@@ -76,9 +72,6 @@ $(eval $1_head = $(shell cat .git/modules/$2/HEAD))
 $(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
 	.git/modules/$2/$(lastword $($1_head)),\
 	.git/modules/$2/HEAD))
-
-# init submodule if necessary
-$($1_head_file): $2/.git
 endef
 
 define mason_package
@@ -93,22 +86,52 @@ $($1_target): $($1_package_yaml) $(telescope-fzf-native) | dirs
 $1: $($1_target)
 endef
 
-.PHONY: all
-all: mpv-mpris xwinwrap ccls fzf fzy telescope-fzf-native vim_jsdoc eslint_d helptags nerd_fonts iosevka carapace i3status treesitter atuin difftastic_nvim logrotate
+submodules_paths = $(shell cat .gitmodules | grep "path =" | cut -d ' ' -f3)
+submodules_target = $(addsuffix /.git, $(submodules_paths))
 
-.PHONY: submodules
-$(submodules-deps) &:
+.DEFAULT_GOAL := all
+
+# --keep-going: -k ensures independent branches continue even if one fails.
+# MAKEFLAGS += -k
+TARGETS = \
+	mpv-mpris \
+	xwinwrap \
+	ccls \
+	fzf \
+	fzy \
+	telescope-fzf-native \
+	vim_jsdoc \
+	eslint_d \
+	helptags \
+	nerd_fonts \
+	iosevka \
+	carapace \
+	i3status \
+	treesitter \
+	atuin \
+	difftastic_nvim \
+	logrotate
+
+.PHONY: all
+$(TARGETS): | $(submodules_target) # order-only dependency
+all: $(TARGETS)
+
+$(submodules_target) &:
 	git submodule update --init --recursive
 # Alternatively, to initialize individually (notice we are replacing /.git with an empty string):
-# $(submodules-deps):
+# $(submodules_target):
 # 	git submodule update --init --recursive $(@:/.git=)
-submodules: $(submodules-deps)
+
+.PHONY: submodules
+submodules:
+	git submodule update --init --recursive
 
 .PHONY: mpv-mpris
 mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
 $(eval $(call git_submodule,mpv-mpris,$(MPV_MPRIS_ROOT)))
 $(mpv-mpris_target): $(mpv-mpris_head_file)
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
+	@touch $(mpv-mpris_target)
 mpv-mpris: $(mpv-mpris_target)
 
 .PHONY: xwinwrap
@@ -134,7 +157,8 @@ $(i3status-config): $(i3status-config-template)
 		/^\s*cpu_temperature\s+[0-9]+\s*{/ { print; if ("$(cpu-temperature-device-file-path)" != "") printf "    $(cpu-temperature-device-file-path)"; next } \
 		{ print }' \
 		"$(i3status-config-template)" > "$(i3status-config)"
-i3status: $(i3status-config)
+i3status_target = $(i3status-config)
+i3status: $(i3status_target)
 
 .PHONY: ccls
 ccls_target = $(CCLS_ROOT)/Release/ccls
@@ -151,8 +175,7 @@ $(nerdfonts_source):
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v$(nerdfonts_version)/NerdFontsSymbolsOnly.tar.xz -O $(nerdfonts_source)
 
 .PHONY: nerd_fonts
-nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf \
-										$(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
+nerd_fonts_target = $(NERD_FONTS)/SymbolsNerdFont-Regular.ttf $(NERD_FONTS)/SymbolsNerdFontMono-Regular.ttf
 $(nerd_fonts_target) &: $(nerdfonts_source)
 	tar xvJf $< --one-top-level=$(NERD_FONTS) -m
 nerd_fonts: $(nerd_fonts_target)
@@ -165,7 +188,7 @@ $(iosevka_source):
 iosevka_target = $(FONTS)/Iosevka.ttc
 $(iosevka_target): $(iosevka_source)
 	unzip -o -d $(FONTS) $<
-	touch $@
+	@touch $@
 iosevka: $(iosevka_target)
 
 .PHONY: carapace
@@ -184,11 +207,8 @@ carapace_target = $(DEPS)/carapace/carapace
 $(carapace_target): $(DEPS)/$(carapace_archive)
 	mkdir -p $(DEPS)/carapace
 	tar xvzf $< -C $(DEPS)/carapace
-	touch $@
+	@touch $@
 carapace: $(carapace_target)
-
-# Extract Rust version if cargo exists
-HAS_CARGO := $(shell command -v cargo >/dev/null 2>&1 && echo yes || echo no)
 
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin
@@ -196,6 +216,7 @@ $(eval $(call git_submodule,atuin,$(ATUIN_ROOT)))
 $(atuin_target): $(atuin_head_file)
 ifeq ($(HAS_CARGO),yes)
 	cargo build --manifest-path $(ATUIN_ROOT)/crates/atuin/Cargo.toml --release
+	@touch $(atuin_target)
 else
 	@echo "❌ cargo not found, skipping atuin"
 endif
@@ -265,29 +286,31 @@ else
 endif
 zmk_cli: $(zmk_cli)
 
-fzf = $(FZF_ROOT)/bin/fzf
+fzf_target = $(FZF_ROOT)/bin/fzf
 $(eval $(call git_submodule,fzf,$(FZF_ROOT)))
-$(fzf): $(fzf_head_file)
+$(fzf_target): $(fzf_head_file)
 	@# Officially:
 	@# $DEPS_DIR/fzf/install --all
 	@# Manually download executable
 	$(FZF_ROOT)/install --no-update-rc --no-bash --no-zsh --no-completion --no-key-bindings
-fzf: $(fzf)
+	@touch $(fzf_target)
+fzf: $(fzf_target)
 
 .PHONY: fzy
-fzy = $(FZY_ROOT)/fzy
+fzy_target = $(FZY_ROOT)/fzy
 $(eval $(call git_submodule,fzy,$(FZY_ROOT)))
-$(fzy): $(fzy_head_file)
+$(fzy_target): $(fzy_head_file)
 	$(MAKE) -C $(FZY_ROOT) clean # TODO: cannot rebuild without clean first
 	$(MAKE) -C $(FZY_ROOT)
-fzy: $(fzy)
+fzy: $(fzy_target)
 
 .PHONY: telescope-fzf-native
-telescope-fzf-native = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
+telescope-fzf-native_target = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
 $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_ROOT)))
-$(telescope-fzf-native): $(telescope-fzf-native_head_file)
+$(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
-telescope-fzf-native: $(telescope-fzf-native)
+	@touch $(telescope-fzf-native_target)
+telescope-fzf-native: $(telescope-fzf-native_target)
 
 lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls tsgo kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
 PHONY: $(lsps)
@@ -311,21 +334,24 @@ $(eval $(call mason_package,tree-sitter-cli,true))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 .PHONY: helptags
-$(helptags)&: $(helptags-deps) $(telescope-fzf-native)
+helptags-paths = $(shell find $(NVIM_DATA_DIRECTORY)/site/pack/default/start $(NVIM_DATA_DIRECTORY)/site/pack/default/opt -maxdepth 2 -mindepth 2 -type d -name doc)
+helptags-deps = $(addsuffix /*.txt, $(helptags-paths))
+helptags_target = $(addsuffix /tags, $(helptags-paths))
+$(helptags_target)&: $(helptags-deps) $(telescope-fzf-native)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
 			-c "set runtimepath+=$(NVIM_DATA_DIRECTORY)/site/pack/default/opt/*" \
 			-c "helptags ALL" -c q )
-helptags: $(helptags)
+helptags: $(helptags_target)
 
 .PHONY: treesitter
 # print in neovim prints to stderr
 treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql markdown markdown_inline
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
-treesitter-targets = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(treesitter-langs)))
+treesitter_target = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 # also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
-$(treesitter-targets) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(telescope-fzf-native) $(tree-sitter-cli_target)
+$(treesitter_target) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(telescope-fzf-native) $(tree-sitter-cli_target)
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
@@ -333,32 +359,36 @@ $(treesitter-targets) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(te
 			 -c "lua require('nvim-treesitter').install({ $(treesitter-langs-params) }):wait(30000000)" \
 			 -c "lua require('nvim-treesitter').update({ $(treesitter-langs-params) }):wait(30000000)" \
 			 -c q )
-	touch $(treesitter-targets)
-treesitter: $(treesitter-targets)
+	@touch $(treesitter_target)
+treesitter: $(treesitter_target)
 
 .PHONY: eslint_d
-eslint_d = $(ESLINT_D_ROOT)/node_modules
+eslint_d_target = $(ESLINT_D_ROOT)/node_modules
 $(eval $(call git_submodule,eslint_d,$(ESLINT_D_ROOT)))
-$(eslint_d): $(eslint_d_head_file)
+$(eslint_d_target): $(eslint_d_head_file)
 	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
-eslint_d: $(eslint_d)
+eslint_d: $(eslint_d_target)
 
 .PHONY: difftastic_nvim
-difftastic_nvim = $(NVIM_DIFFTASTIC_ROOT)/target/release/libdifftastic_nvim.so
+difftastic_nvim_target = $(NVIM_DIFFTASTIC_ROOT)/target/release/libdifftastic_nvim.so
 $(eval $(call git_submodule,difftastic_nvim,$(NVIM_DIFFTASTIC_ROOT)))
-$(difftastic_nvim): $(difftastic_nvim_head_file)
+$(difftastic_nvim_target): $(difftastic_nvim_head_file)
+ifeq ($(HAS_CARGO),yes)
 	cd $(NVIM_DIFFTASTIC_ROOT) && cargo build --release
-	touch $(difftastic_nvim)
-difftastic_nvim: $(difftastic_nvim)
+	@touch $(difftastic_nvim_target)
+else
+	@echo "❌ cargo not found, skipping difftastic_nvim"
+endif
+difftastic_nvim: $(difftastic_nvim_target)
 
 .PHONY: vim_jsdoc
-vim_jsdoc = $(VIM_JSDOC_ROOT)/lib/lehre
+vim_jsdoc_target = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,$(VIM_JSDOC_ROOT)))
-$(vim_jsdoc): $(vim_jsdoc_head_file)
+$(vim_jsdoc_target): $(vim_jsdoc_head_file)
 	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
-	touch $(vim_jsdoc)
+	@touch $(vim_jsdoc_target)
 	git -C $(VIM_JSDOC_ROOT) restore lib/yarn.lock
-vim_jsdoc: $(vim_jsdoc)
+vim_jsdoc: $(vim_jsdoc_target)
 
 .PHONY: gitflow
 $(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
@@ -367,18 +397,18 @@ $(gitflow): $(gitflow_head_file)
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 gitflow: $(gitflow)
 
-logrotate-target = $(LOGROTATE_DIR)/xsession.conf
-$(logrotate-target): $(LOGROTATE_DIR)/xsession.conf.in
+logrotate_target = $(LOGROTATE_DIR)/xsession.conf
+$(logrotate_target): $(LOGROTATE_DIR)/xsession.conf.in
 	sed 's|@XDG_STATE_HOME@|$(XDG_STATE_HOME)|g' $< > $@
-logrotate: $(logrotate-target)
+logrotate: $(logrotate_target)
 
 CRONTAB_STAMP := .crontab.installed
 $(CRONTAB_STAMP): $(CRONTAB_SRC)
 	@if crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
-		touch $@; \
+		@touch $@; \
 	else \
 		crontab $(CRONTAB_SRC); \
-		touch $@; \
+		@touch $@; \
 	fi
 cron: $(CRONTAB_STAMP)
 
@@ -455,9 +485,19 @@ check-submodule-mismatch:
 
 .PHONY: test-build
 test-build:
-	[ -e $(mpv-mpris_target) ] || exit 1
-	[ -e $(i3status-config) ] || exit 1
-	[ -x $(tree-sitter-cli_target) ] || exit 1
+	@missing=0; \
+	$(foreach t,$(TARGETS), \
+		if [ -z "$($(t)_target)" ]; then \
+			echo "Missing target: $(t)"; \
+			missing=1; \
+		fi; \
+		for f in $($(t)_target); do \
+			if [ ! -e "$$f" ]; then \
+				echo "Missing: $(t) - $$f"; \
+				missing=1; \
+			fi; \
+		done; ) \
+	exit $$missing
 
 .PHONY: test
 test: check-submodule-mismatch

@@ -196,6 +196,7 @@ ifeq ($(HAS_CARGO),yes)
 	@touch $(atuin_target)
 else
 	@echo "❌ cargo not found, skipping atuin"
+	@exit 1
 endif
 atuin: $(atuin_target)
 
@@ -355,6 +356,7 @@ ifeq ($(HAS_CARGO),yes)
 	@touch $(difftastic_nvim_target)
 else
 	@echo "❌ cargo not found, skipping difftastic_nvim"
+	@exit 1
 endif
 difftastic_nvim: $(difftastic_nvim_target)
 
@@ -400,9 +402,11 @@ ifneq ($(DBUS_SESSION_BUS_ADDRESS),)
 	@dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
 else
 	@echo "⚠️  D-Bus session address not found in environment. Skipping dconf load."
+	@exit 1
 endif
 else
 	@echo "❌ dbus not found, skipping dbus load"
+	@exit 1
 endif
 
 .PHONY: dirs
@@ -520,7 +524,10 @@ test-ibus-config:
 	@dconf dump /desktop/ibus/ | cmp ${DCONF}/ibus.dconf
 	@dconf dump /org/freedesktop/ibus/ | cmp ${DCONF}/ibus-engine.dconf
 
-.PHONY: test
-test: check-submodule-mismatch test-ibus-config
+.PHONY: test-neovim
+test-neovim:
 	# make sure neovim doesn't output errors
 	[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
+
+.PHONY: test
+test: check-submodule-mismatch test-ibus-config test-neovim

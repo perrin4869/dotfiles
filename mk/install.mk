@@ -92,23 +92,22 @@ ZEN_PROFILE_PAIRS := $(shell awk -F= '\
 ' "$(ZEN_PROFILES_INI)")
 endif
 
-# Generate make targets like zen-natsumi-personal
-ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-catppuccin-$(firstword $(subst :, ,$(pair))))
+ZEN_PROFILE_TASKS := $(foreach pair,$(ZEN_PROFILE_PAIRS),zen-$(firstword $(subst :, ,$(pair))))
 
 $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\
   $(eval ZEN_PROFILE_PATH := $(subst +, ,$(word 2,$(subst :, ,$(pair)))))\
   $(eval ZEN_PROFILE_PATH_ESCAPED := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
-  $(eval $(ZEN_PROFILE_NAME)_target := $(foreach file,$(ZEN_CATPPUCCIN_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
-  $(eval zen-catppuccin-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)_target))\
-  $(eval $($(ZEN_PROFILE_NAME)_target) &: ; \
+  $(eval zen-$(ZEN_PROFILE_NAME)_target := $(foreach file,$(ZEN_CATPPUCCIN_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
+  $(eval zen-$(ZEN_PROFILE_NAME): $(zen-$(ZEN_PROFILE_NAME)_target))\
+  $(eval $(zen-$(ZEN_PROFILE_NAME)_target) &: ; \
     @echo "Setting up profile: $(ZEN_PROFILE_NAME) at path: $(ZEN_PROFILE_PATH)" && \
     mkdir -p "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome" && \
     $(foreach file,$(ZEN_CATPPUCCIN_FILES), \
       ln -sf "$(abspath $(ZEN_CATPPUCCIN))/$(file)" "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome/$(file)"; \
     )\
   )\
-  $(eval .PHONY: zen-catppuccin-$(ZEN_PROFILE_NAME))\
+  $(eval .PHONY: zen-$(ZEN_PROFILE_NAME))\
 )
 
 INSTALL_TARGETS = gitflow qmk_cli zmk_cli

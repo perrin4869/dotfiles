@@ -30,6 +30,7 @@ submodules:
 mpv-mpris_target = $(MPV_MPRIS_ROOT)/mpris.so
 $(eval $(call git_submodule,mpv-mpris,$(MPV_MPRIS_ROOT)))
 $(mpv-mpris_target): $(mpv-mpris_head_file)
+	$(call require,$(CC))
 	$(MAKE) -C $(MPV_MPRIS_ROOT)
 	@touch $(mpv-mpris_target)
 mpv-mpris: $(mpv-mpris_target)
@@ -38,6 +39,7 @@ mpv-mpris: $(mpv-mpris_target)
 xwinwrap_target = $(XWINWRAP_ROOT)/xwinwrap
 $(eval $(call git_submodule,xwinwrap,$(XWINWRAP_ROOT)))
 $(xwinwrap_target): $(xwinwrap_head_file)
+	$(call require,$(CC))
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
 
@@ -176,6 +178,7 @@ fzf: $(fzf_target)
 fzy_target = $(FZY_ROOT)/fzy
 $(eval $(call git_submodule,fzy,$(FZY_ROOT)))
 $(fzy_target): $(fzy_head_file)
+	$(call require,$(CC))
 	$(MAKE) -C $(FZY_ROOT) clean # TODO: cannot rebuild without clean first
 	$(MAKE) -C $(FZY_ROOT)
 fzy: $(fzy_target)
@@ -184,6 +187,7 @@ fzy: $(fzy_target)
 telescope-fzf-native_target = $(TELESCOPE_FZF_NATIVE_ROOT)/build/libfzf.so
 $(eval $(call git_submodule,telescope-fzf-native,$(TELESCOPE_FZF_NATIVE_ROOT)))
 $(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
+	$(call require,$(CC))
 	$(MAKE) -C $(TELESCOPE_FZF_NATIVE_ROOT)
 	@touch $(telescope-fzf-native_target)
 telescope-fzf-native: $(telescope-fzf-native_target)
@@ -260,6 +264,7 @@ difftastic_nvim: $(difftastic_nvim_target)
 vim_jsdoc_target = $(VIM_JSDOC_ROOT)/lib/lehre
 $(eval $(call git_submodule,vim_jsdoc,$(VIM_JSDOC_ROOT)))
 $(vim_jsdoc_target): $(vim_jsdoc_head_file)
+	$(call require,npm)
 	$(MAKE) -C$(VIM_JSDOC_ROOT) clean && $(MAKE) -C$(VIM_JSDOC_ROOT) install
 	@touch $(vim_jsdoc_target)
 	git -C $(VIM_JSDOC_ROOT) restore lib/yarn.lock

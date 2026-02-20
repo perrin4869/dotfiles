@@ -74,8 +74,19 @@ test-fonts:
 .PHONY: test-neovim
 test-neovim:
 	@# make sure neovim doesn't output errors
-	@[ -z "$$(nvim --headless +qa 2>&1)" ] || exit 1
-	@echo "✓ neovim boots cleanly"
+	@err=$$(nvim --headless +qa 2>&1); \
+	if [ -n "$$err" ]; then \
+	    echo "$$err"; exit 1; \
+	else \
+	    echo "✓ neovim boots cleanly"; \
+	fi
 
 .PHONY: test
-test: check-submodule-mismatch test-dirs test-install-targets test-ibus-config test-cron test-fonts test-neovim
+test: \
+	check-submodule-mismatch \
+	test-dirs \
+	test-install-targets \
+	test-ibus-config \
+	test-cron \
+	test-fonts \
+	test-neovim

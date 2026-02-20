@@ -1,11 +1,3 @@
-$(eval $(call has_cmd,cargo))
-$(eval $(call has_cmd,nvim))
-$(eval $(call has_cmd,wget))
-$(eval $(call has_cmd,git))
-$(eval $(call has_cmd,awk))
-$(eval $(call has_cmd,unzip))
-$(eval $(call has_cmd,$(CMAKE)))
-
 define mason_package
 # sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
@@ -272,6 +264,11 @@ $(vim_jsdoc_target): $(vim_jsdoc_head_file)
 	@touch $(vim_jsdoc_target)
 	git -C $(VIM_JSDOC_ROOT) restore lib/yarn.lock
 vim_jsdoc: $(vim_jsdoc_target)
+
+logrotate_target = $(LOGROTATE_DIR)/xsession.conf
+$(logrotate_target): $(LOGROTATE_DIR)/xsession.conf.in
+	sed 's|@XDG_STATE_HOME@|$(XDG_STATE_HOME)|g' $< > $@
+logrotate: $(logrotate_target)
 
 # --keep-going: -k ensures independent branches continue even if one fails.
 # MAKEFLAGS += -k

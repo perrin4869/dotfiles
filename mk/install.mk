@@ -1,35 +1,32 @@
-$(eval $(call has_cmd,dconf))
-$(eval $(call has_cmd,stow))
-$(eval $(call has_cmd,crontab))
-$(eval $(call has_cmd,fc-cache))
-
 ifdef PIPX_LOCAL_VENVS
-qmk_cli = $(PIPX_LOCAL_VENVS)/qmk/bin/qmk
+qmk_cli_target = $(PIPX_LOCAL_VENVS)/qmk/bin/qmk
 else
-qmk_cli = $(PYTHON_SITE_PACKAGES)/qmk.egg-link
+qmk_cli_target = $(PYTHON_SITE_PACKAGES)/qmk.egg-link
 endif
 $(eval $(call git_submodule,qmk_cli,$(QMK_CLI_ROOT)))
-$(qmk_cli): $(qmk_cli_head_file)
+$(qmk_cli_target): $(qmk_cli_head_file)
 ifdef PIPX_LOCAL_VENVS
-	[ -e $(qmk_cli) ] && pipx upgrade qmk || pipx install $(QMK_CLI_ROOT)
+	[ -e $(qmk_cli_target) ] && pipx upgrade qmk || pipx install $(QMK_CLI_ROOT)
 else
+	$(call require,pip)
 	pip install --user --editable=$(QMK_CLI_ROOT)
 endif
-qmk_cli: $(qmk_cli)
+qmk_cli: $(qmk_cli_target)
 
 ifdef PIPX_LOCAL_VENVS
-zmk_cli = $(PIPX_LOCAL_VENVS)/zmk/bin/zmk
+zmk_cli_target = $(PIPX_LOCAL_VENVS)/zmk/bin/zmk
 else
-zmk_cli = $(PYTHON_SITE_PACKAGES)/zmk.egg-link
+zmk_cli_target = $(PYTHON_SITE_PACKAGES)/zmk.egg-link
 endif
 $(eval $(call git_submodule,zmk_cli,$(ZMK_CLI_ROOT)))
-$(zmk_cli): $(zmk_cli_head_file)
+$(zmk_cli_target): $(zmk_cli_head_file)
 ifdef PIPX_LOCAL_VENVS
-	[ -e $(zmk_cli) ] && pipx upgrade zmk || pipx install $(ZMK_CLI_ROOT)
+	[ -e $(zmk_cli_target) ] && pipx upgrade zmk || pipx install $(ZMK_CLI_ROOT)
 else
+	$(call require,pip)
 	pip install --user --editable=$(ZMK_CLI_ROOT)
 endif
-zmk_cli: $(zmk_cli)
+zmk_cli: $(zmk_cli_target)
 
 .PHONY: gitflow
 $(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
@@ -38,13 +35,8 @@ $(gitflow_target): $(gitflow_head_file)
 	$(MAKE) -C$(GITFLOW_ROOT) prefix=$(PREFIX) install
 gitflow: $(gitflow_target)
 
-logrotate_target = $(LOGROTATE_DIR)/xsession.conf
-$(logrotate_target): $(LOGROTATE_DIR)/xsession.conf.in
-	sed 's|@XDG_STATE_HOME@|$(XDG_STATE_HOME)|g' $< > $@
-logrotate: $(logrotate_target)
-
-CRONTAB_STAMP := .crontab.installed
-$(CRONTAB_STAMP): $(CRONTAB_SRC)
+crontab_stamp := .crontab.installed
+$(crontab_stamp): $(CRONTAB_SRC)
 	$(call require,crontab)
 	@if crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
 		touch $@; \
@@ -52,7 +44,7 @@ $(CRONTAB_STAMP): $(CRONTAB_SRC)
 		crontab $(CRONTAB_SRC); \
 		touch $@; \
 	fi
-cron: $(CRONTAB_STAMP)
+cron: $(crontab_stamp)
 
 .PHONY: dconf
 dconf:
@@ -107,9 +99,9 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval ZEN_PROFILE_NAME := $(firstword $(subst :, ,$(pair))))\
   $(eval ZEN_PROFILE_PATH := $(subst +, ,$(word 2,$(subst :, ,$(pair)))))\
   $(eval ZEN_PROFILE_PATH_ESCAPED := $(subst +,\ ,$(word 2,$(subst :, ,$(pair)))))\
-  $(eval $(ZEN_PROFILE_NAME)-files := $(foreach file,$(ZEN_CATPPUCCIN_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
-  $(eval zen-catppuccin-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)-files))\
-  $(eval $($(ZEN_PROFILE_NAME)-files) &: ; \
+  $(eval $(ZEN_PROFILE_NAME)_target := $(foreach file,$(ZEN_CATPPUCCIN_FILES),$(ZEN_DIR)/$(ZEN_PROFILE_PATH_ESCAPED)/chrome/$(file)))\
+  $(eval zen-catppuccin-$(ZEN_PROFILE_NAME): $($(ZEN_PROFILE_NAME)_target))\
+  $(eval $($(ZEN_PROFILE_NAME)_target) &: ; \
     @echo "Setting up profile: $(ZEN_PROFILE_NAME) at path: $(ZEN_PROFILE_PATH)" && \
     mkdir -p "$(ZEN_DIR)/$(ZEN_PROFILE_PATH)/chrome" && \
     $(foreach file,$(ZEN_CATPPUCCIN_FILES), \
@@ -119,5 +111,6 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval .PHONY: zen-catppuccin-$(ZEN_PROFILE_NAME))\
 )
 
+INSTALL_TARGETS = gitflow qmk_cli zmk_cli
 .PHONY: install
-install: home fonts gitflow dconf qmk_cli zmk_cli cron $(ZEN_PROFILE_TASKS)
+install: home fonts dconf cron $(ZEN_PROFILE_TASKS)

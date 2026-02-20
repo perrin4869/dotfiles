@@ -11,13 +11,9 @@ $(eval $1_head_file = $(if $(findstring ref:,$($1_head)),\
 	.git/modules/$2/HEAD))
 endef
 
-define has_cmd
-$(eval HAS_$1 := $(shell command -v $1 >/dev/null 2>&1 && echo yes || echo no))
-endef
-
 define require
-@if [ "$(HAS_$1)" != "yes" ]; then \
-    echo "Skipping $@: missing dependency: $1"; \
-    exit 1; \
+@if ! command -v $(1) >/dev/null 2>&1; then \
+    echo "Skipping $@: missing dependency: $(1)"; \
+    exit 0; \
 fi
 endef

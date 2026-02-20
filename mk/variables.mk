@@ -7,10 +7,9 @@ XDG_STATE_HOME ?= ${PREFIX}/state
 XDG_CONFIG_HOME ?= ${HOME}/.config
 
 PYTHON_SITE_PACKAGES := $(shell $(PYTHON) -m site --user-site)
-PIPX := $(shell command -v pipx 2> /dev/null)
-ifneq ($(PIPX),)
+ifeq ($(shell command -v pipx >/dev/null 2>&1 && echo yes || echo no),yes)
 	# pipx --value shorthand changed from -v -> -V somewhere between 1.3.1 and 1.5.0
-	PIPX_LOCAL_VENVS := $(shell pipx environment --value PIPX_LOCAL_VENVS)
+	PIPX_LOCAL_VENVS = $(shell pipx environment --value PIPX_LOCAL_VENVS)
 endif
 
 DEPS = deps

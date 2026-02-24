@@ -11,7 +11,7 @@ github_repo() {
     metals)    echo "scalameta/metals" ;;
     coursier)  echo "coursier/coursier" ;;
     iosevka)   echo "be5invis/Iosevka" ;;
-    carapace)  echo "rsteube/carapace" ;;
+    carapace)  echo "carapace-sh/carapace-bin" ;;
     nerdfonts) echo "ryanoasis/nerd-fonts" ;;
     *)
       echo "Unknown dependency: $1" >&2

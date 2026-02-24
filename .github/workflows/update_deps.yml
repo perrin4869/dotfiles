@@ -59,3 +59,4 @@ jobs:
           delete-branch: true
           title: "Update ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           commit-message: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
+          token: ${{ secrets.PAT }}

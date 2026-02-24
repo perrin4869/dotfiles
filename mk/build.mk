@@ -1,3 +1,5 @@
+get_version = $(shell cat $(DEPS)/.versions_$(1))
+
 define mason_package
 # sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
 $(eval $1_package_yaml = $(MASON_REGISTRY_ROOT)/packages/$1/package.yaml)
@@ -73,7 +75,7 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
 
-nerdfonts_version = 3.4.0
+nerdfonts_version = $(call get_version,nerdfonts)
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz
 $(nerdfonts_source):
 	$(call require,wget)
@@ -86,7 +88,7 @@ $(nerd_fonts_target) &: $(nerdfonts_source)
 nerd_fonts: $(nerd_fonts_target)
 
 .PHONY: iosevka
-iosevka_version = 34.1.0
+iosevka_version = $(call get_version,iosevka)
 iosevka_source = $(FONTS)/SuperTTC-Iosevka-$(iosevka_version).zip
 $(iosevka_source):
 	$(call require,wget)
@@ -99,7 +101,7 @@ $(iosevka_target): $(iosevka_source)
 iosevka: $(iosevka_target)
 
 .PHONY: carapace
-carapace_version = 1.6.2
+carapace_version = $(call get_version,carapace)
 carapace_arch = $(shell case $$(uname -m) in \
 	x86_64$(CP) echo amd64 ;; \
 	i386|i686$(CP) echo 386 ;; \
@@ -127,7 +129,7 @@ $(atuin_target): $(atuin_head_file)
 atuin: $(atuin_target)
 
 .PHONY: coursier
-coursier_version = 2.1.24
+coursier_version = $(call get_version,coursier)
 coursier_builder = $(COURSIER_ROOT)/coursier-builder-$(coursier_version)
 $(coursier_builder):
 	$(call require,wget)
@@ -147,7 +149,7 @@ $(coursier_target): $(coursier_builder)
 coursier: $(coursier_target)
 
 .PHONY: metals
-metals_version = 1.6.5
+metals_version = $(call get_version,metals)
 metals_target = $(METALS_ROOT)/metals-$(metals_version)
 metals_bin = home/.local/bin/metals
 $(metals_target): $(coursier_target)

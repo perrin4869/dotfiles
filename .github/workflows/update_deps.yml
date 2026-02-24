@@ -1,0 +1,61 @@
+name: Update external assets
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "11 * * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dep:
+          - metals
+          - coursier
+          - iosevka
+          - carapace
+          - nerdfonts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: jq
+
+      - name: Check for update
+        id: check
+        run: |
+          new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"
+          if [[ -n "$new_version" ]]; then
+            echo "version=$new_version" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply update
+        if: steps.check.outputs.version != ''
+        run: |
+          utils/update_version \
+            "${{ matrix.dep }}" \
+            "${{ steps.check.outputs.version }}"
+
+      - name: Detect changes
+        id: diff
+        if: steps.check.outputs.version != ''
+        run: |
+          git diff --quiet || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update/${{ matrix.dep }}/${{ steps.check.outputs.version }}
+          delete-branch: true
+          title: "Update ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
+          commit-message: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"

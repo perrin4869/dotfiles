@@ -15,6 +15,7 @@ endif
 DEPS = deps
 DCONF = dconf
 CRON = cron
+EXTERNAL_VERSIONS = .external_versions
 FONTS = home/.local/share/fonts
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris

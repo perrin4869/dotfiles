@@ -1,4 +1,4 @@
-get_version = $(shell cat $(DEPS)/.versions_$(1) | sed 's/^v//')
+get_version = $(shell cat .$(EXTERNAL_VERSIONS)/$(1) | sed 's/^v//')
 
 define mason_package
 # sometimes the $1 argument does not match the bin name, as is the case with tree-sitter-cli (tree-sitter is the binary name)
@@ -74,6 +74,9 @@ $(ccls_target): $(ccls_head_file)
 		$(CMAKE) -H. -BRelease -DCMAKE_BUILD_TYPE=Release && \
 		$(CMAKE) --build Release
 ccls: $(ccls_target)
+
+foo:
+	echo $(nerdfonts_source)
 
 nerdfonts_version = $(call get_version,nerdfonts)
 nerdfonts_source = $(FONTS)/NerdFontsSymbolsOnly-$(nerdfonts_version).tar.xz

@@ -5,7 +5,7 @@ $(foreach t,$(1), \
 		echo "Missing target variable: $(t)_target"; \
 		missing=1; \
 	fi; \
-	for f in $($(t)_target); do \
+	for f in $(call escape_par,$($(t)_target)); do \
 		if [ ! -e "$$f" ]; then \
 			echo "Missing: $(t) - $$f"; \
 			missing=1; \

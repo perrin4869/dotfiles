@@ -100,7 +100,6 @@ iosevka: $(iosevka_target)
 
 .PHONY: carapace
 carapace_version = 1.6.2
-CP := )
 carapace_arch = $(shell case $$(uname -m) in \
 	x86_64$(CP) echo amd64 ;; \
 	i386|i686$(CP) echo 386 ;; \

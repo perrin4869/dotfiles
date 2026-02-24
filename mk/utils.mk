@@ -17,3 +17,9 @@ define require
     exit 0; \
 fi
 endef
+
+OP := (
+CP := )
+
+# zen-profile paths have parentheses, such as `$HOME/.zen/hewsesre.Default (release)/chrome/userChrome.css`
+escape_par = $(subst $(OP),\$(OP),$(subst $(CP),\$(CP),$1))

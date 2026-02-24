@@ -110,6 +110,6 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval .PHONY: zen-$(ZEN_PROFILE_NAME))\
 )
 
-INSTALL_TARGETS = gitflow qmk_cli zmk_cli
+INSTALL_TARGETS = gitflow qmk_cli zmk_cli $(ZEN_PROFILE_TASKS)
 .PHONY: install
-install: home fonts dconf cron $(ZEN_PROFILE_TASKS)
+install: home fonts dconf cron

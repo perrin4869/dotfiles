@@ -9,7 +9,7 @@ Several components included in this repository require local build toolchains to
 - `clang` (required for `ccls`)
 - `gcc` (required for `mpv-mpris`, `fzy`)
 - `rust` (required for `atuin`, `difftastic_nvim`)
-- `nodejs` (required for `eslint_d` and multiple tools installed via `mason`)
+- `nodejs` (required for `eslint_d`, `vim-jsdoc` and multiple tools installed via `mason`)
 - `luarocks` (required for multiple tools installed via `mason`)
 - `yq` (used internally by `mason`)
 

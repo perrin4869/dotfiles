@@ -83,7 +83,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		end)
 		pickers.map(pickers.prefix .. 'l', function(telescope)
 			telescope.extensions.metals.commands()
-		end, { desc = 'metals.commands.telescope' })
+		end, { desc = 'metals.commands.telescope', buffer = buffer })
 
 		local prefix = '<leader>l'
 		-- Toggle panel with Tree Views

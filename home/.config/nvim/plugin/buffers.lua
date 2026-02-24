@@ -70,7 +70,7 @@ defer.very_lazy(function()
 		next_move.make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext'))
 	)
 
-	local map = require('map').map
+	local map = require('map').create({ unique = false })
 	map('n', '[b', prev_buffers, 'Go to previous buffer')
 	map('n', ']b', next_buffers, 'Go to next buffer')
 end)

@@ -103,19 +103,6 @@ no <s-up> ddkP
 " nnoremap <C-b> <C-b>zz
 set scrolloff=999 " this is more reliable than calling zz after move operations
 
-"make mappings for display lines
-"These mappings make it easy to move along long lines
-vmap <M-j> gj
-vmap <M-k> gk
-vmap <M-4> g$
-vmap <M-6> g^
-vmap <M-0> g^
-nmap <M-j> gj
-nmap <M-k> gk
-nmap <M-4> g$
-nmap <M-6> g^
-nmap <M-0> g^
-
 " see CTRL-^
 " see help expand (or run :echo expand("#"))
 " # is the alternate file name

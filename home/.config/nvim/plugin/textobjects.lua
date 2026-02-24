@@ -133,24 +133,27 @@ defer.on_bufreadpre(function()
 				move.goto_previous_start('@fold', 'folds')
 			end)
 
+			-- mappings for ]], [[, [], ][ cannot be unique:
+			-- https://github.com/vim/vim/blob/e52702f00322c8a8861efd0bd6a3775e685e5685/runtime/ftplugin/vim.vim#L65-L73
+
 			-- keymaps
 			-- You can use the capture groups defined in `textobjects.scm`
 			map({ 'n', 'x', 'o' }, ']m', next_func_start, 'move.next_start.@function.outer')
-			map({ 'n', 'x', 'o' }, ']]', next_class_start, 'move.next_start.@class.outer')
+			map({ 'n', 'x', 'o' }, ']]', next_class_start, { desc = 'move.next_start.@class.outer', unique = false })
 			-- You can also pass a list to group multiple queries.
-			map({ 'n', 'x', 'o' }, ']o', next_loop, 'move.next_start.@loop.inner')
+			map({ 'n', 'x', 'o' }, ']o', next_loop, { desc = 'move.next_start.@loop.inner', unique = false }) -- unimpaired
 			-- You can also use captures from other query groups like `locals.scm` or `folds.scm`
 			map({ 'n', 'x', 'o' }, ']s', next_scope, 'move.next_start.@local.scope')
 			map({ 'n', 'x', 'o' }, ']z', next_fold, 'move.next_start.@fold')
 
 			map({ 'n', 'x', 'o' }, ']M', next_func_end, 'move.next_end.@function.outer')
-			map({ 'n', 'x', 'o' }, '][', next_class_end, 'move.next_end.@class.outer')
+			map({ 'n', 'x', 'o' }, '][', next_class_end, { desc = 'move.next_end.@class.outer', unique = false })
 
 			map({ 'n', 'x', 'o' }, '[m', prev_func_start, 'move.previous_start.@function.outer')
-			map({ 'n', 'x', 'o' }, '[[', prev_class_start, 'move.previous_start.@class.outer')
+			map({ 'n', 'x', 'o' }, '[[', prev_class_start, { desc = 'move.previous_start.@class.outer', unique = false })
 
 			map({ 'n', 'x', 'o' }, '[M', prev_func_end, 'move.previous_end.@function.outer')
-			map({ 'n', 'x', 'o' }, '[]', prev_class_end, 'move.previous_end.@class.outer')
+			map({ 'n', 'x', 'o' }, '[]', prev_class_end, { desc = 'move.previous_end.@class.outer', unique = false })
 
 			-- the next one conflicts with next/prev diagnostics
 			--

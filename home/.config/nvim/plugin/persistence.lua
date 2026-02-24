@@ -22,7 +22,7 @@ local map = require('map').create({
 	end,
 })
 
-local prefix = '<leader>q'
+local prefix = '<leader>;' -- official docs use `<leader>q`, it conflicts with vim.diagnostic.setloclist
 -- restore the session for the current directory
 map(prefix .. 's', 'load')
 

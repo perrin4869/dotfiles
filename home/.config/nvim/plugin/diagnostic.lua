@@ -27,8 +27,8 @@ defer.very_lazy(function()
 			vim.diagnostic.jump({ count = vim.v.count1 })
 		end)
 	)
-	require('map').map('n', '[d', prev_diag, 'Go to previous diagnostic')
-	require('map').map('n', ']d', next_diag, 'Go to next diagnostic')
+	require('map').map('n', '[d', prev_diag, { desc = 'Go to previous diagnostic', unique = false }) -- overrides default
+	require('map').map('n', ']d', next_diag, { desc = 'Go to next diagnostic', unique = false }) -- overrides default
 
 	-- This is nicer than having virtual text
 	-- https://www.reddit.com/r/neovim/comments/nr4y45/issue_with_diagnostics/

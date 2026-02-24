@@ -22,7 +22,7 @@ function M.signature_help()
 end
 
 function M.list_workspace_folders()
-	print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+	vim.print(vim.lsp.buf.list_workspace_folders())
 end
 
 return M

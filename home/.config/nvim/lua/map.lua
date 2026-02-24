@@ -1,12 +1,15 @@
 local M = {}
 
-local OPTS = { silent = true, noremap = true }
+local unique_cache = {}
+
+local OPTS = { silent = true, noremap = true, unique = true }
 --- create a map function that has defaults across the repo
 --- @param opts? {
 ---		desc:string,
 ---		desc_separator?:string,
 ---		buffer?:integer|boolean,
 ---		expr?:boolean,
+---		unique?:boolean,
 ---		opts?:vim.keymap.set.Opts,
 ---		mode?:string|string[],
 ---		rhs?:fun(arg:any):function}
@@ -22,6 +25,10 @@ function M.create(opts)
 
 	if opts.expr ~= nil then
 		opts.opts = vim.tbl_extend('force', opts.opts, { expr = opts.expr })
+	end
+
+	if opts.unique ~= nil then
+		opts.opts = vim.tbl_extend('force', opts.opts, { unique = opts.unique })
 	end
 
 	local function map(mode, lhs, rhs, o)
@@ -46,7 +53,22 @@ function M.create(opts)
 			rhs = opts.rhs(rhs)
 		end
 
-		vim.keymap.set(mode, lhs, rhs, vim.tbl_extend('force', opts.opts, o, desc))
+		local merged_opts = vim.tbl_extend('force', opts.opts, o, desc)
+		if
+			not merged_opts.buffer
+			or not merged_opts.unique
+			or not unique_cache[merged_opts.buffer]
+			or not unique_cache[merged_opts.buffer][lhs]
+		then
+			vim.keymap.set(mode, lhs, rhs, merged_opts)
+
+			if merged_opts.buffer and merged_opts.unique then
+				if not unique_cache[merged_opts.buffer] then
+					unique_cache[merged_opts.buffer] = {}
+				end
+				unique_cache[merged_opts.buffer][lhs] = true
+			end
+		end
 	end
 
 	if opts.mode then

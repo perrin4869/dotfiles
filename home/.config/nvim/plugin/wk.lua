@@ -7,13 +7,12 @@ defer.on_load('which-key', function()
 		{ '<leader>b', group = 'buffers' },
 		-- { '<leader>c', group = 'osc52' },
 		{ '<leader>d', group = 'dap' },
-		{ '<leader>e', group = 'execute' }, -- only lua and vim files
 		{ '<leader>g', group = 'fugitive' },
 		{ '<leader>h', group = 'hunks' },
 		{ '<leader>n', group = 'neotree' },
 		{ '<leader>t', group = 'test' },
-		{ '<leader>q', group = 'persistence' },
-		{ '<leader>.', group = 'execute' },
+		{ '<leader>;', group = 'persistence' },
+		{ '<leader>.', group = 'execute' }, -- only lua and vim files
 		{ '\\', group = 'toggle' },
 		{ require('pickers').prefix, group = 'telescope' },
 	})

@@ -351,9 +351,6 @@
 [submodule "home/.local/share/nvim/mason-registry"]
 	path = home/.local/share/nvim/mason-registry
 	url = https://github.com/mason-org/mason-registry.git
-[submodule "home/.local/share/nvim/site/pack/default/start/wf.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/wf.nvim
-	url = https://github.com/Cassin01/wf.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/alpha-nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/alpha-nvim
 	url = https://github.com/goolord/alpha-nvim.git
@@ -628,3 +625,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/cmp-cmdline"]
 	path = home/.local/share/nvim/site/pack/default/opt/cmp-cmdline
 	url = https://github.com/hrsh7th/cmp-cmdline.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/which-key.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/which-key.nvim
+	url = https://github.com/folke/which-key.nvim.git

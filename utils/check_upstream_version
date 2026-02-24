@@ -1,0 +1,39 @@
+#!/bin/sh
+set -euo pipefail
+
+DEP="$1"
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+VERSION_FILE="$SCRIPT_DIR/.external-versions/$DEP"
+
+github_repo() {
+  case "$1" in
+    metals)    echo "scalameta/metals" ;;
+    coursier)  echo "coursier/coursier" ;;
+    iosevka)   echo "be5invis/Iosevka" ;;
+    carapace)  echo "rsteube/carapace" ;;
+    nerdfonts) echo "ryanoasis/nerd-fonts" ;;
+    *)
+      echo "Unknown dependency: $1" >&2
+      exit 1
+      ;;
+  esac
+}
+
+if [[ ! -f "$VERSION_FILE" ]]; then
+  echo "Missing version file for $DEP" >&2
+  exit 1
+fi
+
+REPO="$(github_repo "$DEP")"
+
+LATEST="$(
+  curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
+  | jq -r '.tag_name'
+)"
+
+CURRENT="$(cat "$VERSION_FILE")"
+
+if [[ "$LATEST" != "$CURRENT" ]]; then
+  printf '%s\n' "$LATEST"
+fi

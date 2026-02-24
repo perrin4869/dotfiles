@@ -4,7 +4,7 @@ set -eu
 DEP="$1"
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
-VERSION_FILE="$SCRIPT_DIR/.external-versions/$DEP"
+VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
 
 github_repo() {
   case "$1" in

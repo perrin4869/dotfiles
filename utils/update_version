@@ -1,11 +1,11 @@
 #!/bin/sh
 
-set -euo pipefail
+set -eu
 
 DEP="$1"
 NEW_VERSION="$2"
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
 
 echo "$NEW_VERSION" > "$VERSION_FILE"

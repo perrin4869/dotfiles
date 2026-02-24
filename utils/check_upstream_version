@@ -1,9 +1,9 @@
 #!/bin/sh
-set -euo pipefail
+set -eu
 
 DEP="$1"
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 VERSION_FILE="$SCRIPT_DIR/.external-versions/$DEP"
 
 github_repo() {
@@ -20,7 +20,7 @@ github_repo() {
   esac
 }
 
-if [[ ! -f "$VERSION_FILE" ]]; then
+if [ ! -f "$VERSION_FILE" ]; then
   echo "Missing version file for $DEP" >&2
   exit 1
 fi
@@ -34,6 +34,6 @@ LATEST="$(
 
 CURRENT="$(cat "$VERSION_FILE")"
 
-if [[ "$LATEST" != "$CURRENT" ]]; then
+if [ "$LATEST" != "$CURRENT" ]; then
   printf '%s\n' "$LATEST"
 fi

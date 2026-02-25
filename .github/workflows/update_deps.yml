@@ -23,7 +23,7 @@ jobs:
           - nerdfonts
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install jq
         uses: awalsh128/cache-apt-pkgs-action@latest

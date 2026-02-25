@@ -1,7 +1,7 @@
 local defer = require('defer')
 defer.pack('avante', 'avante.nvim')
 defer.deps('avante', { 'telescope', 'cmp' })
-defer.cmd('avante', 'AvanteBuild')
+defer.cmd('AvanteBuild', 'avante')
 defer.very_lazy('avante')
 defer.on_load('avante', function()
 	require('avante').setup({

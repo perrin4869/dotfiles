@@ -628,3 +628,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/which-key.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/which-key.nvim
 	url = https://github.com/folke/which-key.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/wrapped.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/wrapped.nvim
+	url = https://github.com/aikhe/wrapped.nvim.git

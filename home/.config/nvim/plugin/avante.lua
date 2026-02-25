@@ -7,6 +7,9 @@ defer.on_load('avante', function()
 		-- add any opts here
 		-- this file can contain specific instructions for your project
 		instructions_file = 'avante.md',
+		behaviour = {
+			auto_set_keymaps = false,
+		},
 		input = {
 			provider = 'dressing',
 		},
@@ -35,6 +38,24 @@ defer.on_load('avante', function()
 		},
 	})
 end)
+local with = defer.with('avante')
+
+local map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = 'n' })
+local prefix = '<leader>i'
+map(
+	prefix .. 'i',
+	with(function()
+		require('avante.api').ask()
+	end),
+	'ask'
+)
+map(
+	prefix .. 'n',
+	with(function()
+		require('avante.api').ask({ new_chat = true })
+	end),
+	'create new ask'
+)
 
 vim
 	.iter({

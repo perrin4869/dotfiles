@@ -5,16 +5,23 @@ defer.on_load('which-key', function()
 	wk.setup()
 	wk.add({
 		{ '<leader>b', group = 'buffers' },
-		-- { '<leader>c', group = 'osc52' },
+		{ '<leader>c', group = 'osc52' },
 		{ '<leader>d', group = 'dap' },
+		{ '<leader>f', group = 'format' },
 		{ '<leader>g', group = 'fugitive' },
 		{ '<leader>h', group = 'hunks' },
 		{ '<leader>n', group = 'neotree' },
 		{ '<leader>t', group = 'test' },
-		{ '<leader>;', group = 'persistence' },
+		{ '<leader>u', group = 'undotree' },
+		{ '<leader>x', group = 'trouble' },
+		{ '<leader>,', group = 'refactoring' },
 		{ '<leader>.', group = 'execute' }, -- only lua and vim files
+		{ '<leader>;', group = 'persistence' },
 		{ '\\', group = 'toggle' },
 		{ require('pickers').prefix, group = 'telescope' },
+		{ require('pickers').prefix .. 'd', group = 'telescope.dap' },
+		{ require('pickers').prefix .. 'g', group = 'telescope.git' },
+		{ require('pickers').prefix .. 'l', group = 'telescope.lsp' },
 	})
 end)
 

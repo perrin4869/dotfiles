@@ -21,16 +21,16 @@ defer.on_load('lsp', function()
 			map('gD', vim.lsp.buf.declaration, 'declaration')
 			map('gd', vim.lsp.buf.definition, 'definition')
 			map('grk', require('lsp').signature_help, 'signature_help')
-			map('<leader>wa', vim.lsp.buf.add_workspace_folder, 'add_workspace_folder')
-			map('<leader>wr', vim.lsp.buf.remove_workspace_folder, 'remove_workspace_folder')
-			map('<leader>wl', require('lsp').list_workspace_folders, 'list_workspace_folders')
+			map('grwa', vim.lsp.buf.add_workspace_folder, 'add_workspace_folder')
+			map('grwr', vim.lsp.buf.remove_workspace_folder, 'remove_workspace_folder')
+			map('grwl', require('lsp').list_workspace_folders, 'list_workspace_folders')
 			-- map('<leader>ds', vim.lsp.buf.document_symbol, "document_symbol")
 			-- map('<leader>ws', vim.lsp.buf.workspace_symbol, "workspace_symbol")
 
 			-- https://www.reddit.com/r/neovim/comments/pdiflv/search_workspace_symbols/
 			local pickers = require('pickers')
-			pickers.map('<leader>ds', 'lsp_document_symbols', { buffer = bufnr })
-			pickers.map('<leader>ws', 'lsp_dynamic_workspace_symbols', { buffer = bufnr })
+			pickers.map(pickers.prefix .. 'ld', 'lsp_document_symbols', { buffer = bufnr })
+			pickers.map(pickers.prefix .. 'lw', 'lsp_dynamic_workspace_symbols', { buffer = bufnr })
 			-- https://github.com/nvim-telescope/telescope.nvim/issues/964
 			-- uses dynamic because most language servers return an empty list on an empty query
 

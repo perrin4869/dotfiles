@@ -1,6 +1,7 @@
 local defer = require('defer')
+defer.pack('dressing', 'dressing.nvim')
 defer.pack('avante', 'avante.nvim')
-defer.deps('avante', { 'telescope', 'cmp' })
+defer.deps('avante', { 'telescope', 'cmp', 'dressing' })
 defer.cmd('AvanteBuild', 'avante')
 defer.very_lazy('avante')
 defer.on_load('avante', function()
@@ -8,8 +9,21 @@ defer.on_load('avante', function()
 		-- add any opts here
 		-- this file can contain specific instructions for your project
 		instructions_file = 'avante.md',
+		input = {
+			provider = 'dressing',
+		},
 		-- for example
-		provider = 'claude',
+		provider = vim.g.avante_provider or 'gemini-cli',
+		acp_providers = {
+			['gemini-cli'] = {
+				command = 'npx',
+				args = { '@google/gemini-cli', '--experimental-acp' },
+				env = {
+					NODE_NO_WARNINGS = '1',
+					GEMINI_API_KEY = os.getenv('GEMINI_API_KEY'),
+				},
+			},
+		},
 		providers = {
 			claude = {
 				endpoint = 'https://api.anthropic.com',
@@ -23,3 +37,7 @@ defer.on_load('avante', function()
 		},
 	})
 end)
+
+require('restore').add_quitpre_ft('Avante')
+require('restore').add_quitpre_ft('AvanteInput')
+require('restore').add_quitpre_ft('AvanteSelectedFiles')

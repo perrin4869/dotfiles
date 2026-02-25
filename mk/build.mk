@@ -136,8 +136,7 @@ avante_target = $(addprefix $(AVANTE_ROOT)/build/,avante_html2md.so  avante_repo
 $(eval $(call git_submodule,avante,$(AVANTE_ROOT)))
 $(avante_target): $(avante_head_file)
 	$(call require,cargo)
-	$(call require,nvim)
-	( unset XDG_CONFIG_HOME && HOME=home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "AvanteBuild" -c q )
+	( cd $(AVANTE_ROOT) && bash ./build.sh )
 	@touch $(avante_target)
 avante: $(avante_target)
 

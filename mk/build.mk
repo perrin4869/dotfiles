@@ -131,6 +131,16 @@ $(atuin_target): $(atuin_head_file)
 	@touch $(atuin_target)
 atuin: $(atuin_target)
 
+.PHONY: avante
+avante_target = $(addprefix $(AVANTE_ROOT)/build/,avante_html2md.so  avante_repo_map.so  avante_templates.so  avante_tokenizers.so)
+$(eval $(call git_submodule,avante,$(AVANTE_ROOT)))
+$(avante_target): $(avante_head_file)
+	$(call require,cargo)
+	$(call require,nvim)
+	( unset XDG_CONFIG_HOME && HOME=home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "AvanteBuild" -c q )
+	@touch $(avante_target)
+avante: $(avante_target)
+
 .PHONY: coursier
 coursier_version = $(call get_version,coursier)
 coursier_builder = $(COURSIER_ROOT)/coursier-builder-$(coursier_version)
@@ -300,6 +310,7 @@ TARGETS = \
 	coursier \
 	metals \
 	difftastic_nvim \
+	avante \
 	logrotate \
 	$(lsps)
 

@@ -2,8 +2,6 @@ local defer = require('defer')
 defer.pack('dressing', 'dressing.nvim')
 defer.pack('avante', 'avante.nvim')
 defer.deps('avante', { 'telescope', 'cmp', 'dressing' })
-defer.cmd('AvanteBuild', 'avante')
-defer.very_lazy('avante')
 defer.on_load('avante', function()
 	require('avante').setup({
 		-- add any opts here
@@ -37,6 +35,29 @@ defer.on_load('avante', function()
 		},
 	})
 end)
+
+vim
+	.iter({
+		'Ask',
+		'Build',
+		'Chat',
+		'ChatNew',
+		'Clear',
+		'Edit',
+		'Stop',
+		'Focus',
+		'History',
+		'Models',
+		'Refresh',
+		'ShowRepoMap',
+		'SwitchProvider',
+		'SwitchInputProvider',
+		'SwitchSelectorProvider',
+		'Toggle',
+	})
+	:each(function(cmd)
+		defer.cmd('Avante' .. cmd, 'avante')
+	end)
 
 require('restore').add_quitpre_ft('Avante')
 require('restore').add_quitpre_ft('AvanteInput')

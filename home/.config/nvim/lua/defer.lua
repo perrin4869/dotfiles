@@ -379,6 +379,7 @@ M.on_bufreadpre = create_on_event({ 'BufReadPre', 'BufNewFile' })
 M.on_bufreadpost = create_on_event({ 'BufReadPost', 'BufNewFile' })
 M.on_insert = create_on_event({ 'InsertEnter' })
 M.on_cmdline = create_on_event({ 'CmdlineEnter' })
+M.on_ft = create_on_event('FileType')
 
 ---@param loader string|function
 function M.very_lazy(loader)

@@ -1,0 +1,64 @@
+local defer = require('defer')
+defer.pack('dressing', 'dressing.nvim')
+defer.pack('avante', 'avante.nvim')
+defer.deps('avante', { 'telescope', 'cmp', 'dressing' })
+defer.on_load('avante', function()
+	require('avante').setup({
+		-- add any opts here
+		-- this file can contain specific instructions for your project
+		instructions_file = 'avante.md',
+		input = {
+			provider = 'dressing',
+		},
+		-- for example
+		provider = vim.g.avante_provider or 'gemini-cli',
+		acp_providers = {
+			['gemini-cli'] = {
+				command = 'npx',
+				args = { '@google/gemini-cli', '--experimental-acp' },
+				env = {
+					NODE_NO_WARNINGS = '1',
+					GEMINI_API_KEY = os.getenv('GEMINI_API_KEY'),
+				},
+			},
+		},
+		providers = {
+			claude = {
+				endpoint = 'https://api.anthropic.com',
+				model = 'claude-sonnet-4-20250514',
+				timeout = 30000, -- Timeout in milliseconds
+				extra_request_body = {
+					temperature = 0.75,
+					max_tokens = 20480,
+				},
+			},
+		},
+	})
+end)
+
+vim
+	.iter({
+		'Ask',
+		'Build',
+		'Chat',
+		'ChatNew',
+		'Clear',
+		'Edit',
+		'Stop',
+		'Focus',
+		'History',
+		'Models',
+		'Refresh',
+		'ShowRepoMap',
+		'SwitchProvider',
+		'SwitchInputProvider',
+		'SwitchSelectorProvider',
+		'Toggle',
+	})
+	:each(function(cmd)
+		defer.cmd('Avante' .. cmd, 'avante')
+	end)
+
+require('restore').add_quitpre_ft('Avante')
+require('restore').add_quitpre_ft('AvanteInput')
+require('restore').add_quitpre_ft('AvanteSelectedFiles')

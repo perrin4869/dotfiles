@@ -34,6 +34,7 @@ METALS_ROOT = $(DEPS)/metals
 NVIM_DATA_DIRECTORY = home/.local/share/nvim
 TREESITTER_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/nvim-treesitter
 TREESITTER_PARSERS = $(NVIM_DATA_DIRECTORY)/site/parser
+AVANTE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/opt/avante.nvim
 MASON_ROOT = $(NVIM_DATA_DIRECTORY)/mason
 MASON_REGISTRY_ROOT = $(NVIM_DATA_DIRECTORY)/mason-registry
 TELESCOPE_FZF_NATIVE_ROOT = $(NVIM_DATA_DIRECTORY)/site/pack/default/start/telescope-fzf-native.nvim

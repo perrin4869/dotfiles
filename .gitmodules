@@ -631,3 +631,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/wrapped.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/wrapped.nvim
 	url = https://github.com/aikhe/wrapped.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/avante.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/avante.nvim
+	url = https://github.com/yetone/avante.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/dressing.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/dressing.nvim
+	url = https://github.com/stevearc/dressing.nvim.git

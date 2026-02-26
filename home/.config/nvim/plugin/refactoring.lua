@@ -5,7 +5,6 @@ end)
 defer.pack('refactoring', 'refactoring.nvim')
 defer.cmd('Refactor', 'refactoring')
 local with = defer.with('refactoring')
-local call = defer.call
 
 local prefix = '<leader>,' -- official is `<leader>r`, but it is used by substitute.nvim
 local map = require('map').create({
@@ -13,7 +12,9 @@ local map = require('map').create({
 	mode = { 'n', 'x' },
 	expr = true,
 	rhs = function(rhs)
-		return with(call('refactor', rhs))
+		return with(function()
+			require('refactoring').refactor(rhs)
+		end)
 	end,
 })
 map(prefix .. 'e', 'Extract Function')

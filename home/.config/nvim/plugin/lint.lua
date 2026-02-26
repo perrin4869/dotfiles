@@ -45,7 +45,9 @@ vim.api.nvim_create_autocmd('FileType', {
 	callback = function(args)
 		vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'TextChanged' }, {
 			buffer = args.buf,
-			callback = defer.with('lint')(defer.call('try_lint')),
+			callback = defer.with('lint')(function()
+				require('lint').try_lint()
+			end),
 		})
 	end,
 })

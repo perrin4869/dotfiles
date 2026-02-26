@@ -73,6 +73,10 @@ defer.on_load('lualine', function()
 		return ''
 	end)
 
+	local progress = defer.with('lsp-progress')(function()
+		require('lsp-progress').progress()
+	end)
+
 	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227
 	vim.api.nvim_create_autocmd('RecordingEnter', {
 		callback = function()
@@ -113,7 +117,7 @@ defer.on_load('lualine', function()
 				{ 'diagnostics', sources = { 'nvim_diagnostic', 'nvim_lsp' } },
 			},
 			lualine_c = {
-				defer.with('lsp-progress')(defer.call('progress')),
+				progress,
 				'g:metals_status',
 				'g:bsp_status',
 				vimtex,

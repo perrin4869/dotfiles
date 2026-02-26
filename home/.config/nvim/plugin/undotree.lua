@@ -2,13 +2,14 @@ local defer = require('defer')
 defer.pack('undotree')
 
 local with_undotree = defer.with('undotree')
-local call = defer.call
 
 local map = require('map').create({
 	mode = 'n',
 	desc = 'undotree',
 	rhs = function(fname)
-		return with_undotree(call(fname))
+		return with_undotree(function()
+			require('undotree')[fname]()
+		end)
 	end,
 })
 

@@ -5,12 +5,13 @@ defer.on_load('substitute', function()
 end)
 defer.pack('substitute', 'substitute.nvim')
 local with = defer.with('substitute')
-local call = defer.call
 
 local map = require('map').create({
 	desc = 'substitute',
 	rhs = function(fname)
-		return with(call(fname))
+		return with(function()
+			require('substitute')[fname]()
+		end)
 	end,
 })
 

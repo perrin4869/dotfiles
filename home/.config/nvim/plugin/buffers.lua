@@ -35,11 +35,11 @@ defer.very_lazy(function()
 		mode = 'n',
 		desc = 'close_buffers',
 		rhs = function(type)
-			return defer.with('close_buffers')(function(close_buffers)
+			return defer.with('close_buffers')(function()
 				if type == 'this' and #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then
 					vim.cmd('q')
 				end
-				close_buffers.delete({ type = type })
+				require('close_buffers').delete({ type = type })
 				if type == 'this' then
 					safe_jump_back()
 				end

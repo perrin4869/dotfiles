@@ -15,37 +15,40 @@ defer.on_load('floaterm', function()
 	})
 end)
 
-local call = defer.call
-local with_floaterm = defer.with('floaterm')
-local with_floaterm_api = function(cb)
-	return defer.with('floaterm')(function()
-		cb(require('floaterm.api'))
-	end)
-end
-
+local with = defer.with('floaterm')
 local map = require('map').create({
 	mode = { 'n', 't' },
 	desc = 'floaterm',
 })
 
-map('<M-t>', with_floaterm(call('toggle')), 'toggle')
+local toggle = with(function()
+	require('floaterm').toggle()
+end)
+local new_term = with(function()
+	if not require('floaterm.state').terminals then
+		require('floaterm').toggle()
+		return
+	end
+	if vim.bo.ft ~= 'Floaterm' then
+		require('floaterm').toggle()
+	end
+	require('floaterm.api').new_term()
+end)
+local cycle_term_bufs_prev = with(function()
+	require('floaterm.api').cycle_term_bufs('prev')
+end)
+local cycle_term_bufs = with(function()
+	require('floaterm.api').cycle_term_bufs()
+end)
+local delete_term = with(function()
+	require('floaterm.api').delete_term()
+end)
 
-map(
-	'<F6>',
-	with_floaterm(function(floaterm)
-		if not require('floaterm.state').terminals then
-			floaterm.toggle()
-			return
-		end
-		if vim.bo.ft ~= 'Floaterm' then
-			floaterm.toggle()
-		end
-		require('floaterm.api').new_term()
-	end),
-	'new_term'
-)
-map('<F7>', with_floaterm_api(call('cycle_term_bufs', 'prev')), 'cycle_prev')
-map('<F8>', with_floaterm_api(call('cycle_term_bufs')), 'cycle_next')
-map('<F12>', with_floaterm(call('toggle')), 'toggle')
+map('<M-t>', toggle, 'toggle')
 
-map('<F9>', with_floaterm_api(call('delete_term')), 'delete_term')
+map('<F6>', new_term, 'new_term')
+map('<F7>', cycle_term_bufs_prev, 'cycle_prev')
+map('<F8>', cycle_term_bufs, 'cycle_next')
+map('<F12>', toggle, 'toggle')
+
+map('<F9>', delete_term, 'delete_term')

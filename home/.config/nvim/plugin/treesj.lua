@@ -6,7 +6,17 @@ defer.on_load('treesj', function()
 	})
 end)
 
-local with_tsj = defer.with('treesj')
+local with = defer.with('treesj')
+
+local toggle = with(function()
+	require('treesj').toggle()
+end)
+local split = with(function()
+	require('treesj').split()
+end)
+local join = with(function()
+	require('treesj').join()
+end)
 
 defer.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
@@ -16,14 +26,11 @@ defer.on_bufreadpre(function()
 				mode = 'n',
 				desc = 'treesj',
 				buffer = args.buf,
-				rhs = function(fname)
-					return with_tsj(defer.call(fname))
-				end,
 			})
 
-			map('<leader>j', 'toggle')
-			map('<C-j>', 'split')
-			map('<C-k>', 'join')
+			map('<leader>j', toggle, 'toggle')
+			map('<C-j>', split, 'split')
+			map('<C-k>', join, 'join')
 		end,
 	})
 end)

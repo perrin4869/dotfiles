@@ -7,13 +7,21 @@ defer.pack('trouble', 'trouble.nvim')
 defer.cmd('Trouble', 'trouble')
 local with_trouble = defer.with('trouble')
 
-local map = require('map').create({
+local map_toggle = require('map').create({
 	mode = 'n',
 	desc = 'trouble',
 	rhs = function(args)
-		return with_trouble(defer.call('toggle', args))
+		return with_trouble(function()
+			require('trouble').toggle(args)
+		end)
 	end,
 })
+
+local prefix = '<leader>x'
+map_toggle(prefix .. 'x', { mode = 'diagnostics' }, 'workspace_diagnostics')
+map_toggle(prefix .. 'X', { mode = 'diagnostics', filter = { buf = 0 } }, 'document_diagnostics')
+map_toggle(prefix .. 'L', 'loclist', 'loclist')
+map_toggle(prefix .. 'Q', 'qflist', 'quickfix')
 
 vim.api.nvim_create_autocmd('LspAttach', {
 	group = vim.api.nvim_create_augroup('LspAttach_trouble', { clear = true }),
@@ -26,7 +34,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		---@param opts string|table
 		---@param desc string
 		local function map_lsp(lhs, opts, desc)
-			map(lhs, opts, { desc = desc, buffer = args.buf })
+			map_toggle(lhs, opts, { desc = desc, buffer = args.buf })
 		end
 
 		map_lsp('<leader>cs', { mode = 'symbols' }, 'symbols')
@@ -38,9 +46,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		map_lsp('<leader>xi', { mode = 'lsp_implementations', focus = true }, 'lsp_implementations')
 	end,
 })
-
-local prefix = '<leader>x'
-map(prefix .. 'x', { mode = 'diagnostics' }, 'workspace_diagnostics')
-map(prefix .. 'X', { mode = 'diagnostics', filter = { buf = 0 } }, 'document_diagnostics')
-map(prefix .. 'L', 'loclist', 'loclist')
-map(prefix .. 'Q', 'qflist', 'quickfix')

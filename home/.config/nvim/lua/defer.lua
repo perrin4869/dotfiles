@@ -204,20 +204,6 @@ function M.with(name)
 	end
 end
 
---- Calls a method from a parameter.
----@param method string
----@return fun(callback: fun(m: any): any): fun(...): any
-function M.call(method, ...)
-	local args = { ... }
-	local nargs = select('#', ...) -- Get the count to handle nil correctly
-	return function(mod)
-		if method then
-			return mod[method](unpack(args, 1, nargs))
-		end
-		return mod(unpack(args, 1, nargs))
-	end
-end
-
 ---@alias Defer.Lazy<T> fun(...): T
 ---
 --- Memoizes a function result.

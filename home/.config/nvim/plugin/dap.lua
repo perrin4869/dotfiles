@@ -25,21 +25,68 @@ end)
 defer.hook('dapui')
 
 local with_dap = defer.with('dap')
+
+local toggle_breakpoint = with_dap(function()
+	require('dap').toggle_breakpoint()
+end)
+
+local set_breakpoint = with_dap(function()
+	require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))
+end)
+
+local continue = with_dap(function()
+	require('dap').continue()
+end)
+
+local up = with_dap(function()
+	require('dap').up()
+end)
+
+local down = with_dap(function()
+	require('dap').down()
+end)
+
+local disconnect = with_dap(function()
+	require('dap').disconnect({ terminateDebuggee = true })
+	require('dap').close()
+end)
+
+local repl_open_focus = with_dap(function()
+	if focus_repl() == false then
+		local _, win = require('dap').repl.open({}, 'vsplit')
+		vim.api.nvim_set_current_win(win)
+		vim.cmd('exe Resize("vertical", "", "35%")')
+	end
+end)
+
+local repl_toggle = with_dap(function()
+	require('dap').repl.toggle({}, 'vsplit')
+	vim.cmd('wincmd h | exe Resize("vertical", "", "35%")')
+end)
+
+local set_exception_breakpoints = with_dap(function()
+	require('dap').set_exception_breakpoints({ 'all' })
+end)
+
+local ui_widgets_hover = with_dap(function()
+	require('dap.ui.widgets').hover(require('dap.utils').get_visual_selection_text())
+end)
+
+local ui_widgets_scopes = with_dap(function()
+	require('dap.ui.widgets').cursor_float(require('dap.ui.widgets').scopes)
+end)
+
 local with_dapui = defer.with('dapui')
-local call = defer.call
+
+local open_dapui = with_dapui(function()
+	require('dapui').open()
+end)
+local toggle_dapui = with_dapui(function()
+	require('dapui').toggle()
+end)
 
 local map = require('map').create({
 	desc = 'dap',
-	rhs = function(args)
-		local t = type(args)
-		if t == 'function' then
-			return args
-		elseif t == 'string' then
-			return with_dap(call(args))
-		elseif t == 'table' then
-			return with_dap(call(unpack(args)))
-		end
-	end,
 })
 
 local debug_layer = defer.lazy(defer.with('layers')(function()
@@ -56,22 +103,30 @@ local debug_layer = defer.lazy(defer.with('layers')(function()
 			},
 			{
 				'<up>',
-				with_dap(call('step_out')),
+				with_dap(function()
+					require('dap').step_out()
+				end),
 				{ silent = true, desc = 'dap.step_out' },
 			},
 			{
 				'<down>',
-				with_dap(call('step_into')),
+				with_dap(function()
+					require('dap').step_into()
+				end),
 				{ silent = true, desc = 'dap.step_into' },
 			},
 			{
 				'<right>',
-				with_dap(call('step_over')),
+				with_dap(function()
+					require('dap').step_over()
+				end),
 				{ silent = true, desc = 'dap.step_over' },
 			},
 			{
 				'c',
-				with_dap(call('continue')),
+				with_dap(function()
+					require('dap').continue()
+				end),
 				{ silent = true, desc = 'dap.continue' },
 			},
 		},
@@ -211,8 +266,8 @@ defer.on_load('dap', function()
 		require('telescope').load_extension('dap')
 	end)
 
-	dap.listeners.before.attach.dapui_config = with_dapui(call('open'))
-	dap.listeners.before.launch.dapui_config = with_dapui(call('open'))
+	dap.listeners.before.attach.dapui_config = open_dapui
+	dap.listeners.before.launch.dapui_config = open_dapui
 	dap.listeners.before.event_terminated['dapui_config'] = function()
 		focus_repl()
 
@@ -228,49 +283,19 @@ defer.very_lazy('dap')
 -- Mappings.
 local prefix = '<leader>d'
 
-local set_breakpoint = with_dap(function(dap)
-	dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
-end)
-
-local disconnect = with_dap(function(dap)
-	dap.disconnect({ terminateDebuggee = true })
-	dap.close()
-end)
-
-local repl_open_focus = with_dap(function(dap)
-	if focus_repl() == false then
-		local _, win = dap.repl.open({}, 'vsplit')
-		vim.api.nvim_set_current_win(win)
-		vim.cmd('exe Resize("vertical", "", "35%")')
-	end
-end)
-
-local repl_toggle = with_dap(function(dap)
-	dap.repl.toggle({}, 'vsplit')
-	vim.cmd('wincmd h | exe Resize("vertical", "", "35%")')
-end)
-
-local ui_widgets_hover = with_dap(function()
-	require('dap.ui.widgets').hover(require('dap.utils').get_visual_selection_text())
-end)
-
-local ui_widgets_scopes = with_dap(function()
-	require('dap.ui.widgets').cursor_float(require('dap.ui.widgets').scopes)
-end)
-
-map('n', prefix .. 't', 'toggle_breakpoint')
+map('n', prefix .. 't', toggle_breakpoint, 'toggle_breakpoint')
 map('n', prefix .. 'H', set_breakpoint, 'set_breakpoint')
-map('n', prefix .. '<cr>', 'continue')
-map('n', prefix .. 'k', 'up')
-map('n', prefix .. 'j', 'down')
+map('n', prefix .. '<cr>', continue, 'continue')
+map('n', prefix .. 'k', up, 'up')
+map('n', prefix .. 'j', down, 'down')
 map('n', prefix .. 'd', disconnect, 'disconnect')
 map('n', prefix .. 'r', repl_open_focus, 'repl.open_focus')
 map('n', prefix .. 'R', repl_toggle, 'repl.toggle')
-map('n', prefix .. 'e', { 'set_exception_breakpoints', { 'all' } })
+map('n', prefix .. 'e', set_exception_breakpoints, 'set_exception_breakpoints')
 map('n', prefix .. 'i', ui_widgets_hover, 'ui.widgets.hover')
 map('n', prefix .. '?', ui_widgets_scopes, 'ui.widgets.scopes')
 
-require('map').map('n', prefix .. 'u', with_dapui(call('toggle')), 'dapui.toggle')
+require('map').map('n', prefix .. 'u', toggle_dapui, 'dapui.toggle')
 
 -- telescope-dap
 local pickers = require('pickers')

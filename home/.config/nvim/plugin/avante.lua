@@ -14,7 +14,7 @@ defer.on_load('avante', function()
 			provider = 'dressing',
 		},
 		-- for example
-		provider = vim.g.avante_provider or 'gemini-cli',
+		provider = vim.g.avante_provider or 'ollama',
 		acp_providers = {
 			['gemini-cli'] = {
 				command = 'npx',
@@ -26,6 +26,10 @@ defer.on_load('avante', function()
 			},
 		},
 		providers = {
+			ollama = {
+				model = 'qwen3:8b',
+				is_env_set = require('avante.providers.ollama').check_endpoint_alive,
+			},
 			claude = {
 				endpoint = 'https://api.anthropic.com',
 				model = 'claude-sonnet-4-20250514',

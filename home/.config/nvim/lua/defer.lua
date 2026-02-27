@@ -188,7 +188,7 @@ function M.deps(name, deps)
 	end
 end
 
----@alias Defer.With<T> fun(callback: fun(m: T, ...): any): fun(...): any
+---@alias Defer.With fun(callback: fun(...): any): fun(...): any
 ---
 --- Wraps a module for lazy execution via a callback.
 ---@generic T

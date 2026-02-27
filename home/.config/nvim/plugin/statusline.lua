@@ -66,7 +66,8 @@ defer.on_load('lualine', function()
 		end
 	end
 
-	local noice = defer.with('noice')(function(noice)
+	local noice = defer.with('noice')(function()
+		local noice = require('noice')
 		if noice.api.status.mode.has() then
 			return noice.api.status.mode.get()
 		end

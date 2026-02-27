@@ -51,8 +51,8 @@ defer.on_load('project', function()
 		require('telescope').load_extension('projects')
 	end)
 
-	pickers.map(pickers.prefix .. 'w', function(telescope)
-		telescope.extensions.projects.projects()
+	pickers.map(pickers.prefix .. 'w', function()
+		require('telescope').extensions.projects.projects()
 	end, { desc = 'projects' })
 end)
 

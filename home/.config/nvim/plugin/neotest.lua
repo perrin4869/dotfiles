@@ -37,57 +37,57 @@ local prefix = '<leader>t'
 
 map(
 	prefix .. 't',
-	with_neotest(function(neotest)
-		neotest.run.run()
+	with_neotest(function()
+		require('neotest').run.run()
 	end),
 	'run'
 )
 
 map(
 	prefix .. 'e', -- entire file
-	with_neotest(function(neotest)
-		neotest.run.run(vim.fn.expand('%'))
+	with_neotest(function()
+		require('neotest').run.run(vim.fn.expand('%'))
 	end),
 	'run_file'
 )
 
 map(
 	prefix .. 'd',
-	with_neotest(function(neotest)
+	with_neotest(function()
 		--- @diagnostic disable-next-line: missing-fields
-		neotest.run.run({ strategy = 'dap' })
+		require('neotest').run.run({ strategy = 'dap' })
 	end),
 	'run_dap'
 )
 
 map(
 	prefix .. 's',
-	with_neotest(function(neotest)
-		neotest.run.stop()
+	with_neotest(function()
+		require('neotest').run.stop()
 	end),
 	'stop'
 )
 
 map(
 	prefix .. 'a',
-	with_neotest(function(neotest)
-		neotest.run.attach()
+	with_neotest(function()
+		require('neotest').run.attach()
 	end),
 	'attach'
 )
 
 map(
 	vim.g.toggle_prefix .. 's',
-	with_neotest(function(neotest)
-		neotest.summary.toggle()
+	with_neotest(function()
+		require('neotest').summary.toggle()
 	end),
 	'attach'
 )
 
 map(
 	vim.g.toggle_prefix .. 'o',
-	with_neotest(function(neotest)
-		neotest.output_panel.toggle()
+	with_neotest(function()
+		require('neotest').output_panel.toggle()
 	end),
 	'attach'
 )

@@ -198,7 +198,7 @@ function M.with(name)
 	return function(callback)
 		return function(...)
 			if type(callback) == 'function' and M.ensure(name) then
-				return callback(M.require(name), ...)
+				return callback(...)
 			end
 		end
 	end

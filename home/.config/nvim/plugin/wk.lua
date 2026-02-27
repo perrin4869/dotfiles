@@ -32,8 +32,8 @@ local with = defer.with('which-key')
 require('map').map(
 	'n',
 	'<leader>?',
-	with(function(wk)
-		wk.show({ global = false })
+	with(function()
+		require('which-key').show({ global = false })
 	end),
 	'Buffer Local Keymaps (which-key)'
 )

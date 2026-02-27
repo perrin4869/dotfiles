@@ -1,7 +1,6 @@
 local defer = require('defer')
 
 defer.pack('metals', 'nvim-metals')
-local with_metals = defer.with('metals')
 local metals_config = defer.lazy(function()
 	local lsp = require('lsp')
 	local metals = require('metals')
@@ -50,8 +49,8 @@ local group = vim.api.nvim_create_augroup('Initialize_metals', {})
 vim.api.nvim_create_autocmd('FileType', {
 	pattern = { 'scala', 'sbt', 'java' },
 	group = group,
-	callback = with_metals(function(metals)
-		metals.initialize_or_attach(metals_config())
+	callback = defer.with('metals')(function()
+		require('metals').initialize_or_attach(metals_config())
 	end),
 })
 
@@ -81,8 +80,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		defer.on_postload('telescope', function()
 			require('telescope').load_extension('metals')
 		end)
-		pickers.map(pickers.prefix .. 'l', function(telescope)
-			telescope.extensions.metals.commands()
+		pickers.map(pickers.prefix .. 'l', function()
+			require('telescope').extensions.metals.commands()
 		end, { desc = 'metals.commands.telescope', buffer = buffer })
 
 		local prefix = '<leader>l'

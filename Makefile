@@ -10,4 +10,5 @@ include mk/variables.mk
 include mk/utils.mk
 include mk/build.mk
 include mk/install.mk
+include mk/bench.mk
 include mk/tests.mk

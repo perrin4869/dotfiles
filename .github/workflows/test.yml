@@ -95,3 +95,5 @@ jobs:
           make install
       - name: test
         run: make test
+      - name: bench
+        run: make bench-nvim

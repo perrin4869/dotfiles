@@ -48,7 +48,8 @@ local map = require('map').create({
 })
 
 local prefix = '<leader>n'
-map(prefix .. 'n', 'toggle', 'toggle')
+map(vim.g.toggle_prefix .. 'n', 'toggle', 'toggle')
+map(prefix .. 'n', 'focus', 'focus')
 map(prefix .. 'f', 'reveal_file=%:p', 'focus-file')
 
 -- ex bufname neo-tree filesystem [1]

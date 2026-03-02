@@ -49,16 +49,31 @@ local prefix = '<leader>i'
 map(
 	prefix .. 'i',
 	with(function()
+		require('avante.api').focus()
+	end),
+	'focus'
+)
+map(
+	prefix .. 'a',
+	with(function()
 		require('avante.api').ask()
 	end),
 	'ask'
 )
 map(
-	prefix .. 'n',
+	prefix .. 'A',
 	with(function()
 		require('avante.api').ask({ new_chat = true })
 	end),
 	'create new ask'
+)
+
+map(
+	vim.g.toggle_prefix .. 'a',
+	with(function()
+		require('avante.api').toggle()
+	end),
+	'toggle'
 )
 
 vim

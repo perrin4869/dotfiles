@@ -13,3 +13,8 @@ updates:
       schedule:
           # Check for updates to GitHub Actions every weekday
           interval: weekly
+      ignore:
+          # force following the latest HEAD and ignore tags othen than the pseudo-version
+          # https://github.com/dependabot/dependabot-core/issues/1639#issuecomment-3991678824
+          - dependency-name: "*"
+            versions: ["> 0.0.0"]

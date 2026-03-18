@@ -75,7 +75,7 @@ defer.on_load('lualine', function()
 	end)
 
 	local progress = defer.with('lsp-progress')(function()
-		require('lsp-progress').progress()
+		return require('lsp-progress').progress()
 	end)
 
 	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227

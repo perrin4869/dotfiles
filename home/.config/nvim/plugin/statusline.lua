@@ -105,6 +105,29 @@ defer.on_load('lualine', function()
 			lualine_a = { 'mode', paste },
 			lualine_b = {
 				{
+					'project',
+
+					-- Can be:
+					-- - `'short'`         - Only shows the basename of the project root directory (default)
+					-- - `'full'`          - Shows the full path but without expanding the home directory
+					-- - `'full_expanded'` - Shows the full, expanded path
+					format = 'short',
+
+					-- Text to display when no project root is found (set to `nil` or empty string to disable)
+					no_project = 'N/A',
+
+					-- The separator
+					-- separator = ' ',
+
+					-- Optional table of two strings set as enclosing characters.
+					-- Set to `nil` to disable it
+					--
+					-- e.g. `enclose_pair = { '(', ')' }` ==> `(<YOUR_PROJECT>)`
+					--      `enclose_pair = { '<', ']' }` ==> `<<YOUR_PROJECT>]`
+					--      `enclose_pair = { nil, 'a' }` ==> `<YOUR_PROJECT>a`
+					enclose_pair = nil,
+				},
+				{
 					'b:gitsigns_head', -- "branch" external source
 					icon = '',
 					fmt = function(s)

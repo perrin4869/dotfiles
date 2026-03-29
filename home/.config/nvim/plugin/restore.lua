@@ -26,9 +26,10 @@ vim.api.nvim_create_autocmd('QuitPre', {
 			end
 
 			-- Should quit, so we close all invalid windows.
-			for _, w in ipairs(restore_wins) do
-				vim.api.nvim_win_close(w, true)
-			end
+			-- for _, w in ipairs(restore_wins) do
+			-- 	vim.api.nvim_win_close(w, true)
+			-- end
+			vim.cmd.quitall({ bang = true })
 		end
 	end,
 })

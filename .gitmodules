@@ -580,9 +580,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text
 	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-ts-context-commentstring"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-ts-context-commentstring
-	url = https://github.com/JoosepAlviste/nvim-ts-context-commentstring.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
 	url = https://github.com/folke/trouble.nvim.git

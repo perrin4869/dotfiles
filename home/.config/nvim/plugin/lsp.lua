@@ -60,7 +60,8 @@ defer.on_load('lsp', function()
 					group = group,
 					buffer = bufnr,
 					callback = function()
-						vim.lsp.codelens.refresh({ bufnr = bufnr })
+						-- refresh
+						vim.lsp.codelens.enable(true, { bufnr = bufnr })
 					end,
 				})
 

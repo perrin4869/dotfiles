@@ -16,7 +16,6 @@ defer.on_bufreadpre(function()
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)
 			vim.cmd.packadd('nvim-treesitter-endwise')
-			vim.cmd.packadd('nvim-ts-context-commentstring')
 			vim.cmd.packadd('nvim-treesitter-context')
 
 			vim.treesitter.start()

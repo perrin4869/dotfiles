@@ -637,3 +637,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-in-its-entirety"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-in-its-entirety
 	url = https://github.com/dotcore64/nvim-in-its-entirety
+[submodule "home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim
+	url = https://github.com/folke/ts-comments.nvim.git

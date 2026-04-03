@@ -1,7 +1,7 @@
 local defer = require('defer')
 defer.pack('dressing', 'dressing.nvim')
 defer.pack('avante', 'avante.nvim')
-defer.deps('avante', { 'telescope', 'cmp', 'dressing' })
+defer.deps('avante', { 'telescope', 'cmp', 'dressing', 'copilot' })
 defer.on_load('avante', function()
 	require('avante').setup({
 		-- add any opts here

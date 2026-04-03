@@ -640,3 +640,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim
 	url = https://github.com/folke/ts-comments.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/copilot.lua"]
+	path = home/.local/share/nvim/site/pack/default/opt/copilot.lua
+	url = https://github.com/zbirenbaum/copilot.lua.git

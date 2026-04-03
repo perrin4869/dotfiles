@@ -23,6 +23,7 @@ home/.local/share/nvim/neo-tree.nvim.log
 home/.local/share/nvim/site/parser-info/
 home/.local/share/nvim/site/parser/
 home/.local/share/nvim/site/queries/
+home/.local/share/nvim/avante/
 
 # these get generated when running neovim with HOME=./home
 home/.local/state/

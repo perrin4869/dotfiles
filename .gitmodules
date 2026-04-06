@@ -469,9 +469,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/rtp.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/rtp.nvim
 	url = https://github.com/lumen-oss/rtp.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/undotree"]
-	path = home/.local/share/nvim/site/pack/default/opt/undotree
-	url = https://github.com/jiaoshijie/undotree.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/neoscroll.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/neoscroll.nvim
 	url = https://github.com/karb94/neoscroll.nvim.git

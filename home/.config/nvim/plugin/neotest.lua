@@ -81,7 +81,7 @@ map(
 	with_neotest(function()
 		require('neotest').summary.toggle()
 	end),
-	'attach'
+	'summary.toggle'
 )
 
 map(

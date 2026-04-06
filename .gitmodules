@@ -643,3 +643,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/copilot.lua"]
 	path = home/.local/share/nvim/site/pack/default/opt/copilot.lua
 	url = https://github.com/zbirenbaum/copilot.lua.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/screenkey.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/screenkey.nvim
+	url = https://github.com/NStefan002/screenkey.nvim.git

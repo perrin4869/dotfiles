@@ -60,5 +60,6 @@ jobs:
           title: "Update ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           commit-message: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           token: ${{ secrets.PAT }}
-          reviewers: ${{ github.actor }}
+          # Review cannot be requested from pull request author. - https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request
+          # reviewers: ${{ github.actor }}
           assignees: ${{ github.actor }}

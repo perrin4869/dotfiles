@@ -240,7 +240,7 @@ helptags: $(helptags_target)
 
 .PHONY: treesitter
 # print in neovim prints to stderr
-treesitter-langs = bash c cpp css graphql haskell html javascript json jsonc latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql markdown markdown_inline
+treesitter-langs = bash c cpp css graphql haskell html javascript json latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql markdown markdown_inline
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter_target = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(treesitter-langs)))
 # installing treesitter requires that all neovim config has been installed into rtp (home task)

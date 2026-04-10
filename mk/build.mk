@@ -205,7 +205,7 @@ $(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
 	@touch $(telescope-fzf-native_target)
 telescope-fzf-native: $(telescope-fzf-native_target)
 
-lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls tsgo kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli
+lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server typescript-language-server vtsls tsgo kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli copilot-language-server
 .PHONY: $(lsps)
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
@@ -224,6 +224,7 @@ $(eval $(call mason_package,kotlin-debug-adapter,true))
 $(eval $(call mason_package,sqlls,true))
 $(eval $(call mason_package,lua-language-server))
 $(eval $(call mason_package,tree-sitter-cli,true))
+$(eval $(call mason_package,copilot-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
 
 .PHONY: helptags

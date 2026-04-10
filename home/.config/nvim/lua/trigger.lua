@@ -1,7 +1,7 @@
-local lazy = require('defer').lazy
+local lazy = require('yall').lazy
 local M = {}
 
---- @type Defer.Lazy<uv.uv_timer_t>
+--- @type Yall.Lazy<uv.uv_timer_t>
 local timer = lazy(function()
 	return vim.uv.new_timer()
 end)

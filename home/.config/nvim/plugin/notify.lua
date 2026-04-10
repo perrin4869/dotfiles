@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('notify', function()
+yall.on_load('notify', function()
 	require('notify').setup({
 		stages = 'fade_in_slide_out',
 		background_colour = 'FloatShadow',
@@ -8,7 +8,7 @@ defer.on_load('notify', function()
 	})
 end)
 -- since noice also uses nvim-notify, add as a hook
-defer.hook('notify')
+yall.hook('notify')
 
 local lazy_notify = function(...)
 	return require('notify')(...)

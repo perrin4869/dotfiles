@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('alpha', function()
+yall.on_load('alpha', function()
 	local headers = {
 		['nvim'] = {
 			'                                                     ',
@@ -183,4 +183,4 @@ defer.on_load('alpha', function()
 	alpha.start(true, dashboard.opts) -- do so manually so we can load alpha on VimEnter
 end)
 
-defer.on_event('alpha', 'VimEnter', { nested = true })
+yall.on_event('alpha', 'VimEnter', { nested = true })

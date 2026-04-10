@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.on_load('nvim-autopairs', function()
+local yall = require('yall')
+yall.on_load('nvim-autopairs', function()
 	local npairs = require('nvim-autopairs')
 	local Rule = require('nvim-autopairs.rule')
 	local cond = require('nvim-autopairs.conds')
@@ -51,4 +51,4 @@ defer.on_load('nvim-autopairs', function()
 			:use_key(bracket[2])
 	end
 end)
-defer.very_lazy('nvim-autopairs')
+yall.very_lazy('nvim-autopairs')

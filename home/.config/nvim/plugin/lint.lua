@@ -1,4 +1,4 @@
-local defer = require('defer')
+local yall = require('yall')
 
 local function explicitly_disabled(linter_name)
 	return vim.g['lint_enable_' .. linter_name] == false
@@ -30,9 +30,9 @@ local default_linters_by_ft = {
 local linters_by_ft = vim.tbl_extend('force', default_linters_by_ft, vim.g.linters_by_ft or {})
 local pattern = vim.tbl_keys(linters_by_ft)
 
-defer.deps('lint', 'mason')
-defer.pack('lint', 'nvim-lint')
-defer.on_load('lint', function()
+yall.deps('lint', 'mason')
+yall.pack('lint', 'nvim-lint')
+yall.on_load('lint', function()
 	local lint = require('lint')
 
 	lint.linters_by_ft = linters_by_ft
@@ -45,7 +45,7 @@ vim.api.nvim_create_autocmd('FileType', {
 	callback = function(args)
 		vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'TextChanged' }, {
 			buffer = args.buf,
-			callback = defer.with('lint')(function()
+			callback = yall.with('lint')(function()
 				require('lint').try_lint()
 			end),
 		})

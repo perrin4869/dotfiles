@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('cmp', function()
+yall.on_load('cmp', function()
 	local cmp = require('cmp')
 	local lspkind = require('lspkind')
 
@@ -155,10 +155,10 @@ defer.on_load('cmp', function()
 		-- vim.g.matchup_enabled = true
 	end)
 end)
-defer.pack('cmp', 'nvim-cmp')
-defer.on_bufreadpost('cmp')
+yall.pack('cmp', 'nvim-cmp')
+yall.on_bufreadpost('cmp')
 
-defer.on_load('cmp_git', function()
+yall.on_load('cmp_git', function()
 	require('cmp_git').setup({
 		-- defaults
 		filetypes = { 'gitcommit' },
@@ -193,13 +193,13 @@ local function add_source(lua, pack, after)
 		after = true
 	end
 
-	defer.pack(lua, pack)
-	defer.deps(lua, 'cmp')
-	defer.on_insert(lua)
-	defer.on_cmdline(lua)
+	yall.pack(lua, pack)
+	yall.deps(lua, 'cmp')
+	yall.on_insert(lua)
+	yall.on_cmdline(lua)
 
 	if after then
-		defer.after(lua)
+		yall.after(lua)
 	end
 end
 

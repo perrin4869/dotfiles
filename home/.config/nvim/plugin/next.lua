@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.on_load('nvim-next', function()
+local yall = require('yall')
+yall.on_load('nvim-next', function()
 	require('nvim-next').setup({
 		default_mappings = {
 			repeat_style = 'original',
@@ -10,4 +10,4 @@ defer.on_load('nvim-next', function()
 		},
 	})
 end)
-defer.very_lazy('nvim-next')
+yall.very_lazy('nvim-next')

@@ -1,11 +1,11 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('flash', function()
+yall.on_load('flash', function()
 	require('flash').setup({
 		modes = { char = { enabled = false } },
 	})
 end)
-local with = defer.with('flash')
+local with = yall.with('flash')
 
 local jump = with(function()
 	require('flash').jump()
@@ -33,7 +33,7 @@ map('o', 'r', remote, 'remote')
 map('c', '<C-s>', toggle, 'toggle')
 
 -- Treesitter logic
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)

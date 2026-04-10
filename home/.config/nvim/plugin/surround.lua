@@ -1,4 +1,4 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.pack('nvim-surround')
-defer.very_lazy('nvim-surround')
+yall.pack('nvim-surround')
+yall.very_lazy('nvim-surround')

@@ -1,10 +1,10 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('neo-tree', function()
+yall.on_load('neo-tree', function()
 	require('neo-tree').setup({
 		filesystem = {
 			commands = {
-				avante_add_files = defer.with('avante')(function(state)
+				avante_add_files = yall.with('avante')(function(state)
 					local node = state.tree:get_node()
 					local filepath = node:get_id()
 					local relative_path = require('avante.utils').relative_path(filepath)
@@ -34,8 +34,8 @@ defer.on_load('neo-tree', function()
 		},
 	})
 end)
-defer.pack('neo-tree', 'neo-tree.nvim')
-defer.cmd('Neotree', 'neo-tree')
+yall.pack('neo-tree', 'neo-tree.nvim')
+yall.cmd('Neotree', 'neo-tree')
 
 local map = require('map').create({
 	mode = 'n',

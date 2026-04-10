@@ -1,8 +1,8 @@
-local defer = require('defer')
+local yall = require('yall')
 
 local M = {}
 
-local with_telescope = defer.with('telescope')
+local with_telescope = yall.with('telescope')
 
 -- gg would be nice but then you can't jump to the top of the file
 M.prefix = '<leader><leader>'

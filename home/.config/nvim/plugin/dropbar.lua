@@ -1,8 +1,8 @@
-local defer = require('defer')
-defer.pack('dropbar', 'dropbar.nvim')
-defer.on_bufreadpre('dropbar')
+local yall = require('yall')
+yall.pack('dropbar', 'dropbar.nvim')
+yall.on_bufreadpre('dropbar')
 
-local pick = defer.with('dropbar')(function()
+local pick = yall.with('dropbar')(function()
 	require('dropbar.api').pick()
 end)
 require('map').map('n', '<leader>o', pick, 'dropbar.pick')

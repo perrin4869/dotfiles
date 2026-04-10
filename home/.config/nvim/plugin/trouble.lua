@@ -1,11 +1,11 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('trouble', function()
+yall.on_load('trouble', function()
 	require('trouble').setup()
 end)
-defer.pack('trouble', 'trouble.nvim')
-defer.cmd('Trouble', 'trouble')
-local with_trouble = defer.with('trouble')
+yall.pack('trouble', 'trouble.nvim')
+yall.cmd('Trouble', 'trouble')
+local with_trouble = yall.with('trouble')
 
 local map_toggle = require('map').create({
 	mode = 'n',

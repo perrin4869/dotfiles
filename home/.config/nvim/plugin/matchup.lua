@@ -1,4 +1,4 @@
-local defer = require('defer')
+local yall = require('yall')
 -- very-lazy will fail to setup on the first opened buffer
-defer.pack('matchup', 'vim-matchup')
-defer.on_bufreadpost('matchup')
+yall.pack('matchup', 'vim-matchup')
+yall.on_bufreadpost('matchup')

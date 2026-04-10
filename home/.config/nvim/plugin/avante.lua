@@ -1,8 +1,8 @@
-local defer = require('defer')
-defer.pack('dressing', 'dressing.nvim')
-defer.pack('avante', 'avante.nvim')
-defer.deps('avante', { 'telescope', 'cmp', 'dressing', 'copilot' })
-defer.on_load('avante', function()
+local yall = require('yall')
+yall.pack('dressing', 'dressing.nvim')
+yall.pack('avante', 'avante.nvim')
+yall.deps('avante', { 'telescope', 'cmp', 'dressing', 'copilot' })
+yall.on_load('avante', function()
 	require('avante').setup({
 		-- add any opts here
 		-- this file can contain specific instructions for your project
@@ -42,7 +42,7 @@ defer.on_load('avante', function()
 		},
 	})
 end)
-local with = defer.with('avante')
+local with = yall.with('avante')
 
 local map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = 'n' })
 local prefix = '<leader>i'
@@ -96,7 +96,7 @@ vim
 		'Toggle',
 	})
 	:each(function(cmd)
-		defer.cmd('Avante' .. cmd, 'avante')
+		yall.cmd('Avante' .. cmd, 'avante')
 	end)
 
 require('restore').add_quitpre_ft('Avante')

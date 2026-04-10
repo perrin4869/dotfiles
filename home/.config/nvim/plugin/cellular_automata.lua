@@ -1,11 +1,11 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.pack('cellular-automaton', 'cellular-automaton.nvim')
-defer.hook('cellular-automaton')
-defer.cmd('CellularAutomaton', 'cellular-automaton')
+yall.pack('cellular-automaton', 'cellular-automaton.nvim')
+yall.hook('cellular-automaton')
+yall.cmd('CellularAutomaton', 'cellular-automaton')
 
 -- for example "make_it_rain"
-local get_animations = defer.lazy(function()
+local get_animations = yall.lazy(function()
 	return vim.tbl_keys(require('cellular-automaton').animations)
 end)
 local fml = function()

@@ -1,10 +1,10 @@
-local defer = require('defer')
-defer.on_load('refactoring', function()
+local yall = require('yall')
+yall.on_load('refactoring', function()
 	require('refactoring').setup({})
 end)
-defer.pack('refactoring', 'refactoring.nvim')
-defer.cmd('Refactor', 'refactoring')
-local with = defer.with('refactoring')
+yall.pack('refactoring', 'refactoring.nvim')
+yall.cmd('Refactor', 'refactoring')
+local with = yall.with('refactoring')
 
 local prefix = '<leader>,' -- official is `<leader>r`, but it is used by substitute.nvim
 local map = require('map').create({

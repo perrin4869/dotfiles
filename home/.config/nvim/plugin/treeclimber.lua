@@ -1,11 +1,11 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('nvim-treeclimber', function()
+yall.on_load('nvim-treeclimber', function()
 	require('nvim-treeclimber').setup({})
 end)
-defer.pack('nvim-treeclimber', 'nvim-treeclimber')
+yall.pack('nvim-treeclimber', 'nvim-treeclimber')
 
-local with_tc = defer.with('nvim-treeclimber')
+local with_tc = yall.with('nvim-treeclimber')
 
 local function plug(name)
 	return with_tc(function()
@@ -29,7 +29,7 @@ local siblings_backward = plug('<Plug>(treeclimber-select-siblings-backward)')
 local siblings_forward = plug('<Plug>(treeclimber-select-siblings-forward)')
 local select_top_level = plug('<Plug>(treeclimber-select-top-level)')
 
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)

@@ -1,7 +1,7 @@
-local defer = require('defer')
+local yall = require('yall')
 local pickers = require('pickers')
 
-defer.on_load('telescope', function()
+yall.on_load('telescope', function()
 	local telescope = require('telescope')
 	telescope.setup({
 		pickers = {
@@ -15,8 +15,8 @@ defer.on_load('telescope', function()
 		telescope.load_extension(ext)
 	end
 end)
-defer.pack('telescope', 'telescope.nvim')
-defer.cmd('Telescope', 'telescope')
+yall.pack('telescope', 'telescope.nvim')
+yall.cmd('Telescope', 'telescope')
 
 -- Mappings.
 pickers.map('<C-p>', pickers.project_files, 'project_files')

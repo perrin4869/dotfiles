@@ -1,4 +1,4 @@
-local defer = require('defer')
+local yall = require('yall')
 
 -- cache for per-language indent availability
 local indent_cache = {}
@@ -11,7 +11,7 @@ local function has_indent(ft)
 	return indent_cache[lang]
 end
 
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)

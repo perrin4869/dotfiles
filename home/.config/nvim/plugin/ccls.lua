@@ -1,6 +1,6 @@
-local defer = require('defer')
-defer.deps('ccls', 'lspconfig')
-defer.on_load('ccls', function()
+local yall = require('yall')
+yall.deps('ccls', 'lspconfig')
+yall.on_load('ccls', function()
 	vim.api.nvim_create_autocmd('FileType', {
 		once = true,
 		pattern = vim.lsp.config.ccls.filetypes,
@@ -12,4 +12,4 @@ defer.on_load('ccls', function()
 		end,
 	})
 end)
-defer.on_bufreadpre('ccls')
+yall.on_bufreadpre('ccls')

@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('nvim-treesitter-textobjects', function()
+yall.on_load('nvim-treesitter-textobjects', function()
 	require('nvim-treesitter-textobjects').setup({
 		select = {
 			-- Automatically jump forward to textobj, similar to targets.vim
@@ -34,9 +34,9 @@ defer.on_load('nvim-treesitter-textobjects', function()
 		},
 	})
 end)
-defer.on_bufreadpost('nvim-treesitter-textobjects')
+yall.on_bufreadpost('nvim-treesitter-textobjects')
 
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)

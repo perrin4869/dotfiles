@@ -1,7 +1,7 @@
-local defer = require('defer')
+local yall = require('yall')
 local packadd = vim.cmd.packadd
 
-defer.very_lazy(function()
+yall.very_lazy(function()
 	packadd('vim-caser')
 	packadd('vim-illuminate')
 	packadd('vim-floaterm')
@@ -15,12 +15,12 @@ defer.very_lazy(function()
 	packadd('vim-easy-align')
 end)
 
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	packadd('ragtag')
 	packadd('vim-sleuth')
 	packadd('vim-gutentags')
 end)
 
-defer.on_insert(function()
+yall.on_insert(function()
 	packadd('vim-fat-finger')
 end)

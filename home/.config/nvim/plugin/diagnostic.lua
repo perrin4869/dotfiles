@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.very_lazy(function()
+local yall = require('yall')
+yall.very_lazy(function()
 	local map = require('map').create({
 		mode = 'n',
 		desc = 'diagnostic',

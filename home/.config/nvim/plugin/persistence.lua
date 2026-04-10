@@ -1,13 +1,13 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('persistence', function()
+yall.on_load('persistence', function()
 	require('persistence').setup()
 end)
-defer.pack('persistence', 'persistence.nvim')
-defer.hook('persistence')
-defer.on_event('persistence', 'BufReadPre')
+yall.pack('persistence', 'persistence.nvim')
+yall.hook('persistence')
+yall.on_event('persistence', 'BufReadPre')
 
-local with = defer.with('persistence')
+local with = yall.with('persistence')
 
 local load = with(function()
 	require('persistence').load()

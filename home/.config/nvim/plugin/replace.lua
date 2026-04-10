@@ -1,10 +1,10 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('substitute', function()
+yall.on_load('substitute', function()
 	require('substitute').setup()
 end)
-defer.pack('substitute', 'substitute.nvim')
-local with = defer.with('substitute')
+yall.pack('substitute', 'substitute.nvim')
+local with = yall.with('substitute')
 
 local map = require('map').create({
 	desc = 'substitute',

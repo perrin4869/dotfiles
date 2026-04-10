@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.on_bufreadpre(function()
+local yall = require('yall')
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		once = true,
 		group = vim.api.nvim_create_augroup('Initialize_lazydev', {}),

@@ -1,21 +1,21 @@
-local defer = require('defer')
+local yall = require('yall')
 
 local options = {}
-defer.on_load('copilot', function()
+yall.on_load('copilot', function()
 	require('copilot').setup(options)
 end)
-defer.pack('copilot', 'copilot.lua')
-defer.cmd('Copilot', 'copilot')
+yall.pack('copilot', 'copilot.lua')
+yall.cmd('Copilot', 'copilot')
 
-defer.on_load('copilot_ls', function()
+yall.on_load('copilot_ls', function()
 	vim.g.copilot_nes_debounce = 500
 	vim.lsp.enable('copilot_ls')
 end)
-defer.pack('copilot_ls', 'copilot-lsp')
+yall.pack('copilot_ls', 'copilot-lsp')
 
 if vim.g.enable_copilot_ls then
-	defer.on_insert('copilot')
-	defer.deps('copilot', 'copilot_ls')
+	yall.on_insert('copilot')
+	yall.deps('copilot', 'copilot_ls')
 	options.nes = {
 		enabled = true,
 		keymap = {

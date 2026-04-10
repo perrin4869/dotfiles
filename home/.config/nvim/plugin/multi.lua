@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.on_load('multicursor-nvim', function()
+local yall = require('yall')
+yall.on_load('multicursor-nvim', function()
 	local mc = require('multicursor-nvim')
 	mc.setup()
 
@@ -33,9 +33,9 @@ defer.on_load('multicursor-nvim', function()
 	hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
 	hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
 end)
-defer.pack('multicursor-nvim', 'multicursor.nvim')
+yall.pack('multicursor-nvim', 'multicursor.nvim')
 
-local with = defer.with('multicursor-nvim')
+local with = yall.with('multicursor-nvim')
 
 local line_add_cursor = function(dir)
 	return with(function()

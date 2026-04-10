@@ -1,12 +1,12 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('treesj', function()
+yall.on_load('treesj', function()
 	require('treesj').setup({
 		use_default_keymaps = false,
 	})
 end)
 
-local with = defer.with('treesj')
+local with = yall.with('treesj')
 
 local toggle = with(function()
 	require('treesj').toggle()
@@ -18,7 +18,7 @@ local join = with(function()
 	require('treesj').join()
 end)
 
-defer.on_bufreadpre(function()
+yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		pattern = require('nvim-treesitter').get_installed(),
 		callback = function(args)

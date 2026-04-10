@@ -1,4 +1,4 @@
-local defer = require('defer')
+local yall = require('yall')
 
 local function focus_repl()
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -11,20 +11,20 @@ local function focus_repl()
 	return false
 end
 
-defer.pack('nvim-dap-virtual-text', 'nvim-dap-virtual-text')
-defer.on_load('nvim-dap-virtual-text', function()
+yall.pack('nvim-dap-virtual-text', 'nvim-dap-virtual-text')
+yall.on_load('nvim-dap-virtual-text', function()
 	require('nvim-dap-virtual-text').setup()
 end)
 
-defer.pack('dapui', 'nvim-dap-ui')
-defer.deps('dapui', { 'dap' })
-defer.on_load('dapui', function()
+yall.pack('dapui', 'nvim-dap-ui')
+yall.deps('dapui', { 'dap' })
+yall.on_load('dapui', function()
 	-- nvim-dap-ui
 	require('dapui').setup()
 end)
-defer.hook('dapui')
+yall.hook('dapui')
 
-local with_dap = defer.with('dap')
+local with_dap = yall.with('dap')
 
 local toggle_breakpoint = with_dap(function()
 	require('dap').toggle_breakpoint()
@@ -76,7 +76,7 @@ local ui_widgets_scopes = with_dap(function()
 	require('dap.ui.widgets').cursor_float(require('dap.ui.widgets').scopes)
 end)
 
-local with_dapui = defer.with('dapui')
+local with_dapui = yall.with('dapui')
 
 local open_dapui = with_dapui(function()
 	require('dapui').open()
@@ -89,7 +89,7 @@ local map = require('map').create({
 	desc = 'dap',
 })
 
-local debug_layer = defer.lazy(defer.with('layers')(function()
+local debug_layer = yall.lazy(yall.with('layers')(function()
 	local layer = require('layers').mode.new()
 	layer:auto_show_help()
 	layer:keymaps({
@@ -135,8 +135,8 @@ local debug_layer = defer.lazy(defer.with('layers')(function()
 	return layer
 end))
 
-defer.pack('dap', 'nvim-dap')
-defer.on_load('dap', function()
+yall.pack('dap', 'nvim-dap')
+yall.on_load('dap', function()
 	local dap = require('dap')
 
 	dap.adapters['pwa-node'] = {
@@ -232,7 +232,7 @@ defer.on_load('dap', function()
 
 	-- Map K to hover while session is active.
 	dap.listeners.after['event_initialized']['me'] = function()
-		defer.ensure('nvim-dap-virtual-text')
+		yall.ensure('nvim-dap-virtual-text')
 
 		if not debug_layer():active() then
 			debug_layer():activate()
@@ -262,7 +262,7 @@ defer.on_load('dap', function()
 		end,
 	})
 
-	defer.on_postload('telescope', function()
+	yall.on_postload('telescope', function()
 		require('telescope').load_extension('dap')
 	end)
 
@@ -278,7 +278,7 @@ defer.on_load('dap', function()
 	-- 	require("dapui").close()
 	-- end
 end)
-defer.very_lazy('dap')
+yall.very_lazy('dap')
 
 -- Mappings.
 local prefix = '<leader>d'

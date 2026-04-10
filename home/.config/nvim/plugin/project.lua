@@ -1,5 +1,5 @@
 local pickers = require('pickers')
-local defer = require('defer')
+local yall = require('yall')
 
 local function on_attach()
 	local persistence = require('persistence')
@@ -13,7 +13,7 @@ local function on_attach()
 	end
 end
 
-defer.on_load('project', function()
+yall.on_load('project', function()
 	require('project').setup({
 		-- first argument is the workspace name
 		manual_mode = true,
@@ -47,7 +47,7 @@ defer.on_load('project', function()
 
 	require('project.api').set_pwd(root, method)
 
-	defer.on_postload('telescope', function()
+	yall.on_postload('telescope', function()
 		require('telescope').load_extension('projects')
 	end)
 
@@ -57,4 +57,4 @@ defer.on_load('project', function()
 end)
 
 -- it's possible to lazy load because in manual mode we don't set "BufEnter" aucmds
-defer.on_event('project', 'VimEnter', { nested = true })
+yall.on_event('project', 'VimEnter', { nested = true })

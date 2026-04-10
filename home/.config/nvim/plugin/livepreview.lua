@@ -1,5 +1,5 @@
-local defer = require('defer')
+local yall = require('yall')
 -- very-lazy will fail to setup on the first opened buffer
-defer.pack('livepreview', 'live-preview.nvim')
-defer.hook('livepreview')
-defer.cmd('LivePreview', 'livepreview')
+yall.pack('livepreview', 'live-preview.nvim')
+yall.hook('livepreview')
+yall.cmd('LivePreview', 'livepreview')

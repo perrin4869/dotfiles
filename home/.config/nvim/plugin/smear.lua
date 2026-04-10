@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('smear_cursor', function()
+yall.on_load('smear_cursor', function()
 	require('smear_cursor').enabled = true
 end)
-defer.very_lazy('smear_cursor')
+yall.very_lazy('smear_cursor')

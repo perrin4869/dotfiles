@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.very_lazy(function()
+local yall = require('yall')
+yall.very_lazy(function()
 	vim.cmd.packadd('vim-unimpaired')
 
 	-- see help [q and help ]q for the default mappings in neovim >= 0.11

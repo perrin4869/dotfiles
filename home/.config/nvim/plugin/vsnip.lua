@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.very_lazy(function()
+local yall = require('yall')
+yall.very_lazy(function()
 	vim.cmd.packadd('vim-vsnip')
 	vim.cmd.packadd('vim-vsnip-integ')
 

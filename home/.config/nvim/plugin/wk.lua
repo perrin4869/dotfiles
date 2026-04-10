@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('which-key', function()
+yall.on_load('which-key', function()
 	local wk = require('which-key')
 	wk.setup()
 	wk.add({
@@ -25,9 +25,9 @@ defer.on_load('which-key', function()
 	})
 end)
 
-defer.pack('which-key', 'which-key.nvim')
-defer.very_lazy('which-key')
-local with = defer.with('which-key')
+yall.pack('which-key', 'which-key.nvim')
+yall.very_lazy('which-key')
+local with = yall.with('which-key')
 
 require('map').map(
 	'n',

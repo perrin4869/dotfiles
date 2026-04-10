@@ -1,12 +1,12 @@
-local defer = require('defer')
-defer.pack('wrapped', 'wrapped.nvim')
-defer.cmd('WrappedNvim', 'wrapped')
-defer.cmd('NvimWrapped', 'wrapped')
+local yall = require('yall')
+yall.pack('wrapped', 'wrapped.nvim')
+yall.cmd('WrappedNvim', 'wrapped')
+yall.cmd('NvimWrapped', 'wrapped')
 
 require('map').map(
 	'n',
 	'<leader>W',
-	defer.with('wrapped')(function()
+	yall.with('wrapped')(function()
 		require('wrapped').run()
 	end),
 	'wrapped'

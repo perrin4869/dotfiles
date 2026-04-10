@@ -1,7 +1,7 @@
-local defer = require('defer')
-defer.pack('floaterm')
-defer.very_lazy('floaterm')
-defer.on_load('floaterm', function()
+local yall = require('yall')
+yall.pack('floaterm')
+yall.very_lazy('floaterm')
+yall.on_load('floaterm', function()
 	require('floaterm').setup({
 		border = true,
 		-- https://github.com/nvzone/floaterm/issues/35
@@ -15,7 +15,7 @@ defer.on_load('floaterm', function()
 	})
 end)
 
-local with = defer.with('floaterm')
+local with = yall.with('floaterm')
 local map = require('map').create({
 	mode = { 'n', 't' },
 	desc = 'floaterm',

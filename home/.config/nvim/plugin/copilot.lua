@@ -1,21 +1,35 @@
-local defer = require('defer')
+local yall = require('yall')
 
 local options = {}
-defer.on_load('copilot', function()
+yall.on_load('copilot', function()
 	require('copilot').setup(options)
 end)
-defer.pack('copilot', 'copilot.lua')
-defer.cmd('Copilot', 'copilot')
+yall.pack('copilot', 'copilot.lua')
+yall.cmd('Copilot', 'copilot')
 
-defer.on_load('copilot_ls', function()
+yall.on_load('copilot_ls', function()
+	vim.keymap.set('n', '<tab>', function()
+		local bufnr = vim.api.nvim_get_current_buf()
+		local state = vim.b[bufnr].nes_state
+		if state then
+			-- Try to jump to the start of the suggestion edit.
+			-- If already at the start, then apply the pending suggestion and jump to the end of the edit.
+			local _ = require('copilot-lsp.nes').walk_cursor_start_edit()
+				or (require('copilot-lsp.nes').apply_pending_nes() and require('copilot-lsp.nes').walk_cursor_end_edit())
+			return nil
+		else
+			-- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
+			return '<C-i>'
+		end
+	end, { desc = 'Accept Copilot NES suggestion', expr = true })
 	vim.g.copilot_nes_debounce = 500
 	vim.lsp.enable('copilot_ls')
 end)
-defer.pack('copilot_ls', 'copilot-lsp')
+yall.pack('copilot_ls', 'copilot-lsp')
 
 if vim.g.enable_copilot_ls then
-	defer.on_insert('copilot')
-	defer.deps('copilot', 'copilot_ls')
+	yall.on_insert('copilot')
+	yall.deps('copilot', 'copilot_ls')
 	options.nes = {
 		enabled = true,
 		keymap = {

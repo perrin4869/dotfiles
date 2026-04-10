@@ -1,8 +1,8 @@
-local defer = require('defer')
+local yall = require('yall')
 local M = {}
 
-M.get_capabilities = defer.lazy(function()
-	return defer.require('cmp_nvim_lsp').default_capabilities()
+M.get_capabilities = yall.lazy(function()
+	return yall.require('cmp_nvim_lsp').default_capabilities()
 end)
 
 --- setup organize_imports mappings and user command

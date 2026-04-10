@@ -1,4 +1,4 @@
----@class Defer.Entry
+---@class Yall.Entry
 ---@field pack string|nil The name of the package for packadd
 ---@field post function|nil Function to run after loading (setup)
 ---@field load function|nil Function to run to load (setup)
@@ -8,13 +8,13 @@
 ---@field disabled boolean Whether the module is prevented from loading
 ---@field loaded boolean Internal state to track if ensure has already run
 
----@type table<string, Defer.Entry>
+---@type table<string, Yall.Entry>
 local registry = {}
 ---@type table<string, string>
 local hooks = {}
 
 ---@param name string
----@return Defer.Entry
+---@return Yall.Entry
 local function entry(name)
 	if not registry[name] then
 		registry[name] = {
@@ -56,7 +56,7 @@ local function trigger_load_with_after(plugin_name)
 end
 
 --- returns true if a module is disabled, false otherwise
---- @param mod Defer.Entry
+--- @param mod Yall.Entry
 --- @return boolean
 local function is_disabled(mod, name)
 	return mod.disabled or vim.env['DEFER_DISABLE_' .. string.upper(string.gsub(name, '-', '_'))] ~= nil
@@ -188,12 +188,12 @@ function M.deps(name, deps)
 	end
 end
 
----@alias Defer.With fun(callback: fun(...): any): fun(...): any
+---@alias Yall.With fun(callback: fun(...): any): fun(...): any
 ---
 --- Wraps a module for lazy execution via a callback.
 ---@generic T
 ---@param name string
----@return Defer.With<T>
+---@return Yall.With<T>
 function M.with(name)
 	return function(callback)
 		return function(...)
@@ -204,12 +204,12 @@ function M.with(name)
 	end
 end
 
----@alias Defer.Lazy<T> fun(...): T
+---@alias Yall.Lazy<T> fun(...): T
 ---
 --- Memoizes a function result.
 ---@generic T
 ---@param fn fun(...): T
----@return Defer.Lazy<T>
+---@return Yall.Lazy<T>
 function M.lazy(fn)
 	local value
 	local ran = false
@@ -227,7 +227,7 @@ end
 ---@param module string The module to load
 function M.cmd(name, module)
 	if vim.fn.exists(':' .. name) ~= 0 then
-		error("defer.cmd: '" .. name .. "' already exists")
+		error("yall.cmd: '" .. name .. "' already exists")
 	end
 
 	-- Clean up the placeholder BEFORE the plugin defines its own
@@ -308,7 +308,7 @@ table.insert(package.loaders, 2, hook)
 ---@param opts? { pattern?: string|string[], nested?: boolean }
 function M.on_event(name, events, opts)
 	opts = opts or {}
-	local group_id = vim.api.nvim_create_augroup('Defer_Event_' .. name, { clear = true })
+	local group_id = vim.api.nvim_create_augroup('Yall_Event_' .. name, { clear = true })
 
 	vim.api.nvim_create_autocmd(events, {
 		group = group_id,
@@ -346,7 +346,7 @@ local function create_on_event(event)
 		if type(event) == 'table' then
 			event_str = table.concat(event, '_')
 		end
-		local group_id = vim.api.nvim_create_augroup('Defer_Event_' .. event_str, { clear = true })
+		local group_id = vim.api.nvim_create_augroup('Yall_Event_' .. event_str, { clear = true })
 
 		vim.api.nvim_create_autocmd(event, {
 			group = group_id,
@@ -387,7 +387,7 @@ function M.very_lazy(loader)
 	})
 end
 
--- In defer.lua's initialization:
+-- In yall.lua's initialization:
 vim.api.nvim_create_autocmd('UIEnter', {
 	once = true,
 	callback = function()

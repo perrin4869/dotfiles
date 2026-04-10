@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('gitsigns', function()
+yall.on_load('gitsigns', function()
 	require('gitsigns').setup({
 		on_attach = function(bufnr)
 			local gs = package.loaded.gitsigns
@@ -77,5 +77,5 @@ defer.on_load('gitsigns', function()
 		end,
 	})
 end)
-defer.pack('gitsigns', 'gitsigns.nvim')
-defer.on_bufreadpost('gitsigns')
+yall.pack('gitsigns', 'gitsigns.nvim')
+yall.on_bufreadpost('gitsigns')

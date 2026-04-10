@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('lsp', function()
+yall.on_load('lsp', function()
 	local lsp = require('lsp')
 
 	vim.api.nvim_create_autocmd('LspAttach', {
@@ -84,7 +84,7 @@ defer.on_load('lsp', function()
 		'sqlls',
 	})
 end)
-defer.deps('lsp', { 'lspconfig', 'mason' })
-defer.on_bufreadpost('lsp')
-defer.pack('lspconfig', 'nvim-lspconfig')
-defer.on_bufreadpre('lspconfig')
+yall.deps('lsp', { 'lspconfig', 'mason' })
+yall.on_bufreadpost('lsp')
+yall.pack('lspconfig', 'nvim-lspconfig')
+yall.on_bufreadpre('lspconfig')

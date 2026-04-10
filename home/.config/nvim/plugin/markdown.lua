@@ -1,7 +1,7 @@
-local defer = require('defer')
-defer.pack('render-markdown', 'render-markdown.nvim')
+local yall = require('yall')
+yall.pack('render-markdown', 'render-markdown.nvim')
 local fts = { 'markdown', 'Avante' }
-defer.on_ft('render-markdown', {
+yall.on_ft('render-markdown', {
 	once = true,
 	pattern = fts,
 })

@@ -1,7 +1,7 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('difftastic-nvim', function()
+yall.on_load('difftastic-nvim', function()
 	require('difftastic-nvim').setup()
 end)
-defer.pack('difftastic-nvim', 'difftastic.nvim')
-defer.very_lazy('difftastic-nvim')
+yall.pack('difftastic-nvim', 'difftastic.nvim')
+yall.very_lazy('difftastic-nvim')

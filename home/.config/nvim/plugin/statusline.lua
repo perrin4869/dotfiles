@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('lualine', function()
+yall.on_load('lualine', function()
 	local lualine = require('lualine')
 	local function paste()
 		if vim.o.paste then
@@ -66,7 +66,7 @@ defer.on_load('lualine', function()
 		end
 	end
 
-	local noice = defer.with('noice')(function()
+	local noice = yall.with('noice')(function()
 		local noice = require('noice')
 		if noice.api.status.mode.has() then
 			return noice.api.status.mode.get()
@@ -74,7 +74,7 @@ defer.on_load('lualine', function()
 		return ''
 	end)
 
-	local progress = defer.with('lsp-progress')(function()
+	local progress = yall.with('lsp-progress')(function()
 		return require('lsp-progress').progress()
 	end)
 
@@ -163,4 +163,4 @@ defer.on_load('lualine', function()
 	})
 end)
 
-defer.very_lazy('lualine')
+yall.very_lazy('lualine')

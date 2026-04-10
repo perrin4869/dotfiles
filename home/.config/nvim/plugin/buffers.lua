@@ -1,5 +1,5 @@
-local defer = require('defer')
-defer.on_load('close_buffers', function()
+local yall = require('yall')
+yall.on_load('close_buffers', function()
 	require('close_buffers').setup({
 		filetype_ignore = {}, -- Filetype to ignore when running deletions
 		file_glob_ignore = {}, -- File name glob pattern to ignore when running deletions (e.g. '*.md')
@@ -8,11 +8,11 @@ defer.on_load('close_buffers', function()
 		next_buffer_cmd = nil, -- Custom function to retrieve the next buffer when preserving window layout
 	})
 end)
-defer.pack('close_buffers', 'close-buffers.nvim')
-defer.cmd('BDelete', 'close_buffers')
-defer.cmd('BWipeout', 'close_buffers')
+yall.pack('close_buffers', 'close-buffers.nvim')
+yall.cmd('BDelete', 'close_buffers')
+yall.cmd('BWipeout', 'close_buffers')
 
-defer.very_lazy(function()
+yall.very_lazy(function()
 	local function safe_jump_back()
 		local jumplist, cur_idx = unpack(vim.fn.getjumplist())
 
@@ -35,7 +35,7 @@ defer.very_lazy(function()
 		mode = 'n',
 		desc = 'close_buffers',
 		rhs = function(type)
-			return defer.with('close_buffers')(function()
+			return yall.with('close_buffers')(function()
 				if type == 'this' and #vim.fn.getbufinfo({ buflisted = 1 }) == 1 then
 					vim.cmd('q')
 				end
@@ -51,7 +51,7 @@ defer.very_lazy(function()
 	map('<leader><c-h>', 'hidden') -- <C-BS> sends <C-h>
 end)
 
-defer.very_lazy(function()
+yall.very_lazy(function()
 	local next_move = require('nvim-next.move')
 
 	local function cokeline_or_buf(cokeline_focus_direction, bufcmd)

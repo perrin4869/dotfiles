@@ -1,7 +1,7 @@
-local defer = require('defer')
-defer.pack('undotree', 'nvim.undotree')
+local yall = require('yall')
+yall.pack('undotree', 'nvim.undotree')
 
-local with_undotree = defer.with('undotree')
+local with_undotree = yall.with('undotree')
 
 local map = require('map').create({
 	mode = 'n',
@@ -16,4 +16,4 @@ map(
 	'toggle'
 )
 
-defer.cmd('Undotree', 'undotree')
+yall.cmd('Undotree', 'undotree')

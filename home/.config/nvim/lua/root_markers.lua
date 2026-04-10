@@ -42,7 +42,7 @@ function M.has_marker(bufnr, root, markers)
 		) > 0
 end
 
-local lazy = require('defer').lazy
+local lazy = require('yall').lazy
 M.markers = {
 	eslint = lazy(function()
 		return M.get_root_markers('eslint', vim.list_extend({ 'js', 'cjs', 'mjs', 'ts', 'mts' }, M.default_exts))

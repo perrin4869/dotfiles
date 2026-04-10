@@ -1,6 +1,6 @@
-local defer = require('defer')
+local yall = require('yall')
 
-defer.on_load('conform', function()
+yall.on_load('conform', function()
 	local conform = require('conform')
 
 	local json = { 'prettierd', 'prettier', stop_after_first = true }
@@ -102,5 +102,5 @@ defer.on_load('conform', function()
 		{ desc = 'Toggle autoformat-on-save', bang = true }
 	)
 end)
-defer.pack('conform', 'conform.nvim')
-defer.on_bufreadpost('conform')
+yall.pack('conform', 'conform.nvim')
+yall.on_bufreadpost('conform')

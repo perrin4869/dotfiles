@@ -8,6 +8,8 @@ yall.on_load('avante', function()
 		-- this file can contain specific instructions for your project
 		instructions_file = 'avante.md',
 		behaviour = {
+			-- https://github.com/yetone/avante.nvim/issues/1048
+			auto_suggestions = vim.g.avante_provider ~= 'copilot',
 			auto_set_keymaps = false,
 		},
 		input = {

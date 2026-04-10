@@ -1,7 +1,7 @@
 local yall = require('yall')
+local provider = vim.g.avante_provider
 yall.pack('dressing', 'dressing.nvim')
 yall.pack('avante', 'avante.nvim')
-yall.deps('avante', { 'telescope', 'cmp', 'dressing', 'copilot' })
 yall.on_load('avante', function()
 	require('avante').setup({
 		-- add any opts here
@@ -9,7 +9,7 @@ yall.on_load('avante', function()
 		instructions_file = 'avante.md',
 		behaviour = {
 			-- https://github.com/yetone/avante.nvim/issues/1048
-			auto_suggestions = vim.g.avante_provider ~= 'copilot',
+			auto_suggestions = provider ~= 'copilot',
 			auto_set_keymaps = false,
 		},
 		input = {
@@ -44,6 +44,11 @@ yall.on_load('avante', function()
 		},
 	})
 end)
+local deps = { 'telescope', 'cmp', 'dressing' }
+if provider == 'copilot' then
+	table.insert(deps, 'copilot')
+end
+yall.deps('avante', deps)
 local with = yall.with('avante')
 
 local map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = 'n' })

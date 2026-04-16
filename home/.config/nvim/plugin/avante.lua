@@ -109,3 +109,4 @@ vim
 require('restore').add_quitpre_ft('Avante')
 require('restore').add_quitpre_ft('AvanteInput')
 require('restore').add_quitpre_ft('AvanteSelectedFiles')
+require('restore').add_quitpre_ft('AvanteTodos')

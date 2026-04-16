@@ -5,7 +5,12 @@ vim.api.nvim_create_autocmd('QuitPre', {
 		local floating_wins = {}
 		-- consider also trying vim.fn.winlayout()
 		local wins = vim.api.nvim_list_wins()
+		local current_win = vim.api.nvim_get_current_win()
 		for _, w in ipairs(wins) do
+			if w == current_win then
+				-- if closing an ignored window like qf, do not count it
+				goto continue
+			end
 			local bufnr = vim.api.nvim_win_get_buf(w)
 			local ft = vim.bo[bufnr].filetype
 			-- ignore empty buffers (no name and no ft)
@@ -16,6 +21,7 @@ vim.api.nvim_create_autocmd('QuitPre', {
 			elseif vim.api.nvim_win_get_config(w).relative ~= '' then
 				table.insert(floating_wins, w)
 			end
+			::continue::
 		end
 		if 1 == #wins - #floating_wins - #restore_wins - #ignore_wins then
 			-- save the session before closing the windows, otherwise the tree state does not get saved

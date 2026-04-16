@@ -300,9 +300,6 @@
 [submodule "home/.vim/pack/default/start/yats.vim"]
 	path = home/.vim/pack/default/start/yats.vim
 	url = https://github.com/HerringtonDarkholme/yats.vim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/treesj"]
-	path = home/.local/share/nvim/site/pack/default/start/treesj
-	url = https://github.com/Wansmer/treesj.git
 [submodule "home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/telescope-file-browser.nvim
 	url = https://github.com/nvim-telescope/telescope-file-browser.nvim.git
@@ -643,3 +640,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-view"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-view
 	url = https://github.com/igorlfs/nvim-dap-view.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/splitjoin.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/splitjoin.nvim
+	url = https://github.com/bennypowers/splitjoin.nvim.git

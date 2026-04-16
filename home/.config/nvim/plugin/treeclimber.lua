@@ -12,7 +12,7 @@ local function plug(name)
 	end)
 end
 
-local show_control_flow = plug('<Plug>(treeclimber-show-control-flow)')
+-- local show_control_flow = plug('<Plug>(treeclimber-show-control-flow)')
 local select_node = plug('<Plug>(treeclimber-select-current-node)')
 local select_expand = plug('<Plug>(treeclimber-select-expand)')
 local select_forward_end = plug('<Plug>(treeclimber-select-forward-end)')
@@ -37,7 +37,7 @@ yall.on_bufreadpre(function()
 				desc_separator = ': ',
 			})
 
-			map('n', '<leader>k', show_control_flow, 'control flow')
+			-- map('n', '<leader>k', show_control_flow, 'control flow')
 
 			map({ 'x', 'o' }, 'i.', select_node, 'select node')
 			map({ 'x', 'o' }, 'a.', select_expand, 'expand')

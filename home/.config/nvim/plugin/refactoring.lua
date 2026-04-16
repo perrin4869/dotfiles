@@ -4,7 +4,7 @@ yall.pack('refactoring', 'refactoring.nvim')
 yall.cmd('Refactor', 'refactoring')
 local with = yall.with('refactoring')
 
-local prefix = '<leader>,' -- official is `<leader>r`, but it is used by substitute.nvim
+local prefix = '<leader>.' -- official is `<leader>r`, but it is used by substitute.nvim
 local map = require('map').create({
 	desc = 'refactoring',
 	mode = { 'n', 'x' },

@@ -364,7 +364,7 @@
 	path = home/.local/share/fonts/monaspace
 	url = https://github.com/githubnext/monaspace.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-nio"]
-	# this is a dependency of nvim-dap-ui
+	# this is a dependency of neotest and neotest-busted
 	path = home/.local/share/nvim/site/pack/default/start/nvim-nio
 	url = https://github.com/nvim-neotest/nvim-nio.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/lazydev.nvim"]
@@ -571,12 +571,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap
 	url = https://github.com/mfussenegger/nvim-dap.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-ui
-	url = https://github.com/rcarriga/nvim-dap-ui.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-virtual-text
-	url = https://github.com/theHamsta/nvim-dap-virtual-text.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/trouble.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/trouble.nvim
 	url = https://github.com/folke/trouble.nvim.git
@@ -646,3 +640,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/copilot-lsp"]
 	path = home/.local/share/nvim/site/pack/default/opt/copilot-lsp
 	url = https://github.com/copilotlsp-nvim/copilot-lsp.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap-view"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap-view
+	url = https://github.com/igorlfs/nvim-dap-view.git

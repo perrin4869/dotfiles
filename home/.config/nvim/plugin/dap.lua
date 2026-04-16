@@ -11,18 +11,14 @@ local function focus_repl()
 	return false
 end
 
-yall.pack('nvim-dap-virtual-text', 'nvim-dap-virtual-text')
-yall.on_load('nvim-dap-virtual-text', function()
-	require('nvim-dap-virtual-text').setup()
-end)
-
-yall.pack('dapui', 'nvim-dap-ui')
-yall.deps('dapui', { 'dap' })
-yall.on_load('dapui', function()
-	-- nvim-dap-ui
-	require('dapui').setup()
-end)
-yall.hook('dapui')
+yall.pack('dap-view', 'nvim-dap-view')
+yall.deps('dap-view', { 'dap' })
+yall.very_lazy('dap-view')
+yall.setup('dap-view', {
+	virtual_text = {
+		enabled = false,
+	},
+})
 
 local with_dap = yall.with('dap')
 
@@ -76,13 +72,13 @@ local ui_widgets_scopes = with_dap(function()
 	require('dap.ui.widgets').cursor_float(require('dap.ui.widgets').scopes)
 end)
 
-local with_dapui = yall.with('dapui')
+local with_view = yall.with('dap-view')
 
-local open_dapui = with_dapui(function()
-	require('dapui').open()
+local open_view = with_view(function()
+	require('dap-view').open()
 end)
-local toggle_dapui = with_dapui(function()
-	require('dapui').toggle()
+local toggle_view = with_view(function()
+	require('dap-view').toggle()
 end)
 
 local map = require('map').create({
@@ -232,8 +228,6 @@ yall.on_load('dap', function()
 
 	-- Map K to hover while session is active.
 	dap.listeners.after['event_initialized']['me'] = function()
-		yall.ensure('nvim-dap-virtual-text')
-
 		if not debug_layer():active() then
 			debug_layer():activate()
 		end
@@ -266,16 +260,16 @@ yall.on_load('dap', function()
 		require('telescope').load_extension('dap')
 	end)
 
-	dap.listeners.before.attach.dapui_config = open_dapui
-	dap.listeners.before.launch.dapui_config = open_dapui
-	dap.listeners.before.event_terminated['dapui_config'] = function()
+	dap.listeners.before.attach.dap_view_config = open_view
+	dap.listeners.before.launch.dap_view_config = open_view
+	dap.listeners.before.event_terminated['dap_view_config'] = function()
 		focus_repl()
 
 		-- closing is too intrusive - cannot inspect the output
-		-- require("dapui").close()
+		-- require("dap-view").close()
 	end
-	-- dap.listeners.before.event_exited["dapui_config"] = function()
-	-- 	require("dapui").close()
+	-- dap.listeners.before.event_exited["dap_view_config"] = function()
+	-- 	require("dap-view").close()
 	-- end
 end)
 yall.very_lazy('dap')
@@ -295,7 +289,7 @@ map('n', prefix .. 'e', set_exception_breakpoints, 'set_exception_breakpoints')
 map('n', prefix .. 'i', ui_widgets_hover, 'ui.widgets.hover')
 map('n', prefix .. '?', ui_widgets_scopes, 'ui.widgets.scopes')
 
-require('map').map('n', prefix .. 'u', toggle_dapui, 'dapui.toggle')
+require('map').map('n', prefix .. 'u', toggle_view, 'dap-view.toggle')
 
 -- telescope-dap
 local pickers = require('pickers')

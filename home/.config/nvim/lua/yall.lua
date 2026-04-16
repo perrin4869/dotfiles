@@ -114,6 +114,15 @@ function M.disable(name)
 end
 
 ---@param name string
+---@param opts? table<string, any>
+function M.setup(name, opts)
+	opts = opts or {}
+	M.on_load(name, function()
+		require(name).setup(opts)
+	end)
+end
+
+---@param name string
 ---@return any
 function M.ensure(name)
 	local mod = registry[name]

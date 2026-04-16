@@ -1,18 +1,16 @@
 local yall = require('yall')
 local pickers = require('pickers')
 
+yall.setup('telescope', {
+	pickers = {
+		find_files = { hidden = true },
+	},
+})
 yall.on_load('telescope', function()
-	local telescope = require('telescope')
-	telescope.setup({
-		pickers = {
-			find_files = { hidden = true },
-		},
-	})
-
 	-- Load extensions only after telescope itself is initialized
 	local extensions = { 'fzf', 'neoclip', 'file_browser', 'git_grep' }
 	for _, ext in ipairs(extensions) do
-		telescope.load_extension(ext)
+		require('telescope').load_extension(ext)
 	end
 end)
 yall.pack('telescope', 'telescope.nvim')

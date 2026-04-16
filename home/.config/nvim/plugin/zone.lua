@@ -4,6 +4,4 @@
 -- local yall = require("yall")
 -- yall.pack("zone", "zone.nvim")
 -- yall.very_lazy("zone")
--- yall.on_load("zone", function()
--- 	require("zone").setup()
--- end)
+-- yall.setup("zone")

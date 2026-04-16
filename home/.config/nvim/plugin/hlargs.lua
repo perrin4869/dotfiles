@@ -1,24 +1,22 @@
 local yall = require('yall')
 
-yall.on_load('hlargs', function()
-	require('hlargs').setup({
-		disable = function(_, bufnr)
-			if vim.b[bufnr].semantic_tokens then
-				return true
-			end
+yall.setup('hlargs', {
+	disable = function(_, bufnr)
+		if vim.b[bufnr].semantic_tokens then
+			return true
+		end
 
-			local clients = vim.lsp.get_clients({ bufnr = bufnr })
-			for _, c in pairs(clients) do
-				local caps = c.server_capabilities
-				if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
-					-- cache languages that were already resolved
-					vim.b[bufnr].semantic_tokens = true
-					return vim.b[bufnr].semantic_tokens
-				end
+		local clients = vim.lsp.get_clients({ bufnr = bufnr })
+		for _, c in pairs(clients) do
+			local caps = c.server_capabilities
+			if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+				-- cache languages that were already resolved
+				vim.b[bufnr].semantic_tokens = true
+				return vim.b[bufnr].semantic_tokens
 			end
-		end,
-	})
-end)
+		end
+	end,
+})
 yall.on_bufreadpost('hlargs')
 
 vim.api.nvim_create_autocmd('LspAttach', {

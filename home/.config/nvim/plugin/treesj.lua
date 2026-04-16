@@ -1,10 +1,8 @@
 local yall = require('yall')
 
-yall.on_load('treesj', function()
-	require('treesj').setup({
-		use_default_keymaps = false,
-	})
-end)
+yall.setup('treesj', {
+	use_default_keymaps = false,
+})
 
 local with = yall.with('treesj')
 

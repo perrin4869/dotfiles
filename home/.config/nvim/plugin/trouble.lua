@@ -1,8 +1,6 @@
 local yall = require('yall')
 
-yall.on_load('trouble', function()
-	require('trouble').setup()
-end)
+yall.setup('trouble')
 yall.pack('trouble', 'trouble.nvim')
 yall.cmd('Trouble', 'trouble')
 local with_trouble = yall.with('trouble')

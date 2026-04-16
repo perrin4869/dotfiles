@@ -1,19 +1,17 @@
 local yall = require('yall')
 yall.pack('floaterm')
 yall.very_lazy('floaterm')
-yall.on_load('floaterm', function()
-	require('floaterm').setup({
-		border = true,
-		-- https://github.com/nvzone/floaterm/issues/35
-		mappings = {
-			term = function(buf)
-				vim.keymap.set('n', '<ESC>', function()
-					require('floaterm').toggle()
-				end, { buffer = buf })
-			end,
-		},
-	})
-end)
+yall.setup('floaterm', {
+	border = true,
+	-- https://github.com/nvzone/floaterm/issues/35
+	mappings = {
+		term = function(buf)
+			vim.keymap.set('n', '<ESC>', function()
+				require('floaterm').toggle()
+			end, { buffer = buf })
+		end,
+	},
+})
 
 local with = yall.with('floaterm')
 local map = require('map').create({

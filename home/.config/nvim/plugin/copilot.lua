@@ -1,18 +1,6 @@
 local yall = require('yall')
 
 local options = {}
-yall.on_load('copilot', function()
-	require('copilot').setup(options)
-end)
-yall.pack('copilot', 'copilot.lua')
-yall.cmd('Copilot', 'copilot')
-
-yall.on_load('copilot_ls', function()
-	vim.g.copilot_nes_debounce = 500
-	vim.lsp.enable('copilot_ls')
-end)
-yall.pack('copilot_ls', 'copilot-lsp')
-
 if vim.g.enable_copilot_ls then
 	yall.on_insert('copilot')
 	yall.deps('copilot', 'copilot_ls')
@@ -25,3 +13,12 @@ if vim.g.enable_copilot_ls then
 		},
 	}
 end
+yall.setup('copilot', options)
+yall.pack('copilot', 'copilot.lua')
+yall.cmd('Copilot', 'copilot')
+
+yall.on_load('copilot_ls', function()
+	vim.g.copilot_nes_debounce = 500
+	vim.lsp.enable('copilot_ls')
+end)
+yall.pack('copilot_ls', 'copilot-lsp')

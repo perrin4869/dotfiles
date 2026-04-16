@@ -1,6 +1,4 @@
 local yall = require('yall')
-yall.on_load('numb', function()
-	require('numb').setup()
-end)
+yall.setup('numb')
 yall.pack('numb', 'numb.nvim')
 yall.very_lazy('numb')

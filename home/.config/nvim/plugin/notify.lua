@@ -1,12 +1,10 @@
 local yall = require('yall')
 
-yall.on_load('notify', function()
-	require('notify').setup({
-		stages = 'fade_in_slide_out',
-		background_colour = 'FloatShadow',
-		timeout = 3000,
-	})
-end)
+yall.setup('notify', {
+	stages = 'fade_in_slide_out',
+	background_colour = 'FloatShadow',
+	timeout = 3000,
+})
 -- since noice also uses nvim-notify, add as a hook
 yall.hook('notify')
 

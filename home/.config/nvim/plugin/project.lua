@@ -13,23 +13,22 @@ local function on_attach()
 	end
 end
 
-yall.on_load('project', function()
-	require('project').setup({
-		-- first argument is the workspace name
-		manual_mode = true,
-		before_attach = function(target_dir)
-			local persistence = require('persistence')
-			if persistence.active() then
-				local cwd = vim.uv.cwd()
-				if cwd and vim.fs.normalize(cwd) ~= vim.fs.normalize(target_dir) then
-					persistence.save()
-				end
-				persistence.stop()
+yall.setup('project', {
+	-- first argument is the workspace name
+	manual_mode = true,
+	before_attach = function(target_dir)
+		local persistence = require('persistence')
+		if persistence.active() then
+			local cwd = vim.uv.cwd()
+			if cwd and vim.fs.normalize(cwd) ~= vim.fs.normalize(target_dir) then
+				persistence.save()
 			end
-		end,
-		on_attach = on_attach,
-	})
-	--
+			persistence.stop()
+		end
+	end,
+	on_attach = on_attach,
+})
+yall.on_load('project', function()
 	-- dont autoload if nvim start with arg
 	if vim.fn.argc(-1) > 0 then
 		return

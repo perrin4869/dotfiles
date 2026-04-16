@@ -1,10 +1,7 @@
 local yall = require('yall')
 
 yall.pack('neotest')
-yall.on_load('neotest', function()
-	--- @diagnostic disable-next-line: missing-fields
-	require('neotest').setup({})
-end)
+yall.setup('neotest')
 
 local function add_adapter(adapter_name)
 	yall.pack(adapter_name)

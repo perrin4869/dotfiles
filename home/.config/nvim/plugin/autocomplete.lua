@@ -158,35 +158,33 @@ end)
 yall.pack('cmp', 'nvim-cmp')
 yall.on_bufreadpost('cmp')
 
-yall.on_load('cmp_git', function()
-	require('cmp_git').setup({
-		-- defaults
-		filetypes = { 'gitcommit' },
-		github = {
-			issues = {
-				filter = 'all', -- assigned, created, mentioned, subscribed, all, repos
-				limit = 100,
-				state = 'open', -- open, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
+yall.setup('cmp_git', {
+	-- defaults
+	filetypes = { 'gitcommit' },
+	github = {
+		issues = {
+			filter = 'all', -- assigned, created, mentioned, subscribed, all, repos
+			limit = 100,
+			state = 'open', -- open, closed, all
 		},
-		gitlab = {
-			issues = {
-				limit = 100,
-				state = 'opened', -- opened, closed, all
-			},
-			mentions = {
-				limit = 100,
-			},
-			merge_requests = {
-				limit = 100,
-				state = 'opened', -- opened, closed, locked, merged
-			},
+		mentions = {
+			limit = 100,
 		},
-	})
-end)
+	},
+	gitlab = {
+		issues = {
+			limit = 100,
+			state = 'opened', -- opened, closed, all
+		},
+		mentions = {
+			limit = 100,
+		},
+		merge_requests = {
+			limit = 100,
+			state = 'opened', -- opened, closed, locked, merged
+		},
+	},
+})
 
 local function add_source(lua, pack, after)
 	if after == nil then

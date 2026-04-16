@@ -1,8 +1,6 @@
 local yall = require('yall')
 
-yall.on_load('nvim-treeclimber', function()
-	require('nvim-treeclimber').setup({})
-end)
+yall.setup('nvim-treeclimber')
 yall.pack('nvim-treeclimber', 'nvim-treeclimber')
 
 local with_tc = yall.with('nvim-treeclimber')

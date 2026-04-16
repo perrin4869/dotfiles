@@ -1,7 +1,5 @@
 local yall = require('yall')
-yall.on_load('refactoring', function()
-	require('refactoring').setup({})
-end)
+yall.setup('refactoring')
 yall.pack('refactoring', 'refactoring.nvim')
 yall.cmd('Refactor', 'refactoring')
 local with = yall.with('refactoring')

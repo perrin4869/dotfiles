@@ -1,5 +1,3 @@
 local yall = require('yall')
-yall.on_load('neoclip', function()
-	require('neoclip').setup()
-end)
+yall.setup('neoclip')
 yall.very_lazy('neoclip')

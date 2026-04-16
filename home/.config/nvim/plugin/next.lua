@@ -1,6 +1,6 @@
 local yall = require('yall')
-yall.on_load('nvim-next', function()
-	require('nvim-next').setup({
+yall.setup('nvim-next', function()
+	return {
 		default_mappings = {
 			repeat_style = 'original',
 		},
@@ -8,6 +8,6 @@ yall.on_load('nvim-next', function()
 			require('nvim-next.builtins').f,
 			require('nvim-next.builtins').t,
 		},
-	})
+	}
 end)
 yall.very_lazy('nvim-next')

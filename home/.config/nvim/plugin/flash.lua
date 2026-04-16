@@ -1,10 +1,8 @@
 local yall = require('yall')
 
-yall.on_load('flash', function()
-	require('flash').setup({
-		modes = { char = { enabled = false } },
-	})
-end)
+yall.setup('flash', {
+	modes = { char = { enabled = false } },
+})
 local with = yall.with('flash')
 
 local jump = with(function()

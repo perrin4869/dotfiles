@@ -1,8 +1,6 @@
 local yall = require('yall')
 
-yall.on_load('substitute', function()
-	require('substitute').setup()
-end)
+yall.setup('substitute')
 yall.pack('substitute', 'substitute.nvim')
 local with = yall.with('substitute')
 

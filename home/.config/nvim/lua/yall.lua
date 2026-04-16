@@ -114,10 +114,13 @@ function M.disable(name)
 end
 
 ---@param name string
----@param opts? table<string, any>
+---@param opts? table<string, any> | fun(): table<string, any>
 function M.setup(name, opts)
 	opts = opts or {}
 	M.on_load(name, function()
+		if type(opts) == 'function' then
+			opts = opts()
+		end
 		require(name).setup(opts)
 	end)
 end

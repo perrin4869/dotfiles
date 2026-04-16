@@ -1,5 +1,3 @@
 local yall = require('yall')
 yall.pack('layers', 'layers.nvim')
-yall.on_load('layers', function()
-	require('layers').setup({})
-end)
+yall.setup('layers')

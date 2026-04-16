@@ -1,8 +1,6 @@
 local yall = require('yall')
 
-yall.on_load('persistence', function()
-	require('persistence').setup()
-end)
+yall.setup('persistence')
 yall.pack('persistence', 'persistence.nvim')
 yall.hook('persistence')
 yall.on_event('persistence', 'BufReadPre')

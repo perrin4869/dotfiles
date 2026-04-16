@@ -1,81 +1,79 @@
 local yall = require('yall')
 
-yall.on_load('gitsigns', function()
-	require('gitsigns').setup({
-		on_attach = function(bufnr)
-			local gs = package.loaded.gitsigns
+yall.setup('gitsigns', {
+	on_attach = function(bufnr)
+		local gs = package.loaded.gitsigns
 
-			local map = require('map').create({
-				desc = 'gitsigns',
-				buffer = bufnr,
-			})
+		local map = require('map').create({
+			desc = 'gitsigns',
+			buffer = bufnr,
+		})
 
-			local next_integrations = require('nvim-next.integrations')
-			local nngs = next_integrations.gitsigns(gs)
+		local next_integrations = require('nvim-next.integrations')
+		local nngs = next_integrations.gitsigns(gs)
 
-			local trigger = require('trigger').trigger
-			local prev_hunk, next_hunk = trigger('c', function()
-				if vim.wo.diff then
-					return ']c'
-				end
-				vim.schedule(function()
-					-- gs.next_hunk()
-					nngs.next_hunk()
-				end)
-				return '<Ignore>'
-			end, function()
-				if vim.wo.diff then
-					return '[c'
-				end
-				vim.schedule(function()
-					nngs.prev_hunk()
-				end)
-				return '<Ignore>'
+		local trigger = require('trigger').trigger
+		local prev_hunk, next_hunk = trigger('c', function()
+			if vim.wo.diff then
+				return ']c'
+			end
+			vim.schedule(function()
+				-- gs.next_hunk()
+				nngs.next_hunk()
 			end)
+			return '<Ignore>'
+		end, function()
+			if vim.wo.diff then
+				return '[c'
+			end
+			vim.schedule(function()
+				nngs.prev_hunk()
+			end)
+			return '<Ignore>'
+		end)
 
-			-- Navigation
-			map('n', ']c', prev_hunk, { expr = true, desc = 'next_hunk' })
-			map('n', '[c', next_hunk, { expr = true, desc = 'prev_hunk' })
+		-- Navigation
+		map('n', ']c', prev_hunk, { expr = true, desc = 'next_hunk' })
+		map('n', '[c', next_hunk, { expr = true, desc = 'prev_hunk' })
 
-			-- Actions
-			map('n', '<leader>hs', gs.stage_hunk, 'stage_hunk')
-			map('n', '<leader>hr', gs.reset_hunk, 'reset_hunk')
+		-- Actions
+		map('n', '<leader>hs', gs.stage_hunk, 'stage_hunk')
+		map('n', '<leader>hr', gs.reset_hunk, 'reset_hunk')
 
-			map('v', '<leader>hs', function()
-				gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-			end, 'stage_hunk')
+		map('v', '<leader>hs', function()
+			gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+		end, 'stage_hunk')
 
-			map('v', '<leader>hr', function()
-				gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-			end, 'reset_hunk')
+		map('v', '<leader>hr', function()
+			gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+		end, 'reset_hunk')
 
-			map('n', '<leader>hS', gs.stage_buffer, 'stage_buffer')
-			map('n', '<leader>hR', gs.reset_buffer, 'reset_buffer')
-			map('n', '<leader>hp', gs.preview_hunk, 'preview_hunk')
-			map('n', '<leader>hi', gs.preview_hunk_inline, 'preview_hunk_inline')
+		map('n', '<leader>hS', gs.stage_buffer, 'stage_buffer')
+		map('n', '<leader>hR', gs.reset_buffer, 'reset_buffer')
+		map('n', '<leader>hp', gs.preview_hunk, 'preview_hunk')
+		map('n', '<leader>hi', gs.preview_hunk_inline, 'preview_hunk_inline')
 
-			map('n', '<leader>hb', function()
-				gs.blame_line({ full = true })
-			end, 'blame_line')
+		map('n', '<leader>hb', function()
+			gs.blame_line({ full = true })
+		end, 'blame_line')
 
-			map('n', '<leader>hd', gs.diffthis, 'diffthis')
+		map('n', '<leader>hd', gs.diffthis, 'diffthis')
 
-			map('n', '<leader>hD', function()
-				gs.diffthis('~')
-			end, 'diffthis_~')
+		map('n', '<leader>hD', function()
+			gs.diffthis('~')
+		end, 'diffthis_~')
 
-			map('n', '<leader>hQ', function()
-				gs.setqflist('all')
-			end, 'setqflist_all')
-			map('n', '<leader>hq', gs.setqflist, 'setqflist')
+		map('n', '<leader>hQ', function()
+			gs.setqflist('all')
+		end, 'setqflist_all')
+		map('n', '<leader>hq', gs.setqflist, 'setqflist')
 
-			map('n', vim.g.toggle_prefix .. 'b', gs.toggle_current_line_blame, 'toggle_current_line_blame')
-			map('n', vim.g.toggle_prefix .. 'w', gs.toggle_word_diff, 'toggle_word_diff')
+		map('n', vim.g.toggle_prefix .. 'b', gs.toggle_current_line_blame, 'toggle_current_line_blame')
+		map('n', vim.g.toggle_prefix .. 'w', gs.toggle_word_diff, 'toggle_word_diff')
 
-			-- Text object
-			map({ 'o', 'x' }, 'ih', gs.select_hunk, 'select_hunk')
-		end,
-	})
-end)
+		-- Text object
+		map({ 'o', 'x' }, 'ih', gs.select_hunk, 'select_hunk')
+	end,
+})
 yall.pack('gitsigns', 'gitsigns.nvim')
 yall.on_bufreadpost('gitsigns')

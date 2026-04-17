@@ -643,3 +643,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/splitjoin.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/splitjoin.nvim
 	url = https://github.com/bennypowers/splitjoin.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-regexplainer"]
+	path = home/.local/share/nvim/site/pack/default/opt/nvim-regexplainer
+	url = https://github.com/bennypowers/nvim-regexplainer.git

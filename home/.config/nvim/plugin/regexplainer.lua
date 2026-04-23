@@ -18,7 +18,7 @@ yall.on_bufreadpre(function()
 			})
 
 			map(vim.g.toggle_prefix .. 'x', 'toggle')
-			map('<leader>Xy', 'yank')
+			map('yx', 'yank')
 		end,
 	})
 end)

@@ -327,12 +327,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-notify"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-notify
 	url = https://github.com/rcarriga/nvim-notify.git
-[submodule "home/.local/share/nvim/site/pack/default/start/noice.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/noice.nvim
-	url = https://github.com/folke/noice.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nui.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/nui.nvim
-	url = https://github.com/MunifTanjim/nui.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/nvim-autopairs"]
 	path = home/.local/share/nvim/site/pack/default/start/nvim-autopairs
 	url = https://github.com/windwp/nvim-autopairs.git
@@ -646,3 +640,9 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-regexplainer"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-regexplainer
 	url = https://github.com/bennypowers/nvim-regexplainer.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/tiny-cmdline.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/tiny-cmdline.nvim
+	url = https://github.com/rachartier/tiny-cmdline.nvim
+[submodule "home/.local/share/nvim/site/pack/default/opt/nui.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/nui.nvim
+	url = https://github.com/MunifTanjim/nui.nvim.git

@@ -66,18 +66,17 @@ yall.on_load('lualine', function()
 		end
 	end
 
-	local noice = yall.with('noice')(function()
-		local noice = require('noice')
-		if noice.api.status.mode.has() then
-			return noice.api.status.mode.get()
-		end
-		return ''
-	end)
+	vim.api.nvim_create_autocmd('User', {
+		group = vim.api.nvim_create_augroup('lualine_lsp_progress_augroup', { clear = true }),
+		pattern = 'LspProgressStatusUpdated',
+		callback = function()
+			require('lualine').refresh()
+		end,
+	})
 
 	local progress = yall.with('lsp-progress')(function()
 		return require('lsp-progress').progress()
 	end)
-
 	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227
 	vim.api.nvim_create_autocmd('RecordingEnter', {
 		callback = function()
@@ -142,6 +141,7 @@ yall.on_load('lualine', function()
 			},
 			lualine_c = {
 				progress,
+				vim.ui.progress_status,
 				'g:metals_status',
 				'g:bsp_status',
 				vimtex,
@@ -155,12 +155,11 @@ yall.on_load('lualine', function()
 					end,
 				},
 			},
-			lualine_x = { noice, 'encoding', 'fileformat', 'filetype' },
+			lualine_x = { 'encoding', 'fileformat', 'filetype' },
 			lualine_y = { 'progress' },
 			lualine_z = { 'location' },
 		},
-		extensions = { 'fugitive', 'mason', 'neo-tree', 'oil', 'quickfix', 'trouble' },
+		extensions = { 'fugitive', 'mason', 'neo-tree', 'oil', 'quickfix', 'trouble', 'avante' },
 	})
 end)
-
 yall.very_lazy('lualine')

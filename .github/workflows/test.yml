@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 24.x
       - name: install lua
-        uses: leafo/gh-actions-lua@v12
+        uses: leafo/gh-actions-lua@v13
       - name: install luarocks # mason needs luarocks to intall luacheck
         uses: leafo/gh-actions-luarocks@v6
       - name: deps

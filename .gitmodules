@@ -367,9 +367,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-vtsls"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-vtsls
 	url = https://github.com/yioneko/nvim-vtsls.git
-[submodule "home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim"]
-	path = home/.local/share/nvim/site/pack/default/start/lsp-progress.nvim
-	url = https://github.com/linrongbin16/lsp-progress.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim"]
 	path = home/.local/share/nvim/site/pack/default/start/smear-cursor.nvim
 	url = https://github.com/sphamba/smear-cursor.nvim.git
@@ -646,3 +643,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/nui.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/nui.nvim
 	url = https://github.com/MunifTanjim/nui.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/fidget.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/fidget.nvim
+	url = https://github.com/j-hui/fidget.nvim.git

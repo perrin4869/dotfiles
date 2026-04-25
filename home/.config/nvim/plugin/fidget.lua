@@ -1,0 +1,10 @@
+local yall = require('yall')
+
+yall.setup('fidget')
+yall.pack('fidget', 'fidget.nvim')
+yall.very_lazy('fidget')
+yall.on_load('fidget', function()
+	yall.on_postload('telescope', function()
+		require('telescope').load_extension('fidget')
+	end)
+end)

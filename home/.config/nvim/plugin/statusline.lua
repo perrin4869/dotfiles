@@ -66,17 +66,6 @@ yall.on_load('lualine', function()
 		end
 	end
 
-	vim.api.nvim_create_autocmd('User', {
-		group = vim.api.nvim_create_augroup('lualine_lsp_progress_augroup', { clear = true }),
-		pattern = 'LspProgressStatusUpdated',
-		callback = function()
-			require('lualine').refresh()
-		end,
-	})
-
-	local progress = yall.with('lsp-progress')(function()
-		return require('lsp-progress').progress()
-	end)
 	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227
 	vim.api.nvim_create_autocmd('RecordingEnter', {
 		callback = function()
@@ -140,7 +129,6 @@ yall.on_load('lualine', function()
 				{ 'diagnostics', sources = { 'nvim_diagnostic', 'nvim_lsp' } },
 			},
 			lualine_c = {
-				progress,
 				vim.ui.progress_status,
 				'g:metals_status',
 				'g:bsp_status',

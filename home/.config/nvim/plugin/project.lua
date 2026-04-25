@@ -34,7 +34,7 @@ yall.on_load('project', function()
 		return
 	end
 
-	local root, method = require('project').get_project_root()
+	local root, method = require('project').current_project(true)
 	if not root or not method then
 		return
 	end
@@ -44,7 +44,7 @@ yall.on_load('project', function()
 		return
 	end
 
-	require('project.api').set_pwd(root, method)
+	require('project.core').set_pwd(root, method)
 
 	yall.on_postload('telescope', function()
 		require('telescope').load_extension('projects')

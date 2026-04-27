@@ -30,6 +30,20 @@ yall.on_bufreadpre(function()
 
 			-- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
 			vim.opt_local.foldlevelstart = 99
+
+			local map = require('map').create({
+				buffer = args.buf,
+				desc = 'treeclimber', -- used to be handled by nvim-treeclimber, now on core
+				desc_separator = ': ',
+			})
+
+			map({ 'n', 'x', 'o' }, '<M-j>', vim.fn.maparg('in', 'x', false, true).callback, 'shrink')
+			map({ 'n', 'x', 'o' }, '<M-k>', vim.fn.maparg('an', 'x', false, true).callback, 'parent')
+			map({ 'n', 'x', 'o' }, '<M-h>', vim.fn.maparg('[n', 'x', false, true).callback, 'previous')
+			map({ 'n', 'x', 'o' }, '<M-l>', vim.fn.maparg(']n', 'x', false, true).callback, 'next')
+
+			map({ 'n', 'x', 'o' }, '<M-H>', vim.fn.maparg('[N', 'x', false, true).callback, 'grow backward')
+			map({ 'n', 'x', 'o' }, '<M-L>', vim.fn.maparg(']N', 'x', false, true).callback, 'grow forward')
 		end,
 	})
 end)

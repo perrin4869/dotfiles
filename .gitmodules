@@ -553,9 +553,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/telescope.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/telescope.nvim
 	url = https://github.com/nvim-telescope/telescope.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/nvim-treeclimber"]
-	path = home/.local/share/nvim/site/pack/default/opt/nvim-treeclimber
-	url = https://github.com/Dkendal/nvim-treeclimber.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-dap"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-dap
 	url = https://github.com/mfussenegger/nvim-dap.git

@@ -1,26 +1,26 @@
 -- vim: ft=lua tw=80
 
-max_comment_line_length = 160
+max_comment_line_length = 180
 
-exclude_files = { "home/.local/share/", "home/.vim/undo", "home/.vim/pack" }
+exclude_files = { 'home/.local/share/', 'home/.vim/undo', 'home/.vim/pack' }
 
 -- Rerun tests only if their modification time changed.
 cache = true
 
 -- Global objects defined by the C code
 read_globals = {
-	"vim",
+	'vim',
 }
 
 globals = {
-	"vim.g",
-	"vim.b",
-	"vim.w",
-	"vim.o",
-	"vim.bo",
-	"vim.wo",
-	"vim.go",
-	"vim.env",
-	"vim.opt",
-	"vim.opt_local",
+	'vim.g',
+	'vim.b',
+	'vim.w',
+	'vim.o',
+	'vim.bo',
+	'vim.wo',
+	'vim.go',
+	'vim.env',
+	'vim.opt',
+	'vim.opt_local',
 }

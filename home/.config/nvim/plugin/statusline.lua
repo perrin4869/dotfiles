@@ -115,7 +115,7 @@ yall.on_load('lualine', function()
 				{ 'diagnostics', sources = { 'nvim_diagnostic', 'nvim_lsp' } },
 			},
 			lualine_c = {
-				vim.ui.progress_status,
+				yall.with('ui2')(vim.ui.progress_status),
 				'g:metals_status',
 				'g:bsp_status',
 				vimtex,

@@ -6,4 +6,4 @@ vim.g.tiny_cmdline = {
 }
 yall.pack('tiny-cmdline', 'tiny-cmdline.nvim')
 yall.deps('tiny-cmdline', 'ui2')
-yall.on_bufreadpre('tiny-cmdline')
+yall.on_bufenter('tiny-cmdline')

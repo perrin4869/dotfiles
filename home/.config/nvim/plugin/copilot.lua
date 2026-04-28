@@ -7,7 +7,8 @@ if vim.g.enable_copilot_ls then
 	options.nes = {
 		enabled = true,
 		keymap = {
-			accept_and_goto = '<leader>p',
+			-- accept_and_goto = '<leader>p',
+			accept_and_goto = 'grp',
 			accept = false,
 			dismiss = '<Esc>',
 		},

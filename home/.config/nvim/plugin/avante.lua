@@ -74,6 +74,20 @@ map(
 	end),
 	'create new ask'
 )
+map(
+	prefix .. 'f',
+	with(function()
+		require('avante.api').add_selected_file(vim.api.nvim_buf_get_name(0))
+	end),
+	'add_current_file'
+)
+map(
+	prefix .. 'b',
+	with(function()
+		require('avante.api').add_buffer_files()
+	end),
+	'add_buffer_files'
+)
 
 map(
 	vim.g.toggle_prefix .. 'a',

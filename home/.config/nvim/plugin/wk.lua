@@ -10,6 +10,7 @@ yall.on_load('which-key', function()
 		{ '<leader>f', group = 'format' },
 		{ '<leader>g', group = 'fugitive' },
 		{ '<leader>h', group = 'hunks' },
+		{ '<leader>i', group = 'avante' },
 		{ '<leader>n', group = 'neotree' },
 		{ '<leader>t', group = 'test' },
 		{ '<leader>u', group = 'undotree' },

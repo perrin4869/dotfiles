@@ -33,6 +33,7 @@ yall.setup('neo-tree', {
 	},
 })
 yall.pack('neo-tree', 'neo-tree.nvim')
+yall.deps('neo-tree', 'nui')
 yall.cmd('Neotree', 'neo-tree')
 
 local map = require('map').create({

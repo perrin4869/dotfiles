@@ -33,6 +33,9 @@ yall.setup('avante', {
 		},
 	},
 	providers = {
+		copilot = {
+			model = vim.g.avante_copilot_model or 'claude-sonnet-4.6',
+		},
 		ollama = {
 			model = 'qwen3:8b',
 			is_env_set = with(function()

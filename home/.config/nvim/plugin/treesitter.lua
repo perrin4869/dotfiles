@@ -37,17 +37,44 @@ yall.on_bufreadpre(function()
 				desc_separator = ': ',
 			})
 
-			map({ 'n', 'x', 'o' }, '<M-j>', vim.fn.maparg('in', 'x', false, true).callback, 'shrink')
-			map({ 'n', 'x', 'o' }, '<M-k>', vim.fn.maparg('an', 'x', false, true).callback, 'parent')
-			map({ 'n', 'x', 'o' }, '<M-h>', vim.fn.maparg('[n', 'x', false, true).callback, 'previous')
-			map({ 'n', 'x', 'o' }, '<M-l>', vim.fn.maparg(']n', 'x', false, true).callback, 'next')
+			local function not_available(op)
+				return function()
+					vim.notify(op .. ' is not available for file type ' .. vim.bo[args.buf].ft)
+				end
+			end
 
-			map({ 'n', 'x', 'o' }, '<M-H>', vim.fn.maparg('[N', 'x', false, true).callback or function()
-				vim.notify('grow backward is not available for file type ' .. vim.bo[args.buf].ft)
-			end, 'grow backward')
-			map({ 'n', 'x', 'o' }, '<M-L>', vim.fn.maparg(']N', 'x', false, true).callback or function()
-				vim.notify('grow forward is not available for file type ' .. vim.bo[args.buf].ft)
-			end, 'grow forward')
+			map(
+				{ 'n', 'x', 'o' },
+				'<M-j>',
+				vim.fn.maparg('in', 'x', false, true).callback or not_available('shrink'),
+				'shrink'
+			)
+			map(
+				{ 'n', 'x', 'o' },
+				'<M-k>',
+				vim.fn.maparg('an', 'x', false, true).callback or not_available('parent'),
+				'parent'
+			)
+			map(
+				{ 'n', 'x', 'o' },
+				'<M-h>',
+				vim.fn.maparg('[n', 'x', false, true).callback or not_available('previous'),
+				'previous'
+			)
+			map({ 'n', 'x', 'o' }, '<M-l>', vim.fn.maparg(']n', 'x', false, true).callback or not_available('next'), 'next')
+
+			map(
+				{ 'n', 'x', 'o' },
+				'<M-H>',
+				vim.fn.maparg('[N', 'x', false, true).callback or not_available('grow backward'),
+				'grow backward'
+			)
+			map(
+				{ 'n', 'x', 'o' },
+				'<M-L>',
+				vim.fn.maparg(']N', 'x', false, true).callback or not_available('grow forward'),
+				'grow forward'
+			)
 		end,
 	})
 end)

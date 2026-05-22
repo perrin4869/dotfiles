@@ -31,50 +31,22 @@ yall.on_bufreadpre(function()
 			-- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
 			vim.opt_local.foldlevelstart = 99
 
-			local map = require('map').create({
-				buffer = args.buf,
-				desc = 'treeclimber', -- used to be handled by nvim-treeclimber, now on core
-				desc_separator = ': ',
-			})
-
-			local function not_available(op)
-				return function()
-					vim.notify(op .. ' is not available for file type ' .. vim.bo[args.buf].ft)
-				end
+			local function map_treeclimber(lhs, builtin_mapping, desc)
+				require('map').map(
+					{ 'n', 'x', 'o' },
+					lhs,
+					vim.fn.maparg(builtin_mapping, 'x', false, true).callback,
+					{ buffer = args.buf, desc = 'treeclimber: ' .. desc }
+				)
 			end
 
-			map(
-				{ 'n', 'x', 'o' },
-				'<M-j>',
-				vim.fn.maparg('in', 'x', false, true).callback or not_available('shrink'),
-				'shrink'
-			)
-			map(
-				{ 'n', 'x', 'o' },
-				'<M-k>',
-				vim.fn.maparg('an', 'x', false, true).callback or not_available('parent'),
-				'parent'
-			)
-			map(
-				{ 'n', 'x', 'o' },
-				'<M-h>',
-				vim.fn.maparg('[n', 'x', false, true).callback or not_available('previous'),
-				'previous'
-			)
-			map({ 'n', 'x', 'o' }, '<M-l>', vim.fn.maparg(']n', 'x', false, true).callback or not_available('next'), 'next')
+			map_treeclimber('<M-j>', 'in', 'shrink')
+			map_treeclimber('<M-k>', 'an', 'parent')
+			map_treeclimber('<M-h>', '[n', 'previous')
+			map_treeclimber('<M-l>', ']n', 'next')
 
-			map(
-				{ 'n', 'x', 'o' },
-				'<M-H>',
-				vim.fn.maparg('[N', 'x', false, true).callback or not_available('grow backward'),
-				'grow backward'
-			)
-			map(
-				{ 'n', 'x', 'o' },
-				'<M-L>',
-				vim.fn.maparg(']N', 'x', false, true).callback or not_available('grow forward'),
-				'grow forward'
-			)
+			map_treeclimber('<M-H>', '[N', 'grow backward')
+			map_treeclimber('<M-L>', ']N', 'grow forward')
 		end,
 	})
 end)

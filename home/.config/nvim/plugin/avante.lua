@@ -51,6 +51,14 @@ yall.setup('avante', {
 				max_tokens = 20480,
 			},
 		},
+		-- https://github.com/deepseek-ai/awesome-deepseek-integration/blob/main/docs/avante.nvim/README.md
+		deepseek = {
+			__inherited_from = 'openai',
+			api_key_name = os.getenv('DEEPSEEK_API_KEY'),
+			endpoint = 'https://api.deepseek.com',
+			model = vim.g.avante_deepseek_model or 'deepseek-coder',
+			max_tokens = 8192,
+		},
 	},
 })
 

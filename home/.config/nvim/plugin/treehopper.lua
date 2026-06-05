@@ -2,7 +2,7 @@ local yall = require('yall')
 yall.pack('tsht', 'nvim-treehopper')
 yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
-		pattern = require('nvim-treesitter').get_installed(),
+		pattern = require('treesitter').get_installed(),
 		callback = function(args)
 			local map = require('map').create({
 				desc = 'treehopper',

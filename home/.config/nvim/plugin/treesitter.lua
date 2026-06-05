@@ -13,7 +13,7 @@ end
 
 yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
-		pattern = require('nvim-treesitter').get_installed(),
+		pattern = require('treesitter').get_installed(),
 		callback = function(args)
 			vim.cmd.packadd('nvim-treesitter-endwise')
 			vim.cmd.packadd('nvim-treesitter-context')

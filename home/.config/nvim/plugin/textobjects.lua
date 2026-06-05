@@ -36,7 +36,7 @@ yall.on_bufreadpost('nvim-treesitter-textobjects')
 
 yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
-		pattern = require('nvim-treesitter').get_installed(),
+		pattern = require('treesitter').get_installed(),
 		callback = function(args)
 			local next_move = require('nvim-next.move')
 			local move = require('nvim-treesitter-textobjects.move')

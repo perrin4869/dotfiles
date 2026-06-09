@@ -37,7 +37,8 @@ yall.setup('avante', {
 			model = vim.g.avante_copilot_model or 'claude-sonnet-4.6',
 		},
 		ollama = {
-			model = 'qwen3:8b',
+			-- model = 'qwen3:8b',
+			model = vim.g.avante_ollama_model or 'gemma4:12b',
 			is_env_set = with(function()
 				return require('avante.providers.ollama').check_endpoint_alive()
 			end),
@@ -106,6 +107,14 @@ map(
 		require('avante.api').toggle()
 	end),
 	'toggle'
+)
+
+map(
+	prefix .. 'd',
+	with(function()
+		require('avante').toggle.debug()
+	end),
+	'toggle.debug'
 )
 
 vim

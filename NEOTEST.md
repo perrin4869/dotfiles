@@ -51,7 +51,7 @@ vim.g.test_get_adapters = function(root)
 end
 ```
 
-Note: if `vim.g.test_root` is not set, we will default to using either the output of `require('project').get_project_root()` or `vim.fn.getcwd()` as fallbacks.
+Note: if `vim.g.test_root` is not set, we will default to using either the output of `require('project').current_root()` or `vim.fn.getcwd()` as fallbacks.
 
 ## 2. Monorepo Services (Mocha + NPM Workspaces)
 **Structure:** `services/{service_name}/.../{file}.{spec|integration|e2e}.ts`\

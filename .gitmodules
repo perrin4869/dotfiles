@@ -643,3 +643,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/fidget.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/fidget.nvim
 	url = https://github.com/j-hui/fidget.nvim.git
+[submodule "home/.local/share/nvim/site/pack/default/opt/async.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/async.nvim
+	url = https://github.com/lewis6991/async.nvim.git

@@ -16,7 +16,7 @@ if vim.g.test_get_adapters then
 
 	yall.on_postload('neotest', function()
 		-- hint: set vim.g.test_root to vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ':h') in .nvim.lua is the safest option
-		local root = vim.g.test_root or yall.require('project').get_project_root() or vim.fn.getcwd()
+		local root = vim.g.test_root or yall.require('project').current_root() or vim.fn.getcwd()
 
 		--- @diagnostic disable-next-line: missing-fields
 		require('neotest').setup_project(root, {

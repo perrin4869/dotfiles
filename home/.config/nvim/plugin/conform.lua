@@ -6,7 +6,7 @@ yall.on_load('conform', function()
 	local json = { 'prettierd', 'prettier', stop_after_first = true }
 	local js = function(bufnr)
 		local root_markers = require('root_markers')
-		local project_root, _ = require('project').get_project_root()
+		local project_root = require('project').current_root()
 
 		if project_root and root_markers.has_marker(bufnr, project_root, root_markers.markers.eslint()) then
 			return { 'eslint_d' }

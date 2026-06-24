@@ -61,26 +61,26 @@ jobs:
           # version: v0.11.3
           version: nightly
       - name: cache cargo
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
           key: ${{ runner.os }}-cargo-${{ hashFiles('.git/modules/deps/atuin/HEAD', '.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
       - name: cache atuin
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             deps/atuin/target
           key: ${{ runner.os }}-atuin-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
       - name: cache ccls
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             deps/ccls/Release
           key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
       - name: cache difftastic
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target

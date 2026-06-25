@@ -103,6 +103,9 @@ no <s-up> ddkP
 " nnoremap <C-b> <C-b>zz
 set scrolloff=999 " this is more reliable than calling zz after move operations
 
+" https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
+set foldlevelstart=99
+
 " see CTRL-^
 " see help expand (or run :echo expand("#"))
 " # is the alternate file name

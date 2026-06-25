@@ -28,9 +28,6 @@ yall.on_bufreadpre(function()
 				vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end
 
-			-- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
-			vim.opt_local.foldlevelstart = 99
-
 			local function map_treeclimber(lhs, builtin_mapping, desc)
 				require('map').map(
 					{ 'n', 'x', 'o' },

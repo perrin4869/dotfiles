@@ -8,7 +8,7 @@ if provider == 'copilot' then
 end
 yall.deps('avante', deps)
 local with = yall.with('avante')
-yall.setup('avante', {
+local config = {
 	-- add any opts here
 	-- this file can contain specific instructions for your project
 	instructions_file = 'avante.md',
@@ -45,7 +45,7 @@ yall.setup('avante', {
 		},
 		claude = {
 			endpoint = 'https://api.anthropic.com',
-			model = 'claude-sonnet-4-20250514',
+			model = vim.g.avante_claude_model or 'claude-sonnet-4-20250514',
 			timeout = 30000, -- Timeout in milliseconds
 			extra_request_body = {
 				temperature = 0.75,
@@ -61,7 +61,12 @@ yall.setup('avante', {
 			max_tokens = 8192,
 		},
 	},
-})
+}
+if vim.g.avante_claude_auth_type then
+	-- default is 'api' and requires an api key, for 'pro', 'max' or 'teams' accounts use 'max' auth type
+	config.providers.claude.auth_type = vim.g.avante_claude_auth_type
+end
+yall.setup('avante', config)
 
 local map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = 'n' })
 local prefix = '<leader>i'

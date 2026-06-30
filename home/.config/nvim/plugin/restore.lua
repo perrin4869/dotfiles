@@ -18,6 +18,8 @@ vim.api.nvim_create_autocmd('QuitPre', {
 				table.insert(restore_wins, w)
 			elseif ft == '' and vim.api.nvim_buf_get_name(bufnr) == '' then
 				table.insert(ignore_wins, w)
+			elseif vim.bo[bufnr].buftype == 'terminal' then
+				table.insert(ignore_wins, w)
 			elseif vim.api.nvim_win_get_config(w).relative ~= '' then
 				table.insert(floating_wins, w)
 			end

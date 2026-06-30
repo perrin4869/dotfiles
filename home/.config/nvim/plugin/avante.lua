@@ -1,8 +1,7 @@
 local yall = require('yall')
 local provider = vim.g.avante_provider
-yall.pack('dressing', 'dressing.nvim')
 yall.pack('avante', 'avante.nvim')
-local deps = { 'telescope', 'cmp', 'dressing' }
+local deps = { 'telescope', 'cmp' }
 if provider == 'copilot' then
 	table.insert(deps, 'copilot')
 end
@@ -16,9 +15,6 @@ local config = {
 		-- https://github.com/yetone/avante.nvim/issues/1048
 		auto_suggestions = provider ~= 'copilot',
 		auto_set_keymaps = false,
-	},
-	input = {
-		provider = 'dressing',
 	},
 	-- for example
 	provider = provider or 'ollama',

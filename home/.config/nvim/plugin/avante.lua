@@ -16,6 +16,9 @@ local config = {
 		auto_suggestions = provider ~= 'copilot',
 		auto_set_keymaps = false,
 	},
+	input = {
+		provider = 'snacks',
+	},
 	-- for example
 	provider = provider or 'ollama',
 	acp_providers = {

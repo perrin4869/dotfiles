@@ -23,15 +23,39 @@ vim
 		yall.cmd('ClaudeCode' .. cmd, 'claudecode')
 	end)
 
-local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ', mode = 'n' })
+local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' })
 local prefix = '<leader>C'
-map(prefix .. 'r', function()
-	vim.cmd.ClaudeCode('--resume')
-end, 'resume')
-map(prefix .. 'b', function()
-	vim.cmd.ClaudeCodeAdd('%')
-end, 'focus')
+local claude = function(cmd, args)
+	if type(cmd) == 'table' then
+		args = cmd
+		cmd = ''
+	else
+		cmd = cmd or ''
+		args = args or {}
+	end
 
-map(vim.g.toggle_prefix .. 'c', function()
+	return function()
+		vim.cmd['ClaudeCode' .. cmd](unpack(args))
+	end
+end
+map('n', prefix .. 'c', claude(), 'toggle')
+map('n', prefix .. 'f', claude('Focus'), 'focus')
+map('n', prefix .. 'r', claude({ '--resume' }), 'resume')
+map('n', prefix .. 'C', claude({ '--continue' }), 'continue')
+map('n', prefix .. 'm', claude('SelectModel'), 'select_model')
+map('n', prefix .. 'b', claude('Add', { '%' }), 'add_current_buffer')
+map('v', prefix .. 's', claude('Send'), 'send')
+map('n', prefix .. 'a', claude('DiffAccept'), 'accept_diff')
+map('n', prefix .. 'd', claude('DiffDeny'), 'deny_diff')
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = vim.api.nvim_create_augroup('claudecode_mappings', { clear = true }),
+	pattern = { 'NvimTree', 'neo-tree', 'oil', 'minifiles', 'netrw', 'snacks_picker_list' },
+	callback = function(args)
+		map('n', prefix .. 's', claude('TreeAdd'), { desc = 'add_file', buffer = args.buf })
+	end,
+})
+
+map('n', vim.g.toggle_prefix .. 'c', function()
 	vim.cmd.ClaudeCode()
 end, 'toggle')

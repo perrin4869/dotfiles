@@ -6,6 +6,7 @@ yall.on_load('which-key', function()
 	wk.add({
 		{ '<leader>b', group = 'buffers' },
 		{ '<leader>c', group = 'osc52' },
+		{ '<leader>C', group = 'claudecode' },
 		{ '<leader>d', group = 'dap' },
 		{ '<leader>f', group = 'format' },
 		{ '<leader>g', group = 'fugitive' },

@@ -77,26 +77,54 @@ run_guarded picom -b ${PICOM_VSYNC:-}
 # if autorandr-launcher is installed (presumably because udev was not) then daemonize
 run_guarded autorandr-launcher --daemonize
 
-# if pipewire in available in the system, enable it
-if have pipewire; then
+# if pipewire is available and not already running (e.g. via /etc/profile.d/pipewire.sh
+# on Slackware, or systemd user services elsewhere), start it as a fallback.
+# Test pipewire's own lockfile (the same one it uses internally to refuse a second
+# instance - see pipewire's "unable to lock lockfile ... maybe another daemon is
+# running" error) rather than matching on process name, which is fragile.
+# Bail if PulseAudio is already in charge (autospawn, or already running per its
+# own --check flag), to avoid pipewire-pulse fighting it for the same socket.
+PIPEWIRE_LOCK="${XDG_RUNTIME_DIR:-/tmp}/pipewire-0.lock"
+if have pipewire \
+  && ! grep -q '^autospawn *= *yes' /etc/pulse/client.conf 2>/dev/null \
+  && ! (have pulseaudio && pulseaudio --check 2>/dev/null) \
+  && flock -n "$PIPEWIRE_LOCK" true 2>/dev/null; then
   INIT=$(ps --no-headers -o comm 1)
   if [[ "$INIT" != "systemd" ]]; then
     # on slackware we don't use systemd, so enable logging explicitly
     export PIPEWIRE_LOG=~/.pipewire.log
   fi
 
-  pipewire &
-  pipewire-pulse &
+  # setsid: detach from this session so a later SIGHUP (X crash, logout) can't
+  # take pipewire and friends down with it.
+  setsid pipewire &
 
-  if have wireplumber; then
-    log "pipewire session manager: running wireplumber"
-    wireplumber &
-  elif have pipewire-media-session; then
-    log "pipewire session manager: running pipewire-media-session"
-    pipewire-media-session &
-  else
-    log "pipewire session manager: not found"
-  fi
+  ( # wait for pipewire's own socket before starting its dependents, instead of
+    # racing all three at once - same class of fix applied to the system's own
+    # /etc/profile.d/pipewire.sh, which used to race inotifywait against pipewire's
+    # own startup.
+    timeout=100
+    while [ $timeout -gt 0 ]; do
+      [ -S "${XDG_RUNTIME_DIR:-/tmp}/pipewire-0" ] && break
+      sleep 0.2
+      timeout=$((timeout - 1))
+    done
+
+    if [ "$timeout" -eq 0 ]; then
+      log "ERROR: pipewire socket did not appear within 20s, not starting pipewire-pulse/wireplumber"
+    else
+      setsid pipewire-pulse &
+      if have wireplumber; then
+        log "pipewire session manager: running wireplumber"
+        setsid wireplumber &
+      elif have pipewire-media-session; then
+        log "pipewire session manager: running pipewire-media-session"
+        setsid pipewire-media-session &
+      else
+        log "pipewire session manager: not found"
+      fi
+    fi
+  ) &
 fi
 
 if [[ -e "/etc/slackware-version" ]]; then

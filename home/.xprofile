@@ -95,9 +95,10 @@ if have pipewire \
     export PIPEWIRE_LOG=~/.pipewire.log
   fi
 
-  # setsid: detach from this session so a later SIGHUP (X crash, logout) can't
-  # take pipewire and friends down with it.
-  setsid pipewire &
+  # deliberately no setsid here: this is a fallback scoped to this X session
+  # (only runs because nothing else already claimed pipewire), so it should
+  # live and die with it, not outlive it as an orphaned, detached process.
+  pipewire &
 
   ( # wait for pipewire's own socket before starting its dependents, instead of
     # racing all three at once - same class of fix applied to the system's own
@@ -113,13 +114,13 @@ if have pipewire \
     if [ "$timeout" -eq 0 ]; then
       log "ERROR: pipewire socket did not appear within 20s, not starting pipewire-pulse/wireplumber"
     else
-      setsid pipewire-pulse &
+      pipewire-pulse &
       if have wireplumber; then
         log "pipewire session manager: running wireplumber"
-        setsid wireplumber &
+        wireplumber &
       elif have pipewire-media-session; then
         log "pipewire session manager: running pipewire-media-session"
-        setsid pipewire-media-session &
+        pipewire-media-session &
       else
         log "pipewire session manager: not found"
       fi

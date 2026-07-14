@@ -4,6 +4,7 @@ yall.on_load('conform', function()
 	local conform = require('conform')
 
 	local json = { 'prettierd', 'prettier', stop_after_first = true }
+	local yaml = { 'eslint_d', 'prettierd', 'prettier', stop_after_first = true }
 	local js = function(bufnr)
 		local root_markers = require('root_markers')
 		local project_root = require('project').current_root()
@@ -24,6 +25,7 @@ yall.on_load('conform', function()
 			-- Use a sub-list to run only the first available formatter
 			json = json,
 			jsonc = json,
+			yaml = yaml,
 			kotlin = { lsp_format = 'never' },
 			['_'] = { 'trim_whitespace', lsp_format = 'prefer' },
 		},

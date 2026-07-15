@@ -34,7 +34,7 @@ jobs:
           toolchain: stable
           override: true
       - name: install node.js # various dependencies
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24.x
       - name: install lua

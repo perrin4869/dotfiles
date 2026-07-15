@@ -2,7 +2,8 @@ local M = {}
 
 ---@type table<string, boolean>
 local fts = { qf = true }
----@type table<string, fun(): nil>
+---@alias restore.matcher string|fun(bufnr: integer, bufname: string): boolean
+---@type table<restore.matcher, fun(): nil>
 local matches = {}
 
 --- @param ft string
@@ -15,7 +16,7 @@ function M.ft(ft)
 	return fts[ft]
 end
 
---- @param match string
+--- @param match restore.matcher a Lua pattern matched against bufname, or a predicate given (bufnr, bufname)
 --- @param restore (fun(): nil)|nil
 function M.add_buf_match(match, restore)
 	matches[match] = restore or function() end
@@ -30,7 +31,8 @@ function M.restore()
 		local bufname = vim.api.nvim_buf_get_name(bufnr)
 		if
 			not vim.iter(matches):any(function(m, r)
-				if bufname:match(m) ~= nil then
+				local is_match = type(m) == 'function' and m(bufnr, bufname) or bufname:match(m) ~= nil
+				if is_match then
 					vim.api.nvim_win_close(w, true)
 					vim.api.nvim_buf_delete(bufnr, { force = true })
 					r()

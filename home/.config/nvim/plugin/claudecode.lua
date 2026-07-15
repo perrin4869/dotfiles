@@ -59,3 +59,23 @@ vim.api.nvim_create_autocmd('FileType', {
 map('n', vim.g.toggle_prefix .. 'c', function()
 	vim.cmd.ClaudeCode()
 end, 'toggle')
+
+-- a naive session restore recreates the claude terminal as a dumb shell
+-- buffer instead of a proper claudecode.nvim terminal, so close it and
+-- reopen it properly instead.
+-- match on the terminal's actual argv (not the bufname, which embeds the
+-- cwd and could false-positive e.g. inside a directory named "claude-*")
+require('restore').add_buf_match(function(bufnr)
+	if vim.bo[bufnr].buftype ~= 'terminal' then
+		return false
+	end
+	local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
+	if not ok or not chan_info.argv then
+		return false
+	end
+	return vim.iter(chan_info.argv):any(function(a)
+		return vim.fs.basename(a) == 'claude'
+	end)
+end, function()
+	vim.cmd.ClaudeCodeOpen()
+end)

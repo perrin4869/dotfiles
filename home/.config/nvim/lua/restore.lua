@@ -31,7 +31,12 @@ function M.restore()
 		local bufname = vim.api.nvim_buf_get_name(bufnr)
 		if
 			not vim.iter(matches):any(function(m, r)
-				local is_match = type(m) == 'function' and m(bufnr, bufname) or bufname:match(m) ~= nil
+				local is_match
+				if type(m) == 'function' then
+					is_match = m(bufnr, bufname)
+				else
+					is_match = bufname:match(m) ~= nil
+				end
 				if is_match then
 					vim.api.nvim_win_close(w, true)
 					vim.api.nvim_buf_delete(bufnr, { force = true })

@@ -25,6 +25,20 @@ vim
 
 local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' })
 local prefix = '<leader>C'
+
+--- @param bufnr integer
+local function is_claude_terminal(bufnr)
+	if vim.bo[bufnr].buftype ~= 'terminal' then
+		return false
+	end
+	local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
+	if not ok or not chan_info.argv then
+		return false
+	end
+	return vim.iter(chan_info.argv):any(function(a)
+		return vim.fs.basename(a) == 'claude'
+	end)
+end
 local claude = function(cmd, args)
 	if type(cmd) == 'table' then
 		args = cmd
@@ -65,17 +79,18 @@ end, 'toggle')
 -- reopen it properly instead.
 -- match on the terminal's actual argv (not the bufname, which embeds the
 -- cwd and could false-positive e.g. inside a directory named "claude-*")
-require('restore').add_buf_match(function(bufnr)
-	if vim.bo[bufnr].buftype ~= 'terminal' then
-		return false
-	end
-	local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
-	if not ok or not chan_info.argv then
-		return false
-	end
-	return vim.iter(chan_info.argv):any(function(a)
-		return vim.fs.basename(a) == 'claude'
-	end)
-end, function()
+require('restore').add_buf_match(is_claude_terminal, function()
 	vim.cmd.ClaudeCodeOpen()
 end)
+
+-- <C-o> is kept as plain exit-to-Normal-mode (e.g. to paste register contents),
+-- so use a separate key to leave the claude terminal and refocus the
+-- previous window in one step
+vim.api.nvim_create_autocmd('TermOpen', {
+	callback = function(args)
+		if not is_claude_terminal(args.buf) then
+			return
+		end
+		map('t', '<C-q>', '<C-\\><C-n><C-w>p', { buffer = args.buf, desc = 'unfocus' })
+	end,
+})

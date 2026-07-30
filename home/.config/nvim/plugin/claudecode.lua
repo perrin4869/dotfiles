@@ -58,7 +58,7 @@ map('n', prefix .. 'r', claude({ '--resume' }), 'resume')
 map('n', prefix .. 'C', claude({ '--continue' }), 'continue')
 map('n', prefix .. 'm', claude('SelectModel'), 'select_model')
 map('n', prefix .. 'b', claude('Add', { '%' }), 'add_current_buffer')
-map('v', prefix .. 's', claude('Send'), 'send')
+map('v', prefix, claude('Send'), 'send')
 map('n', prefix .. 'a', claude('DiffAccept'), 'accept_diff')
 map('n', prefix .. 'd', claude('DiffDeny'), 'deny_diff')
 

@@ -1,6 +1,12 @@
 local yall = require('yall')
 yall.pack('claudecode', 'claudecode.nvim')
-yall.setup('claudecode')
+yall.setup('claudecode', { -- https://github.com/coder/claudecode.nvim/pull/308/changes
+	diff_opts = {
+		-- also returns focus to the terminal after a same-tab diff is
+		-- accepted/rejected, not just when it opens
+		keep_terminal_focus = true,
+	},
+})
 
 vim
 	.iter({
@@ -27,7 +33,7 @@ local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' }
 local prefix = '<leader>C'
 
 --- @param bufnr integer
-local function is_claude_terminal(bufnr)
+local function is_claude_terminal(bufnr) -- https://github.com/coder/claudecode.nvim/pull/202/changes
 	if vim.bo[bufnr].buftype ~= 'terminal' then
 		return false
 	end

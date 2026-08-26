@@ -136,7 +136,7 @@ avante_target = $(addprefix $(AVANTE_ROOT)/lua/,avante_html2md.so  avante_repo_m
 $(eval $(call git_submodule,avante,$(AVANTE_ROOT)))
 $(avante_target): $(avante_head_file)
 	$(call require,cargo)
-	( cd $(AVANTE_ROOT) && bash ./build.sh )
+	$(MAKE) -C $(AVANTE_ROOT)
 	@touch $(avante_target)
 avante: $(avante_target)
 

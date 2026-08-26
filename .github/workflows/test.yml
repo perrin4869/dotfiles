@@ -28,6 +28,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           submodules: recursive
+          # full history + tags for the superproject and submodules, so builds that rely on
+          # `git describe --tags` (e.g. deps/ccls, or a submodule's own build tooling) behave
+          # the same as a real local clone instead of depending on shallow-clone shape
+          fetch-depth: 0
       - name: install rust toolchain
         uses: actions-rs/toolchain@v1 # atuin
         with:

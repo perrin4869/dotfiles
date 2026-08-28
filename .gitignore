@@ -19,6 +19,9 @@ home/.local/share/nvim/project_nvim/
 home/.local/share/nvim/mason/
 home/.local/share/nvim/neo-tree.nvim.log
 
+# local, untracked package root for in-development nvim plugins (see init.lua)
+home/.local/share/nvim/site-local/
+
 # treesitter
 home/.local/share/nvim/site/parser-info/
 home/.local/share/nvim/site/parser/

@@ -84,3 +84,11 @@ user_pref("browser.tabs.insertAfterCurrent", true);
 user_pref("zen.theme.content-element-separation", 0);
 user_pref("zen.view.experimental-force-window-controls-left", true);
 ```
+
+### uBlock Origin Filters
+
+Custom uBlock Origin filters ("My filters") are declared in [`home/.mozilla/native-messaging-hosts/uBlock0@raymondhill.net.json`](home/.mozilla/native-messaging-hosts/uBlock0@raymondhill.net.json), which `stow` links to `~/.mozilla/native-messaging-hosts/uBlock0@raymondhill.net.json`. This is Firefox's [managed storage](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/managed) native-manifest mechanism (requires uBlock Origin 1.33.0+): on startup, uBlock reads this file and applies `data.toOverwrite.filters` to its own "My filters" pane, so no manual dashboard/import step is required in either browser profile. Because `Vendor=Mozilla` in Zen's `application.ini`, Zen shares the same `~/.mozilla/native-messaging-hosts` directory as regular Firefox, so this applies to any Mozilla-vendor profile with uBlock Origin installed.
+
+Notes:
+- A full browser restart is required to pick up changes to this file.
+- `toOverwrite` fully replaces the "My filters" pane content on every launch, so any filters added manually through the uBlock UI will be reverted on restart — treat this file as the source of truth and edit it instead.

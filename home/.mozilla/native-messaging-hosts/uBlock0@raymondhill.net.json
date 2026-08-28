@@ -1,0 +1,13 @@
+{
+  "name": "uBlock0@raymondhill.net",
+  "description": "uBlock Origin custom filters, managed via dotfiles",
+  "type": "storage",
+  "data": {
+    "toOverwrite": {
+      "filters": [
+        "! playback state",
+        "@@/api/tracking$domain=patreon.com"
+      ]
+    }
+  }
+}

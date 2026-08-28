@@ -50,6 +50,7 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `spot`
 - `zen`
 - `difftastic`
+- `gh` (used for git credential authentication over HTTPS)
 - `joystickwake` (optionally requires `python-dbus-fast` and `python-xlib` when running under X11)
 - `helvum`
 - `logrotate`

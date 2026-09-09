@@ -1,0 +1,60 @@
+#!/bin/sh
+# redshift hook: dim the backlight along with the day/night cycle, via acpilight's
+# xbacklight (see deps/acpilight, README). Portable across machines: acpilight
+# enumerates both native ACPI panels (/sys/class/backlight/<panel>) and, once the
+# ddcci-driver-linux kernel module is loaded, DDC/CI-controlled external monitors
+# (/sys/class/backlight/ddcci*) under the same interface.
+#
+# Called by redshift as: backlight period-changed <old-period> <new-period>
+set -u
+
+brightness_day=70
+brightness_transition=50
+brightness_night=30
+# redshift sets period to "none" (and fires this same period-changed hook)
+# when disabled via SIGUSR1/the redshift-gtk tray toggle, alongside resetting
+# color settings to neutral -- restore full brightness to match.
+brightness_default=100
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+have xbacklight || exit 0
+
+case "${3:-}" in
+	daytime) brightness=$brightness_day ;;
+	transition) brightness=$brightness_transition ;;
+	night) brightness=$brightness_night ;;
+	none) brightness=$brightness_default ;;
+	*) exit 0 ;;
+esac
+
+# Only look at actual display backlights, never acpilight's /sys/class/leds
+# fallback (keyboard/capslock/etc. LEDs) -- on a machine with no backlight
+# device at all, xbacklight's "first controller found" default would otherwise
+# silently target one of those instead of a screen and fail or do the wrong
+# thing. No backlight device present (e.g. ddcci-driver-linux not loaded
+# yet): nothing to do.
+backlight_ctrls=$(ls /sys/class/backlight 2>/dev/null) || exit 0
+[ -n "$backlight_ctrls" ] || exit 0
+
+# Prefer a ddcci-exposed external monitor (desktop) when present; on machines
+# with no ddcci device (e.g. a laptop's native panel only), fall through to
+# xbacklight's own default controller, which is safe here since we already
+# confirmed at least one /sys/class/backlight entry exists. Matched via
+# `case`, not `grep ddcci*`, so it never risks shell pathname expansion
+# against files in the current directory.
+ctrl=
+for name in $backlight_ctrls; do
+	case "$name" in
+		ddcci*)
+			ctrl=$name
+			break
+			;;
+	esac
+done
+
+if [ -n "$ctrl" ]; then
+	xbacklight -ctrl "$ctrl" -set "$brightness"
+else
+	xbacklight -set "$brightness"
+fi

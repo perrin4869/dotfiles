@@ -37,24 +37,21 @@ esac
 backlight_ctrls=$(ls /sys/class/backlight 2>/dev/null) || exit 0
 [ -n "$backlight_ctrls" ] || exit 0
 
-# Prefer a ddcci-exposed external monitor (desktop) when present; on machines
-# with no ddcci device (e.g. a laptop's native panel only), fall through to
+# Set every ddcci-exposed external monitor (a desktop may have several,
+# independently registered per i2c bus -- see README); on machines with no
+# ddcci device at all (e.g. a laptop's native panel only), fall through to
 # xbacklight's own default controller, which is safe here since we already
 # confirmed at least one /sys/class/backlight entry exists. Matched via
 # `case`, not `grep ddcci*`, so it never risks shell pathname expansion
 # against files in the current directory.
-ctrl=
+found_ddcci=0
 for name in $backlight_ctrls; do
 	case "$name" in
 		ddcci*)
-			ctrl=$name
-			break
+			xbacklight -ctrl "$name" -set "$brightness"
+			found_ddcci=1
 			;;
 	esac
 done
 
-if [ -n "$ctrl" ]; then
-	xbacklight -ctrl "$ctrl" -set "$brightness"
-else
-	xbacklight -set "$brightness"
-fi
+[ "$found_ddcci" -eq 1 ] || xbacklight -set "$brightness"

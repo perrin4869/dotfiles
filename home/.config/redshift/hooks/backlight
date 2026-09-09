@@ -8,7 +8,7 @@
 # Called by redshift as: backlight period-changed <old-period> <new-period>
 set -u
 
-brightness_day=100
+brightness_day=70
 brightness_transition=50
 brightness_night=30
 # redshift sets period to "none" (and fires this same period-changed hook)

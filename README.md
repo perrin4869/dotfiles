@@ -61,7 +61,6 @@ In addition, the following third-party system dependencies are assumed to be pre
 On Slackware systems, the following additional dependency is optional:
 
 - `sun`
-  (also requires your user to be in the `video` group)
 
 ## Installation
 
@@ -135,3 +134,4 @@ Two things the build here deliberately does *not* automate, since they require r
   sudo install -vCDt /etc/udev/rules.d deps/acpilight/90-backlight.rules
   sudo udevadm trigger -s backlight -c add
   ```
+  (also requires your user to be in the `video` group)

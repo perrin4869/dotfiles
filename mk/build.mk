@@ -45,6 +45,13 @@ $(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
 
+.PHONY: acpilight
+acpilight_target = $(ACPILIGHT_ROOT)/xbacklight
+$(eval $(call git_submodule,acpilight,$(ACPILIGHT_ROOT)))
+# no build step - just ensure submodule
+$(acpilight_target): $(acpilight_head_file)
+acpilight: $(acpilight_target)
+
 i3status-config-template := home/.config/i3status/config.template
 i3status-config          := home/.config/i3status/config
 amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
@@ -292,6 +299,7 @@ logrotate: $(logrotate_target)
 TARGETS = \
 	mpv-mpris \
 	xwinwrap \
+	acpilight \
 	ccls \
 	fzf \
 	fzy \

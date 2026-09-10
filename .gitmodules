@@ -646,3 +646,7 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/snacks.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/snacks.nvim
 	url = https://github.com/folke/snacks.nvim.git
+[submodule "deps/acpilight"]
+	path = deps/acpilight
+	url = https://gitlab.com/wavexx/acpilight
+	ignore = untracked

@@ -104,7 +104,7 @@ Controlling an external/desktop monitor's brightness this way additionally requi
 
 Two things the build here deliberately does *not* automate, since they require root and are one-time system setup rather than per-user dotfiles (udev rules in particular are inherently system-wide -- there's no per-user rules directory or per-user udev daemon, so this can't be moved into the unprivileged `home`/stow flow no matter what):
 
-- **Registering each monitor's DDC/CI device**, since `ddcci-driver-linux` doesn't autodetect monitors on its own -- it needs the main device (address `0x37`) added manually per i2c bus. Add to `/etc/rc.d/rc.local` (bus resolved dynamically per DRM connector, since i2c adapter numbers aren't guaranteed stable across reboots/driver updates; adjust the `card0-*` glob to match which GPU your monitors are on):
+- **Registering each monitor's DDC/CI device**, since `ddcci-driver-linux` doesn't autodetect monitors on its own -- it needs the main device (address `0x37`) added manually per i2c bus. Add to `/etc/rc.d/rc.local` (bus resolved dynamically per DRM connector, since i2c adapter numbers aren't guaranteed stable across reboots/driver updates; adjust the `card0-*` glob to match which GPU your monitors are on). The loop itself is backgrounded (`( ... ) &`): writing to `new_device` is a synchronous sysfs call that blocks until the driver's real I2C handshake with that monitor finishes, so doing this for several monitors serially and un-backgrounded measurably slows down boot -- `modprobe` alone is instant and doesn't need it, only the per-monitor loop does:
   ```sh
   /sbin/modprobe ddcci-backlight
 
@@ -114,20 +114,22 @@ Two things the build here deliberately does *not* automate, since they require r
   # legacy adapter that can't complete the full DDC/CI handshake. HDMI
   # connectors have no such split -- their `ddc` symlink is the only (and
   # correct) adapter.
-  for conn in /sys/class/drm/card0-*/; do
-    [ "$(cat "$conn/status" 2>/dev/null)" = "connected" ] || continue
-    direct=$(ls -d "$conn"i2c-* 2>/dev/null | head -1)
-    if [ -n "$direct" ]; then
-      ddc_bus=$(basename "$direct")
-    else
-      ddc_link="$conn/ddc"
-      [ -e "$ddc_link" ] || continue
-      ddc_bus=$(basename "$(readlink -f "$ddc_link")")
-    fi
-    bus_num=${ddc_bus#i2c-}
-    [ -e "/sys/bus/ddcci/devices/ddcci$bus_num" ] && continue
-    echo ddcci 0x37 > "/sys/bus/i2c/devices/$ddc_bus/new_device" 2>/dev/null
-  done
+  (
+    for conn in /sys/class/drm/card0-*/; do
+      [ "$(cat "$conn/status" 2>/dev/null)" = "connected" ] || continue
+      direct=$(ls -d "$conn"i2c-* 2>/dev/null | head -1)
+      if [ -n "$direct" ]; then
+        ddc_bus=$(basename "$direct")
+      else
+        ddc_link="$conn/ddc"
+        [ -e "$ddc_link" ] || continue
+        ddc_bus=$(basename "$(readlink -f "$ddc_link")")
+      fi
+      bus_num=${ddc_bus#i2c-}
+      [ -e "/sys/bus/ddcci/devices/ddcci$bus_num" ] && continue
+      echo ddcci 0x37 > "/sys/bus/i2c/devices/$ddc_bus/new_device" 2>/dev/null
+    done
+  ) &
   ```
 - **Installing acpilight's udev rule** so `xbacklight` can write to `/sys/class/backlight` without root:
   ```sh

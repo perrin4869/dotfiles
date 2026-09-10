@@ -45,14 +45,10 @@ $(xwinwrap_target): $(xwinwrap_head_file)
 	$(MAKE) -C $(XWINWRAP_ROOT)
 xwinwrap: $(xwinwrap_target)
 
-# acpilight's xbacklight is a plain script (no build step); this just ensures
-# the submodule is checked out (already executable straight from git, which
-# tracks the mode bit). The udev rule (90-backlight.rules), which grants group
-# `video` write access to /sys/class/backlight without setuid/sudo, is a
-# one-time system-level install and is NOT handled here -- see README.
 .PHONY: acpilight
 acpilight_target = $(ACPILIGHT_ROOT)/xbacklight
 $(eval $(call git_submodule,acpilight,$(ACPILIGHT_ROOT)))
+# no build step - just ensure submodule
 $(acpilight_target): $(acpilight_head_file)
 acpilight: $(acpilight_target)
 

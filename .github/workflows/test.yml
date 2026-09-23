@@ -62,8 +62,6 @@ jobs:
         with:
           # apt neovim is too old
           neovim: true
-          # `-` mapping conflict between oil vs nvim.dir is fixed as of
-          # https://github.com/neovim/neovim/pull/40531
           version: nightly
       - name: cache cargo
         uses: actions/cache@v6

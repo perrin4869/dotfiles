@@ -1,110 +1,33 @@
-local yall = require('yall')
-yall.on_load('multicursor-nvim', function()
-	local mc = require('multicursor-nvim')
-	mc.setup()
-
-	-- Mappings defined in a keymap layer only apply when there are
-	-- multiple cursors. This lets you have overlapping mappings.
-	mc.addKeymapLayer(function(layerSet)
-		-- Select a different cursor as the main one.
-		layerSet({ 'n', 'x' }, '<left>', mc.prevCursor)
-		layerSet({ 'n', 'x' }, '<right>', mc.nextCursor)
-
-		-- Delete the main cursor.
-		layerSet({ 'n', 'x' }, '<leader>x', mc.deleteCursor)
-
-		-- Enable and clear cursors using escape.
-		layerSet('n', '<esc>', function()
-			if not mc.cursorsEnabled() then
-				mc.enableCursors()
-			else
-				mc.clearCursors()
-			end
-		end)
-	end)
-
-	-- Customize how cursors look.
-	local hl = vim.api.nvim_set_hl
-	hl(0, 'MultiCursorCursor', { reverse = true })
-	hl(0, 'MultiCursorVisual', { link = 'Visual' })
-	hl(0, 'MultiCursorSign', { link = 'SignColumn' })
-	hl(0, 'MultiCursorMatchPreview', { link = 'Search' })
-	hl(0, 'MultiCursorDisabledCursor', { reverse = true })
-	hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
-	hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
-end)
-yall.pack('multicursor-nvim', 'multicursor.nvim')
-
-local with = yall.with('multicursor-nvim')
-
-local line_add_cursor = function(dir)
-	return with(function()
-		require('multicursor-nvim').lineAddCursor(dir)
-	end)
-end
-
-local line_skip_cursor = function(dir)
-	return with(function()
-		require('multicursor-nvim').lineAddCursor(dir)
-	end)
-end
-
-local match_add_cursor = function(dir)
-	return with(function()
-		require('multicursor-nvim').matchAddCursor(dir)
-	end)
-end
-
-local match_skip_cursor = function(dir)
-	return with(function()
-		require('multicursor-nvim').matchAddCursor(dir)
-	end)
-end
-
-local handle_mouse = with(function()
-	require('multicursor-nvim').handleMouse()
-end)
-
-local handle_mouse_drag = with(function()
-	require('multicursor-nvim').handleMouseDrag()
-end)
-
-local handle_mouse_release = with(function()
-	require('multicursor-nvim').handleMouseRelease()
-end)
-
-local operator = with(function()
-	require('multicursor-nvim').operator()
-end)
-
-local toggle_cursor = with(function()
-	require('multicursor-nvim').toggleCursor()
-end)
-
+-- Neovim >= 0.13 has multicursor built in, see `:h multicursor`.
+-- Core defaults kept as-is: Q, [count]Q, {Visual}Q, <C-LeftMouse>, CTRL-L, gQ, ]C, [C, q=.
 local map = require('map').create({
 	desc = 'multicursor',
 })
 
--- Add or skip cursor above/below the main cursor.
-map({ 'n', 'x' }, '<c-up>', line_add_cursor(-1), 'add_line_up')
-map({ 'n', 'x' }, '<c-down>', line_add_cursor(1), 'add_line_down')
-map({ 'n', 'x' }, '<c-s-up>', line_skip_cursor(-1), 'skip_line_up')
-map({ 'n', 'x' }, '<c-s-down>', line_skip_cursor(1), 'skip_line_down')
+-- Leave a cursor at the current position and move to the line above/below,
+-- so repeated presses extend a column of cursors (à la Sublime/VSCode).
+local function add_vertical_cursor(dir)
+	return function()
+		local win = vim.api.nvim_get_current_win()
+		local buf = vim.api.nvim_win_get_buf(win)
+		local cursor = vim.api.nvim_win_get_cursor(win)
+		local target = cursor[1] + dir
+		if target < 1 or target > vim.api.nvim_buf_line_count(buf) then
+			return
+		end
+		vim.api.nvim_mcursor(buf, cursor)
+		vim.api.nvim_win_set_cursor(win, { target, cursor[2] })
+	end
+end
 
--- Add or skip adding a new cursor by matching word/selection
-map({ 'n', 'x' }, '<C-n>', match_add_cursor(1), 'match_add_cursor_down')
-map({ 'n', 'x' }, '<C-M-n>', match_add_cursor(-1), 'match_add_cursor_up')
-map({ 'n', 'x' }, '<C-s>', match_skip_cursor(1), 'match_skip_cursor_down')
-map({ 'n', 'x' }, '<C-M-s>', match_skip_cursor(-1), 'match_skip_cursor_up')
--- the official mappings above are <leader>n, <leader>s, <leader>N, <leader>S
+map({ 'n', 'x' }, '<c-up>', add_vertical_cursor(-1), 'add_cursor_up')
+map({ 'n', 'x' }, '<c-down>', add_vertical_cursor(1), 'add_cursor_down')
 
--- Add and remove cursors with control + left click.
-map('n', '<c-leftmouse>', handle_mouse, 'handle_mouse')
-map('n', '<c-leftdrag>', handle_mouse_drag, 'handle_mouse_drag')
-map('n', '<c-leftrelease>', handle_mouse_release, 'handle_mouse_release')
+-- Seed a cursor at every occurrence of the word under the cursor.
+map('n', '<C-n>', function()
+	vim.fn.setreg('/', [[\<]] .. vim.fn.expand('<cword>') .. [[\>]])
+	vim.cmd.normal({ '1Q', bang = true })
+end, 'match_add_cursor')
 
-map({ 'n', 'x' }, '<leader>m', operator, 'operator')
-
--- Disable and enable cursors.
-map({ 'n', 'x' }, '<c-q>', toggle_cursor, 'toggleCursor')
--- consider also vim.g.toggle_prefix .. m
+-- Place a cursor on each line of the visual selection (`{Visual}Q`).
+map('x', '<leader>m', 'Q', 'add_cursor_per_line')

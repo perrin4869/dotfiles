@@ -1,8 +1,9 @@
 local yall = require('yall')
-yall.pack('async', 'async.nvim')
+-- async.nvim is no longer needed: refactoring.nvim now uses vim.async (nvim 0.13+)
+-- https://github.com/neovim/neovim/pull/34473
+-- https://github.com/ThePrimeagen/refactoring.nvim/pull/551
 yall.setup('refactoring')
 yall.pack('refactoring', 'refactoring.nvim')
-yall.deps('refactoring', 'async')
 yall.cmd('Refactor', 'refactoring')
 local with = yall.with('refactoring')
 

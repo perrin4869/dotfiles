@@ -25,13 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install jq
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: jq
-
       - name: Check for update
         id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"
           if [[ -n "$new_version" ]]; then

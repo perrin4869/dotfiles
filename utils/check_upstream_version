@@ -20,6 +20,19 @@ github_repo() {
   esac
 }
 
+# A version we've deliberately rejected (e.g. a broken upstream release) gets
+# its update PR closed with the "wontfix" label instead of merged. Checking
+# for that PR - by its branch name, which GitHub keeps even after the branch
+# itself is deleted - lets us skip re-proposing it without committing
+# anything to the repo.
+was_rejected() {
+  dep="$1"
+  version="$2"
+
+  count="$(gh pr list --state closed --head "update/$dep/$version" --label wontfix --json number --jq 'length' 2>/dev/null)" || return 1
+  [ "${count:-0}" -gt 0 ]
+}
+
 if [ ! -f "$VERSION_FILE" ]; then
   echo "Missing version file for $DEP" >&2
   exit 1
@@ -27,13 +40,10 @@ fi
 
 REPO="$(github_repo "$DEP")"
 
-LATEST="$(
-  curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" \
-  | jq -r '.tag_name'
-)"
+LATEST="$(gh api "repos/$REPO/releases/latest" --jq '.tag_name')"
 
 CURRENT="$(cat "$VERSION_FILE")"
 
-if [ "$LATEST" != "$CURRENT" ]; then
+if [ "$LATEST" != "$CURRENT" ] && ! was_rejected "$DEP" "$LATEST"; then
   printf '%s\n' "$LATEST"
 fi

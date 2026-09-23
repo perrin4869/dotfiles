@@ -5,6 +5,7 @@ DEP="$1"
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
+IGNORE_FILE="$SCRIPT_DIR/../.external_versions/$DEP.ignore"
 
 github_repo() {
   case "$1" in
@@ -33,6 +34,10 @@ LATEST="$(
 )"
 
 CURRENT="$(cat "$VERSION_FILE")"
+
+if [ -f "$IGNORE_FILE" ] && grep -qxF "$LATEST" "$IGNORE_FILE"; then
+  exit 0
+fi
 
 if [ "$LATEST" != "$CURRENT" ]; then
   printf '%s\n' "$LATEST"

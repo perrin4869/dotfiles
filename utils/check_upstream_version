@@ -29,21 +29,8 @@ was_rejected() {
   dep="$1"
   version="$2"
 
-  own_repo="${GITHUB_REPOSITORY:-}"
-  if [ -z "$own_repo" ]; then
-    own_repo="$(
-      git -C "$SCRIPT_DIR" remote get-url origin 2>/dev/null \
-        | sed -E 's#^[a-zA-Z]+://##; s#^[^@]*@##; s#^[^:/]+[:/]##; s#\.git$##'
-    )"
-  fi
-  [ -n "$own_repo" ] || return 1
-
-  set -- -fsSL "https://api.github.com/repos/$own_repo/pulls?head=${own_repo%%/*}:update/$dep/$version&state=closed"
-  if [ -n "${GITHUB_TOKEN:-}" ]; then
-    set -- "$@" -H "Authorization: Bearer $GITHUB_TOKEN"
-  fi
-
-  curl "$@" | jq -e 'any(.[]; .labels[].name == "wontfix")' >/dev/null 2>&1
+  count="$(gh pr list --state closed --head "update/$dep/$version" --label wontfix --json number --jq 'length' 2>/dev/null)" || return 1
+  [ "${count:-0}" -gt 0 ]
 }
 
 if [ ! -f "$VERSION_FILE" ]; then

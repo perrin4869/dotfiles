@@ -5,7 +5,6 @@ DEP="$1"
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
-IGNORE_FILE="$SCRIPT_DIR/../.external_versions/$DEP.ignore"
 
 github_repo() {
   case "$1" in
@@ -19,6 +18,32 @@ github_repo() {
       exit 1
       ;;
   esac
+}
+
+# A version we've deliberately rejected (e.g. a broken upstream release) gets
+# its update PR closed with the "wontfix" label instead of merged. Checking
+# for that PR - by its branch name, which GitHub keeps even after the branch
+# itself is deleted - lets us skip re-proposing it without committing
+# anything to the repo.
+was_rejected() {
+  dep="$1"
+  version="$2"
+
+  own_repo="${GITHUB_REPOSITORY:-}"
+  if [ -z "$own_repo" ]; then
+    own_repo="$(
+      git -C "$SCRIPT_DIR" remote get-url origin 2>/dev/null \
+        | sed -E 's#^[a-zA-Z]+://##; s#^[^@]*@##; s#^[^:/]+[:/]##; s#\.git$##'
+    )"
+  fi
+  [ -n "$own_repo" ] || return 1
+
+  set -- -fsSL "https://api.github.com/repos/$own_repo/pulls?head=${own_repo%%/*}:update/$dep/$version&state=closed"
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    set -- "$@" -H "Authorization: Bearer $GITHUB_TOKEN"
+  fi
+
+  curl "$@" | jq -e 'any(.[]; .labels[].name == "wontfix")' >/dev/null 2>&1
 }
 
 if [ ! -f "$VERSION_FILE" ]; then
@@ -35,10 +60,6 @@ LATEST="$(
 
 CURRENT="$(cat "$VERSION_FILE")"
 
-if [ -f "$IGNORE_FILE" ] && grep -qxF "$LATEST" "$IGNORE_FILE"; then
-  exit 0
-fi
-
-if [ "$LATEST" != "$CURRENT" ]; then
+if [ "$LATEST" != "$CURRENT" ] && ! was_rejected "$DEP" "$LATEST"; then
   printf '%s\n' "$LATEST"
 fi

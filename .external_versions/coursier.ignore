@@ -1,4 +1,0 @@
-# v2.1.25: standalone launcher jar is broken, bundles a mismatched cats lib -
-# every command fails with NoSuchMethodError during arg parsing.
-# https://github.com/coursier/coursier/issues/3865
-v2.1.25

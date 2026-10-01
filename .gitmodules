@@ -439,9 +439,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/neo-tree.nvim
 	url = https://github.com/nvim-neo-tree/neo-tree.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/multicursor.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/multicursor.nvim
-	url = https://github.com/jake-stewart/multicursor.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/nvim-surround"]
 	path = home/.local/share/nvim/site/pack/default/opt/nvim-surround
 	url = https://github.com/kylechui/nvim-surround.git
@@ -604,9 +601,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/avante.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/avante.nvim
 	url = https://github.com/yetone/avante.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/start/nvim-in-its-entirety"]
-	path = home/.local/share/nvim/site/pack/default/start/nvim-in-its-entirety
-	url = https://github.com/dotcore64/nvim-in-its-entirety
 [submodule "home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/ts-comments.nvim
 	url = https://github.com/folke/ts-comments.nvim.git
@@ -637,9 +631,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/fidget.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/fidget.nvim
 	url = https://github.com/j-hui/fidget.nvim.git
-[submodule "home/.local/share/nvim/site/pack/default/opt/async.nvim"]
-	path = home/.local/share/nvim/site/pack/default/opt/async.nvim
-	url = https://github.com/lewis6991/async.nvim.git
 [submodule "home/.local/share/nvim/site/pack/default/opt/claudecode.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/claudecode.nvim
 	url = https://github.com/coder/claudecode.nvim.git

@@ -1,0 +1,14 @@
+#!/bin/sh
+# SUDO_ASKPASS helper: prompt arrives as $1, the answer goes to stdout
+. "$HOME/.local/libexec/pick-bin"
+
+prompt=${1:-Password:}
+
+case "$(pick_bin zenity kdialog rofi)" in
+    zenity) exec zenity --password --title=askpass --text="$prompt" 2>/dev/null ;;
+    kdialog) exec kdialog --title askpass --password "$prompt" 2>/dev/null ;;
+    rofi) exec rofi -dmenu -password -l 0 -p "$prompt" </dev/null ;;
+esac
+
+echo "askpass: no prompt program found (tried zenity, kdialog, rofi)" >&2
+exit 1

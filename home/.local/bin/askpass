@@ -1,13 +1,87 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # SUDO_ASKPASS helper: prompt arrives as $1, the answer goes to stdout
 . "$HOME/.local/libexec/pick-bin"
 
 prompt=${1:-Password:}
 
+# sudo only hands askpass the prompt, so recover the command from sudo's argv
+# (no upstream support: https://github.com/trifectatechfoundation/sudo-rs/issues/1678)
+sudo_context() {
+    [[ $(< "/proc/$PPID/comm") == sudo ]] || return 1
+    local -a argv
+    mapfile -d '' -t argv < "/proc/$PPID/cmdline" || return 1
+
+    local n=${#argv[@]} i=1 user= text
+    # Anything we cannot parse (-s, -l, -e, unknown flags, ...) shows the raw command line
+    if parse_sudo_args && ((i < n)); then
+        printf -v text '%q ' "${argv[@]:i}"
+        text="Command: ${text% }"
+        [[ -n $user ]] && text+=$'\n'"Run as: $user"
+    else
+        printf -v text '%q ' "${argv[@]}"
+        text="Command: ${text% }"
+    fi
+    printf '%s' "${text:0:500}"
+}
+
+# Advances i past sudo's options and VAR=value words, using sudo_context's locals
+parse_sudo_args() {
+    local a flags c val
+    while ((i < n)); do
+        a=${argv[i]}
+        case $a in
+            --) ((i++)); break ;;
+            --user) user=${argv[i + 1]}; ((i += 2)) ;;
+            --group|--host|--prompt|--chdir|--chroot|--role|--type|--close-from|--command-timeout|--other-user) ((i += 2)) ;;
+            --user=*) user=${a#*=}; ((i++)) ;;
+            --group=*|--host=*|--prompt=*|--chdir=*|--chroot=*|--role=*|--type=*|--close-from=*|--command-timeout=*|--other-user=*) ((i++)) ;;
+            --askpass|--non-interactive|--background|--set-home|--preserve-env|--preserve-env=*|--preserve-groups|--stdin|--bell) ((i++)) ;;
+            --*) return 1 ;;
+            -?*)
+                flags=${a#-}
+                while [[ -n $flags ]]; do
+                    c=${flags:0:1}
+                    flags=${flags:1}
+                    case $c in
+                        [ABbEHnPS]) ;;
+                        [CDghpRrTtUu])
+                            if [[ -n $flags ]]; then val=$flags; flags=; else val=${argv[++i]}; fi
+                            [[ $c == u ]] && user=$val
+                            ;;
+                        *) return 1 ;;
+                    esac
+                done
+                ((i++))
+                ;;
+            *) break ;;
+        esac
+    done
+    while ((i < n)) && [[ ${argv[i]} == [A-Za-z_]*=* ]]; do ((i++)); done
+}
+
+# zenity and rofi read their text as Pango markup
+escape() {
+    local t=${1//&/"&amp;"}
+    t=${t//</"&lt;"}
+    printf '%s' "${t//>/"&gt;"}"
+}
+
+context=$(sudo_context 2>/dev/null)
+
 case "$(pick_bin zenity kdialog rofi)" in
-    zenity) exec zenity --password --title=askpass --text="$prompt" 2>/dev/null ;;
-    kdialog) exec kdialog --title askpass --password "$prompt" 2>/dev/null ;;
-    rofi) exec rofi -dmenu -password -l 0 -p "$prompt" </dev/null ;;
+    zenity)
+        if [[ -n $context ]]; then
+            exec zenity --forms --title=askpass --text="$(escape "$context")" --add-password="$prompt" 2>/dev/null
+        fi
+        exec zenity --password --title=askpass 2>/dev/null
+        ;;
+    kdialog) exec kdialog --title askpass --password "${context:+$context$'\n\n'}$prompt" 2>/dev/null ;;
+    rofi)
+        if [[ -n $context ]]; then
+            exec rofi -dmenu -password -l 0 -p "$prompt" -mesg "$(escape "$context")" </dev/null
+        fi
+        exec rofi -dmenu -password -l 0 -p "$prompt" </dev/null
+        ;;
 esac
 
 echo "askpass: no prompt program found (tried zenity, kdialog, rofi)" >&2

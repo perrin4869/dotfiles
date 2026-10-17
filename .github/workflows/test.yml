@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: checkout
         uses: actions/checkout@v7
@@ -22,7 +22,7 @@ jobs:
           args: --check home/.config
 
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: checkout
         uses: actions/checkout@v7
@@ -50,10 +50,10 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-17-dev
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-22-dev
           # libglib2.0-dev libmpv-dev libavformat-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
-          # libclang-17-dev - ccls
+          # libclang-22-dev - ccls
           version: 1.0
       - name: install yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master
@@ -67,6 +67,10 @@ jobs:
           # https://github.com/neovim/neovim/pull/40531
           # will probably have to disable the `unique` flag for oil.nvim
           # version: nightly
+        env:
+          # /tmp is on a separate device on ubuntu-26.04, causing EXDEV on rename
+          # https://github.com/rhysd/action-setup-vim/issues/80
+          TMPDIR: ${{ runner.temp }}
       - name: cache cargo
         uses: actions/cache@v6
         with:

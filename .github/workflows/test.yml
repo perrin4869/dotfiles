@@ -67,6 +67,10 @@ jobs:
           # https://github.com/neovim/neovim/pull/40531
           # will probably have to disable the `unique` flag for oil.nvim
           # version: nightly
+        env:
+          # /tmp is on a separate device on ubuntu-26.04, causing EXDEV on rename
+          # https://github.com/rhysd/action-setup-vim/issues/80
+          TMPDIR: ${{ runner.temp }}
       - name: cache cargo
         uses: actions/cache@v6
         with:

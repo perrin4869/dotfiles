@@ -71,7 +71,7 @@ context=$(sudo_context 2>/dev/null)
 case "$(pick_bin zenity kdialog rofi)" in
     zenity)
         if [[ -n $context ]]; then
-            exec zenity --forms --title=askpass --text="$(escape "$context")" --add-password="$prompt" 2>/dev/null
+            exec zenity --entry --hide-text --title=askpass --text="$(escape "$context")"$'\n\n'"$(escape "$prompt")" 2>/dev/null
         fi
         exec zenity --password --title=askpass 2>/dev/null
         ;;

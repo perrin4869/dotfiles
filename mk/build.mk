@@ -212,7 +212,7 @@ $(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
 	@touch $(telescope-fzf-native_target)
 telescope-fzf-native: $(telescope-fzf-native_target)
 
-lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server tsc kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli copilot-language-server
+lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server tsc kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli copilot-language-server
 .PHONY: $(lsps)
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
@@ -224,7 +224,6 @@ $(eval $(call mason_package,css-lsp))
 $(eval $(call mason_package,js-debug-adapter))
 $(eval $(call mason_package,tsc))
 $(eval $(call mason_package,bash-language-server))
-$(eval $(call mason_package,kotlin-lsp,true))
 $(eval $(call mason_package,kotlin-debug-adapter,true))
 $(eval $(call mason_package,sqlls,true))
 $(eval $(call mason_package,lua-language-server))

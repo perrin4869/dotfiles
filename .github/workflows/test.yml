@@ -62,11 +62,7 @@ jobs:
         with:
           # apt neovim is too old
           neovim: true
-          version: v0.12.6
-          # currently broken because of `-` mapping conflict between oil vs nvim.dir
-          # https://github.com/neovim/neovim/pull/40531
-          # will probably have to disable the `unique` flag for oil.nvim
-          # version: nightly
+          version: nightly
         env:
           # /tmp is on a separate device on ubuntu-26.04, causing EXDEV on rename
           # https://github.com/rhysd/action-setup-vim/issues/80

@@ -1,6 +1,6 @@
 {
   "env": {
-    "SUDO_ASKPASS": "/home/perrin4869/.local/bin/askpass"
+    "SUDO_ASKPASS": "@HOME@/.local/bin/askpass"
   },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,

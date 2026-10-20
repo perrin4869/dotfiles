@@ -46,6 +46,8 @@ VIM_JSDOC_ROOT = home/.vim/pack/default/start/vim-jsdoc
 GITFLOW_ROOT = $(DEPS)/gitflow
 CRONTAB_SRC := $(CRON)/crontab
 LOGROTATE_DIR := home/.config/logrotate
+CLAUDE_DIR := home/.claude
+CLAUDE_MACHINE_SETTINGS := $(HOME)/.claude/settings.machine.json
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini

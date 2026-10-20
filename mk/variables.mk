@@ -47,7 +47,7 @@ GITFLOW_ROOT = $(DEPS)/gitflow
 CRONTAB_SRC := $(CRON)/crontab
 LOGROTATE_DIR := home/.config/logrotate
 CLAUDE_DIR := home/.claude
-CLAUDE_LOCAL_SETTINGS := $(HOME)/.claude/settings.local.json
+CLAUDE_LOCAL_SETTINGS := $(XDG_CONFIG_HOME)/dotfiles/claude/settings.local.json
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini

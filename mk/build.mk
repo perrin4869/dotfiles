@@ -296,8 +296,10 @@ logrotate: $(logrotate_target)
 # Claude Code has no user-scope settings.local.json to keep per-machine settings (e.g. autoMode) out of git:
 # ~/.claude/settings.local.json only applies to sessions started in ~ itself, and autoMode is only read from
 # ~/.claude/settings.json, managed settings or --settings. Until that exists (the CLAUDE.md equivalent,
-# https://github.com/anthropics/claude-code/issues/15396, was closed as not planned), merge the untracked
-# ~/.claude/settings.local.json into the generated settings.json, emulating that scope. jq's `*` deep-merges objects but replaces arrays.
+# https://github.com/anthropics/claude-code/issues/15396, was closed as not planned), merge an untracked file
+# into the generated settings.json. It lives under ~/.config/dotfiles since Claude Code itself never reads it,
+# and outside ~/.claude so it is not picked up as local settings for sessions in ~.
+# jq's `*` deep-merges objects but replaces arrays.
 claude_settings_target = $(CLAUDE_DIR)/settings.json
 $(claude_settings_target): $(CLAUDE_DIR)/settings.json.in $(wildcard $(CLAUDE_LOCAL_SETTINGS))
 	$(call require,jq)

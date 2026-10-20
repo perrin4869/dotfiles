@@ -297,8 +297,12 @@ logrotate: $(logrotate_target)
 # ~/.claude/settings.local.json only applies to sessions started in ~ itself, and autoMode is only read from
 # ~/.claude/settings.json, managed settings or --settings. Until that exists (the CLAUDE.md equivalent,
 # https://github.com/anthropics/claude-code/issues/15396, was closed as not planned), merge an untracked file
-# into the generated settings.json. It lives under ~/.config/dotfiles since Claude Code itself never reads it,
-# and outside ~/.claude so it is not picked up as local settings for sessions in ~.
+# into the generated settings.json. It lives outside ~/.claude so it is not picked up as local settings for
+# sessions in ~, and under ~/.config/dotfiles since Claude Code itself never reads it.
+# Claude Code has no XDG support (https://github.com/anthropics/claude-code/issues/1455): CLAUDE_CONFIG_DIR is the
+# only way to relocate ~/.claude, and it moves config, state and credentials together. ~/.config/claude is avoided
+# because some versions have used $XDG_CONFIG_HOME/claude as the config dir
+# (https://github.com/anthropics/claude-code/issues/2350), so a file there could be loaded or clobbered.
 # jq's `*` deep-merges objects but replaces arrays.
 claude_settings_target = $(CLAUDE_DIR)/settings.json
 $(claude_settings_target): $(CLAUDE_DIR)/settings.json.in $(wildcard $(CLAUDE_LOCAL_SETTINGS))

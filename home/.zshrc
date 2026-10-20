@@ -105,6 +105,8 @@ gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 alias zshconfig="vim ~/.zshrc"
 alias ohmyzsh="vim ~/.oh-my-zsh"
 alias gvim="gvim -v --servername vimserver"
+# Claude Code reads autoMode only from user settings or --settings, so per-machine rules live outside the stowed settings.json
+[[ -f ~/.claude/settings.machine.json ]] && alias claude='claude --settings ~/.claude/settings.machine.json'
 
 # use vi keybindings
 bindkey -v

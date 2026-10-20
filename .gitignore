@@ -86,3 +86,7 @@ home/.local/bin/metals
 .stowrc
 tmp_bench.log
 *.installed
+
+home/.claude/*
+!home/.claude/CLAUDE.md
+!home/.claude/settings.json

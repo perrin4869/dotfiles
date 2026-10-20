@@ -61,7 +61,7 @@ else
 endif
 
 .PHONY: dirs
-dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks $(XDG_CONFIG_HOME)/logrotate
+dirs = $(XDG_CONFIG_HOME) $(XDG_DATA_HOME) $(XDG_DATA_HOME)/icons $(XDG_DATA_HOME)/themes $(BINDIR) $(LIBEXECDIR) $(HOME)/.luarocks $(XDG_CONFIG_HOME)/logrotate $(HOME)/.claude
 $(dirs):
 	mkdir -p $@
 dirs: $(dirs)

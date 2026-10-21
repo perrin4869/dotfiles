@@ -28,6 +28,8 @@ jobs:
       # no RUSTC_WRAPPER: atuin's workspace crates are uncacheable (sqlx::migrate! dirs, bin/proc-macro)
       # and it routes every cc-crate C compile through sccache, which made cold builds ~8m slower
       SCCACHE_GHA_ENABLED: "true"
+      # rustc incremental reuses work by content hash, so cached target dirs help despite fresh mtimes
+      CARGO_PROFILE_RELEASE_INCREMENTAL: "true"
       CMAKE_C_COMPILER_LAUNCHER: sccache
       CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:
@@ -91,20 +93,20 @@ jobs:
         uses: actions/cache@v6
         with:
           path: deps/atuin/target
-          key: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
-          restore-keys: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-
+          key: ${{ runner.os }}-atuin-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
+          restore-keys: ${{ runner.os }}-atuin-incr-${{ steps.rust.outputs.cachekey }}-
       - name: cache difftastic
         uses: actions/cache@v6
         with:
           path: home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
-          key: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
-          restore-keys: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-
+          key: ${{ runner.os }}-difftastic-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-difftastic-incr-${{ steps.rust.outputs.cachekey }}-
       - name: cache avante
         uses: actions/cache@v6
         with:
           path: home/.local/share/nvim/site/pack/default/opt/avante.nvim/target
-          key: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
-          restore-keys: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-
+          key: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-
       - name: build
         run: make
       - name: test build

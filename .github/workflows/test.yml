@@ -23,6 +23,17 @@ jobs:
 
   test:
     runs-on: ubuntu-26.04
+    env:
+      # checkout gives sources a fresh mtime, so cmake recompiles ccls; sccache hashes content instead
+      # no RUSTC_WRAPPER: atuin's workspace crates are uncacheable (sqlx::migrate! dirs, bin/proc-macro)
+      # and it routes every cc-crate C compile through sccache, which made cold builds ~8m slower
+      SCCACHE_GHA_ENABLED: "true"
+      # rustc incremental reuses work by content hash, so cached target dirs help despite fresh mtimes;
+      # build.incremental, since cargo disables incremental on CI otherwise, even if the profile enables it;
+      # "true" not "1": sccache aborts every compile (ccls too) when CARGO_{BUILD_,}INCREMENTAL is "1"
+      CARGO_BUILD_INCREMENTAL: "true"
+      CMAKE_C_COMPILER_LAUNCHER: sccache
+      CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:
       - name: checkout
         uses: actions/checkout@v7
@@ -32,11 +43,12 @@ jobs:
           # `git describe --tags` (e.g. deps/ccls, or a submodule's own build tooling) behave
           # the same as a real local clone instead of depending on shallow-clone shape
           fetch-depth: 0
+      # rustup directly: dtolnay/rust-toolchain exports CARGO_INCREMENTAL=0, which overrides build.incremental
       - name: install rust toolchain
-        uses: actions-rs/toolchain@v1 # atuin
-        with:
-          toolchain: stable
-          override: true
+        id: rust
+        run: |
+          rustup update stable && rustup default stable
+          echo "cachekey=$(rustc -V | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
       - name: install node.js # various dependencies
         uses: actions/setup-node@v7
         with:
@@ -71,31 +83,35 @@ jobs:
           # /tmp is on a separate device on ubuntu-26.04, causing EXDEV on rename
           # https://github.com/rhysd/action-setup-vim/issues/80
           TMPDIR: ${{ runner.temp }}
+      - name: install sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: cache cargo
         uses: actions/cache@v6
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('.git/modules/deps/atuin/HEAD', '.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/avante.nvim/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
       - name: cache atuin
         uses: actions/cache@v6
         with:
-          path: |
-            deps/atuin/target
-          key: ${{ runner.os }}-atuin-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
-      - name: cache ccls
-        uses: actions/cache@v6
-        with:
-          path: |
-            deps/ccls/Release
-          key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
+          path: deps/atuin/target
+          key: ${{ runner.os }}-atuin-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
+          restore-keys: ${{ runner.os }}-atuin-incr-${{ steps.rust.outputs.cachekey }}-
       - name: cache difftastic
         uses: actions/cache@v6
         with:
-          path: |
-            home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
-          key: ${{ runner.os }}-difftastic-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+          path: home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
+          key: ${{ runner.os }}-difftastic-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-difftastic-incr-${{ steps.rust.outputs.cachekey }}-
+      - name: cache avante
+        uses: actions/cache@v6
+        with:
+          path: home/.local/share/nvim/site/pack/default/opt/avante.nvim/target
+          key: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-
       - name: build
         run: make
       - name: test build

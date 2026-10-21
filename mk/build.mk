@@ -248,6 +248,8 @@ helptags: $(helptags_target)
 treesitter-langs = bash c cpp css graphql haskell html javascript json latex lua regex scala java svelte typescript yaml kotlin vim vimdoc sql markdown markdown_inline
 treesitter-langs-params = $(subst $(SPACE),$(COMMA),$(foreach lang,$(treesitter-langs),'$(lang)'))
 treesitter_target = $(addprefix $(TREESITTER_PARSERS)/, $(addsuffix .so, $(treesitter-langs)))
+# errors in -c don't affect nvim's exit code, so cquit explicitly when a parser fails
+treesitter_run = lua local ok, res = pcall(function() return require('nvim-treesitter').$1({ $(treesitter-langs-params) }):wait(30000000) end) if not (ok and res) then vim.cmd.cquit() end
 # installing treesitter requires that all neovim config has been installed into rtp (home task)
 # also, some parsers depend on the tree-sitter-cli (latex), so make sure it is installed too
 $(treesitter_target) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(telescope-fzf-native) $(tree-sitter-cli_target)
@@ -255,9 +257,11 @@ $(treesitter_target) &: $(TREESITTER_ROOT)/lua/nvim-treesitter/parsers.lua $(tel
 	@# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
 	@# rm -f $(treesitter-targets)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
+	@# mason is loaded on UIEnter, which never fires headless; force it so tree-sitter is on PATH
 	( unset XDG_CONFIG_HOME && HOME=home nvim --headless \
-			 -c "lua require('nvim-treesitter').install({ $(treesitter-langs-params) }):wait(30000000)" \
-			 -c "lua require('nvim-treesitter').update({ $(treesitter-langs-params) }):wait(30000000)" \
+			 -c "lua require('yall').ensure('mason')" \
+			 -c "$(call treesitter_run,install)" \
+			 -c "$(call treesitter_run,update)" \
 			 -c q )
 	@touch $(treesitter_target)
 treesitter: $(treesitter_target)

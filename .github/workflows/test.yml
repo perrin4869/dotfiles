@@ -24,9 +24,10 @@ jobs:
   test:
     runs-on: ubuntu-26.04
     env:
-      # checkout gives sources a fresh mtime, so cargo/cmake recompile local sources; sccache hashes content instead
+      # checkout gives sources a fresh mtime, so cmake recompiles ccls; sccache hashes content instead
+      # no RUSTC_WRAPPER: atuin's workspace crates are uncacheable (sqlx::migrate! dirs, bin/proc-macro)
+      # and it routes every cc-crate C compile through sccache, which made cold builds ~8m slower
       SCCACHE_GHA_ENABLED: "true"
-      RUSTC_WRAPPER: sccache
       CMAKE_C_COMPILER_LAUNCHER: sccache
       CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:

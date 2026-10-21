@@ -28,8 +28,9 @@ jobs:
       # no RUSTC_WRAPPER: atuin's workspace crates are uncacheable (sqlx::migrate! dirs, bin/proc-macro)
       # and it routes every cc-crate C compile through sccache, which made cold builds ~8m slower
       SCCACHE_GHA_ENABLED: "true"
-      # rustc incremental reuses work by content hash, so cached target dirs help despite fresh mtimes
-      CARGO_PROFILE_RELEASE_INCREMENTAL: "true"
+      # rustc incremental reuses work by content hash, so cached target dirs help despite fresh mtimes;
+      # must be CARGO_INCREMENTAL since dtolnay/rust-toolchain sets it to 0 when unset, overriding profiles
+      CARGO_INCREMENTAL: "1"
       CMAKE_C_COMPILER_LAUNCHER: sccache
       CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:

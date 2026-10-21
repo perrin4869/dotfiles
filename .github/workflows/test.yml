@@ -29,8 +29,9 @@ jobs:
       # and it routes every cc-crate C compile through sccache, which made cold builds ~8m slower
       SCCACHE_GHA_ENABLED: "true"
       # rustc incremental reuses work by content hash, so cached target dirs help despite fresh mtimes;
-      # not CARGO_INCREMENTAL=1: sccache aborts every compile (ccls too) when that is set
-      CARGO_PROFILE_RELEASE_INCREMENTAL: "true"
+      # build.incremental, since cargo disables incremental on CI otherwise, even if the profile enables it;
+      # "true" not "1": sccache aborts every compile (ccls too) when CARGO_{BUILD_,}INCREMENTAL is "1"
+      CARGO_BUILD_INCREMENTAL: "true"
       CMAKE_C_COMPILER_LAUNCHER: sccache
       CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:
@@ -42,7 +43,7 @@ jobs:
           # `git describe --tags` (e.g. deps/ccls, or a submodule's own build tooling) behave
           # the same as a real local clone instead of depending on shallow-clone shape
           fetch-depth: 0
-      # rustup directly: dtolnay/rust-toolchain exports CARGO_INCREMENTAL=0, which overrides the profile setting
+      # rustup directly: dtolnay/rust-toolchain exports CARGO_INCREMENTAL=0, which overrides build.incremental
       - name: install rust toolchain
         id: rust
         run: |

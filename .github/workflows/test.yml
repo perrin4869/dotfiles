@@ -109,7 +109,10 @@ jobs:
           key: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
           restore-keys: ${{ runner.os }}-avante-incr-${{ steps.rust.outputs.cachekey }}-
       - name: build
-        run: make
+        run: |
+          # sccache refuses to run while CARGO_INCREMENTAL is set
+          env -u CARGO_INCREMENTAL make ccls
+          make
       - name: test build
         run:  make test-build
       - name: install

@@ -23,6 +23,12 @@ jobs:
 
   test:
     runs-on: ubuntu-26.04
+    env:
+      # checkout gives sources a fresh mtime, so cargo/cmake recompile local sources; sccache hashes content instead
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: sccache
+      CMAKE_C_COMPILER_LAUNCHER: sccache
+      CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:
       - name: checkout
         uses: actions/checkout@v7
@@ -69,6 +75,8 @@ jobs:
           # /tmp is on a separate device on ubuntu-26.04, causing EXDEV on rename
           # https://github.com/rhysd/action-setup-vim/issues/80
           TMPDIR: ${{ runner.temp }}
+      - name: install sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: cache cargo
         uses: actions/cache@v6
         with:
@@ -79,42 +87,23 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/avante.nvim/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
       - name: cache atuin
-        id: cache-atuin
         uses: actions/cache@v6
         with:
           path: deps/atuin/target
           key: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
           restore-keys: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-
-      - name: cache ccls
-        id: cache-ccls
-        uses: actions/cache@v6
-        with:
-          path: deps/ccls/Release
-          key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
       - name: cache difftastic
-        id: cache-difftastic
         uses: actions/cache@v6
         with:
           path: home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
           key: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
           restore-keys: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-
       - name: cache avante
-        id: cache-avante
         uses: actions/cache@v6
         with:
-          path: |
-            home/.local/share/nvim/site/pack/default/opt/avante.nvim/target
-            home/.local/share/nvim/site/pack/default/opt/avante.nvim/lua/avante_*.so
+          path: home/.local/share/nvim/site/pack/default/opt/avante.nvim/target
           key: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
           restore-keys: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-
-      # checkout gives sources a fresh mtime, so make/cmake/cargo would rebuild restored artifacts
-      - name: mark cached builds up to date
-        run: |
-          fresh() { find "$@" -exec touch {} +; }
-          if [ "${{ steps.cache-atuin.outputs.cache-hit }}" = true ]; then fresh deps/atuin/target; fi
-          if [ "${{ steps.cache-ccls.outputs.cache-hit }}" = true ]; then fresh deps/ccls/Release; fi
-          if [ "${{ steps.cache-difftastic.outputs.cache-hit }}" = true ]; then fresh home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target; fi
-          if [ "${{ steps.cache-avante.outputs.cache-hit }}" = true ]; then fresh home/.local/share/nvim/site/pack/default/opt/avante.nvim/target home/.local/share/nvim/site/pack/default/opt/avante.nvim/lua/avante_*.so; fi
       - name: build
         run: make
       - name: test build

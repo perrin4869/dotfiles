@@ -33,10 +33,8 @@ jobs:
           # the same as a real local clone instead of depending on shallow-clone shape
           fetch-depth: 0
       - name: install rust toolchain
-        uses: actions-rs/toolchain@v1 # atuin
-        with:
-          toolchain: stable
-          override: true
+        id: rust
+        uses: dtolnay/rust-toolchain@stable
       - name: install node.js # various dependencies
         uses: actions/setup-node@v7
         with:
@@ -75,27 +73,48 @@ jobs:
         uses: actions/cache@v6
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-          key: ${{ runner.os }}-cargo-${{ hashFiles('.git/modules/deps/atuin/HEAD', '.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: ${{ runner.os }}-cargo-${{ hashFiles('deps/atuin/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/Cargo.lock', 'home/.local/share/nvim/site/pack/default/opt/avante.nvim/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
       - name: cache atuin
+        id: cache-atuin
         uses: actions/cache@v6
         with:
-          path: |
-            deps/atuin/target
-          key: ${{ runner.os }}-atuin-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
+          path: deps/atuin/target
+          key: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/deps/atuin/HEAD') }}
+          restore-keys: ${{ runner.os }}-atuin-${{ steps.rust.outputs.cachekey }}-
       - name: cache ccls
+        id: cache-ccls
         uses: actions/cache@v6
         with:
-          path: |
-            deps/ccls/Release
+          path: deps/ccls/Release
           key: ${{ runner.os }}-ccls-${{ hashFiles('.git/modules/deps/ccls/HEAD') }}
       - name: cache difftastic
+        id: cache-difftastic
+        uses: actions/cache@v6
+        with:
+          path: home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
+          key: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-difftastic-${{ steps.rust.outputs.cachekey }}-
+      - name: cache avante
+        id: cache-avante
         uses: actions/cache@v6
         with:
           path: |
-            home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target
-          key: ${{ runner.os }}-difftastic-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/HEAD') }}
+            home/.local/share/nvim/site/pack/default/opt/avante.nvim/target
+            home/.local/share/nvim/site/pack/default/opt/avante.nvim/lua/avante_*.so
+          key: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-${{ hashFiles('.git/modules/home/.local/share/nvim/site/pack/default/opt/avante.nvim/HEAD') }}
+          restore-keys: ${{ runner.os }}-avante-${{ steps.rust.outputs.cachekey }}-
+      # checkout gives sources a fresh mtime, so make/cmake/cargo would rebuild restored artifacts
+      - name: mark cached builds up to date
+        run: |
+          fresh() { find "$@" -exec touch {} +; }
+          if [ "${{ steps.cache-atuin.outputs.cache-hit }}" = true ]; then fresh deps/atuin/target; fi
+          if [ "${{ steps.cache-ccls.outputs.cache-hit }}" = true ]; then fresh deps/ccls/Release; fi
+          if [ "${{ steps.cache-difftastic.outputs.cache-hit }}" = true ]; then fresh home/.local/share/nvim/site/pack/default/opt/difftastic.nvim/target; fi
+          if [ "${{ steps.cache-avante.outputs.cache-hit }}" = true ]; then fresh home/.local/share/nvim/site/pack/default/opt/avante.nvim/target home/.local/share/nvim/site/pack/default/opt/avante.nvim/lua/avante_*.so; fi
       - name: build
         run: make
       - name: test build

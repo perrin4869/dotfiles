@@ -84,7 +84,7 @@ jobs:
           # https://github.com/rhysd/action-setup-vim/issues/80
           TMPDIR: ${{ runner.temp }}
       - name: install sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.11
       - name: cache cargo
         uses: actions/cache@v6
         with:

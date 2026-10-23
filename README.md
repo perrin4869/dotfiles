@@ -71,6 +71,16 @@ make
 make install
 ```
 
+## Development
+
+Install [`pre-commit`](https://pre-commit.com/) (`pipx install pre-commit`), then set up the git hook once per clone:
+
+```sh
+make prepare
+```
+
+It runs `luacheck` and `stylua --check` on staged Lua files, the same checks as the `lint` job in CI.
+
 ## Zen Browser Configuration
 
 The following preferences are used by the Zen browser and are expected to be defined in:

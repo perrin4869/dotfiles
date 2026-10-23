@@ -111,5 +111,13 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
 )
 
 INSTALL_TARGETS = gitflow qmk_cli zmk_cli $(ZEN_PROFILE_TASKS)
+.PHONY: prepare
+prepare:
+	@if command -v pre-commit >/dev/null 2>&1; then \
+		pre-commit install; \
+	else \
+		echo "Skipping $@: missing dependency: pre-commit"; \
+	fi
+
 .PHONY: install
 install: home fonts dconf cron

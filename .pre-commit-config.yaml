@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: luacheck
+        name: luacheck
+        entry: luacheck
+        language: system
+        types: [lua]
+      - id: stylua
+        name: stylua
+        entry: stylua --check
+        language: system
+        types: [lua]
+        files: ^home/\.config/

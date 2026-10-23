@@ -7,7 +7,7 @@ yall.setup('neoscroll', {
 	easing = 'quintic',
 })
 
--- karb94/neoscroll.nvim#124: a move_cursor=false scroll (<C-e>, zz) started mid-animation skips the unhide and a later scroll saves the hidden guicursor as the original, so the cursor stays invisible. Remove once fixed upstream.
+-- karb94/neoscroll.nvim#124: a move_cursor=false scroll mid-animation skips the unhide, so the hidden guicursor gets saved as the original. Drop once fixed upstream.
 yall.on_postload('neoscroll', function()
 	local scroll = require('neoscroll.scroll')
 	local hidden = 'a:NeoscrollHiddenCursor'

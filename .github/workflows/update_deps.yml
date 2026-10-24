@@ -49,6 +49,7 @@ jobs:
           git diff --quiet || echo "changed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create PR
+        id: pr
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v8
         with:
@@ -60,3 +61,13 @@ jobs:
           # Review cannot be requested from pull request author. - https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request
           # reviewers: ${{ github.actor }}
           assignees: ${{ github.actor }}
+
+      - name: Assign PR
+        if: steps.pr.outputs.pull-request-number
+        env:
+          # PAT acts as me, and GitHub doesn't notify about my own actions
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/assignees" \
+            -f "assignees[]=$GITHUB_REPOSITORY_OWNER" --silent

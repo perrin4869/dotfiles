@@ -60,7 +60,8 @@ jobs:
           token: ${{ secrets.PAT }}
           # Review cannot be requested from pull request author. - https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request
           # reviewers: ${{ github.actor }}
-          assignees: ${{ github.actor }}
+          # Assigned by github token below to trigger an email notification
+          # assignees: ${{ github.actor }}
 
       - name: Assign PR
         if: steps.pr.outputs.pull-request-number

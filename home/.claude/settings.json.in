@@ -7,5 +7,6 @@
     "lua-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true
   },
-  "switchModelsOnFlag": false
+  "switchModelsOnFlag": false,
+  "cleanupPeriodDays": 36500
 }

@@ -28,6 +28,9 @@ case "${3:-}" in
 	*) exit 0 ;;
 esac
 
+# Recorded so rc.local can apply it once DDC/CI monitors finish registering after this ran.
+[ -n "${XDG_RUNTIME_DIR:-}" ] && printf '%s\n' "$brightness" > "$XDG_RUNTIME_DIR/redshift-brightness"
+
 # Only look at actual display backlights, never acpilight's /sys/class/leds
 # fallback (keyboard/capslock/etc. LEDs) -- on a machine with no backlight
 # device at all, xbacklight's "first controller found" default would otherwise

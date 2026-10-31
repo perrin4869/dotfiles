@@ -213,3 +213,5 @@ bar {
 
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
+# new tiled windows leave fullscreen, which focus_on_window_activation urgent no longer does
+for_window [tiling workspace="__focused__"] focus

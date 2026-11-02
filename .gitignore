@@ -93,3 +93,4 @@ home/.claude/*
 !home/.claude/settings.json.in
 
 home/.npmrc
+home/.npmrc.local

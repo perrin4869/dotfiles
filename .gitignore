@@ -91,3 +91,5 @@ tmp_bench.log
 home/.claude/*
 !home/.claude/CLAUDE.md
 !home/.claude/settings.json.in
+
+home/.npmrc

@@ -48,6 +48,8 @@ CRONTAB_SRC := $(CRON)/crontab
 LOGROTATE_DIR := home/.config/logrotate
 CLAUDE_DIR := home/.claude
 CLAUDE_LOCAL_SETTINGS := $(XDG_CONFIG_HOME)/dotfiles/claude/settings.local.json
+NPMRC := home/.npmrc
+NPMRC_LOCAL := $(XDG_CONFIG_HOME)/dotfiles/npm/npmrc.local
 
 ZEN_DIR := $(HOME)/.zen
 ZEN_PROFILES_INI := $(ZEN_DIR)/profiles.ini

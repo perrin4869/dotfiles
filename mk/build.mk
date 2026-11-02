@@ -315,6 +315,15 @@ $(claude_settings_target): $(CLAUDE_DIR)/settings.json.in $(wildcard $(CLAUDE_LO
 	sed 's|@HOME@|$(HOME)|g' $< | jq -s 'reduce .[] as $$s ({}; . * $$s)' - $(wildcard $(CLAUDE_LOCAL_SETTINGS)) > $@
 claude_settings: $(claude_settings_target)
 
+# npmrc has no import directive (https://github.com/npm/rfcs/issues/641) and npm only reads ~/.npmrc as user config
+# (no XDG location, https://github.com/npm/rfcs/issues/586), so concatenate the tracked settings with an untracked
+# file holding auth tokens. npm expands ${VAR} in values itself, so the template needs no substitution.
+npmrc_target = $(NPMRC)
+$(npmrc_target): $(NPMRC).in $(wildcard $(NPMRC_LOCAL))
+	cat $^ > $@
+	chmod 600 $@
+npmrc: $(npmrc_target)
+
 # --keep-going: -k ensures independent branches continue even if one fails.
 # MAKEFLAGS += -k
 TARGETS = \
@@ -340,6 +349,7 @@ TARGETS = \
 	avante \
 	logrotate \
 	claude_settings \
+	npmrc \
 	$(lsps)
 
 .PHONY: build

@@ -1,7 +1,7 @@
 local yall = require('yall')
 local provider = vim.g.avante_provider
 yall.pack('avante', 'avante.nvim')
-local deps = { 'telescope', 'cmp' }
+local deps = { 'telescope', 'cmp', 'nui', 'mega.cmdparse' }
 if provider == 'copilot' then
 	table.insert(deps, 'copilot')
 end

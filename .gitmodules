@@ -650,3 +650,9 @@
 	path = deps/acpilight
 	url = https://gitlab.com/wavexx/acpilight
 	ignore = untracked
+[submodule "home/.local/share/nvim/site/pack/default/opt/mega.logging"]
+	path = home/.local/share/nvim/site/pack/default/opt/mega.logging
+	url = https://github.com/ColinKennedy/mega.logging
+[submodule "home/.local/share/nvim/site/pack/default/opt/mega.cmdparse"]
+	path = home/.local/share/nvim/site/pack/default/opt/mega.cmdparse
+	url = https://github.com/ColinKennedy/mega.cmdparse

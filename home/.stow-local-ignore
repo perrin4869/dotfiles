@@ -3,3 +3,4 @@
 .cache
 .npm
 .+\.in$
+\.npmrc\.local

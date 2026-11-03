@@ -29,7 +29,6 @@ QMK_CLI_ROOT = $(DEPS)/qmk_cli
 ZMK_CLI_ROOT = $(DEPS)/zmk-cli
 ESLINT_D_ROOT = $(DEPS)/eslint_d
 PI_ACP_ROOT = $(DEPS)/pi-acp
-PI_EXTENSIONS_DIR = home/.pi/agent/extensions
 FZF_ROOT = $(DEPS)/fzf
 FZY_ROOT = $(DEPS)/fzy
 NERD_FONTS = $(FONTS)/NerdFontsSymbolsOnly

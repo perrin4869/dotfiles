@@ -19,12 +19,12 @@ updates:
           - dependency-name: "*"
             versions: ["> 0.0.0"]
     - package-ecosystem: npm
-      directory: /home/.pi/agent/extensions
+      directory: /
       schedule:
           interval: weekly
       assignees:
           - perrin4869
       groups:
-          pi-extensions:
+          npm:
               patterns:
                   - "*"

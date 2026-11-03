@@ -4,4 +4,4 @@
 .npm
 .+\.in$
 \.npmrc\.local
-^/\.pi/agent/extensions/(node_modules|package\.json|package-lock\.json|tsconfig\.json|\.oxlintrc\.json|\.oxfmtrc\.json)$
+^/\.pi/agent/extensions/(package\.json|tsconfig\.json)$

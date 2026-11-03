@@ -21,11 +21,8 @@ jobs:
           version: latest
           args: --check home/.config
 
-  pi-extensions:
+  npm-workspaces:
     runs-on: ubuntu-26.04
-    defaults:
-      run:
-        working-directory: home/.pi/agent/extensions
     steps:
       - name: checkout
         uses: actions/checkout@v7
@@ -34,7 +31,6 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-          cache-dependency-path: home/.pi/agent/extensions/package-lock.json
       - name: install
         run: npm ci --ignore-scripts
       - name: typecheck, lint and format

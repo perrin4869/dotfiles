@@ -4,5 +4,9 @@
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
+  },
+  "options": {
+    "typeAware": true,
+    "denyWarnings": true
   }
 }

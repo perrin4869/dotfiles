@@ -178,13 +178,10 @@ $(pi_target): $(DEPS)/$(pi_archive)
 	@touch $@
 pi: $(pi_target)
 
-# types for editing the local pi extensions, not needed at runtime; keep pi-coding-agent at .external_versions/pi
-.PHONY: pi-extensions
-pi-extensions_target = $(PI_EXTENSIONS_DIR)/node_modules
-$(pi-extensions_target): $(PI_EXTENSIONS_DIR)/package-lock.json
-	npm --prefix $(PI_EXTENSIONS_DIR) ci --ignore-scripts
+# dev tooling for the npm workspaces, not needed at runtime; keep pi-coding-agent at .external_versions/pi
+node_modules: package-lock.json
+	npm ci --ignore-scripts
 	@touch $@
-pi-extensions: $(pi-extensions_target)
 
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin

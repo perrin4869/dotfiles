@@ -10,7 +10,7 @@ const PLAN_STATE_ENTRY = "plan-mode-state";
 
 function readSettings(cwd: string): OpusplanSettings {
 	const manager = SettingsManager.create(cwd);
-	const pick = (s: Record<string, unknown>) => (s.opusplan ?? {}) as OpusplanSettings;
+	const pick = (s: object): OpusplanSettings => ("opusplan" in s ? (s.opusplan as OpusplanSettings) : {});
 	return { ...pick(manager.getGlobalSettings()), ...pick(manager.getProjectSettings()) };
 }
 

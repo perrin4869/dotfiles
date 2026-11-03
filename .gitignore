@@ -99,3 +99,5 @@ home/.claude/*
 
 home/.npmrc
 home/.npmrc.local
+
+home/.pi/agent/extensions/node_modules

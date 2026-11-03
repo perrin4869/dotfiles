@@ -12,3 +12,9 @@ repos:
         language: system
         types: [lua]
         files: ^home/\.config/
+      - id: pi-extensions
+        name: pi extensions (tsc, oxlint, oxfmt)
+        entry: npm --prefix home/.pi/agent/extensions run --silent check
+        language: system
+        files: ^home/\.pi/agent/extensions/
+        pass_filenames: false

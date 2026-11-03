@@ -2,7 +2,18 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "1.5.0",
-    "@types/node": "24.19.2"
+    "@earendil-works/pi-coding-agent": "^1.5.0",
+    "@types/node": "^24.19.2",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "oxlint-tsgolint": "^7.0.2005",
+    "typescript": "^7.0.2"
+  },
+  "scripts": {
+    "typecheck": "tsc -p .",
+    "lint": "oxlint --type-aware --deny-warnings",
+    "format": "oxfmt '*.ts'",
+    "format:check": "oxfmt --check '*.ts'",
+    "check": "npm run typecheck && npm run lint && npm run format:check"
   }
 }

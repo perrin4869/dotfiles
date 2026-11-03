@@ -30,6 +30,20 @@ local default_linters_by_ft = {
 local linters_by_ft = vim.tbl_extend('force', default_linters_by_ft, vim.g.linters_by_ft or {})
 local pattern = vim.tbl_keys(linters_by_ft)
 
+local js_filetypes = { javascript = true, javascriptreact = true, typescript = true, typescriptreact = true }
+-- eslint_d stays the default; oxlint is the fallback for projects that only configure oxlint
+local function js_linters(bufnr)
+	local root_markers = require('root_markers')
+	if vim.fs.root(bufnr, root_markers.markers.eslint()) then
+		return nil
+	end
+	local oxlint_root = vim.fs.root(bufnr, root_markers.markers.oxlint())
+	if oxlint_root then
+		return { 'oxlint' }, { cwd = oxlint_root }
+	end
+	return nil
+end
+
 yall.deps('lint', 'mason')
 yall.pack('lint', 'nvim-lint')
 yall.on_load('lint', function()
@@ -37,6 +51,16 @@ yall.on_load('lint', function()
 
 	lint.linters_by_ft = linters_by_ft
 	lint.lint = add_disable(lint.lint)
+
+	-- upstream only looks for node_modules in nvim's cwd, not next to the oxlint config
+	lint.linters.oxlint = vim.tbl_extend('force', require('lint.linters.oxlint'), {
+		cmd = function()
+			local root = vim.fs.root(0, require('root_markers').markers.oxlint())
+			local bin = root and vim.fs.joinpath(root, 'node_modules', '.bin', 'oxlint')
+			return bin and vim.uv.fs_stat(bin) and bin or 'oxlint'
+		end,
+		args = { '--format', 'github', '--type-aware' },
+	})
 end)
 
 vim.api.nvim_create_autocmd('FileType', {
@@ -46,7 +70,11 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'TextChanged' }, {
 			buffer = args.buf,
 			callback = yall.with('lint')(function()
-				require('lint').try_lint()
+				if js_filetypes[vim.bo[args.buf].filetype] then
+					require('lint').try_lint(js_linters(args.buf))
+				else
+					require('lint').try_lint()
+				end
 			end),
 		})
 	end,

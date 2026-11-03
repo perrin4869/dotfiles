@@ -18,3 +18,13 @@ updates:
           # https://github.com/dependabot/dependabot-core/issues/1639#issuecomment-3991678824
           - dependency-name: "*"
             versions: ["> 0.0.0"]
+    - package-ecosystem: npm
+      directory: /home/.pi/agent/extensions
+      schedule:
+          interval: weekly
+      assignees:
+          - perrin4869
+      groups:
+          pi-extensions:
+              patterns:
+                  - "*"

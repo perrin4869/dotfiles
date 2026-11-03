@@ -14,6 +14,7 @@ github_repo() {
     carapace)  echo "carapace-sh/carapace-bin" ;;
     emmylua_check) echo "EmmyLuaLs/emmylua-analyzer-rust" ;;
     nerdfonts) echo "ryanoasis/nerd-fonts" ;;
+    pi)        echo "earendil-works/pi" ;;
     *)
       echo "Unknown dependency: $1" >&2
       exit 1

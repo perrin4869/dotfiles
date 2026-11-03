@@ -1,0 +1,34 @@
+{
+  "lua-language-server": {
+    "command": ["lua-language-server"],
+    "extensions": [".lua"]
+  },
+  "bash-language-server": {
+    "command": ["bash-language-server", "start"],
+    "extensions": [".sh", ".bash"]
+  },
+  "vtsls": {
+    "command": ["vtsls", "--stdio"],
+    "extensions": [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts"]
+  },
+  "vscode-json-language-server": {
+    "command": ["vscode-json-language-server", "--stdio"],
+    "extensions": [".json", ".jsonc"]
+  },
+  "vscode-css-language-server": {
+    "command": ["vscode-css-language-server", "--stdio"],
+    "extensions": [".css", ".scss", ".less"]
+  },
+  "vscode-html-language-server": {
+    "command": ["vscode-html-language-server", "--stdio"],
+    "extensions": [".html"]
+  },
+  "ccls": {
+    "command": ["ccls"],
+    "extensions": [".c", ".h", ".cc", ".cpp", ".cxx", ".hpp", ".hh"]
+  },
+  "intellij-server": {
+    "command": ["intellij-server", "--stdio"],
+    "extensions": [".kt", ".kts"]
+  }
+}

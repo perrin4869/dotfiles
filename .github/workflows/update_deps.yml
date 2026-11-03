@@ -22,6 +22,7 @@ jobs:
           - carapace
           - emmylua_check
           - nerdfonts
+          - pi
 
     steps:
       - uses: actions/checkout@v7

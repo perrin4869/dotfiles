@@ -159,6 +159,25 @@ $(yubikey-touch-detector_target): $(yubikey-touch-detector_head_file)
 	@touch $@
 yubikey-touch-detector: $(yubikey-touch-detector_target)
 
+.PHONY: pi
+pi_version = $(call get_version,pi)
+pi_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo x64 ;; \
+	aarch64|arm64$(CP) echo arm64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+# upstream asset name has no version, so add one to rebuild on bumps
+pi_archive = pi-$(pi_version)-linux-$(pi_arch).tar.gz
+$(DEPS)/$(pi_archive):
+	$(call require,wget)
+	wget https://github.com/earendil-works/pi/releases/download/v$(pi_version)/pi-linux-$(pi_arch).tar.gz -O $@
+pi_target = $(DEPS)/pi/pi
+$(pi_target): $(DEPS)/$(pi_archive)
+	rm -rf $(DEPS)/pi
+	tar xvzf $< -C $(DEPS)
+	@touch $@
+pi: $(pi_target)
+
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin
 $(eval $(call git_submodule,atuin,$(ATUIN_ROOT)))
@@ -304,6 +323,17 @@ $(eslint_d_target): $(eslint_d_head_file)
 	npm --prefix $(ESLINT_D_ROOT) ci --omit=dev --ignore-scripts
 eslint_d: $(eslint_d_target)
 
+# switch to a mason_package if pi-acp is ever added to mason-registry
+.PHONY: pi-acp
+pi-acp_target = $(PI_ACP_ROOT)/dist/index.js
+$(eval $(call git_submodule,pi-acp,$(PI_ACP_ROOT)))
+$(pi-acp_target): $(pi-acp_head_file)
+	npm --prefix $(PI_ACP_ROOT) ci --ignore-scripts
+	npm --prefix $(PI_ACP_ROOT) run build
+	npm --prefix $(PI_ACP_ROOT) prune --omit=dev --ignore-scripts
+	chmod +x $@
+pi-acp: $(pi-acp_target)
+
 .PHONY: difftastic_nvim
 difftastic_nvim_target = $(NVIM_DIFFTASTIC_ROOT)/target/release/libdifftastic_nvim.so
 $(eval $(call git_submodule,difftastic_nvim,$(NVIM_DIFFTASTIC_ROOT)))
@@ -366,12 +396,14 @@ TARGETS = \
 	telescope-fzf-native \
 	vim_jsdoc \
 	eslint_d \
+	pi-acp \
 	helptags \
 	nerd_fonts \
 	iosevka \
 	carapace \
 	emmylua_check \
 	yubikey-touch-detector \
+	pi \
 	i3status \
 	treesitter \
 	atuin \

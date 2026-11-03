@@ -1,0 +1,7 @@
+{
+  "$schema": "https://pi.dev/schemas/keybindings.schema.json",
+  "tui.editor.historyPrevious": "ctrl+p",
+  "tui.editor.historyNext": "ctrl+n",
+  "app.model.cycleForward": "alt+p",
+  "app.model.cycleBackward": "alt+shift+p"
+}

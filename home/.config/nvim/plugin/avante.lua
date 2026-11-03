@@ -16,6 +16,33 @@ local config = {
 		auto_suggestions = provider ~= 'copilot',
 		auto_set_keymaps = false,
 	},
+	-- submit always focuses the result window, so the real keys are mapped below to refocus the input
+	mappings = {
+		submit = {
+			normal = '<Plug>(avante-submit)',
+			insert = '<Plug>(avante-submit)',
+		},
+	},
+	-- the builtin /resume only lists avante's histories, even when the agent keeps its own sessions
+	slash_commands = {
+		{
+			name = 'resume',
+			description = 'Resume a previous session',
+			details = "Resume a previous session; lists the agent's sessions for ACP providers",
+			callback = function()
+				local avante_config = require('avante.config')
+				if avante_config.acp_providers[avante_config.provider] then
+					require('avante.api').select_acp_session()
+				else
+					require('avante.api').select_history()
+				end
+			end,
+		},
+	},
+	-- native picks via vim.ui.select, then asks open/delete/cancel through vim.ui.input
+	selector = {
+		provider = 'telescope',
+	},
 	input = {
 		provider = 'snacks',
 	},
@@ -28,6 +55,12 @@ local config = {
 			env = {
 				NODE_NO_WARNINGS = '1',
 				GEMINI_API_KEY = os.getenv('GEMINI_API_KEY'),
+			},
+		},
+		pi = {
+			command = 'pi-acp',
+			env = {
+				NODE_NO_WARNINGS = '1',
 			},
 		},
 	},
@@ -140,6 +173,58 @@ for _, cmd in ipairs({
 }) do
 	yall.cmd('Avante' .. cmd, 'avante')
 end
+
+-- same as <C-q> in the claude terminal: leave the sidebar for the code window it was opened from
+local sidebar_map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = { 'n', 'i' } })
+vim.api.nvim_create_autocmd('FileType', {
+	group = vim.api.nvim_create_augroup('avante_mappings', { clear = true }),
+	pattern = { 'Avante', 'AvanteInput', 'AvanteSelectedFiles', 'AvanteTodos' },
+	callback = function(args)
+		sidebar_map('<C-q>', function()
+			vim.cmd.stopinsert()
+			local sidebar = require('avante').get()
+			if sidebar and vim.api.nvim_win_is_valid(sidebar.code.winid) then
+				vim.api.nvim_set_current_win(sidebar.code.winid)
+			else
+				vim.cmd.wincmd('p')
+			end
+		end, { buffer = args.buf, desc = 'unfocus' })
+
+		if vim.bo[args.buf].filetype ~= 'AvanteInput' then
+			return
+		end
+		local function submit()
+			local sidebar = require('avante').get()
+			if not sidebar then
+				return
+			end
+			local input_winid = sidebar.containers.input.winid
+			sidebar:submit_input()
+			if input_winid and vim.api.nvim_win_is_valid(input_winid) then
+				vim.api.nvim_set_current_win(input_winid)
+			end
+		end
+		map('<CR>', submit, { buffer = args.buf, desc = 'submit' })
+		require('map').map('i', '<C-s>', submit, { buffer = args.buf, unique = false, desc = 'avante: submit' })
+	end,
+})
+
+-- entering the sidebar from a code window (e.g. <C-w>l) lands on the result pane; go to the prompt instead
+vim.api.nvim_create_autocmd('WinEnter', {
+	group = vim.api.nvim_create_augroup('avante_focus_input', { clear = true }),
+	callback = function()
+		if vim.bo.filetype ~= 'Avante' then
+			return
+		end
+		local sidebar = require('avante').get()
+		if not sidebar or sidebar:is_sidebar_winid(vim.fn.win_getid(vim.fn.winnr('#'))) then
+			return
+		end
+		vim.schedule(function()
+			sidebar:focus_input()
+		end)
+	end,
+})
 
 require('restore').add_quitpre_ft('Avante')
 require('restore').add_quitpre_ft('AvanteInput')

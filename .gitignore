@@ -81,6 +81,9 @@ deps/carapace-bin_*_linux_386.tar.gz
 deps/emmylua_check
 deps/emmylua_check-*.tar.gz
 
+deps/pi
+deps/pi-*-linux-*.tar.gz
+
 deps/coursier
 deps/metals
 home/.local/bin/metals

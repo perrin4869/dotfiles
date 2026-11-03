@@ -16,6 +16,15 @@ local function is_pi_terminal(bufnr)
 	return vim.fs.basename(chan_info.argv[1] or '') == 'pi'
 end
 
+-- like the claude terminal, a session restore recreates pi as a plain terminal; replace it with the
+-- pi.nvim-managed one, continuing the last session
+require('restore').add_buf_match(
+	is_pi_terminal,
+	yall.with('pi')(function()
+		require('pi').continue()
+	end)
+)
+
 -- same as in the claude terminal: leave terminal mode and refocus the previous window in one step
 vim.api.nvim_create_autocmd('TermOpen', {
 	group = vim.api.nvim_create_augroup('pi_terminal_mappings', { clear = true }),

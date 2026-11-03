@@ -42,6 +42,7 @@ function M.restore()
 				if is_match then
 					vim.api.nvim_win_close(w, true)
 					vim.api.nvim_buf_delete(bufnr, { force = true })
+					remaining = remaining - 1
 					r()
 					return true
 				end

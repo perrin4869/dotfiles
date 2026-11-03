@@ -12,8 +12,8 @@ repos:
         language: system
         types: [lua]
         files: ^home/\.config/
-      - id: npm-workspaces
-        name: npm workspaces (tsc, oxlint, oxfmt)
+      - id: typescript
+        name: typescript (tsc, oxlint, oxfmt)
         entry: npm run --silent check
         language: system
         files: ^(home/\.pi/agent/extensions/|package(-lock)?\.json$|\.ox(lint|fmt)rc\.json$)

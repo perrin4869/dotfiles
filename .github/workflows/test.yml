@@ -7,35 +7,6 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    runs-on: ubuntu-26.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@v7
-      - name: lint
-        uses: lunarmodules/luacheck@v1
-      - name: style
-        uses: JohnnyMorganz/stylua-action@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: latest
-          args: --check home/.config
-
-  npm-workspaces:
-    runs-on: ubuntu-26.04
-    steps:
-      - name: checkout
-        uses: actions/checkout@v7
-      - name: install node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 24.x
-          cache: npm
-      - name: install
-        run: npm ci --ignore-scripts
-      - name: typecheck, lint and format
-        run: npm run check
-
   test:
     runs-on: ubuntu-26.04
     env:

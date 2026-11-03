@@ -174,13 +174,12 @@ for _, cmd in ipairs({
 	yall.cmd('Avante' .. cmd, 'avante')
 end
 
--- same as <C-q> in the claude terminal: leave the sidebar for the code window it was opened from
-local sidebar_map = require('map').create({ desc = 'avante', desc_separator = ': ', mode = { 'n', 'i' } })
 vim.api.nvim_create_autocmd('FileType', {
 	group = vim.api.nvim_create_augroup('avante_mappings', { clear = true }),
 	pattern = { 'Avante', 'AvanteInput', 'AvanteSelectedFiles', 'AvanteTodos' },
 	callback = function(args)
-		sidebar_map('<C-q>', function()
+		-- same as <C-q> in the claude terminal: leave the sidebar for the code window it was opened from
+		require('map').map({ 'n', 'i' }, '<C-q>', function()
 			vim.cmd.stopinsert()
 			local sidebar = require('avante').get()
 			if sidebar and vim.api.nvim_win_is_valid(sidebar.code.winid) then
@@ -188,7 +187,7 @@ vim.api.nvim_create_autocmd('FileType', {
 			else
 				vim.cmd.wincmd('p')
 			end
-		end, { buffer = args.buf, desc = 'unfocus' })
+		end, { buffer = args.buf, desc = 'avante: unfocus' })
 
 		if vim.bo[args.buf].filetype ~= 'AvanteInput' then
 			return

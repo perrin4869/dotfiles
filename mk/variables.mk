@@ -24,6 +24,7 @@ XWINWRAP_ROOT = $(DEPS)/xwinwrap
 ACPILIGHT_ROOT = $(DEPS)/acpilight
 CCLS_ROOT = $(DEPS)/ccls
 ATUIN_ROOT = $(DEPS)/atuin
+YUBIKEY_TOUCH_DETECTOR_ROOT = $(DEPS)/yubikey-touch-detector
 QMK_CLI_ROOT = $(DEPS)/qmk_cli
 ZMK_CLI_ROOT = $(DEPS)/zmk-cli
 ESLINT_D_ROOT = $(DEPS)/eslint_d

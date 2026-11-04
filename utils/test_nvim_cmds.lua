@@ -1,10 +1,15 @@
 -- Load every module with yall.cmd placeholders and compare them with the commands it defines:
--- a placeholder the plugin no longer defines is stale, and a plugin command sharing the
--- placeholders' name prefix without one of its own won't lazy-load.
+-- a placeholder the plugin no longer defines, or only as a deprecated alias, is stale, and a
+-- plugin command sharing the placeholders' name prefix without one of its own won't lazy-load.
 local yall = require('yall')
 
 local function user_commands()
 	return vim.api.nvim_get_commands({ builtin = false })
+end
+
+-- plugins keep renamed commands as aliases that say so in their description
+local function deprecated(command)
+	return command.definition:lower():find('deprecated', 1, true) ~= nil
 end
 
 local function common_prefix(names)
@@ -32,12 +37,14 @@ for _, module in ipairs(vim.tbl_keys(modules)) do
 			stubbed[name] = true
 			if not after[name] then
 				table.insert(failures, ('%s: stale placeholder %s'):format(module, name))
+			elseif deprecated(after[name]) then
+				table.insert(failures, ('%s: placeholder for deprecated %s'):format(module, name))
 			end
 		end
 		local prefix = common_prefix(stubs)
 		for name in pairs(after) do
 			local defined_by_load = not before[name] or stubbed[name]
-			if defined_by_load and not stubbed[name] and vim.startswith(name, prefix) then
+			if defined_by_load and not stubbed[name] and vim.startswith(name, prefix) and not deprecated(after[name]) then
 				table.insert(failures, ('%s: %s has no placeholder'):format(module, name))
 			end
 		end

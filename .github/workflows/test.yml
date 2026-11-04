@@ -57,7 +57,8 @@ jobs:
         uses: actions/setup-go@v6
         with:
           go-version: stable
-          cache: false
+          # caches GOCACHE (compiled packages) and GOMODCACHE; only the final link reruns
+          cache-dependency-path: deps/yubikey-touch-detector/go.sum
       - name: install lua
         uses: leafo/gh-actions-lua@v13
         with:

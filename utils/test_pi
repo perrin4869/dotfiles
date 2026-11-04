@@ -30,6 +30,8 @@ async function check() {
 	pi.on('error', (error) => (spawnError = error));
 	pi.stdin.write(`${JSON.stringify({ type: 'get_commands' })}\n`);
 
+	// Readable.from only for its map/find; drop it once async iterators have them:
+	// https://github.com/tc39/proposal-async-iterator-helpers
 	const response = await Readable.from(createInterface({ input: pi.stdout }))
 		.map(parse)
 		.find((message) => message?.type === 'response' && message.command === 'get_commands', {

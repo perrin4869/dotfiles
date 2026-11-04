@@ -86,8 +86,7 @@ test-neovim:
 
 .PHONY: test-neovim-cmds
 test-neovim-cmds:
-	@# run from an empty directory, so no project .nvim.lua applies
-	@cd "$$(mktemp -d)" && nvim --headless --cmd 'luafile $(CURDIR)/$(UTILS)/test_nvim_cmds.lua' \
+	@nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test

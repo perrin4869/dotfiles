@@ -2,7 +2,7 @@
 // Bump each pinned `npm:<name>@<version>` package in pi's settings to its latest release.
 // `pi update` leaves pinned versions alone, so this does it for the update PRs.
 // Prints one `name old -> new` line per bump.
-import { writeFileSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import settings from '../home/.pi/agent/settings.json' with { type: 'json' };
 
 const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
@@ -13,17 +13,24 @@ async function latest(name) {
 	return (await response.json()).version;
 }
 
-const updates = await Promise.all(
-	(settings.packages ?? []).map(async (spec) => {
+const tap = (f) => (arg) => {
+	f(arg);
+	return arg;
+};
+
+const packages = await Promise.all(
+	(settings.packages ?? []).map((spec) => {
 		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
-		if (!match) return { spec };
+		if (!match) return spec;
 		const [, name, current] = match;
-		const version = await latest(name);
-		return version === current ? { spec } : { spec: `npm:${name}@${version}`, bump: `${name} ${current} -> ${version}` };
+		return latest(name)
+			.then(tap((version) => version !== current && console.log(`${name} ${current} -> ${version}`)))
+			.then((version) => `npm:${name}@${version}`);
 	}),
 );
-settings.packages = updates.map((u) => u.spec);
-for (const { bump } of updates) if (bump) console.log(bump);
 
 // pi writes the file this way, so an update only shows the changed versions
-writeFileSync(new URL('../home/.pi/agent/settings.json', import.meta.url), JSON.stringify(settings, null, 2));
+await writeFile(
+	new URL('../home/.pi/agent/settings.json', import.meta.url),
+	JSON.stringify({ ...settings, packages }, null, 2),
+);

@@ -1,6 +1,6 @@
 {
-  "lua-language-server": {
-    "command": ["lua-language-server"],
+  "emmylua_ls": {
+    "command": ["emmylua_ls"],
     "extensions": [".lua"]
   },
   "bash-language-server": {

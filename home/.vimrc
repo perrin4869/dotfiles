@@ -52,6 +52,13 @@ set directory=$HOME/.vim/backup//,/tmp//,. " for swp files"
 " separators substituted to percent '%' signs. This will ensure file name
 " uniqueness in the preserve directory
 
+" pass edits secrets in /dev/shm; keep them out of undo, swap, backup and viminfo/shada files
+augroup redact_shm
+  autocmd!
+  autocmd BufNewFile,BufReadPre /dev/shm/* setlocal noundofile noswapfile nobackup nowritebackup
+  autocmd BufNewFile,BufReadPre /dev/shm/* execute has('nvim') ? 'set shada=' : 'set viminfo='
+augroup END
+
 " Folding options
 " get folding signs space
 set foldcolumn=3

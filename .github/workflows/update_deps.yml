@@ -74,3 +74,43 @@ jobs:
         run: |
           gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/assignees" \
             -f "assignees[]=$GITHUB_REPOSITORY_OWNER" --silent
+
+  pi-packages:
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Update pinned packages
+        id: update
+        run: |
+          {
+            echo 'changes<<EOF'
+            utils/update_pi_packages
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        id: pr
+        if: steps.update.outputs.changes != ''
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: update/pi-packages
+          delete-branch: true
+          title: "Update pi packages"
+          commit-message: "chore(deps): bump pi packages"
+          body: |
+            ```
+            ${{ steps.update.outputs.changes }}
+            ```
+          token: ${{ secrets.PAT }}
+
+      - name: Assign PR
+        if: steps.pr.outputs.pull-request-number
+        env:
+          # PAT acts as me, and GitHub doesn't notify about my own actions
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/assignees" \
+            -f "assignees[]=$GITHUB_REPOSITORY_OWNER" --silent

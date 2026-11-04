@@ -24,6 +24,9 @@ updates:
           interval: weekly
       assignees:
           - perrin4869
+      ignore:
+          # bumped together with the pi binary by update_deps.yml
+          - dependency-name: "@earendil-works/*"
       groups:
           npm:
               patterns:

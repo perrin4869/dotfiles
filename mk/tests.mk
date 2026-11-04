@@ -89,6 +89,10 @@ test-neovim-cmds:
 	@nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
+.PHONY: test-lua-types
+test-lua-types:
+	@nvim -l $(UTILS)/typecheck_lua.lua && echo "$(PASS) lua-language-server finds no type problems"
+
 .PHONY: test
 test: \
 	check-submodule-mismatch \
@@ -98,4 +102,5 @@ test: \
 	test-cron \
 	test-fonts \
 	test-neovim \
-	test-neovim-cmds
+	test-neovim-cmds \
+	test-lua-types

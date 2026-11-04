@@ -90,12 +90,10 @@ test-neovim-cmds:
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test-lua-types
-# .emmyrc.check.json lists the library that lazydev provides per file in the editor; the repo's
-# config, booted against the repo's home, reports where it is
+# .emmyrc.check.json lists the library that lazydev provides per file in the editor; with HOME set to
+# the repo's home, Neovim reports this checkout's pack dir rather than the installed one
 test-lua-types: $(emmylua_check_target)
-	@eval "$$(unset XDG_CONFIG_HOME XDG_DATA_HOME && HOME=$(CURDIR)/home nvim --headless \
-			-c "lua io.stdout:write(('export VIMRUNTIME=%q NVIM_PACK=%q'):format(vim.env.VIMRUNTIME, vim.fn.stdpath('data') .. '/site/pack'))" \
-			-c q)" && \
+	@eval "$$(unset XDG_DATA_HOME && HOME=$(CURDIR)/home nvim -l $(UTILS)/lua_check_paths.lua)" && \
 		$(emmylua_check_target) home/.config/nvim -c .emmyrc.check.json --severity warn --warnings-as-errors \
 		&& echo "$(PASS) emmylua_check finds no type problems"
 

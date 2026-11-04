@@ -21,7 +21,6 @@ jobs:
           - iosevka
           - carapace
           - emmylua_check
-          - yubikey-touch-detector
           - nerdfonts
 
     steps:

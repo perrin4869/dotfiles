@@ -53,6 +53,12 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24.x
+      - name: install go # yubikey-touch-detector
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          # caches GOCACHE (compiled packages) and GOMODCACHE; only the final link reruns
+          cache-dependency-path: deps/yubikey-touch-detector/go.sum
       - name: install lua
         uses: leafo/gh-actions-lua@v13
         with:
@@ -62,10 +68,11 @@ jobs:
       - name: deps
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-22-dev
+          packages: stow libglib2.0-dev libmpv-dev dbus-x11 dconf-cli libavformat-dev libclang-22-dev libgpgme-dev
           # libglib2.0-dev libmpv-dev libavformat-dev - mpv-mpris
           # dbus-x11 dconf-cli - ibus
           # libclang-22-dev - ccls
+          # libgpgme-dev - yubikey-touch-detector
           version: 1.0
       - name: install yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master

@@ -90,6 +90,7 @@ test-neovim-cmds:
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test-lua-types
+# .emmyrc.check.json lists the library that lazydev provides per file in the editor
 test-lua-types: $(emmylua_check_target)
 	@VIMRUNTIME="$$(nvim --clean --headless --cmd 'echo $$VIMRUNTIME' +q 2>&1)" \
 		$(emmylua_check_target) home/.config/nvim -c .emmyrc.check.json --severity warn --warnings-as-errors \

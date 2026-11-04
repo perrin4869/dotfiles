@@ -15,6 +15,7 @@ vim
 		'SelectModel',
 		'Add',
 		'Send',
+		'SendText',
 		'TreeAdd',
 		'Status',
 		'Start',

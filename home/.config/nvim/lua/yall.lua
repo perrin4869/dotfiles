@@ -12,6 +12,8 @@
 local registry = {}
 ---@type table<string, string>
 local hooks = {}
+---@type table<string, string[]>
+local cmds = {}
 
 ---@param name string
 ---@return Yall.Entry
@@ -242,6 +244,9 @@ function M.cmd(name, module)
 		error("yall.cmd: '" .. name .. "' already exists")
 	end
 
+	cmds[module] = cmds[module] or {}
+	table.insert(cmds[module], name)
+
 	-- Clean up the placeholder BEFORE the plugin defines its own
 	on_preload(module, function()
 		pcall(vim.api.nvim_del_user_command, name)
@@ -261,6 +266,12 @@ function M.cmd(name, module)
 			return vim.fn.getcompletion(cmd_line, 'cmdline')
 		end,
 	})
+end
+
+--- Placeholder commands registered with cmd, by module.
+---@return table<string, string[]>
+function M.cmds()
+	return vim.deepcopy(cmds)
 end
 
 --- Creates a lazy command trigger.

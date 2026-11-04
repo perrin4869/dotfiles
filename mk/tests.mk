@@ -84,6 +84,12 @@ test-neovim:
 	    echo "$(PASS) neovim boots cleanly"; \
 	fi
 
+.PHONY: test-neovim-cmds
+test-neovim-cmds:
+	@# run from an empty directory, so no project .nvim.lua applies
+	@cd "$$(mktemp -d)" && nvim --headless -c 'luafile $(CURDIR)/$(UTILS)/test_nvim_cmds.lua' \
+		&& echo "$(PASS) lazy-loaded commands match their plugins"
+
 .PHONY: test
 test: \
 	check-submodule-mismatch \
@@ -92,4 +98,5 @@ test: \
 	test-ibus-config \
 	test-cron \
 	test-fonts \
-	test-neovim
+	test-neovim \
+	test-neovim-cmds

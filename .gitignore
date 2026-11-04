@@ -78,6 +78,7 @@ deps/carapace
 deps/carapace-bin_*_linux_amd64.tar.gz
 deps/carapace-bin_*_linux_arm64.tar.gz
 deps/carapace-bin_*_linux_386.tar.gz
+deps/yubikey-touch-detector
 
 deps/coursier
 deps/metals

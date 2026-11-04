@@ -12,6 +12,7 @@ github_repo() {
     coursier)  echo "coursier/coursier" ;;
     iosevka)   echo "be5invis/Iosevka" ;;
     carapace)  echo "carapace-sh/carapace-bin" ;;
+    yubikey-touch-detector) echo "maximbaz/yubikey-touch-detector" ;;
     nerdfonts) echo "ryanoasis/nerd-fonts" ;;
     *)
       echo "Unknown dependency: $1" >&2

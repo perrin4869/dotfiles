@@ -12,7 +12,7 @@ yall.on_load('ui2', function()
 			-- },
 		},
 	})
-	vim.opt.winborder = 'rounded'
+	vim.o.winborder = 'rounded'
 	vim.opt.completeopt:append('popup')
 
 	-- alternative to fidget.nvim, but I like the ui of fidget better now

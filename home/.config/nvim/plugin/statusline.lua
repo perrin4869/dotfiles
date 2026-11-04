@@ -77,7 +77,7 @@ yall.on_load('lualine', function()
 	-- recording stops, so we wait a bit (50ms) before refreshing.
 	vim.api.nvim_create_autocmd('RecordingLeave', {
 		callback = function()
-			local timer = vim.loop.new_timer()
+			local timer = assert(vim.uv.new_timer())
 			timer:start(
 				50,
 				0,

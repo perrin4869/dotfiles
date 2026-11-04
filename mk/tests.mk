@@ -89,6 +89,15 @@ test-neovim-cmds:
 	@nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
+.PHONY: test-lua-types
+# .luarc.check.json lists the library that lazydev provides per file in the editor; with HOME set to
+# the repo's home, Neovim reports this checkout's pack dir rather than the installed one
+test-lua-types:
+	@eval "$$(unset XDG_DATA_HOME && HOME=$(CURDIR)/home nvim -l $(UTILS)/lua_check_paths.lua)" && \
+		$(MASON_ROOT)/bin/lua-language-server --check=home/.config/nvim --configpath=$(CURDIR)/.luarc.check.json \
+		--check_format=pretty --checklevel=Warning \
+		&& echo "$(PASS) lua-language-server finds no type problems"
+
 .PHONY: test
 test: \
 	check-submodule-mismatch \
@@ -98,4 +107,5 @@ test: \
 	test-cron \
 	test-fonts \
 	test-neovim \
-	test-neovim-cmds
+	test-neovim-cmds \
+	test-lua-types

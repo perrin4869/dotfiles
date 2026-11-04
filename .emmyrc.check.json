@@ -17,8 +17,7 @@
           "*/*/*/l[!u]*/**",
           "*/*/*/lu[!a]*/**",
           "*/*/*/lua?*/**",
-          "*/*/*/*.lua",
-          "*/*/plenary.nvim/lua/plenary/busted.lua"
+          "*/*/*/*.lua"
         ]
       }
     ]

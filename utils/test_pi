@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Start pi with the installed config over RPC and list its commands. pi installs missing packages on
-// startup and reports any that fail to install or load on stderr, so a clean start prints nothing there.
+// startup, with npm's output on stderr, and reports packages that fail to install or load there as
+// `Error:` or `Warning:` lines.
 import { spawn } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -20,12 +21,12 @@ const child = spawn(pi, ['--mode', 'rpc', '--no-session'], { cwd, stdio: ['pipe'
 let errors = '';
 child.stderr.on('data', (chunk) => (errors += chunk));
 
-function finish(message) {
+function finish(message, output = errors) {
 	clearTimeout(timer);
 	child.kill();
 	rmSync(cwd, { recursive: true, force: true });
 	if (message !== undefined) {
-		stderr.write(`${message}\n${errors}`);
+		stderr.write(`${message}\n${output}`);
 		exit(1);
 	}
 }
@@ -47,7 +48,8 @@ createInterface({ input: child.stdout }).on('line', (line) => {
 	const names = new Set(message.data.commands.map((c) => c.name));
 	const missing = EXPECTED_COMMANDS.filter((name) => !names.has(name));
 	if (missing.length > 0) return finish(`missing commands: ${missing.join(', ')}`);
-	if (errors.trim() !== '') return finish('pi reported errors on startup:');
+	const problems = errors.split('\n').filter((l) => /^(Error|Warning):/.test(l));
+	if (problems.length > 0) return finish('pi reported problems on startup:', `${problems.join('\n')}\n`);
 	finish();
 	console.log(`pi started cleanly with ${names.size} commands`);
 });

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Play a sound each time yubikey-touch-detector reports the key waiting for a touch.
+# Its socket sends fixed 5-byte events: GPG_1, U2F_1 or MAC_1 when a touch is requested, *_0 when it ends.
+set -u
+
+socket="${XDG_RUNTIME_DIR:?}/yubikey-touch-detector.socket"
+sound="${YUBIKEY_TOUCH_SOUND:-/usr/share/sounds/freedesktop/stereo/dialog-warning.oga}"
+
+while :; do
+	if [[ -S $socket ]]; then
+		socat -u "UNIX-CONNECT:$socket" - | while read -r -N 5 event; do
+			[[ $event == *_1 ]] && pw-play "$sound" &
+		done
+	fi
+	# the detector isn't running yet, or restarted
+	sleep 1
+done

@@ -129,6 +129,26 @@ $(carapace_target): $(DEPS)/$(carapace_archive)
 	@touch $@
 carapace: $(carapace_target)
 
+.PHONY: yubikey-touch-detector
+yubikey-touch-detector_version = $(call get_version,yubikey-touch-detector)
+yubikey-touch-detector_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo x86_64 ;; \
+	aarch64|arm64$(CP) echo aarch64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+yubikey-touch-detector_url = https://github.com/maximbaz/yubikey-touch-detector/releases/download/$(yubikey-touch-detector_version)
+yubikey-touch-detector_binary = yubikey-touch-detector-$(yubikey-touch-detector_arch)-linux-gnu
+yubikey-touch-detector_target = $(DEPS)/yubikey-touch-detector/yubikey-touch-detector
+# a bare binary, so depend on the pinned version to fetch it again on a bump
+$(yubikey-touch-detector_target): $(EXTERNAL_VERSIONS)/yubikey-touch-detector
+	$(call require,wget)
+	mkdir -p $(@D)
+	cd $(@D) && wget -q -O $(yubikey-touch-detector_binary) $(yubikey-touch-detector_url)/$(yubikey-touch-detector_binary) \
+		&& wget -q -O SHA256SUMS $(yubikey-touch-detector_url)/SHA256SUMS \
+		&& sha256sum -c --ignore-missing SHA256SUMS \
+		&& mv $(yubikey-touch-detector_binary) $(@F) && chmod +x $(@F) && rm SHA256SUMS
+yubikey-touch-detector: $(yubikey-touch-detector_target)
+
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin
 $(eval $(call git_submodule,atuin,$(ATUIN_ROOT)))
@@ -340,6 +360,7 @@ TARGETS = \
 	nerd_fonts \
 	iosevka \
 	carapace \
+	yubikey-touch-detector \
 	i3status \
 	treesitter \
 	atuin \

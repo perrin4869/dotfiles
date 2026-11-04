@@ -65,6 +65,9 @@ GEOCLUE2=$(
 run_bg_guarded sxhkd
 run_bg_guarded blueman-applet
 run_bg_guarded dunst
+# notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
+run_bg_guarded yubikey-touch-detector --notify
+run_bg_guarded yubikey-touch-sound
 run_bg_guarded xscreensaver -no-splash
 run_bg_guarded udiskie --tray
 run_bg_guarded $GEOCLUE2 # required for redshift

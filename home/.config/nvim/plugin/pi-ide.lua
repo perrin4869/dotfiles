@@ -10,7 +10,6 @@ local diff_review = false
 yall.on_load('pi-ide', function()
 	local diff = require('pi-ide.diff')
 	local open_blocking = diff.open_blocking
-	---@diagnostic disable-next-line: duplicate-set-field
 	diff.open_blocking = function(params)
 		if diff_review then
 			return open_blocking(params)
@@ -23,12 +22,11 @@ yall.on_load('pi-ide', function()
 	-- pi-ide reports any named buffer, so entering a pi terminal would replace the last code selection
 	local selection = require('pi-ide.selection')
 	local update = selection.update
-	---@diagnostic disable-next-line: duplicate-set-field
-	selection.update = function(...)
+	selection.update = function()
 		if vim.bo.buftype ~= '' then
 			return
 		end
-		return update(...)
+		update()
 	end
 end)
 

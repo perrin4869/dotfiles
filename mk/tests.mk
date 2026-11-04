@@ -93,6 +93,7 @@ test-neovim-cmds:
 # .emmyrc.check.json lists the library that lazydev provides per file in the editor
 test-lua-types: $(emmylua_check_target)
 	@VIMRUNTIME="$$(nvim --clean --headless --cmd 'echo $$VIMRUNTIME' +q 2>&1)" \
+		NVIM_PACK="$(CURDIR)/$(NVIM_DATA_DIRECTORY)/site/pack" \
 		$(emmylua_check_target) home/.config/nvim -c .emmyrc.check.json --severity warn --warnings-as-errors \
 		&& echo "$(PASS) emmylua_check finds no type problems"
 

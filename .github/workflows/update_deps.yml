@@ -20,7 +20,6 @@ jobs:
           - coursier
           - iosevka
           - carapace
-          - yubikey-touch-detector
           - nerdfonts
 
     steps:

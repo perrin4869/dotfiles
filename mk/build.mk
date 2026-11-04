@@ -130,21 +130,13 @@ $(carapace_target): $(DEPS)/$(carapace_archive)
 carapace: $(carapace_target)
 
 .PHONY: yubikey-touch-detector
-yubikey-touch-detector_version = $(call get_version,yubikey-touch-detector)
-yubikey-touch-detector_source = yubikey-touch-detector-$(yubikey-touch-detector_version)-vendored.tar.gz
-$(DEPS)/$(yubikey-touch-detector_source):
-	$(call require,wget)
-	wget -q https://github.com/maximbaz/yubikey-touch-detector/releases/download/$(yubikey-touch-detector_version)/$(yubikey-touch-detector_source) -O $@.part
-	$(UTILS)/verify_github_asset maximbaz/yubikey-touch-detector $(yubikey-touch-detector_version) $(@F) $@.part
-	mv $@.part $@
-yubikey-touch-detector_target = $(DEPS)/yubikey-touch-detector/yubikey-touch-detector
 # release binaries link gpgme 1.x (libgpgme.so.11), so build against the system's gpgme
-$(yubikey-touch-detector_target): $(DEPS)/$(yubikey-touch-detector_source)
+yubikey-touch-detector_target = $(YUBIKEY_TOUCH_DETECTOR_ROOT)/yubikey-touch-detector
+$(eval $(call git_submodule,yubikey-touch-detector,$(YUBIKEY_TOUCH_DETECTOR_ROOT)))
+$(yubikey-touch-detector_target): $(yubikey-touch-detector_head_file)
 	$(call require,go)
-	rm -rf $(@D) && mkdir -p $(@D)/src
-	tar xzf $< -C $(@D)/src --strip-components=1
-	cd $(@D)/src && GOFLAGS=-mod=vendor go build -trimpath -o ../$(@F) .
-	rm -rf $(@D)/src
+	cd $(YUBIKEY_TOUCH_DETECTOR_ROOT) && go build -trimpath -o $(@F) .
+	@touch $@
 yubikey-touch-detector: $(yubikey-touch-detector_target)
 
 .PHONY: atuin

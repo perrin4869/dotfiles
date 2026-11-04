@@ -45,13 +45,10 @@ local function trigger_load_with_after(plugin_name)
 	if not res or not rtp then
 		return
 	end
-	for _, dir in ipairs(vim.opt.packpath:get()) do
-		local glob = vim.fs.joinpath('pack', '*', 'opt', plugin_name)
-		local plugin_dirs = vim.fn.globpath(dir, glob, nil, true, true)
-		if not vim.tbl_isempty(plugin_dirs) then
-			rtp.source_after_plugin_dir(plugin_dirs[1])
-			return
-		end
+	local glob = vim.fs.joinpath('pack', '*', 'opt', plugin_name)
+	local plugin_dir = vim.fn.globpath(vim.o.packpath, glob, false, true)[1]
+	if plugin_dir then
+		rtp.source_after_plugin_dir(plugin_dir)
 	end
 end
 

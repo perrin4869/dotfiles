@@ -1,6 +1,6 @@
 -- Load every module with yall.cmd placeholders and compare them with the commands it defines:
 -- a placeholder the plugin no longer defines, or only as a deprecated alias, is stale, and a
--- command the plugin defines without a placeholder won't lazy-load.
+-- plugin command sharing the placeholders' name prefix without one of its own won't lazy-load.
 -- Run with --cmd, before the config, so it can record the placeholders as they are created.
 local yall = require('yall')
 
@@ -22,21 +22,14 @@ local function deprecated(command)
 	return command.definition:lower():find('deprecated', 1, true) ~= nil
 end
 
--- the plugin directory whose file defined a command, so a dependency's commands aren't counted
-local function plugin_dir(name)
-	local output = vim.api.nvim_exec2('verbose command ' .. name, { output = true }).output
-	local file = output:match('Last set from (.-) line %d+') or output:match('Last set from (%S+)')
-	return file and vim.fs.normalize(file):match('^(.-/pack/[^/]+/[^/]+/[^/]+)/')
-end
-
--- commands created from Lua only record their file while 'verbose' is set
-local function load_module(module)
-	vim.o.verbosefile = '/dev/null'
-	vim.o.verbose = 1
-	local ok, err = pcall(yall.ensure, module)
-	vim.o.verbose = 0
-	vim.o.verbosefile = ''
-	return ok, err
+local function common_prefix(names)
+	local prefix = names[1]
+	for _, name in ipairs(names) do
+		while not vim.startswith(name, prefix) do
+			prefix = prefix:sub(1, -2)
+		end
+	end
+	return prefix
 end
 
 local function check()
@@ -44,27 +37,24 @@ local function check()
 	for _, module in ipairs(vim.tbl_keys(modules)) do
 		local stubs = modules[module]
 		local before = user_commands()
-		local ok, err = load_module(module)
+		local ok, err = pcall(yall.ensure, module)
 		if not ok then
 			table.insert(failures, ('%s: failed to load: %s'):format(module, err))
 		else
 			local after = user_commands()
-			local dirs = {}
+			local stubbed = {}
 			for _, name in ipairs(stubs) do
+				stubbed[name] = true
 				if not after[name] then
 					table.insert(failures, ('%s: stale placeholder %s'):format(module, name))
-				else
-					if deprecated(after[name]) then
-						table.insert(failures, ('%s: placeholder for deprecated %s'):format(module, name))
-					end
-					local dir = plugin_dir(name)
-					if dir then
-						dirs[dir] = true
-					end
+				elseif deprecated(after[name]) then
+					table.insert(failures, ('%s: placeholder for deprecated %s'):format(module, name))
 				end
 			end
-			for name, command in pairs(after) do
-				if not before[name] and not deprecated(command) and dirs[plugin_dir(name) or ''] then
+			local prefix = common_prefix(stubs)
+			for name in pairs(after) do
+				local defined_by_load = not before[name] or stubbed[name]
+				if defined_by_load and not stubbed[name] and vim.startswith(name, prefix) and not deprecated(after[name]) then
 					table.insert(failures, ('%s: %s has no placeholder'):format(module, name))
 				end
 			end

@@ -1,4 +1,10 @@
 {
+	"shellTools": {
+		"bg_run": {
+			"commandArgument": "command",
+			"workdirArgument": "cwd"
+		}
+	},
 	"permission": {
 		"*": "allow",
 		"path": {

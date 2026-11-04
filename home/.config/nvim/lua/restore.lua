@@ -30,8 +30,6 @@ function M.restore()
 		local bufnr = vim.api.nvim_win_get_buf(w)
 		local bufname = vim.api.nvim_buf_get_name(bufnr)
 		if
-			-- Nvim 0.12 annotates Iter:any without its predicate
-			---@diagnostic disable-next-line: redundant-parameter
 			not vim.iter(matches):any(function(m, r)
 				local is_match
 				if type(m) == 'function' then

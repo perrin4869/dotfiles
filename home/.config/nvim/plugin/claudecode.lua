@@ -54,7 +54,7 @@ local claude = function(cmd, args)
 	end
 
 	return function()
-		assert(vim.cmd['ClaudeCode' .. cmd])(unpack(args))
+		vim.cmd({ cmd = 'ClaudeCode' .. cmd, args = args })
 	end
 end
 map('n', prefix .. 'c', claude(), 'toggle')

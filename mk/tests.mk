@@ -90,10 +90,12 @@ test-neovim-cmds:
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test-lua-types
-# .luarc.check.json lists the library that lazydev provides per file in the editor
+# .luarc.check.json lists the library that lazydev provides per file in the editor; the repo's
+# config, booted against the repo's home, reports where it is
 test-lua-types:
-	@VIMRUNTIME="$$(nvim --clean --headless --cmd 'echo $$VIMRUNTIME' +q 2>&1)" \
-		NVIM_PACK="$(CURDIR)/$(NVIM_DATA_DIRECTORY)/site/pack" \
+	@eval "$$(unset XDG_CONFIG_HOME XDG_DATA_HOME && HOME=$(CURDIR)/home nvim --headless \
+			-c "lua io.stdout:write(('export VIMRUNTIME=%q NVIM_PACK=%q'):format(vim.env.VIMRUNTIME, vim.fn.stdpath('data') .. '/site/pack'))" \
+			-c q)" && \
 		$(MASON_ROOT)/bin/lua-language-server --check=home/.config/nvim --configpath=$(CURDIR)/.luarc.check.json \
 		--check_format=pretty --checklevel=Warning \
 		&& echo "$(PASS) lua-language-server finds no type problems"

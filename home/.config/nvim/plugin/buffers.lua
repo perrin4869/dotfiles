@@ -43,6 +43,9 @@ end)
 
 yall.very_lazy(function()
 	local next_move = require('nvim-next.move')
+	-- nvim-next's two return values are lost to the type checker, which would see one argument short
+	---@type fun(prev: function, next: function): function, function
+	local make_repeatable_pair = next_move.make_repeatable_pair
 
 	local function cokeline_or_buf(cokeline_focus_direction, bufcmd)
 		return function()
@@ -57,9 +60,8 @@ yall.very_lazy(function()
 	end
 
 	-- buffers
-	local prev_buffer, next_buffer =
-		next_move.make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext'))
-	local prev_buffers, next_buffers = require('trigger').trigger('b', prev_buffer, next_buffer)
+	local prev_buffers, next_buffers =
+		require('trigger').trigger('b', make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext')))
 
 	local map = require('map').create({ unique = false })
 	map('n', '[b', prev_buffers, 'Go to previous buffer')

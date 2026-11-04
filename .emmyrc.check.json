@@ -11,6 +11,10 @@
     "library": [
       "$VIMRUNTIME",
       "$NVIM_PACK"
+    ],
+    "ignoreGlobs": [
+      "**/async.nvim/meta/**",
+      "**/claudecode.nvim/tests/**"
     ]
   }
 }

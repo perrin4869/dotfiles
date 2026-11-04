@@ -78,6 +78,8 @@ deps/carapace
 deps/carapace-bin_*_linux_amd64.tar.gz
 deps/carapace-bin_*_linux_arm64.tar.gz
 deps/carapace-bin_*_linux_386.tar.gz
+deps/emmylua_check
+deps/emmylua_check-*.tar.gz
 
 deps/coursier
 deps/metals

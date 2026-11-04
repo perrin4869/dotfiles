@@ -14,18 +14,10 @@ yall.very_lazy(function()
 	local function safe_jump_back()
 		local jumplist, cur_idx = unpack(vim.fn.getjumplist())
 
-		-- cur_idx is 0-indexed. The previous jump is at cur_idx - 1.
-		-- We use +1 because Lua tables are 1-indexed.
-		local prev_jump_idx = cur_idx -- This points to the entry before current in 1-indexing
-
-		if prev_jump_idx > 0 then
-			local prev_jump = jumplist[prev_jump_idx]
-			local bufnr = prev_jump.bufnr
-
-			-- Check if the buffer is valid and loaded in Neovim
-			if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr) then
-				vim.cmd.normal({ vim.api.nvim_replace_termcodes('<C-o>', true, false, true), bang = true })
-			end
+		-- cur_idx is 0-indexed, so as a 1-based index it points to the entry before the current one
+		local prev_jump = jumplist[cur_idx]
+		if prev_jump and vim.api.nvim_buf_is_valid(prev_jump.bufnr) and vim.api.nvim_buf_is_loaded(prev_jump.bufnr) then
+			vim.cmd.normal({ vim.api.nvim_replace_termcodes('<C-o>', true, false, true), bang = true })
 		end
 	end
 
@@ -51,10 +43,15 @@ end)
 
 yall.very_lazy(function()
 	local next_move = require('nvim-next.move')
+	-- nvim-next's two return values are lost to the type checker, which would see one argument short
+	---@type fun(prev: function, next: function): function, function
+	local make_repeatable_pair = next_move.make_repeatable_pair
 
 	local function cokeline_or_buf(cokeline_focus_direction, bufcmd)
 		return function()
 			if package.loaded['cokeline'] then
+				-- cokeline annotates its goals with the quotes inside ('"focus"')
+				---@diagnostic disable-next-line: param-type-mismatch
 				require('cokeline.mappings').by_step('focus', cokeline_focus_direction)
 			else
 				vim.cmd(bufcmd)
@@ -63,10 +60,8 @@ yall.very_lazy(function()
 	end
 
 	-- buffers
-	local prev_buffers, next_buffers = require('trigger').trigger(
-		'b',
-		next_move.make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext'))
-	)
+	local prev_buffers, next_buffers =
+		require('trigger').trigger('b', make_repeatable_pair(cokeline_or_buf(-1, 'bprevious'), cokeline_or_buf(1, 'bnext')))
 
 	local map = require('map').create({ unique = false })
 	map('n', '[b', prev_buffers, 'Go to previous buffer')

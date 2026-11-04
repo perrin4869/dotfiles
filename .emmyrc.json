@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
+  "workspace": {
+    "ignoreGlobs": [
+      "deps/**",
+      "node_modules/**",
+      "home/.local/share/icons/**",
+      "home/.local/share/qmk/**",
+      "home/.local/share/fonts/**",
+      "home/.local/share/themes/**",
+      "home/.local/share/tmux/**",
+      "home/.local/share/oh-my-zsh/**",
+      "home/.local/share/qutebrowser/**",
+      "home/.local/share/nvim/mason/**",
+      "home/.local/share/nvim/mason-registry/**",
+      "home/.local/share/nvim/undo/**"
+    ]
+  },
+  "diagnostics": {
+    "disable": [
+      "unnecessary-if"
+    ]
+  }
+}

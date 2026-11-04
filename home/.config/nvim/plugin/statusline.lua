@@ -12,6 +12,7 @@ yall.on_load('lualine', function()
 	vim.api.nvim_create_autocmd('OptionSet', {
 		pattern = 'paste',
 		callback = function()
+			---@diagnostic disable-next-line: undefined-field
 			require('lualine').refresh()
 		end,
 	})
@@ -69,6 +70,7 @@ yall.on_load('lualine', function()
 	-- https://github.com/nvim-lualine/lualine.nvim/pull/1227
 	vim.api.nvim_create_autocmd('RecordingEnter', {
 		callback = function()
+			---@diagnostic disable-next-line: undefined-field
 			lualine.refresh()
 		end,
 	})
@@ -82,12 +84,14 @@ yall.on_load('lualine', function()
 				50,
 				0,
 				vim.schedule_wrap(function()
+					---@diagnostic disable-next-line: undefined-field
 					lualine.refresh()
 				end)
 			)
 		end,
 	})
 
+	---@diagnostic disable-next-line: undefined-field
 	lualine.setup({
 		sections = {
 			lualine_a = { 'mode', paste },

@@ -42,7 +42,7 @@ end
 -- https://github.com/lumen-oss/lz.n/wiki/lazy‐loading-nvim‐cmp-and-its-extensions
 local function trigger_load_with_after(plugin_name)
 	local res, rtp = pcall(require, 'rtp_nvim')
-	if not res then
+	if not res or not rtp then
 		return
 	end
 	for _, dir in ipairs(vim.opt.packpath:get()) do
@@ -387,6 +387,7 @@ function M.very_lazy(loader)
 			M.ensure(loader)
 		end
 	end
+	---@cast callback function
 	if vim.v.vim_did_enter == 1 then
 		callback()
 		return

@@ -156,6 +156,8 @@ yall.on_load('alpha', function()
 	end
 	dashboard.section.header.val = random(headers)
 
+	-- alpha annotates the default seven buttons as a tuple
+	---@diagnostic disable-next-line: assign-type-mismatch
 	dashboard.section.buttons.val = {
 		dashboard.button('f', '  Find File', ':Telescope find_files<CR>'),
 		dashboard.button('e', '  New file', ':ene <BAR> startinsert <CR>'),
@@ -166,6 +168,8 @@ yall.on_load('alpha', function()
 	}
 
 	local footer = function()
+		-- Nvim 0.12 doesn't annotate vim.version's __call
+		---@diagnostic disable-next-line: call-non-callable
 		local version = ' NVIM ' .. tostring(vim.version())
 		return version
 	end

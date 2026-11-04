@@ -65,7 +65,7 @@ local set_exception_breakpoints = with_dap(function()
 end)
 
 local ui_widgets_hover = with_dap(function()
-	require('dap.ui.widgets').hover(require('dap.utils').get_visual_selection_text())
+	require('dap.ui.widgets').hover()
 end)
 
 local ui_widgets_scopes = with_dap(function()
@@ -286,7 +286,8 @@ map('n', prefix .. 'd', disconnect, 'disconnect')
 map('n', prefix .. 'r', repl_open_focus, 'repl.open_focus')
 map('n', prefix .. 'R', repl_toggle, 'repl.toggle')
 map('n', prefix .. 'e', set_exception_breakpoints, 'set_exception_breakpoints')
-map('n', prefix .. 'i', ui_widgets_hover, 'ui.widgets.hover')
+-- in charwise visual mode, hover() evaluates the selection instead of <cexpr>
+map({ 'n', 'x' }, prefix .. 'i', ui_widgets_hover, 'ui.widgets.hover')
 map('n', prefix .. '?', ui_widgets_scopes, 'ui.widgets.scopes')
 
 require('map').map('n', prefix .. 'u', toggle_view, 'dap-view.toggle')

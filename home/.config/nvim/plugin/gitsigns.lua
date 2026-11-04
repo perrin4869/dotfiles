@@ -2,7 +2,7 @@ local yall = require('yall')
 
 yall.setup('gitsigns', {
 	on_attach = function(bufnr)
-		local gs = package.loaded.gitsigns
+		local gs = require('gitsigns')
 
 		local map = require('map').create({
 			desc = 'gitsigns',

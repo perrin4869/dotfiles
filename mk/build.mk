@@ -129,6 +129,26 @@ $(carapace_target): $(DEPS)/$(carapace_archive)
 	@touch $@
 carapace: $(carapace_target)
 
+.PHONY: emmylua_check
+emmylua_check_version = $(call get_version,emmylua_check)
+# x86_64 is a static musl build, so it doesn't depend on the system's libraries
+emmylua_check_platform = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo linux-musl ;; \
+	aarch64|arm64$(CP) echo linux-aarch64-glibc.2.17 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+# upstream asset name has no version, so add one to fetch it again on bumps
+emmylua_check_archive = emmylua_check-$(emmylua_check_version)-$(emmylua_check_platform).tar.gz
+$(DEPS)/$(emmylua_check_archive):
+	$(call require,wget)
+	wget https://github.com/EmmyLuaLs/emmylua-analyzer-rust/releases/download/$(emmylua_check_version)/emmylua_check-$(emmylua_check_platform).tar.gz -O $@
+emmylua_check_target = $(DEPS)/emmylua_check/emmylua_check
+$(emmylua_check_target): $(DEPS)/$(emmylua_check_archive)
+	mkdir -p $(@D)
+	tar xzf $< -C $(@D)
+	@touch $@
+emmylua_check: $(emmylua_check_target)
+
 .PHONY: yubikey-touch-detector
 # release binaries link gpgme 1.x (libgpgme.so.11), so build against the system's gpgme
 yubikey-touch-detector_target = $(YUBIKEY_TOUCH_DETECTOR_ROOT)/yubikey-touch-detector
@@ -222,7 +242,7 @@ $(telescope-fzf-native_target): $(telescope-fzf-native_head_file)
 	@touch $(telescope-fzf-native_target)
 telescope-fzf-native: $(telescope-fzf-native_target)
 
-lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server tsc kotlin-lsp kotlin-debug-adapter sqlls lua-language-server js-debug-adapter tree-sitter-cli copilot-language-server
+lsps = luacheck stylua prettier jsonlint json-lsp html-lsp css-lsp bash-language-server tsc kotlin-lsp kotlin-debug-adapter sqlls emmylua_ls js-debug-adapter tree-sitter-cli copilot-language-server
 .PHONY: $(lsps)
 $(eval $(call mason_package,luacheck))
 $(eval $(call mason_package,stylua,true))
@@ -237,7 +257,7 @@ $(eval $(call mason_package,bash-language-server))
 $(eval $(call mason_package,kotlin-lsp,true))
 $(eval $(call mason_package,kotlin-debug-adapter,true))
 $(eval $(call mason_package,sqlls,true))
-$(eval $(call mason_package,lua-language-server))
+$(eval $(call mason_package,emmylua_ls))
 $(eval $(call mason_package,tree-sitter-cli,true))
 $(eval $(call mason_package,copilot-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding
@@ -350,6 +370,7 @@ TARGETS = \
 	nerd_fonts \
 	iosevka \
 	carapace \
+	emmylua_check \
 	yubikey-touch-detector \
 	i3status \
 	treesitter \

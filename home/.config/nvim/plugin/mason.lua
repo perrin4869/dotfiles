@@ -2,11 +2,11 @@ local yall = require('yall')
 
 yall.setup('mason', {
 	registries = {
-		'file:' .. vim.fs.joinpath(vim.fn.stdpath('data'), 'mason-registry'),
+		'file:' .. vim.fs.joinpath(vim.fn.stdpath('data') --[[@as string]], 'mason-registry'),
 	},
 })
-vim.iter({ '', 'Install', 'Log', 'Uninstall', 'UninstallAll', 'Update' }):each(function(cmd)
+for _, cmd in ipairs({ '', 'Install', 'Log', 'Uninstall', 'UninstallAll', 'Update' }) do
 	yall.cmd('Mason' .. cmd, 'mason')
-end)
+end
 yall.hook('mason')
 yall.very_lazy('mason')

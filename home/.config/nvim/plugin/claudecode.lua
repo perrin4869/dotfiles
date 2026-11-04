@@ -8,27 +8,25 @@ yall.setup('claudecode', { -- https://github.com/coder/claudecode.nvim/pull/308/
 	},
 })
 
-vim
-	.iter({
-		'',
-		'Focus',
-		'SelectModel',
-		'Add',
-		'Send',
-		'SendText',
-		'TreeAdd',
-		'Status',
-		'Start',
-		'Stop',
-		'Open',
-		'Close',
-		'DiffAccept',
-		'DiffDeny',
-		'CloseAllDiffs',
-	})
-	:each(function(cmd)
-		yall.cmd('ClaudeCode' .. cmd, 'claudecode')
-	end)
+for _, cmd in ipairs({
+	'',
+	'Focus',
+	'SelectModel',
+	'Add',
+	'Send',
+	'SendText',
+	'TreeAdd',
+	'Status',
+	'Start',
+	'Stop',
+	'Open',
+	'Close',
+	'DiffAccept',
+	'DiffDeny',
+	'CloseAllDiffs',
+}) do
+	yall.cmd('ClaudeCode' .. cmd, 'claudecode')
+end
 
 local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' })
 local prefix = '<leader>C'
@@ -42,9 +40,9 @@ local function is_claude_terminal(bufnr) -- https://github.com/coder/claudecode.
 	if not ok or not chan_info.argv then
 		return false
 	end
-	return vim.iter(chan_info.argv):any(function(a)
+	return vim.tbl_contains(chan_info.argv, function(a)
 		return vim.fs.basename(a) == 'claude'
-	end)
+	end, { predicate = true })
 end
 local claude = function(cmd, args)
 	if type(cmd) == 'table' then
@@ -56,7 +54,7 @@ local claude = function(cmd, args)
 	end
 
 	return function()
-		vim.cmd['ClaudeCode' .. cmd](unpack(args))
+		assert(vim.cmd['ClaudeCode' .. cmd])(unpack(args))
 	end
 end
 map('n', prefix .. 'c', claude(), 'toggle')

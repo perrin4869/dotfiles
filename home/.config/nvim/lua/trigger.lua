@@ -3,9 +3,11 @@ local M = {}
 
 --- @type Yall.Lazy<uv.uv_timer_t>
 local timer = lazy(function()
-	return vim.uv.new_timer()
+	return (assert(vim.uv.new_timer()))
 end)
-local cache = {} -- Stores original mappings keyed by the repeat_key
+-- original mappings keyed by the repeat_key
+---@type table<string, table<string, any>|false>
+local cache = {}
 
 ---Restores the original mapping for a specific key
 ---@param key string
@@ -38,7 +40,7 @@ end
 ---Activates the sticky repeat for the primary key
 ---@param key string
 ---@param action function
----@param timeout number
+---@param timeout integer
 local function activate_sticky(key, action, timeout)
 	timer():stop()
 
@@ -72,7 +74,7 @@ end
 ---@param key string The key to override (e.g., 'b')
 ---@param action_prev function
 ---@param action_next function
----@param timeout? number Defaults to 1000ms
+---@param timeout? integer Defaults to 1000ms
 ---@return function action_prev, function action_next
 function M.trigger(key, action_prev, action_next, timeout)
 	timeout = timeout or 1000

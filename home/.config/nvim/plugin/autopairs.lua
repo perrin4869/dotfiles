@@ -23,6 +23,8 @@ yall.on_load('nvim-autopairs', function()
 
 	local brackets = { { '(', ')' }, { '[', ']' }, { '{', '}' } }
 	npairs.add_rules({
+		-- nvim-autopairs' Rule is callable through a metatable it doesn't annotate
+		---@diagnostic disable-next-line: call-non-callable
 		Rule(' ', ' ')
 			:with_pair(cond.done())
 			:replace_endpair(function(opts)
@@ -41,6 +43,7 @@ yall.on_load('nvim-autopairs', function()
 			end),
 	})
 	for _, bracket in pairs(brackets) do
+		---@diagnostic disable-next-line: call-non-callable
 		Rule('', ' ' .. bracket[2])
 			:with_pair(cond.none())
 			:with_move(function(opts)

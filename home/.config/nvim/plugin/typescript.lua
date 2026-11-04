@@ -26,7 +26,7 @@ local yall = require('yall')
 yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		once = true,
-		pattern = vim.lsp.config['tsc'].filetypes,
+		pattern = (vim.lsp.config --[[@as table<string, vim.lsp.Config>]])['tsc'].filetypes,
 		callback = function()
 			vim.lsp.enable('tsc')
 		end,

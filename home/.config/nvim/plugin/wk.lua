@@ -4,7 +4,10 @@ yall.on_load('which-key', function()
 	local wk = require('which-key')
 	wk.setup()
 	wk.add({
+		-- which-key's wk.Spec annotation misses group-only specs
+		---@diagnostic disable-next-line: assign-type-mismatch
 		{ '<leader>b', group = 'buffers' },
+		---@diagnostic disable-next-line: assign-type-mismatch
 		{ '<leader>c', group = 'osc52' },
 		{ '<leader>C', group = 'claudecode' },
 		{ '<leader>d', group = 'dap' },

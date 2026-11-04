@@ -36,7 +36,7 @@ end
 local function create_osc52(mode)
 	if mode == 'op' then
 		return function()
-			vim.opt.opfunc = 'v:lua.osc_callback'
+			vim.o.opfunc = 'v:lua.osc_callback'
 			return 'g@'
 		end
 	elseif mode == 'visual' then

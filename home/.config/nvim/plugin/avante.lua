@@ -123,6 +123,9 @@ map(
 
 vim
 	.iter({
+		'',
+		'ACPModels',
+		'ACPModes',
 		'Ask',
 		'Build',
 		'Chat',

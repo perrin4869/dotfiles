@@ -12,14 +12,12 @@ yall.on_postload('neoscroll', function()
 	local scroll = require('neoscroll.scroll')
 	local hidden = 'a:NeoscrollHiddenCursor'
 	local hide_cursor, tear_down = scroll.hide_cursor, scroll.tear_down
-	---@diagnostic disable-next-line: duplicate-set-field
 	function scroll:hide_cursor()
 		if vim.o.guicursor ~= hidden then
 			---@diagnostic disable-next-line: param-type-mismatch
 			hide_cursor(self)
 		end
 	end
-	---@diagnostic disable-next-line: duplicate-set-field
 	function scroll:tear_down()
 		---@diagnostic disable-next-line: param-type-mismatch
 		tear_down(self)

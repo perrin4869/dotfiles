@@ -62,11 +62,13 @@ local function is_disabled(mod, name)
 	return mod.disabled or vim.env['DEFER_DISABLE_' .. string.upper(string.gsub(name, '-', '_'))] ~= nil
 end
 
---- Registers a function to run BEFORE packadd or require.
+local M = {}
+
+--- Registers a function to run after the module's dependencies load, BEFORE packadd or require.
 --- Useful for clearing placeholder commands/mappings.
 ---@param name string The module name target
 ---@param fn function
-local function on_preload(name, fn)
+function M.on_preload(name, fn)
 	local mod = entry(name)
 	if mod.pre then
 		mod.pre = zip(mod.pre, fn)
@@ -74,8 +76,6 @@ local function on_preload(name, fn)
 		mod.pre = fn
 	end
 end
-
-local M = {}
 
 ---@param name string
 ---@param fn function
@@ -243,7 +243,7 @@ function M.cmd(name, module)
 	end
 
 	-- Clean up the placeholder BEFORE the plugin defines its own
-	on_preload(module, function()
+	M.on_preload(module, function()
 		pcall(vim.api.nvim_del_user_command, name)
 	end)
 

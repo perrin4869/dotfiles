@@ -77,7 +77,7 @@ test-fonts:
 .PHONY: test-neovim
 test-neovim:
 	@# make sure neovim doesn't output errors
-	@err=$$(nvim --headless +qa 2>&1); \
+	@err=$$(NVIM_NOEXRC=1 nvim --headless +qa 2>&1); \
 	if [ -n "$$err" ]; then \
 	    echo "$$err"; exit 1; \
 	else \
@@ -86,7 +86,7 @@ test-neovim:
 
 .PHONY: test-neovim-cmds
 test-neovim-cmds:
-	@nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
+	@NVIM_NOEXRC=1 nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test-lua-types

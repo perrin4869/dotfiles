@@ -35,3 +35,5 @@ jobs:
         run: npm ci --ignore-scripts
       - name: tsc, oxlint, oxfmt
         run: npm run check
+      - name: node --test
+        run: npm test

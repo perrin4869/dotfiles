@@ -13,8 +13,8 @@ repos:
         types: [lua]
         files: ^home/\.config/
       - id: typescript
-        name: typescript (tsc, oxlint, oxfmt)
-        entry: npm run --silent check
+        name: typescript (tsc, oxlint, oxfmt, node --test)
+        entry: sh -c 'npm run --silent check && npm test --silent'
         language: system
         files: ^(home/\.pi/agent/extensions/|package(-lock)?\.json$|\.ox(lint|fmt)rc\.json$)
         pass_filenames: false

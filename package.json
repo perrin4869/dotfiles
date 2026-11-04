@@ -4,7 +4,8 @@
     "home/.pi/agent/extensions"
   ],
   "scripts": {
-    "check": "npm run check --workspaces"
+    "check": "npm run check --workspaces",
+    "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
     "oxfmt": "^0.75.0",

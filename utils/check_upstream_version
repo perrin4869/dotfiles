@@ -12,6 +12,7 @@ github_repo() {
     coursier)  echo "coursier/coursier" ;;
     iosevka)   echo "be5invis/Iosevka" ;;
     carapace)  echo "carapace-sh/carapace-bin" ;;
+    emmylua_check) echo "EmmyLuaLs/emmylua-analyzer-rust" ;;
     yubikey-touch-detector) echo "maximbaz/yubikey-touch-detector" ;;
     nerdfonts) echo "ryanoasis/nerd-fonts" ;;
     *)

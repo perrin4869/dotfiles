@@ -90,8 +90,10 @@ test-neovim-cmds:
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
 .PHONY: test-lua-types
-test-lua-types:
-	@nvim -l $(UTILS)/typecheck_lua.lua && echo "$(PASS) lua-language-server finds no type problems"
+test-lua-types: $(emmylua_check_target)
+	@VIMRUNTIME="$$(nvim --clean --headless --cmd 'echo $$VIMRUNTIME' +q 2>&1)" \
+		$(emmylua_check_target) home/.config/nvim -c .emmyrc.check.json --severity warn --warnings-as-errors \
+		&& echo "$(PASS) emmylua_check finds no type problems"
 
 .PHONY: test
 test: \

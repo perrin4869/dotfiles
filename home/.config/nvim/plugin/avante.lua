@@ -123,6 +123,7 @@ map(
 
 vim
 	.iter({
+		'',
 		'Ask',
 		'Build',
 		'Chat',
@@ -131,14 +132,12 @@ vim
 		'Edit',
 		'Stop',
 		'Focus',
-		'History',
 		'Models',
 		'Refresh',
 		'ShowRepoMap',
 		'SwitchProvider',
 		'SwitchInputProvider',
 		'SwitchSelectorProvider',
-		'Toggle',
 	})
 	:each(function(cmd)
 		yall.cmd('Avante' .. cmd, 'avante')

@@ -9,7 +9,7 @@ yall.setup('hlargs', {
 		local clients = vim.lsp.get_clients({ bufnr = bufnr })
 		for _, c in pairs(clients) do
 			local caps = c.server_capabilities
-			if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+			if caps and caps.semanticTokensProvider and caps.semanticTokensProvider.full then
 				-- cache languages that were already resolved
 				vim.b[bufnr].semantic_tokens = true
 				return vim.b[bufnr].semantic_tokens
@@ -32,8 +32,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		end
 
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		local caps = client.server_capabilities
-		if caps.semanticTokensProvider and caps.semanticTokensProvider.full then
+		local caps = client and client.server_capabilities
+		if caps and caps.semanticTokensProvider and caps.semanticTokensProvider.full then
 			vim.b[bufnr].semantic_tokens = true
 			yall.require('hlargs').disable_buf(bufnr)
 		end

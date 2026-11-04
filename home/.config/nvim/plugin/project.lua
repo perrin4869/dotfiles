@@ -44,7 +44,7 @@ yall.on_load('project', function()
 		return
 	end
 
-	require('project.core').set_pwd(root, method)
+	require('project.core').set_pwd({ dir = root, method = method })
 
 	yall.on_postload('telescope', function()
 		require('telescope').load_extension('projects')

@@ -17,9 +17,9 @@ local function user_commands()
 	return vim.api.nvim_get_commands({ builtin = false })
 end
 
--- plugins keep renamed commands as aliases that say so in their description
+-- plugins keep renamed commands as aliases that say so in their description (desc from Nvim 0.13)
 local function deprecated(command)
-	return command.definition:lower():find('deprecated', 1, true) ~= nil
+	return (command.desc or command.definition):lower():find('deprecated', 1, true) ~= nil
 end
 
 local function check()

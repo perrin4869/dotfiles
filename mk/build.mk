@@ -9,7 +9,8 @@ $($1_target): $($1_package_yaml) | dirs
 	$(call require,nvim)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	@# avoid needing telescope-fzf-native built by disabling telescope
-	( unset XDG_CONFIG_HOME && HOME=home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
+	@# 'exrc' searches upward from the cwd, so run from / to skip a local .nvim.lua in the repo
+	( cd / && unset XDG_CONFIG_HOME && HOME=$(CURDIR)/home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef
@@ -257,7 +258,7 @@ $(eval $(call mason_package,bash-language-server))
 $(eval $(call mason_package,kotlin-lsp,true))
 $(eval $(call mason_package,kotlin-debug-adapter,true))
 $(eval $(call mason_package,sqlls,true))
-$(eval $(call mason_package,emmylua_ls))
+$(eval $(call mason_package,emmylua_ls,true))
 $(eval $(call mason_package,tree-sitter-cli,true))
 $(eval $(call mason_package,copilot-language-server))
 # the mdate on kotlin-debug-adapter executable file dates back to 2021 - update it to avoid rebuilding

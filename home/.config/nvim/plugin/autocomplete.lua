@@ -1,3 +1,5 @@
+-- nvim-cmp's annotations miss SelectBehavior and mark the setup.* functions optional
+---@diagnostic disable: undefined-field, need-check-nil
 local yall = require('yall')
 
 yall.on_load('cmp', function()

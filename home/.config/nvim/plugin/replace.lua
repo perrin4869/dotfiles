@@ -6,6 +6,7 @@ local with = yall.with('substitute')
 
 local map = require('map').create({
 	desc = 'substitute',
+	---@param fname 'operator'|'line'|'eol'|'visual'
 	rhs = function(fname)
 		return with(function()
 			require('substitute')[fname]()

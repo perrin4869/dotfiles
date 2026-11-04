@@ -15,6 +15,9 @@ local function yank_osc52(m, op_type)
 		s_mark, e_mark, sel_type = '.', '.', 'V'
 	end
 
+	if not s_mark or not e_mark then
+		return
+	end
 	local region = vim.fn.getregion(vim.fn.getpos(s_mark), vim.fn.getpos(e_mark), { type = sel_type })
 
 	if #region > 0 then
@@ -25,13 +28,13 @@ local function yank_osc52(m, op_type)
 	end
 end
 
-local function create_osc52(mode)
-	-- Mapping Neovim's operator names to getregion's expected mode characters
+-- 'opfunc' takes a global function
+function _G.osc_callback(t)
+	yank_osc52('op', t)
+end
 
+local function create_osc52(mode)
 	if mode == 'op' then
-		_G.osc_callback = function(t)
-			yank_osc52('op', t)
-		end
 		return function()
 			vim.opt.opfunc = 'v:lua.osc_callback'
 			return 'g@'

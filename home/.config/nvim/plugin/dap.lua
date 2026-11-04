@@ -65,7 +65,7 @@ local set_exception_breakpoints = with_dap(function()
 end)
 
 local ui_widgets_hover = with_dap(function()
-	require('dap.ui.widgets').hover(require('dap.utils').get_visual_selection_text())
+	require('dap.ui.widgets').hover()
 end)
 
 local ui_widgets_scopes = with_dap(function()

@@ -12,6 +12,7 @@ local metals_config = yall.lazy(function()
 	config.handlers = {
 		['metals/status'] = function(...)
 			handlers['metals/status'](...)
+			---@diagnostic disable-next-line: undefined-field
 			require('lualine').refresh()
 		end,
 	}

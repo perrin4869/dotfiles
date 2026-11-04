@@ -44,7 +44,7 @@ yall.on_load('lsp', function()
 				}, vim.lsp.diagnostic.get_namespace(client.id))
 			end
 
-			if client ~= nil and client.server_capabilities.inlayHintProvider then
+			if client ~= nil and client:supports_method('textDocument/inlayHint') then
 				map(vim.g.toggle_prefix .. 'i', function()
 					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr }), { bufnr = bufnr })
 				end, 'inlayhints.toggle')

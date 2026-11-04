@@ -4,7 +4,7 @@ yall.very_lazy(function()
 		mode = 'n',
 		desc = 'diagnostic',
 		rhs = function(func_name)
-			return vim.diagnostic[func_name]
+			return vim.diagnostic[func_name] --[[@as function]]
 		end,
 	})
 
@@ -19,14 +19,12 @@ yall.very_lazy(function()
 	local next_move = require('nvim-next.move')
 	local trigger = require('trigger').trigger
 
-	local prev_diag, next_diag = trigger(
-		'd',
-		next_move.make_repeatable_pair(function()
-			vim.diagnostic.jump({ count = -vim.v.count1 })
-		end, function()
-			vim.diagnostic.jump({ count = vim.v.count1 })
-		end)
-	)
+	local prev_jump, next_jump = next_move.make_repeatable_pair(function()
+		vim.diagnostic.jump({ count = -vim.v.count1 })
+	end, function()
+		vim.diagnostic.jump({ count = vim.v.count1 })
+	end)
+	local prev_diag, next_diag = trigger('d', prev_jump, next_jump)
 	require('map').map('n', '[d', prev_diag, { desc = 'Go to previous diagnostic', unique = false }) -- overrides default
 	require('map').map('n', ']d', next_diag, { desc = 'Go to next diagnostic', unique = false }) -- overrides default
 

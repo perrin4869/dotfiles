@@ -5,7 +5,7 @@ local unique_cache = {}
 local OPTS = { silent = true, noremap = true, unique = true }
 --- create a map function that has defaults across the repo
 --- @param opts? {
----		desc:string,
+---		desc?:string,
 ---		desc_separator?:string,
 ---		buffer?:integer|boolean,
 ---		expr?:boolean,

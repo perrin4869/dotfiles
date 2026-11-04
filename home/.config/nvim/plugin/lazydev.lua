@@ -3,7 +3,7 @@ yall.on_bufreadpre(function()
 	vim.api.nvim_create_autocmd('FileType', {
 		once = true,
 		group = vim.api.nvim_create_augroup('Initialize_lazydev', {}),
-		pattern = vim.lsp.config.emmylua_ls.filetypes,
+		pattern = (vim.lsp.config --[[@as table<string, vim.lsp.Config>]])['emmylua_ls'].filetypes,
 		callback = function()
 			vim.cmd.packadd('lazydev.nvim')
 			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds

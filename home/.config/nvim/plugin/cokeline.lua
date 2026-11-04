@@ -43,6 +43,7 @@ local function setup()
 			{
 				text = function(buffer)
 					return '    '
+						---@diagnostic disable-next-line: undefined-field
 						.. ((is_picking_focus() or is_picking_close()) and buffer.pick_letter .. ' ' or buffer.devicon.icon)
 				end,
 				fg = function(buffer)
@@ -81,6 +82,8 @@ local function setup()
 	})
 
 	require('map').map('n', '<leader>p', function()
+		-- cokeline annotates its goals with the quotes inside ('"focus"')
+		---@diagnostic disable-next-line: param-type-mismatch
 		pick('focus')
 	end, 'cokeline.pick.focus')
 end

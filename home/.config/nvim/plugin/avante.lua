@@ -121,27 +121,25 @@ map(
 	'toggle.debug'
 )
 
-vim
-	.iter({
-		'',
-		'Ask',
-		'Build',
-		'Chat',
-		'ChatNew',
-		'Clear',
-		'Edit',
-		'Stop',
-		'Focus',
-		'Models',
-		'Refresh',
-		'ShowRepoMap',
-		'SwitchProvider',
-		'SwitchInputProvider',
-		'SwitchSelectorProvider',
-	})
-	:each(function(cmd)
-		yall.cmd('Avante' .. cmd, 'avante')
-	end)
+for _, cmd in ipairs({
+	'',
+	'Ask',
+	'Build',
+	'Chat',
+	'ChatNew',
+	'Clear',
+	'Edit',
+	'Stop',
+	'Focus',
+	'Models',
+	'Refresh',
+	'ShowRepoMap',
+	'SwitchProvider',
+	'SwitchInputProvider',
+	'SwitchSelectorProvider',
+}) do
+	yall.cmd('Avante' .. cmd, 'avante')
+end
 
 require('restore').add_quitpre_ft('Avante')
 require('restore').add_quitpre_ft('AvanteInput')

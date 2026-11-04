@@ -93,6 +93,7 @@ test-neovim-cmds:
 # .luarc.check.json lists the library that lazydev provides per file in the editor
 test-lua-types:
 	@VIMRUNTIME="$$(nvim --clean --headless --cmd 'echo $$VIMRUNTIME' +q 2>&1)" \
+		NVIM_PACK="$(CURDIR)/$(NVIM_DATA_DIRECTORY)/site/pack" \
 		$(MASON_ROOT)/bin/lua-language-server --check=home/.config/nvim --configpath=$(CURDIR)/.luarc.check.json \
 		--check_format=pretty --checklevel=Warning \
 		&& echo "$(PASS) lua-language-server finds no type problems"

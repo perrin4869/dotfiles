@@ -15,5 +15,10 @@
       "home/.local/share/nvim/mason-registry/**",
       "home/.local/share/nvim/undo/**"
     ]
+  },
+  "diagnostics": {
+    "disable": [
+      "unnecessary-if"
+    ]
   }
 }

@@ -10,11 +10,22 @@
   "workspace": {
     "library": [
       "$VIMRUNTIME",
-      "$NVIM_PACK"
-    ],
-    "ignoreGlobs": [
-      "**/async.nvim/meta/**",
-      "**/claudecode.nvim/tests/**"
+      {
+        "path": "$NVIM_PACK",
+        "ignoreGlobs": [
+          "*/*/*/[!l]*/**",
+          "*/*/*/l[!u]*/**",
+          "*/*/*/lu[!a]*/**",
+          "*/*/*/lua?*/**",
+          "*/*/*/*.lua",
+          "*/*/plenary.nvim/lua/plenary/busted.lua"
+        ]
+      }
+    ]
+  },
+  "diagnostics": {
+    "disable": [
+      "unnecessary-if"
     ]
   }
 }

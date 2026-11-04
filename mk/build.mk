@@ -9,8 +9,7 @@ $($1_target): $($1_package_yaml) | dirs
 	$(call require,nvim)
 	@# XDG_CONFIG_HOME may be set and take precedence over HOME
 	@# avoid needing telescope-fzf-native built by disabling telescope
-	@# 'exrc' searches upward from the cwd, so run from / to skip a local .nvim.lua in the repo
-	( cd / && unset XDG_CONFIG_HOME && HOME=$(CURDIR)/home DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
+	( unset XDG_CONFIG_HOME && HOME=home NVIM_NOEXRC=1 DEFER_DISABLE_TELESCOPE=true nvim --headless -c "MasonInstall $1" -c q )
 	$(if $(findstring true,$2),touch $$@,)
 $1: $($1_target)
 endef

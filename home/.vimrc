@@ -75,7 +75,10 @@ set nowritebackup
 " alternatively, you could change the directory in which tilde files are stored
 " set backupdir=~/.vim/backup
 
-set exrc
+" NVIM_NOEXRC lets scripted runs from inside a project skip its local config
+if empty($NVIM_NOEXRC)
+  set exrc
+endif
 
 let mapleader=' '
 

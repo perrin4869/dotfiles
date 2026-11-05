@@ -25,9 +25,9 @@ export function defineSettings<T extends TObject>(key: string, schema: T) {
 	const unreported = firstSeen();
 
 	return (pi: ExtensionAPI, ctx: ExtensionContext): Static<T> => {
-		// pi's Settings type lists only pi's own keys
+		// pi's Settings type lists only pi's own keys; getSettings() returns a copy, so Value.Default may fill it in place
 		const raw: unknown = Reflect.get(pi.getSettings(), key);
-		const section = Value.Default(schema, structuredClone(raw ?? {}));
+		const section = Value.Default(schema, raw ?? {});
 		if (Value.Check(schema, section)) return section;
 
 		const problems = describeErrors(key, schema, section);

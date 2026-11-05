@@ -49,15 +49,16 @@ const cwd = '/nonexistent/pi-test/project';
 
 type SettingsStorage = Parameters<typeof SettingsManager.fromStorage>[0];
 
-// pi's settings files, held in memory per scope
+// pi's settings files, held in memory per scope. pi reads and writes through withLock: the callback receives the
+// current contents and returns new ones to store, or undefined to leave them as they are.
 function settingsStorage(files: Record<'global' | 'project', object>): SettingsStorage {
 	const contents: Record<string, string | undefined> = {
 		global: JSON.stringify(files.global),
 		project: JSON.stringify(files.project),
 	};
 	return {
-		withLock: (scope, update) => {
-			contents[scope] = update(contents[scope]) ?? contents[scope];
+		withLock: (scope, access) => {
+			contents[scope] = access(contents[scope]) ?? contents[scope];
 		},
 	};
 }

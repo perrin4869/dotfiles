@@ -8,7 +8,10 @@ export const ModelRef = (defaultRef: string) =>
 
 export const modelRef = (model: Model<Api>) => `${model.provider}/${model.id}`;
 
-export function findModel(ctx: ExtensionContext, ref: string) {
+// splits at the first slash only, unlike split('/')
+export function parseModelRef(ref: string): [provider: string, id: string] {
 	const slash = ref.indexOf('/');
-	return ctx.modelRegistry.find(ref.slice(0, slash), ref.slice(slash + 1));
+	return [ref.slice(0, slash), ref.slice(slash + 1)];
 }
+
+export const findModel = (ctx: ExtensionContext, ref: string) => ctx.modelRegistry.find(...parseModelRef(ref));

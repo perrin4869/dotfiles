@@ -1,4 +1,5 @@
-import { fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
+import { fauxAssistantMessage, fauxToolCall, getCurrentTools } from '@earendil-works/pi-ai';
+import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 import { extension, type Harness, type HarnessOptions, startSession, stubTools, toolResults } from './harness.ts';
@@ -6,42 +7,72 @@ import { extension, type Harness, type HarnessOptions, startSession, stubTools, 
 let harness: Harness | undefined;
 afterEach(() => harness?.dispose());
 
-async function call(tool: string, options: Partial<HarnessOptions> = {}) {
+// rpiv-advisor with a reviewer picked: it puts its tool back before every prompt
+const rpivAdvisor: ExtensionFactory = (pi) => {
+	stubTools('advisor')(pi);
+	pi.on('before_agent_start', () => {
+		const active = pi.getActiveTools();
+		if (!active.includes('advisor')) pi.setActiveTools([...active, 'advisor']);
+		return Promise.resolve();
+	});
+};
+
+async function start(options: Partial<HarnessOptions> = {}) {
 	harness = await startSession({
 		extensions: [extension('advisor-gate')],
-		factories: [stubTools('advisor', 'other')],
+		factories: [rpivAdvisor, stubTools('other')],
 		...options,
 	});
-	harness.respond(
-		fauxAssistantMessage(fauxToolCall(tool, {}), { stopReason: 'toolUse' }),
-		fauxAssistantMessage('done'),
+	return harness;
+}
+
+// the tools the model is offered on each request of a prompt
+async function offeredTools(options: Partial<HarnessOptions> = {}) {
+	const h = await start(options);
+	const offered: string[][] = [];
+	const record = (messages: { role: string }[]) => offered.push(getCurrentTools(messages).map((tool) => tool.name));
+	h.respond(
+		(context) => {
+			record(context.messages);
+			return fauxAssistantMessage(fauxToolCall('other', {}), { stopReason: 'toolUse' });
+		},
+		(context) => {
+			record(context.messages);
+			return fauxAssistantMessage('done');
+		},
 	);
-	await harness.session.prompt('go');
-	return toolResults(harness.session);
+	await h.session.prompt('go');
+	return offered;
 }
 
 const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
-test('blocks the advisor by default', async () => {
-	const [result] = await call('advisor');
-	assert.equal(result.isError, true);
-	assert.match(result.text, /advisor is disabled for this project/);
+test('hides the advisor by default', async () => {
+	for (const tools of await offeredTools()) assert.ok(!tools.includes('advisor'), tools.join());
 });
 
-test('allows the advisor where the project enables it', async () => {
-	assert.deepEqual(await call('advisor', { projectSettings: ENABLED }), [{ isError: false, text: 'ran' }]);
+test('offers the advisor where the project enables it', async () => {
+	for (const tools of await offeredTools({ projectSettings: ENABLED })) assert.ok(tools.includes('advisor'));
 });
 
 test('a global enable applies to projects that say nothing', async () => {
-	assert.deepEqual(await call('advisor', { globalSettings: ENABLED }), [{ isError: false, text: 'ran' }]);
+	for (const tools of await offeredTools({ globalSettings: ENABLED })) assert.ok(tools.includes('advisor'));
 });
 
 test('a project can disable a global enable', async () => {
-	const [result] = await call('advisor', { globalSettings: ENABLED, projectSettings: DISABLED });
+	const offered = await offeredTools({ globalSettings: ENABLED, projectSettings: DISABLED });
+	for (const tools of offered) assert.ok(!tools.includes('advisor'));
+});
+
+test('an advisor call in a disabled project fails', async () => {
+	const h = await start();
+	h.respond(fauxAssistantMessage(fauxToolCall('advisor', {}), { stopReason: 'toolUse' }), fauxAssistantMessage('done'));
+	await h.session.prompt('go');
+	const [result] = toolResults(h.session);
 	assert.equal(result.isError, true);
 });
 
 test('leaves other tools alone', async () => {
-	assert.deepEqual(await call('other'), [{ isError: false, text: 'ran' }]);
+	for (const tools of await offeredTools()) assert.ok(tools.includes('other'));
 });

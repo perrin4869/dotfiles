@@ -48,7 +48,7 @@ Off by default. Enable per project:
 
 ## Advisor
 
-`rpiv-advisor` has one global reviewer model, so a project on Ollama would send its conversation to that reviewer too. The `advisor` tool is blocked unless a project enables it:
+`rpiv-advisor` has one global reviewer model, so a project on Ollama would send its conversation to that reviewer too. The `advisor` tool is hidden from the model unless a project enables it:
 
 ```json
 {
@@ -57,6 +57,8 @@ Off by default. Enable per project:
 ```
 
 A global `"enabled": true` applies to projects that don't set it, and a project can set `false` to opt out again.
+
+The reviewer model itself is global: `/advisor` picks it for every project (`~/.config/rpiv-advisor/advisor.json`).
 
 ---
 

@@ -18,24 +18,20 @@ const describeErrors = (key: string, schema: TSchema, value: unknown) =>
 		.map(({ instancePath, message }) => `${key}${instancePath.replaceAll('/', '.')} ${message}`)
 		.join('; ');
 
-// A top-level key of pi's settings.json owned by one of our extensions, with a default for every field.
+// A reader for a top-level key of pi's settings.json owned by one of our extensions, with a default for every field.
 // pi.getSettings() merges project settings over global ones, field by field, and only once the project is trusted.
 export function defineSettings<T extends TObject>(key: string, schema: T) {
 	// warn once per problem rather than on every read
 	const unreported = firstSeen();
 
-	return {
-		key,
-		schema,
-		read(pi: ExtensionAPI, ctx: ExtensionContext): Static<T> {
-			// pi's Settings type lists only pi's own keys
-			const raw: unknown = Reflect.get(pi.getSettings(), key);
-			const section = Value.Default(schema, structuredClone(raw ?? {}));
-			if (Value.Check(schema, section)) return section;
+	return (pi: ExtensionAPI, ctx: ExtensionContext): Static<T> => {
+		// pi's Settings type lists only pi's own keys
+		const raw: unknown = Reflect.get(pi.getSettings(), key);
+		const section = Value.Default(schema, structuredClone(raw ?? {}));
+		if (Value.Check(schema, section)) return section;
 
-			const problems = describeErrors(key, schema, section);
-			if (unreported(problems)) ctx.ui.notify(`ignoring invalid settings: ${problems}`, 'warning');
-			return Value.Create(schema);
-		},
+		const problems = describeErrors(key, schema, section);
+		if (unreported(problems)) ctx.ui.notify(`ignoring invalid settings: ${problems}`, 'warning');
+		return Value.Create(schema);
 	};
 }

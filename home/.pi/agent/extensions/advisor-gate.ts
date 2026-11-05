@@ -5,10 +5,10 @@ import { withdrawTool } from './lib/tools.ts';
 
 // rpiv-advisor keeps one global reviewer for every session, so an Ollama project would send its whole
 // conversation to that reviewer too. Offer it only where a project opts in with `"advisor": { "enabled": true }`.
-export const settings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
+const readSettings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
 
 export default function (pi: ExtensionAPI) {
 	pi.on('session_start', (_event, ctx) => {
-		if (!settings.read(pi, ctx).enabled) withdrawTool(pi, 'advisor', 'the advisor is disabled for this project');
+		if (!readSettings(pi, ctx).enabled) withdrawTool(pi, 'advisor', 'the advisor is disabled for this project');
 	});
 }

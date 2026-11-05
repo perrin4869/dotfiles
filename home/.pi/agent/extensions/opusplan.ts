@@ -6,7 +6,7 @@ import { defineSettings } from './lib/settings.ts';
 
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
 // Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or toggle with /opusplan.
-export const settings = defineSettings(
+const readSettings = defineSettings(
 	'opusplan',
 	Type.Object({
 		enabled: Type.Boolean({ default: false }),
@@ -31,13 +31,13 @@ export default function (pi: ExtensionAPI) {
 	pi.registerCommand('opusplan', {
 		description: 'Toggle opusplan: plan on one model, implement on another',
 		handler: async (_args, ctx) => {
-			override = !(override ?? settings.read(pi, ctx).enabled);
+			override = !(override ?? readSettings(pi, ctx).enabled);
 			ctx.ui.notify(`opusplan ${override ? 'enabled' : 'disabled'}`, 'info');
 		},
 	});
 
 	pi.on('before_agent_start', async (_event, ctx) => {
-		const { enabled, plan, execute } = settings.read(pi, ctx);
+		const { enabled, plan, execute } = readSettings(pi, ctx);
 		if (!(override ?? enabled)) return;
 		const ref = isPlanning(ctx) ? plan : execute;
 		if (ctx.model && modelRef(ctx.model) === ref) return;

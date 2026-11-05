@@ -15,8 +15,6 @@ import {
 	SessionManager,
 	SettingsManager,
 } from '@earendil-works/pi-coding-agent';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { Type } from 'typebox';
@@ -45,21 +43,35 @@ export type Harness = Disposable & {
 	respond: (...steps: FauxResponseStep[]) => void;
 };
 
+// Everything lives in memory, so these paths are never created: pi only needs them to look for resources there.
+const agentDir = '/nonexistent/pi-test/agent';
+const cwd = '/nonexistent/pi-test/project';
+
+type SettingsStorage = Parameters<typeof SettingsManager.fromStorage>[0];
+
+// pi's settings files, held in memory per scope
+function settingsStorage(files: Record<'global' | 'project', object>): SettingsStorage {
+	const contents: Record<string, string | undefined> = {
+		global: JSON.stringify(files.global),
+		project: JSON.stringify(files.project),
+	};
+	return {
+		withLock: (scope, update) => {
+			contents[scope] = update(contents[scope]) ?? contents[scope];
+		},
+	};
+}
+
 // a real in-process pi session: extensions load from their files, the model is scripted
 export async function startSession(options: HarnessOptions): Promise<Harness> {
 	// releases what was set up so far if setup fails; on success the harness takes it over
 	using cleanup = new DisposableStack();
-	const root = mkdtempSync(join(tmpdir(), 'pi-test-'));
-	cleanup.defer(() => rmSync(root, { recursive: true, force: true }));
-	const agentDir = join(root, 'agent');
-	const cwd = join(root, 'project');
-	mkdirSync(agentDir);
-	mkdirSync(join(cwd, '.pi'), { recursive: true });
-	writeFileSync(join(agentDir, 'settings.json'), JSON.stringify(options.globalSettings ?? {}));
-	writeFileSync(join(cwd, '.pi', 'settings.json'), JSON.stringify(options.projectSettings ?? {}));
 
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
-	const settingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: options.projectTrusted ?? true });
+	const settingsManager = SettingsManager.fromStorage(
+		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
+		{ projectTrusted: options.projectTrusted ?? true },
+	);
 	const resourceLoader = new DefaultResourceLoader({
 		cwd,
 		agentDir,

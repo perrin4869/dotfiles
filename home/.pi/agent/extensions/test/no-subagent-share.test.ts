@@ -16,26 +16,27 @@ async function call(tool: string, input: Parameters<typeof fauxToolCall>[1]) {
 	return toolResults(harness.session);
 }
 
+const blocked = async (input: Parameters<typeof fauxToolCall>[1]) => {
+	const [result] = await call('subagent', { agent: 'worker', task: 'x', ...input });
+	return result.isError && /sharing subagent sessions is disabled/.test(result.text);
+};
+
 test('blocks a top-level share', async () => {
-	const [result] = await call('subagent', { agent: 'worker', task: 'x', share: true });
-	assert.equal(result.isError, true);
-	assert.match(result.text, /sharing subagent sessions is disabled/);
+	assert.equal(await blocked({ share: true }), true);
 });
 
-test('blocks a share nested in parallel tasks', async () => {
-	const [result] = await call('subagent', {
-		tasks: [
-			{ agent: 'a', task: 'x' },
-			{ agent: 'b', task: 'y', share: true },
-		],
-	});
-	assert.equal(result.isError, true);
+test('blocks a share in options', async () => {
+	assert.equal(await blocked({ options: { share: true } }), true);
+});
+
+test('blocks a share that pi-subagents would convert to true', async () => {
+	assert.equal(await blocked({ options: { share: 'true' } }), true);
+	assert.equal(await blocked({ options: { share: 1 } }), true);
 });
 
 test('allows subagent calls without share', async () => {
-	assert.deepEqual(await call('subagent', { agent: 'worker', task: 'x', share: false }), [
-		{ isError: false, text: 'ran' },
-	]);
+	assert.equal(await blocked({}), false);
+	assert.equal(await blocked({ share: false, options: { share: 'false', async: true } }), false);
 });
 
 test('ignores share on other tools', async () => {

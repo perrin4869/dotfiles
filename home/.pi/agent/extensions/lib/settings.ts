@@ -1,12 +1,28 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
-import type { Static, TObject } from 'typebox';
+import type { Static, TObject, TSchema } from 'typebox';
 import { Value } from 'typebox/value';
+
+// a predicate that is true only the first time it sees each value
+function firstSeen() {
+	const seen = new Set<string>();
+	return (value: string) => {
+		if (seen.has(value)) return false;
+		seen.add(value);
+		return true;
+	};
+}
+
+// validation errors as `key.field message`, joined into one line
+const describeErrors = (key: string, schema: TSchema, value: unknown) =>
+	Value.Errors(schema, value)
+		.map(({ instancePath, message }) => `${key}${instancePath.replaceAll('/', '.')} ${message}`)
+		.join('; ');
 
 // A top-level key of pi's settings.json owned by one of our extensions, with a default for every field.
 // pi.getSettings() merges project settings over global ones, field by field, and only once the project is trusted.
 export function defineSettings<T extends TObject>(key: string, schema: T) {
 	// warn once per problem rather than on every read
-	const reported = new Set<string>();
+	const unreported = firstSeen();
 
 	return {
 		key,
@@ -17,14 +33,8 @@ export function defineSettings<T extends TObject>(key: string, schema: T) {
 			const section = Value.Default(schema, structuredClone(raw ?? {}));
 			if (Value.Check(schema, section)) return section;
 
-			const problems = Value.Errors(schema, section).map(
-				({ instancePath, message }) => `${key}${instancePath.replaceAll('/', '.')} ${message}`,
-			);
-			const report = problems.join('; ');
-			if (!reported.has(report)) {
-				reported.add(report);
-				ctx.ui.notify(`ignoring invalid settings: ${report}`, 'warning');
-			}
+			const problems = describeErrors(key, schema, section);
+			if (unreported(problems)) ctx.ui.notify(`ignoring invalid settings: ${problems}`, 'warning');
 			return Value.Create(schema);
 		},
 	};

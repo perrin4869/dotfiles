@@ -1,7 +1,7 @@
-import type { CustomEntry, ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
+import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { Value } from 'typebox/value';
 import { findModel, ModelRef, modelRef } from './lib/models.ts';
+import { latestEntry } from './lib/session.ts';
 import { defineSettings } from './lib/settings.ts';
 
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
@@ -15,16 +15,11 @@ export const settings = defineSettings(
 	}),
 );
 
-// pi-plan-mode appends one of these custom entries whenever plan mode changes; the latest is current
+// pi-plan-mode appends one of these custom entries whenever plan mode changes
 const PLAN_STATE_ENTRY = 'plan-mode-state';
 const PlanState = Type.Object({ enabled: Type.Boolean() });
 
-function isPlanning(ctx: ExtensionContext) {
-	const state = ctx.sessionManager
-		.getBranch()
-		.findLast((entry): entry is CustomEntry => entry.type === 'custom' && entry.customType === PLAN_STATE_ENTRY);
-	return state !== undefined && Value.Check(PlanState, state.data) && state.data.enabled;
-}
+const isPlanning = (ctx: ExtensionContext) => latestEntry(ctx, PLAN_STATE_ENTRY, PlanState)?.enabled ?? false;
 
 export default function (pi: ExtensionAPI) {
 	// set by /opusplan; overrides the settings for the rest of this pi process, including fresh implementation sessions

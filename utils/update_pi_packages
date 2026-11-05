@@ -2,7 +2,9 @@
 // Bump each pinned `npm:<name>@<version>` package in pi's settings to its latest release.
 // `pi update` leaves pinned versions alone, so this does it for the update PRs.
 // Prints one `name old -> new` line per bump.
+import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
+import extensions from '../home/.pi/agent/extensions/package.json' with { type: 'json' };
 import settings from '../home/.pi/agent/settings.json' with { type: 'json' };
 
 const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
@@ -34,3 +36,17 @@ await writeFile(
 	new URL('../home/.pi/agent/settings.json', import.meta.url),
 	JSON.stringify({ ...settings, packages }, null, 2),
 );
+
+// the extension tests run against these packages' internals, so they follow the pinned versions
+const tested = packages
+	.map((spec) => (typeof spec === 'string' ? PINNED.exec(spec) : null))
+	.filter((match) => match && match[1] in extensions.devDependencies)
+	.map(([, name, version]) => `${name}@${version}`);
+if (tested.length > 0) {
+	execFileSync(
+		'npm',
+		['install', '--workspace', 'home/.pi/agent/extensions', '--save-dev', '--save-exact', '--ignore-scripts', ...tested],
+		// stdout is the PR body
+		{ cwd: new URL('..', import.meta.url), stdio: ['ignore', 'ignore', 'inherit'] },
+	);
+}

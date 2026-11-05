@@ -9,17 +9,43 @@ import {
 	type AgentSession,
 	createAgentSession,
 	DefaultResourceLoader,
+	type ExtensionError,
 	type ExtensionFactory,
 	type ExtensionUIContext,
 	ModelRuntime,
 	SessionManager,
 	SettingsManager,
 } from '@earendil-works/pi-coding-agent';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { findPackageJSON } from 'node:module';
+import { dirname, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { env } from 'node:process';
 import { Type } from 'typebox';
+import { Value } from 'typebox/value';
 
 export const extension = (name: string) => join(import.meta.dirname, '..', `${name}.ts`);
+
+const PiManifest = Type.Object({ pi: Type.Object({ extensions: Type.Array(Type.String(), { minItems: 1 }) }) });
+
+function packageManifest(name: string) {
+	const manifest = findPackageJSON(name, import.meta.url);
+	if (manifest === undefined) throw new Error(`${name} is not installed`);
+	return manifest;
+}
+
+// an installed package's pi extension entry point, as pi resolves it from the package's `pi.extensions` manifest
+export function packageExtension(name: string) {
+	const path = packageManifest(name);
+	const manifest: unknown = JSON.parse(readFileSync(path, 'utf8'));
+	if (!Value.Check(PiManifest, manifest)) throw new Error(`${name} declares no pi extension`);
+	return join(dirname(path), manifest.pi.extensions[0]);
+}
+
+// a module inside an installed package, past its `exports` map, for contract tests against its internals
+export async function packageModule<T>(name: string, path: string): Promise<T> {
+	return await import(pathToFileURL(join(dirname(packageManifest(name)), path)).href);
+}
 
 export type HarnessOptions = {
 	extensions: string[];
@@ -112,9 +138,19 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		sessionManager,
 		model,
 	});
-	const notifications: string[] = [];
 	cleanup.defer(() => session.dispose());
-	await session.bindExtensions({ uiContext: recordingUI(notifications) });
+	// pi reports errors thrown by extension handlers here instead of to the caller
+	const errors: ExtensionError[] = [];
+	cleanup.defer(() => {
+		if (errors.length > 0) throw new Error(`extension errors: ${JSON.stringify(errors)}`);
+	});
+	const notifications: string[] = [];
+	// pi's own do-nothing UI, which it uses until one is bound, with notify() recorded
+	const uiContext: ExtensionUIContext = {
+		...session.extensionRunner.getUIContext(),
+		notify: (message) => void notifications.push(message),
+	};
+	await session.bindExtensions({ uiContext, onError: (error) => errors.push(error) });
 	const resources = cleanup.move();
 
 	return {
@@ -141,13 +177,6 @@ export function overrideEnv(vars: EnvValues): Disposable {
 	const saved = Object.fromEntries(Object.keys(vars).map((name) => [name, env[name]]));
 	assignEnv(vars);
 	return { [Symbol.dispose]: () => assignEnv(saved) };
-}
-
-// records notify(); every other UI call answers nothing, like a UI the user ignores
-function recordingUI(notifications: string[]): ExtensionUIContext {
-	const ui: Partial<ExtensionUIContext> = { notify: (message) => void notifications.push(message) };
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the proxy supplies the missing methods
-	return new Proxy(ui, { get: (target, key) => Reflect.get(target, key) ?? (() => undefined) }) as ExtensionUIContext;
 }
 
 // stand-ins for other packages' tools, accepting any input

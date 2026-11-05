@@ -13,7 +13,7 @@ const ShareRequest = Type.Object({
 
 const isTrue = (value: unknown) => Value.Convert(Type.Boolean(), value) === true;
 
-function requestsShare(input: unknown) {
+export function requestsShare(input: unknown) {
 	if (!Value.Check(ShareRequest, input)) return false;
 	return isTrue(input.share) || isTrue(input.options?.share);
 }

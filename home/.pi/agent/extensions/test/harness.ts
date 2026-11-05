@@ -35,7 +35,7 @@ export type HarnessOptions = {
 	toolSources?: Record<string, string>;
 };
 
-// dispose with `using`: it disposes the session and removes the temporary directories
+// dispose with `using`, which disposes the session
 export type Harness = Disposable & {
 	session: AgentSession;
 	sessionManager: SessionManager;
@@ -93,8 +93,7 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 			if (source !== undefined) tool.sourceInfo = { ...tool.sourceInfo, source };
 		}
 	}
-	// pi only switches to models whose provider has credentials
-	// in memory: file-backed stores write after the session is disposed, recreating the temporary directory
+	// in-memory stores, so nothing is written to agentDir; pi only switches to models whose provider has credentials
 	const modelRuntime = await ModelRuntime.create({
 		credentials: new InMemoryCredentialStore(),
 		modelsStore: new InMemoryModelsStore(),

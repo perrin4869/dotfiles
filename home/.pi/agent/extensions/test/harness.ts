@@ -37,7 +37,7 @@ export type HarnessOptions = {
 	toolSources?: Record<string, string>;
 };
 
-// dispose with `using`, which restores PI_CODING_AGENT_DIR and removes the temporary directories
+// dispose with `using`: it disposes the session and removes the temporary directories
 export type Harness = Disposable & {
 	session: AgentSession;
 	sessionManager: SessionManager;
@@ -47,16 +47,16 @@ export type Harness = Disposable & {
 
 // a real in-process pi session: extensions load from their files, the model is scripted
 export async function startSession(options: HarnessOptions): Promise<Harness> {
+	// releases what was set up so far if setup fails; on success the harness takes it over
+	using cleanup = new DisposableStack();
 	const root = mkdtempSync(join(tmpdir(), 'pi-test-'));
+	cleanup.defer(() => rmSync(root, { recursive: true, force: true }));
 	const agentDir = join(root, 'agent');
 	const cwd = join(root, 'project');
 	mkdirSync(agentDir);
 	mkdirSync(join(cwd, '.pi'), { recursive: true });
 	writeFileSync(join(agentDir, 'settings.json'), JSON.stringify(options.globalSettings ?? {}));
 	writeFileSync(join(cwd, '.pi', 'settings.json'), JSON.stringify(options.projectSettings ?? {}));
-	// extensions that read settings themselves resolve the global file through this
-	const previousAgentDir = env.PI_CODING_AGENT_DIR;
-	env.PI_CODING_AGENT_DIR = agentDir;
 
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: options.projectTrusted ?? true });
@@ -101,20 +101,34 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		model,
 	});
 	const notifications: string[] = [];
+	cleanup.defer(() => session.dispose());
 	await session.bindExtensions({ uiContext: recordingUI(notifications) });
+	const resources = cleanup.move();
 
 	return {
 		session,
 		sessionManager,
 		notifications,
 		respond: (...steps) => faux.setResponses(steps),
-		[Symbol.dispose]: () => {
-			session.dispose();
-			if (previousAgentDir === undefined) delete env.PI_CODING_AGENT_DIR;
-			else env.PI_CODING_AGENT_DIR = previousAgentDir;
-			rmSync(root, { recursive: true, force: true });
-		},
+		[Symbol.dispose]: () => resources.dispose(),
 	};
+}
+
+type EnvValues = Record<string, string | undefined>;
+
+// undefined unsets a variable, which assigning undefined to process.env would not
+function assignEnv(values: EnvValues) {
+	for (const [name, value] of Object.entries(values)) {
+		if (value === undefined) delete env[name];
+		else env[name] = value;
+	}
+}
+
+// sets environment variables until disposed, then restores them
+export function overrideEnv(vars: EnvValues): Disposable {
+	const saved = Object.fromEntries(Object.keys(vars).map((name) => [name, env[name]]));
+	assignEnv(vars);
+	return { [Symbol.dispose]: () => assignEnv(saved) };
 }
 
 // records notify(); every other UI call answers nothing, like a UI the user ignores

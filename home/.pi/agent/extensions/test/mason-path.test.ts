@@ -2,23 +2,16 @@ import { fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { env } from 'node:process';
-import { afterEach, beforeEach, test } from 'node:test';
-import { extension, startSession, stubTools } from './harness.ts';
+import { test } from 'node:test';
+import { extension, overrideEnv, startSession, stubTools } from './harness.ts';
 
-// read when the extension loads
+// read when the extension loads; node --test runs each file in its own process
 env.XDG_DATA_HOME = '/xdg';
 const MASON_BIN = join('/xdg', 'nvim', 'mason', 'bin');
 
-let path: string | undefined;
-beforeEach(() => {
-	path = env.PATH;
-	env.PATH = '/usr/bin';
-});
-afterEach(() => {
-	env.PATH = path;
-});
-
-async function call(...tools: string[]) {
+// PATH after a fresh session that starts with `path` runs these tools
+async function pathAfter(tools: string[], path = '/usr/bin') {
+	using restoreEnv = overrideEnv({ PATH: path });
 	using harness = await startSession({
 		extensions: [extension('mason-path')],
 		factories: [stubTools('lsp_hover', 'other')],
@@ -31,25 +24,21 @@ async function call(...tools: string[]) {
 		);
 		await harness.session.prompt('go');
 	}
+	return env.PATH;
 }
 
 test('adds Mason to PATH when a pi-lsp tool runs', async () => {
-	await call('lsp_hover');
-	assert.equal(env.PATH, `/usr/bin:${MASON_BIN}`);
+	assert.equal(await pathAfter(['lsp_hover']), `/usr/bin:${MASON_BIN}`);
 });
 
 test('leaves PATH alone for other tools', async () => {
-	await call('other');
-	assert.equal(env.PATH, '/usr/bin');
+	assert.equal(await pathAfter(['other']), '/usr/bin');
 });
 
 test('adds Mason once', async () => {
-	await call('lsp_hover', 'lsp_hover');
-	assert.equal(env.PATH, `/usr/bin:${MASON_BIN}`);
+	assert.equal(await pathAfter(['lsp_hover', 'lsp_hover']), `/usr/bin:${MASON_BIN}`);
 });
 
 test('keeps an existing Mason entry', async () => {
-	env.PATH = `${MASON_BIN}:/usr/bin`;
-	await call('lsp_hover');
-	assert.equal(env.PATH, `${MASON_BIN}:/usr/bin`);
+	assert.equal(await pathAfter(['lsp_hover'], `${MASON_BIN}:/usr/bin`), `${MASON_BIN}:/usr/bin`);
 });

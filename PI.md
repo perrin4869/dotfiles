@@ -2,7 +2,7 @@
 
 The pi config lives in `home/.pi/agent` and is stowed to `~/.pi/agent`. This file lists the switches this repo adds or configures, and where to flip each one: a command, an environment variable, or a project's `.pi/settings.json`.
 
-Project settings go in `.pi/settings.json` at the project root. That file is ignored globally, so it stays local to each checkout. Project values take precedence over the global `~/.pi/agent/settings.json`.
+Project settings go in `.pi/settings.json` at the project root. That file is ignored globally, so it stays local to each checkout. Project values take precedence over the global `~/.pi/agent/settings.json`, field by field, and apply only once pi trusts the project. A section with an invalid value is ignored, with a warning, and its defaults apply.
 
 ---
 

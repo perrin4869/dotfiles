@@ -72,3 +72,16 @@ test('keeps the model when the target is unavailable', async () => {
 		'start',
 	);
 });
+
+test('ignores an untrusted project', async () => {
+	assert.equal(await turn(await start({ projectSettings: ENABLED, projectTrusted: false })), 'start');
+});
+
+test('warns once about invalid settings and falls back to the defaults', async () => {
+	const h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } } });
+	assert.equal(await turn(h), 'start');
+	assert.equal(await turn(h), 'start');
+	assert.deepEqual(h.notifications, [
+		'ignoring invalid settings: opusplan.enabled must be boolean; opusplan.plan must match pattern "^[^/]+/.+$"',
+	]);
+});

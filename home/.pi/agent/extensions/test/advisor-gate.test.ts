@@ -1,4 +1,4 @@
-import { fauxAssistantMessage, fauxToolCall, getCurrentTools } from '@earendil-works/pi-ai';
+import { fauxAssistantMessage, type FauxResponseFactory, fauxToolCall, getCurrentTools } from '@earendil-works/pi-ai';
 import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
@@ -13,7 +13,6 @@ const rpivAdvisor: ExtensionFactory = (pi) => {
 	pi.on('before_agent_start', () => {
 		const active = pi.getActiveTools();
 		if (!active.includes('advisor')) pi.setActiveTools([...active, 'advisor']);
-		return Promise.resolve();
 	});
 };
 
@@ -26,51 +25,55 @@ async function start(options: Partial<HarnessOptions> = {}) {
 	return harness;
 }
 
-// the tools the model is offered on each request of a prompt
+// the tools offered on each request of a prompt that calls one tool and then finishes
 async function offeredTools(options: Partial<HarnessOptions> = {}) {
 	const h = await start(options);
 	const offered: string[][] = [];
-	const record = (messages: { role: string }[]) => offered.push(getCurrentTools(messages).map((tool) => tool.name));
+	const recording =
+		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
+		(context) => {
+			offered.push(getCurrentTools(context.messages).map((tool) => tool.name));
+			return reply;
+		};
 	h.respond(
-		(context) => {
-			record(context.messages);
-			return fauxAssistantMessage(fauxToolCall('other', {}), { stopReason: 'toolUse' });
-		},
-		(context) => {
-			record(context.messages);
-			return fauxAssistantMessage('done');
-		},
+		recording(fauxAssistantMessage(fauxToolCall('other', {}), { stopReason: 'toolUse' })),
+		recording(fauxAssistantMessage('done')),
 	);
 	await h.session.prompt('go');
 	return offered;
 }
 
+const offersAdvisor = async (options?: Partial<HarnessOptions>) =>
+	(await offeredTools(options)).map((tools) => tools.includes('advisor'));
+
 const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
 test('hides the advisor by default', async () => {
-	for (const tools of await offeredTools()) assert.ok(!tools.includes('advisor'), tools.join());
+	assert.deepEqual(await offersAdvisor(), [false, false]);
 });
 
 test('offers the advisor where the project enables it', async () => {
-	for (const tools of await offeredTools({ projectSettings: ENABLED })) assert.ok(tools.includes('advisor'));
+	assert.deepEqual(await offersAdvisor({ projectSettings: ENABLED }), [true, true]);
 });
 
 test('a global enable applies to projects that say nothing', async () => {
-	for (const tools of await offeredTools({ globalSettings: ENABLED })) assert.ok(tools.includes('advisor'));
+	assert.deepEqual(await offersAdvisor({ globalSettings: ENABLED }), [true, true]);
 });
 
 test('a project can disable a global enable', async () => {
-	const offered = await offeredTools({ globalSettings: ENABLED, projectSettings: DISABLED });
-	for (const tools of offered) assert.ok(!tools.includes('advisor'));
+	assert.deepEqual(await offersAdvisor({ globalSettings: ENABLED, projectSettings: DISABLED }), [false, false]);
+});
+
+test('an untrusted project cannot enable the advisor', async () => {
+	assert.deepEqual(await offersAdvisor({ projectSettings: ENABLED, projectTrusted: false }), [false, false]);
 });
 
 test('an advisor call in a disabled project fails', async () => {
 	const h = await start();
 	h.respond(fauxAssistantMessage(fauxToolCall('advisor', {}), { stopReason: 'toolUse' }), fauxAssistantMessage('done'));
 	await h.session.prompt('go');
-	const [result] = toolResults(h.session);
-	assert.equal(result.isError, true);
+	assert.equal(toolResults(h.session)[0].isError, true);
 });
 
 test('leaves other tools alone', async () => {

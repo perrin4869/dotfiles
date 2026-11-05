@@ -4,6 +4,7 @@ import {
 	createAgentSession,
 	DefaultResourceLoader,
 	type ExtensionFactory,
+	type ExtensionUIContext,
 	ModelRuntime,
 	SessionManager,
 	SettingsManager,
@@ -24,6 +25,8 @@ export type HarnessOptions = {
 	model?: string;
 	globalSettings?: object;
 	projectSettings?: object;
+	// pi leaves project settings out until the project is trusted
+	projectTrusted?: boolean;
 	// pretend these tools came from a package, e.g. { lsp_hover: 'npm:@narumitw/pi-lsp@1.0.0' }
 	toolSources?: Record<string, string>;
 };
@@ -31,6 +34,7 @@ export type HarnessOptions = {
 export type Harness = {
 	session: AgentSession;
 	sessionManager: SessionManager;
+	notifications: string[];
 	respond: (...steps: FauxResponseStep[]) => void;
 	dispose: () => void;
 };
@@ -49,7 +53,7 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 	env.PI_CODING_AGENT_DIR = agentDir;
 
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
-	const settingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: true });
+	const settingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: options.projectTrusted ?? true });
 	const resourceLoader = new DefaultResourceLoader({
 		cwd,
 		agentDir,
@@ -88,11 +92,13 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		sessionManager,
 		model,
 	});
-	await session.bindExtensions({});
+	const notifications: string[] = [];
+	await session.bindExtensions({ uiContext: recordingUI(notifications) });
 
 	return {
 		session,
 		sessionManager,
+		notifications,
 		respond: (...steps) => faux.setResponses(steps),
 		dispose: () => {
 			session.dispose();
@@ -101,6 +107,13 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 			rmSync(root, { recursive: true, force: true });
 		},
 	};
+}
+
+// records notify(); every other UI call answers nothing, like a UI the user ignores
+function recordingUI(notifications: string[]): ExtensionUIContext {
+	const ui: Partial<ExtensionUIContext> = { notify: (message) => void notifications.push(message) };
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the proxy supplies the missing methods
+	return new Proxy(ui, { get: (target, key) => Reflect.get(target, key) ?? (() => undefined) }) as ExtensionUIContext;
 }
 
 // stand-ins for other packages' tools, accepting any input

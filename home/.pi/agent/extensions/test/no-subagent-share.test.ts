@@ -1,13 +1,10 @@
 import { fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
-import { afterEach, test } from 'node:test';
-import { extension, type Harness, startSession, stubTools, toolResults } from './harness.ts';
-
-let harness: Harness | undefined;
-afterEach(() => harness?.dispose());
+import { test } from 'node:test';
+import { extension, startSession, stubTools, toolResults } from './harness.ts';
 
 async function call(tool: string, input: Parameters<typeof fauxToolCall>[1]) {
-	harness = await startSession({
+	using harness = await startSession({
 		extensions: [extension('no-subagent-share')],
 		factories: [stubTools('subagent', 'other')],
 	});

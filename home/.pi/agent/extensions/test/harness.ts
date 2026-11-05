@@ -1,4 +1,10 @@
-import { fauxProvider, type FauxModelDefinition, type FauxResponseStep } from '@earendil-works/pi-ai';
+import {
+	fauxProvider,
+	type FauxModelDefinition,
+	type FauxResponseStep,
+	InMemoryCredentialStore,
+	InMemoryModelsStore,
+} from '@earendil-works/pi-ai';
 import {
 	type AgentSession,
 	createAgentSession,
@@ -31,12 +37,12 @@ export type HarnessOptions = {
 	toolSources?: Record<string, string>;
 };
 
-export type Harness = {
+// dispose with `using`, which restores PI_CODING_AGENT_DIR and removes the temporary directories
+export type Harness = Disposable & {
 	session: AgentSession;
 	sessionManager: SessionManager;
 	notifications: string[];
 	respond: (...steps: FauxResponseStep[]) => void;
-	dispose: () => void;
 };
 
 // a real in-process pi session: extensions load from their files, the model is scripted
@@ -75,9 +81,11 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		}
 	}
 	// pi only switches to models whose provider has credentials
+	// in memory: file-backed stores write after the session is disposed, recreating the temporary directory
 	const modelRuntime = await ModelRuntime.create({
-		authPath: join(agentDir, 'auth.json'),
-		modelsPath: join(agentDir, 'models.json'),
+		credentials: new InMemoryCredentialStore(),
+		modelsStore: new InMemoryModelsStore(),
+		modelsPath: null,
 	});
 	await modelRuntime.setRuntimeApiKey(faux.provider.id, 'test');
 
@@ -100,7 +108,7 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		sessionManager,
 		notifications,
 		respond: (...steps) => faux.setResponses(steps),
-		dispose: () => {
+		[Symbol.dispose]: () => {
 			session.dispose();
 			if (previousAgentDir === undefined) delete env.PI_CODING_AGENT_DIR;
 			else env.PI_CODING_AGENT_DIR = previousAgentDir;

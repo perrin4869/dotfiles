@@ -5,6 +5,9 @@
 		"correctness": "error",
 		"suspicious": "warn"
 	},
+	"rules": {
+		"no-unused-vars": ["error", { "ignoreUsingDeclarations": true }]
+	},
 	"options": {
 		"typeAware": true,
 		"denyWarnings": true

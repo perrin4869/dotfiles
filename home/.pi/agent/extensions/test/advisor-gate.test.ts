@@ -1,11 +1,8 @@
 import { fauxAssistantMessage, type FauxResponseFactory, fauxToolCall, getCurrentTools } from '@earendil-works/pi-ai';
 import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
-import { afterEach, test } from 'node:test';
-import { extension, type Harness, type HarnessOptions, startSession, stubTools, toolResults } from './harness.ts';
-
-let harness: Harness | undefined;
-afterEach(() => harness?.dispose());
+import { test } from 'node:test';
+import { extension, type HarnessOptions, startSession, stubTools, toolResults } from './harness.ts';
 
 // rpiv-advisor with a reviewer picked: it puts its tool back before every prompt
 const rpivAdvisor: ExtensionFactory = (pi) => {
@@ -16,18 +13,12 @@ const rpivAdvisor: ExtensionFactory = (pi) => {
 	});
 };
 
-async function start(options: Partial<HarnessOptions> = {}) {
-	harness = await startSession({
-		extensions: [extension('advisor-gate')],
-		factories: [rpivAdvisor, stubTools('other')],
-		...options,
-	});
-	return harness;
-}
+const start = (options: Partial<HarnessOptions> = {}) =>
+	startSession({ extensions: [extension('advisor-gate')], factories: [rpivAdvisor, stubTools('other')], ...options });
 
 // the tools offered on each request of a prompt that calls one tool and then finishes
 async function offeredTools(options: Partial<HarnessOptions> = {}) {
-	const h = await start(options);
+	using h = await start(options);
 	const offered: string[][] = [];
 	const recording =
 		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
@@ -70,7 +61,7 @@ test('an untrusted project cannot enable the advisor', async () => {
 });
 
 test('an advisor call in a disabled project fails', async () => {
-	const h = await start();
+	using h = await start();
 	h.respond(fauxAssistantMessage(fauxToolCall('advisor', {}), { stopReason: 'toolUse' }), fauxAssistantMessage('done'));
 	await h.session.prompt('go');
 	assert.equal(toolResults(h.session)[0].isError, true);

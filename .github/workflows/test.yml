@@ -54,7 +54,7 @@ jobs:
         with:
           node-version: 24.x
       - name: install go # yubikey-touch-detector
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: stable
           # caches GOCACHE (compiled packages) and GOMODCACHE; only the final link reruns

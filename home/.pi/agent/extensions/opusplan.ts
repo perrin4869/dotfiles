@@ -15,7 +15,10 @@ export const settings = defineSettings(
 	}),
 );
 
-// pi-plan-mode appends one of these custom entries whenever plan mode changes
+// pi-plan-mode appends its whole state as one of these custom entries whenever it changes. Neither is exported, so
+// both mirror its source; only `enabled` matters here:
+// https://github.com/narumiruna/pi-extensions/blob/%40narumitw/pi-plan-mode%400.59.5/packages/pi-plan-mode/src/plan-mode.ts#L106
+// https://github.com/narumiruna/pi-extensions/blob/%40narumitw/pi-plan-mode%400.59.5/packages/pi-plan-mode/src/state.ts#L51
 const PLAN_STATE_ENTRY = 'plan-mode-state';
 const PlanState = Type.Object({ enabled: Type.Boolean() });
 

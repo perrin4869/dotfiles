@@ -46,11 +46,19 @@ export default function (pi: ExtensionAPI) {
 		}
 	}
 
+	// reports a bad plan model when the session starts rather than whenever planning begins
+	function checkModels(ctx: ExtensionContext) {
+		const { plan, execute } = readSettings(pi, ctx);
+		for (const ref of new Set([plan, execute]))
+			if (!findModel(ctx, ref)) ctx.ui.notify(`opusplan: ${ref} is not a known model`, 'warning');
+	}
+
 	pi.registerCommand('opusplan', {
 		description: 'Enable opusplan: plan on one model, implement on another; switching models disables it',
 		handler: async (_args, ctx) => {
 			override = true;
 			ctx.ui.notify('opusplan enabled', 'info');
+			checkModels(ctx);
 			await follow(ctx);
 		},
 	});
@@ -59,6 +67,10 @@ export default function (pi: ExtensionAPI) {
 		if (switching || event.source === 'restore' || !isEnabled(ctx)) return;
 		override = false;
 		ctx.ui.notify('opusplan disabled', 'info');
+	});
+
+	pi.on('session_start', (_event, ctx) => {
+		if (isEnabled(ctx)) checkModels(ctx);
 	});
 
 	pi.on('before_agent_start', async (_event, ctx) => {

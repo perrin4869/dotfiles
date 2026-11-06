@@ -4,5 +4,5 @@
 .npm
 .+\.in$
 \.npmrc\.local
-^/\.pi/agent/extensions/(package\.json|tsconfig\.json|test)$
+^/\.pi/agent/extensions/(package\.json|tsconfig\.json|scripts|test)$
 ^/skills-lock\.json$

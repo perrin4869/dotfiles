@@ -1,37 +1,80 @@
-import { fauxProvider } from '@earendil-works/pi-ai';
-import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
+import { fauxAssistantMessage } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
+import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
-import { extension, overrideEnv, startSession } from './harness.ts';
+import {
+	extension,
+	type Harness,
+	type HarnessOptions,
+	overrideEnv,
+	packageExtension,
+	startSession,
+} from './harness.ts';
 
-const start = (provider: string, factories: ExtensionFactory[] = []) =>
-	startSession({ extensions: [extension('pi-memory-env')], provider, factories });
+// pi-memory resolves its directory when it loads, so point it somewhere disposable before the first session
+const memoryDir = join(import.meta.dirname, '..', '..', '..', '..', '..', 'node_modules', '.cache', 'pi-memory');
+env.PI_MEMORY_DIR = memoryDir;
+env.PI_MEMORY_NO_SEARCH = '1';
+env.PI_MEMORY_QMD_UPDATE = 'off';
 
-// PI_MEMORY_EXIT_SUMMARY once a session starts on `provider`, with the variable initially `initial`
-async function exitSummary(provider: string, initial?: string) {
-	using restoreEnv = overrideEnv({ PI_MEMORY_EXIT_SUMMARY: initial });
-	using harness = await start(provider);
-	return env.PI_MEMORY_EXIT_SUMMARY;
+const SUMMARY = 'Tried the exit summary';
+
+// what pi-memory appended to the daily log, if anything
+function dailyLog() {
+	const daily = join(memoryDir, 'daily');
+	if (!existsSync(daily)) return '';
+	return readdirSync(daily)
+		.map((file) => readFileSync(join(daily, file), 'utf8'))
+		.join('\n');
 }
 
-test('enables the exit summary on a free provider', async () => {
-	assert.equal(await exitSummary('ollama'), '1');
+// runs two prompts and quits the way pi does, then reports whether pi-memory summarised the session
+async function summarized(
+	provider: string,
+	options: {
+		explicit?: string;
+		providers?: HarnessOptions['providers'];
+		after?: (harness: Harness) => Promise<void>;
+	} = {},
+) {
+	rmSync(memoryDir, { recursive: true, force: true });
+	using restoreEnv = overrideEnv({ PI_MEMORY_EXIT_SUMMARY: options.explicit });
+	using h = await startSession({
+		extensions: [await packageExtension('pi-memory'), extension('pi-memory-env')],
+		provider,
+		providers: options.providers,
+	});
+	h.respond(fauxAssistantMessage('one'), fauxAssistantMessage('two'), fauxAssistantMessage(SUMMARY));
+	await h.session.prompt('first');
+	await h.session.prompt('second');
+	await options.after?.(h);
+	await h.session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' });
+	return dailyLog().includes(SUMMARY);
+}
+
+test('summarises the session on exit with a free provider', async () => {
+	assert.equal(await summarized('ollama'), true);
 });
 
-test('disables the exit summary on a paid provider', async () => {
-	assert.equal(await exitSummary('anthropic'), '0');
+test('skips the summary on exit with a paid provider', async () => {
+	assert.equal(await summarized('anthropic'), false);
 });
 
-test('keeps an explicit setting', async () => {
-	assert.equal(await exitSummary('ollama', '0'), '0');
+test('an explicit setting wins', async () => {
+	assert.equal(await summarized('ollama', { explicit: '0' }), false);
 });
 
 test('follows model changes', async () => {
-	using restoreEnv = overrideEnv({ PI_MEMORY_EXIT_SUMMARY: undefined });
-	const ollama = fauxProvider({ provider: 'ollama' });
-	using harness = await start('anthropic', [(pi) => pi.registerProvider(ollama.provider)]);
-	assert.equal(env.PI_MEMORY_EXIT_SUMMARY, '0');
-	await harness.session.setModel(ollama.getModel());
-	assert.equal(env.PI_MEMORY_EXIT_SUMMARY, '1');
+	// switching from a free provider to a paid one stops the summary the free one would have written
+	const switchedToPaid = await summarized('ollama', {
+		providers: [{ provider: 'anthropic', models: [{ id: 'paid' }] }],
+		after: async (h) => {
+			const model = h.session.modelRuntime.getModel('anthropic', 'paid');
+			assert.ok(model);
+			await h.session.setModel(model);
+		},
+	});
+	assert.equal(switchedToPaid, false);
 });

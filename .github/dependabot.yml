@@ -31,6 +31,7 @@ updates:
           - dependency-name: "pi-subagents"
           - dependency-name: "@narumitw/pi-plan-mode"
           - dependency-name: "@juicesharp/rpiv-advisor"
+          - dependency-name: "pi-memory"
       groups:
           npm:
               patterns:

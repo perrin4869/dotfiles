@@ -17,6 +17,7 @@ test('tested packages match the versions pinned in settings.json', () => {
 	assert.deepEqual(tested.map(([name]) => name).toSorted(), [
 		'@juicesharp/rpiv-advisor',
 		'@narumitw/pi-plan-mode',
+		'pi-memory',
 		'pi-subagents',
 	]);
 	for (const [name, version] of tested) assert.equal(version, pinned.get(name), name);

@@ -8,13 +8,20 @@ import { packageModule } from './harness.ts';
 // no-subagent-share mirrors where pi-subagents reads `share`; these fail when an update changes that
 
 type Options = { flattenSubagentToolOptions: (params: Record<string, unknown>) => Record<string, unknown> };
-type Schemas = { SubagentFlatParams: TSchema };
+type Schemas = {
+	SubagentFlatParams: TSchema;
+	SubagentOptionParams: TSchema;
+	SubagentParams: TSchema;
+};
 
 const { flattenSubagentToolOptions } = await packageModule<Options>(
 	'pi-subagents',
 	'src/extension/subagent-options.js',
 );
-const { SubagentFlatParams } = await packageModule<Schemas>('pi-subagents', 'src/extension/schemas.js');
+const { SubagentFlatParams, SubagentOptionParams, SubagentParams } = await packageModule<Schemas>(
+	'pi-subagents',
+	'src/extension/schemas.js',
+);
 
 // whether pi-subagents would upload the session for this tool input
 function shares(input: Record<string, unknown>) {
@@ -49,8 +56,12 @@ function sharePaths(schema: unknown, path = ''): string[] {
 	];
 }
 
-test('share is a top-level parameter only', () => {
+// the model's own parameters carry share only through `options`, whose keys are checked against their own schema,
+// and flat callers pass it at the top level; the blocker checks both places
+test('share is declared at the top level of the flat and option schemas only', () => {
 	assert.deepEqual(sharePaths(SubagentFlatParams), ['share']);
+	assert.deepEqual(sharePaths(SubagentOptionParams), ['share']);
+	assert.deepEqual(sharePaths(SubagentParams), []);
 });
 
 test('a share nested in a task is ignored', () => {

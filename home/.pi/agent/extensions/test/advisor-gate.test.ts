@@ -27,12 +27,17 @@ const start = async (options: Partial<HarnessOptions> = {}) =>
 	});
 
 // the tools offered on each request of a prompt that calls one tool and then finishes
+// the names of the tools a request is offered
+const toolNames = (context: Parameters<FauxResponseFactory>[0]) =>
+	new Set(getCurrentTools(context.messages).map((tool) => tool.name));
+
+// the tools offered on each request of a prompt that calls one tool and then finishes
 async function offeredTools(h: Harness) {
-	const offered: string[][] = [];
+	const offered: Set<string>[] = [];
 	const recording =
 		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
 		(context) => {
-			offered.push(getCurrentTools(context.messages).map((tool) => tool.name));
+			offered.push(toolNames(context));
 			return reply;
 		};
 	h.respond(
@@ -43,7 +48,7 @@ async function offeredTools(h: Harness) {
 	return offered;
 }
 
-const offersAdvisor = async (h: Harness) => (await offeredTools(h)).map((tools) => tools.includes('advisor'));
+const offersAdvisor = async (h: Harness) => (await offeredTools(h)).map((tools) => tools.has('advisor'));
 
 async function offersAdvisorIn(options?: Partial<HarnessOptions>) {
 	using h = await start(options);
@@ -55,7 +60,7 @@ const DISABLED = { advisor: { enabled: false } };
 
 test('keeps the advisor and the gate out of the prompt by default', async () => {
 	using h = await start();
-	for (const tools of await offeredTools(h)) assert.ok(!tools.includes('advisor') && !tools.includes('advisor_gate'));
+	for (const tools of await offeredTools(h)) assert.ok(!tools.has('advisor') && !tools.has('advisor_gate'));
 });
 
 // opusplan switches models while the run starts, which makes rpiv-advisor re-add its tool
@@ -66,14 +71,14 @@ test('keeps the advisor out when another extension switches models', async () =>
 		model: 'executor',
 		projectSettings: { opusplan: { enabled: true, execute: 'faux/target' } },
 	});
-	const offered: string[][] = [];
+	const offered: Set<string>[] = [];
 	h.respond((context) => {
-		offered.push(getCurrentTools(context.messages).map((tool) => tool.name));
+		offered.push(toolNames(context));
 		return fauxAssistantMessage('done');
 	});
 	await h.session.prompt('go');
 	assert.equal(h.session.model?.id, 'target');
-	for (const tools of offered) assert.ok(!tools.includes('advisor'), tools.join());
+	for (const tools of offered) assert.ok(!tools.has('advisor'), [...tools].join());
 });
 
 test('hides the advisor by default', async () => {
@@ -113,5 +118,5 @@ test('an advisor call in a disabled project fails', async () => {
 
 test('leaves other tools alone', async () => {
 	using h = await start();
-	for (const tools of await offeredTools(h)) assert.ok(tools.includes('other'));
+	for (const tools of await offeredTools(h)) assert.ok(tools.has('other'));
 });

@@ -60,8 +60,9 @@ test('/opusplan toggles it', async () => {
 	await h.session.prompt('/opusplan');
 	assert.equal(await turn(h), 'execute');
 	await h.session.prompt('/opusplan');
+	assert.equal(h.session.model?.id, 'start');
 	await h.session.prompt('/plan start');
-	assert.equal(await turn(h), 'execute');
+	assert.equal(await turn(h), 'start');
 });
 
 test('keeps the model and warns when the target is unavailable', async () => {

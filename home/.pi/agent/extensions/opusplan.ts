@@ -28,11 +28,17 @@ export default function (pi: ExtensionAPI) {
 	// set by /opusplan; overrides the settings for the rest of this pi process, including fresh implementation sessions
 	let override: boolean | undefined;
 	const isEnabled = ({ enabled }: { enabled: boolean }) => override ?? enabled;
+	// the model in use before opusplan first switched, restored when /opusplan turns it off
+	let replaced: ExtensionContext['model'];
 
 	pi.registerCommand('opusplan', {
 		description: 'Toggle opusplan: plan on one model, implement on another',
 		handler: async (_args, ctx) => {
 			override = !isEnabled(readSettings(pi, ctx));
+			if (!override && replaced) {
+				await pi.setModel(replaced);
+				replaced = undefined;
+			}
 			ctx.ui.notify(`opusplan ${override ? 'enabled' : 'disabled'}`, 'info');
 		},
 	});
@@ -43,6 +49,7 @@ export default function (pi: ExtensionAPI) {
 		const ref = isPlanning(ctx) ? settings.plan : settings.execute;
 		if (ctx.model && modelRef(ctx.model) === ref) return;
 		const model = findModel(ctx, ref);
+		replaced ??= ctx.model;
 		if (!model || !(await pi.setModel(model))) ctx.ui.notify(`opusplan: cannot use ${ref}`, 'warning');
 	});
 }

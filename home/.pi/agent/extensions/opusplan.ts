@@ -7,7 +7,7 @@ import { defineSettings } from './lib/settings.ts';
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
 // Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or with /opusplan; switching models
 // disables it.
-const readSettings = defineSettings(
+export const readSettings = defineSettings(
 	'opusplan',
 	Type.Object({
 		enabled: Type.Boolean({ default: false }),

@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"allOf": [{ "$ref": "https://pi.dev/schemas/settings.schema.json" }],
+	"properties": {
+		"advisor": { "type": "object", "properties": { "enabled": { "type": "boolean", "default": false } } },
+		"opusplan": {
+			"type": "object",
+			"properties": {
+				"enabled": { "type": "boolean", "default": false },
+				"plan": {
+					"type": "string",
+					"pattern": "^[^/]+/.+$",
+					"default": "claude-bridge/claude-opus-5-5",
+					"description": "a model as provider/id"
+				},
+				"execute": {
+					"type": "string",
+					"pattern": "^[^/]+/.+$",
+					"default": "claude-bridge/claude-sonnet-5-5",
+					"description": "a model as provider/id"
+				}
+			}
+		}
+	}
+}

@@ -27,9 +27,10 @@
     "npm:@sting8k/pi-vcc@0.11.2",
     "npm:@narumitw/pi-goal@0.54.15",
     "npm:@ff-labs/pi-fff@0.11.0",
-    "npm:pi-token-speed@0.12.0"
+    "npm:pi-token-speed@0.12.0",
+    "npm:@spences10/pi-themes@0.0.11"
   ],
-  "theme": "gruvbox",
+  "theme": "gruvbox-dark",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0"
   },

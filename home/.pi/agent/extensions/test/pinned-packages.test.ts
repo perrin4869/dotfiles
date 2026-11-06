@@ -14,6 +14,10 @@ test('tested packages match the versions pinned in settings.json', () => {
 		}),
 	);
 	const tested = Object.entries(extensions.devDependencies).filter(([name]) => pinned.has(name));
-	assert.deepEqual(tested.map(([name]) => name).toSorted(), ['@narumitw/pi-plan-mode', 'pi-subagents']);
+	assert.deepEqual(tested.map(([name]) => name).toSorted(), [
+		'@juicesharp/rpiv-advisor',
+		'@narumitw/pi-plan-mode',
+		'pi-subagents',
+	]);
 	for (const [name, version] of tested) assert.equal(version, pinned.get(name), name);
 });

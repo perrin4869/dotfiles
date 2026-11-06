@@ -1,24 +1,33 @@
 import { fauxAssistantMessage, type FauxResponseFactory, fauxToolCall, getCurrentTools } from '@earendil-works/pi-ai';
-import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
+import { join } from 'node:path';
+import { env } from 'node:process';
 import { test } from 'node:test';
-import { extension, type HarnessOptions, startSession, stubTools, toolResults } from './harness.ts';
+import {
+	extension,
+	type Harness,
+	type HarnessOptions,
+	packageExtension,
+	startSession,
+	stubTools,
+	toolResults,
+} from './harness.ts';
 
-// rpiv-advisor with a reviewer picked: it puts its tool back before every prompt
-const rpivAdvisor: ExtensionFactory = (pi) => {
-	stubTools('advisor')(pi);
-	pi.on('before_agent_start', () => {
-		const active = pi.getActiveTools();
-		if (!active.includes('advisor')) pi.setActiveTools([...active, 'advisor']);
+// the real rpiv-advisor, with faux/reviewer picked as its reviewer in fixtures/config/rpiv-advisor/advisor.json;
+// node --test runs each file in its own process
+env.XDG_CONFIG_HOME = join(import.meta.dirname, 'fixtures', 'config');
+
+const start = async (options: Partial<HarnessOptions> = {}) =>
+	startSession({
+		extensions: [await packageExtension('@juicesharp/rpiv-advisor'), extension('advisor-gate')],
+		factories: [stubTools('other')],
+		models: [{ id: 'executor' }, { id: 'reviewer' }],
+		model: 'executor',
+		...options,
 	});
-};
-
-const start = (options: Partial<HarnessOptions> = {}) =>
-	startSession({ extensions: [extension('advisor-gate')], factories: [rpivAdvisor, stubTools('other')], ...options });
 
 // the tools offered on each request of a prompt that calls one tool and then finishes
-async function offeredTools(options: Partial<HarnessOptions> = {}) {
-	using h = await start(options);
+async function offeredTools(h: Harness) {
 	const offered: string[][] = [];
 	const recording =
 		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
@@ -34,30 +43,54 @@ async function offeredTools(options: Partial<HarnessOptions> = {}) {
 	return offered;
 }
 
-const offersAdvisor = async (options?: Partial<HarnessOptions>) =>
-	(await offeredTools(options)).map((tools) => tools.includes('advisor'));
+const offersAdvisor = async (h: Harness) => (await offeredTools(h)).map((tools) => tools.includes('advisor'));
+
+async function offersAdvisorIn(options?: Partial<HarnessOptions>) {
+	using h = await start(options);
+	return await offersAdvisor(h);
+}
 
 const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
+test('declares neither the advisor nor the gate by default', async () => {
+	using h = await start();
+	for (const tools of await offeredTools(h)) {
+		assert.ok(!tools.includes('advisor') && !tools.includes('advisor_gate'), tools.join());
+	}
+});
+
 test('hides the advisor by default', async () => {
-	assert.deepEqual(await offersAdvisor(), [false, false]);
+	assert.deepEqual(await offersAdvisorIn(), [false, false]);
 });
 
 test('offers the advisor where the project enables it', async () => {
-	assert.deepEqual(await offersAdvisor({ projectSettings: ENABLED }), [true, true]);
+	assert.deepEqual(await offersAdvisorIn({ projectSettings: ENABLED }), [true, true]);
+});
+
+test('declares the advisor but not the gate where the project enables it', async () => {
+	using h = await start({ projectSettings: ENABLED });
+	for (const tools of await offeredTools(h)) assert.ok(tools.includes('advisor') && !tools.includes('advisor_gate'));
 });
 
 test('a global enable applies to projects that say nothing', async () => {
-	assert.deepEqual(await offersAdvisor({ globalSettings: ENABLED }), [true, true]);
+	assert.deepEqual(await offersAdvisorIn({ globalSettings: ENABLED }), [true, true]);
 });
 
 test('a project can disable a global enable', async () => {
-	assert.deepEqual(await offersAdvisor({ globalSettings: ENABLED, projectSettings: DISABLED }), [false, false]);
+	assert.deepEqual(await offersAdvisorIn({ globalSettings: ENABLED, projectSettings: DISABLED }), [false, false]);
 });
 
 test('an untrusted project cannot enable the advisor', async () => {
-	assert.deepEqual(await offersAdvisor({ projectSettings: ENABLED, projectTrusted: false }), [false, false]);
+	assert.deepEqual(await offersAdvisorIn({ projectSettings: ENABLED, projectTrusted: false }), [false, false]);
+});
+
+test('stays hidden when the model changes', async () => {
+	using h = await start();
+	const model = h.session.modelRuntime.getModel('faux', 'reviewer');
+	assert.ok(model);
+	await h.session.setModel(model);
+	assert.deepEqual(await offersAdvisor(h), [false, false]);
 });
 
 test('an advisor call in a disabled project fails', async () => {
@@ -68,5 +101,6 @@ test('an advisor call in a disabled project fails', async () => {
 });
 
 test('leaves other tools alone', async () => {
-	for (const tools of await offeredTools()) assert.ok(tools.includes('other'));
+	using h = await start();
+	for (const tools of await offeredTools(h)) assert.ok(tools.includes('other'));
 });

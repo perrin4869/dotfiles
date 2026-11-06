@@ -15,7 +15,7 @@ async function turn(h: Harness) {
 
 test('opusplan follows the real pi-plan-mode', async () => {
 	using h = await startSession({
-		extensions: [packageExtension('@narumitw/pi-plan-mode'), extension('opusplan')],
+		extensions: [await packageExtension('@narumitw/pi-plan-mode'), extension('opusplan')],
 		models,
 		model: 'start',
 		projectSettings: { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/execute' } },

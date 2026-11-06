@@ -16,7 +16,6 @@ import {
 	SessionManager,
 	SettingsManager,
 } from '@earendil-works/pi-coding-agent';
-import { readFileSync } from 'node:fs';
 import { findPackageJSON } from 'node:module';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -28,24 +27,26 @@ export const extension = (name: string) => join(import.meta.dirname, '..', `${na
 
 const PiManifest = Type.Object({ pi: Type.Object({ extensions: Type.Array(Type.String(), { minItems: 1 }) }) });
 
-function packageManifest(name: string) {
+function packageDir(name: string) {
 	const manifest = findPackageJSON(name, import.meta.url);
 	if (manifest === undefined) throw new Error(`${name} is not installed`);
-	return manifest;
+	return dirname(manifest);
 }
 
+const fileUrl = (dir: string, path: string) => pathToFileURL(join(dir, path)).href;
+
 // an installed package's pi extension entry point, as pi resolves it from the package's `pi.extensions` manifest
-export function packageExtension(name: string) {
-	const path = packageManifest(name);
-	const manifest: unknown = JSON.parse(readFileSync(path, 'utf8'));
+export async function packageExtension(name: string) {
+	const dir = packageDir(name);
+	const { default: manifest }: { default: unknown } = await import(fileUrl(dir, 'package.json'), {
+		with: { type: 'json' },
+	});
 	if (!Value.Check(PiManifest, manifest)) throw new Error(`${name} declares no pi extension`);
-	return join(dirname(path), manifest.pi.extensions[0]);
+	return join(dir, manifest.pi.extensions[0]);
 }
 
 // a module inside an installed package, past its `exports` map, for contract tests against its internals
-export async function packageModule<T>(name: string, path: string): Promise<T> {
-	return await import(pathToFileURL(join(dirname(packageManifest(name)), path)).href);
-}
+export const packageModule = <T>(name: string, path: string): Promise<T> => import(fileUrl(packageDir(name), path));
 
 export type HarnessOptions = {
 	extensions: string[];

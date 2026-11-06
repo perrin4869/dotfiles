@@ -26,18 +26,17 @@ const start = async (options: Partial<HarnessOptions> = {}) =>
 		...options,
 	});
 
-// the tools offered on each request of a prompt that calls one tool and then finishes
 // the names of the tools a request is offered
 const toolNames = (context: Parameters<FauxResponseFactory>[0]) =>
 	new Set(getCurrentTools(context.messages).map((tool) => tool.name));
 
-// the tools offered on each request of a prompt that calls one tool and then finishes
+// the tools offered to any request of a prompt that calls one tool and then finishes
 async function offeredTools(h: Harness) {
-	const offered: Set<string>[] = [];
+	const offered = new Set<string>();
 	const recording =
 		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
 		(context) => {
-			offered.push(toolNames(context));
+			for (const name of toolNames(context)) offered.add(name);
 			return reply;
 		};
 	h.respond(
@@ -48,19 +47,18 @@ async function offeredTools(h: Harness) {
 	return offered;
 }
 
-const offersAdvisor = async (h: Harness) => (await offeredTools(h)).map((tools) => tools.has('advisor'));
-
-async function offersAdvisorIn(options?: Partial<HarnessOptions>) {
+const offersAdvisorIn = async (options?: Partial<HarnessOptions>) => {
 	using h = await start(options);
-	return await offersAdvisor(h);
-}
+	return (await offeredTools(h)).has('advisor');
+};
 
 const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
 test('keeps the advisor and the gate out of the prompt by default', async () => {
 	using h = await start();
-	for (const tools of await offeredTools(h)) assert.ok(!tools.has('advisor') && !tools.has('advisor_gate'));
+	const offered = await offeredTools(h);
+	assert.ok(!offered.has('advisor') && !offered.has('advisor_gate'), [...offered].join());
 });
 
 // opusplan switches models while the run starts, which makes rpiv-advisor re-add its tool
@@ -71,34 +69,34 @@ test('keeps the advisor out when another extension switches models', async () =>
 		model: 'executor',
 		projectSettings: { opusplan: { enabled: true, execute: 'faux/target' } },
 	});
-	const offered: Set<string>[] = [];
+	const offered = new Set<string>();
 	h.respond((context) => {
-		offered.push(toolNames(context));
+		for (const name of toolNames(context)) offered.add(name);
 		return fauxAssistantMessage('done');
 	});
 	await h.session.prompt('go');
 	assert.equal(h.session.model?.id, 'target');
-	for (const tools of offered) assert.ok(!tools.has('advisor'), [...tools].join());
+	assert.ok(!offered.has('advisor'), [...offered].join());
 });
 
 test('hides the advisor by default', async () => {
-	assert.deepEqual(await offersAdvisorIn(), [false, false]);
+	assert.equal(await offersAdvisorIn(), false);
 });
 
 test('offers the advisor where the project enables it', async () => {
-	assert.deepEqual(await offersAdvisorIn({ projectSettings: ENABLED }), [true, true]);
+	assert.equal(await offersAdvisorIn({ projectSettings: ENABLED }), true);
 });
 
 test('a global enable applies to projects that say nothing', async () => {
-	assert.deepEqual(await offersAdvisorIn({ globalSettings: ENABLED }), [true, true]);
+	assert.equal(await offersAdvisorIn({ globalSettings: ENABLED }), true);
 });
 
 test('a project can disable a global enable', async () => {
-	assert.deepEqual(await offersAdvisorIn({ globalSettings: ENABLED, projectSettings: DISABLED }), [false, false]);
+	assert.equal(await offersAdvisorIn({ globalSettings: ENABLED, projectSettings: DISABLED }), false);
 });
 
 test('an untrusted project cannot enable the advisor', async () => {
-	assert.deepEqual(await offersAdvisorIn({ projectSettings: ENABLED, projectTrusted: false }), [false, false]);
+	assert.equal(await offersAdvisorIn({ projectSettings: ENABLED, projectTrusted: false }), false);
 });
 
 test('stays hidden when the model changes', async () => {
@@ -106,7 +104,7 @@ test('stays hidden when the model changes', async () => {
 	const model = h.session.modelRuntime.getModel('faux', 'reviewer');
 	assert.ok(model);
 	await h.session.setModel(model);
-	assert.deepEqual(await offersAdvisor(h), [false, false]);
+	assert.equal((await offeredTools(h)).has('advisor'), false);
 });
 
 test('an advisor call in a disabled project fails', async () => {
@@ -118,5 +116,5 @@ test('an advisor call in a disabled project fails', async () => {
 
 test('leaves other tools alone', async () => {
 	using h = await start();
-	for (const tools of await offeredTools(h)) assert.ok(tools.has('other'));
+	assert.ok((await offeredTools(h)).has('other'));
 });

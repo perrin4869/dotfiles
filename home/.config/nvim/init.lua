@@ -1,11 +1,11 @@
 vim.cmd.source('~/.vimrc')
 
 -- This works by default on vim8
-vim.opt.mouse = 'a'
+vim.o.mouse = 'a'
 
 vim.loader.enable()
 -- nvim 0.5 undo files are incompatible with vim8
-vim.opt.undodir = vim.fn.stdpath('data') .. '/undo'
+vim.o.undodir = vim.fn.stdpath('data') .. '/undo'
 
 -- Local, untracked package root for plugins under development: symlink or
 -- clone a plugin into site-local/pack/dev/{start,opt}/<name> to load it the

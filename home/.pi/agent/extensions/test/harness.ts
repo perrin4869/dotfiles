@@ -61,7 +61,7 @@ export type HarnessOptions = {
 };
 
 // dispose with `using`, which disposes the session
-type NotifyListener = ExtensionUIContext['notify'];
+export type NotifyListener = ExtensionUIContext['notify'];
 
 export type Harness = Disposable & {
 	// binds the extensions, which fires session_start; startSession calls it, createHarness leaves it to the test

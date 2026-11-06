@@ -1,7 +1,7 @@
 import { fauxAssistantMessage } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
-import { extension, type Harness, type HarnessOptions, startSession } from './harness.ts';
+import { mock, test } from 'node:test';
+import { extension, type Harness, type HarnessOptions, type NotifyListener, startSession } from './harness.ts';
 
 const models = [{ id: 'start' }, { id: 'plan' }, { id: 'execute' }];
 const ENABLED = { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/execute' } };
@@ -75,13 +75,13 @@ test('ignores an untrusted project', async () => {
 
 test('warns once about invalid settings and falls back to the defaults', async () => {
 	using h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } } });
-	const warnings: string[] = [];
-	h.onNotify((message, type) => {
-		if (type === 'warning') warnings.push(message);
-	});
+	const notify = mock.fn<NotifyListener>();
+	h.onNotify(notify);
 	assert.equal(await turn(h), 'start');
 	assert.equal(await turn(h), 'start');
-	assert.deepEqual(warnings, [
+	assert.equal(notify.mock.callCount(), 1);
+	assert.deepEqual(notify.mock.calls[0].arguments, [
 		'ignoring invalid settings: opusplan.enabled must be boolean; opusplan.plan must match pattern "^[^/]+/.+$"',
+		'warning',
 	]);
 });

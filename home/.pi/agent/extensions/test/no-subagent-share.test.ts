@@ -29,9 +29,13 @@ test('blocks a share in options', async () => {
 	assert.equal(await blocked({ options: { share: true } }), true);
 });
 
-test('blocks a share that pi-subagents would convert to true', async () => {
+test('blocks a share pi-subagents converts to true', async () => {
 	assert.equal(await blocked({ options: { share: 'true' } }), true);
 	assert.equal(await blocked({ options: { share: 1 } }), true);
+});
+
+test('leaves a top-level share pi-subagents would not convert alone', async () => {
+	assert.equal(await blocked({ share: 'true' }), false);
 });
 
 test('allows subagent calls without share', async () => {

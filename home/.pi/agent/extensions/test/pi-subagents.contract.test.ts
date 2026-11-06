@@ -24,12 +24,11 @@ function sharesReported(input: Record<string, unknown>) {
 }
 
 // Each row: the tool input, whether pi-subagents' own option handling reports a share, and whether the blocker
-// blocks. They differ where pi-subagents would still share after pi coerces the call, as with a string `share`.
+// blocks. pi coerces only declared parameters, and `share` is not one, so a string at the top level shares nowhere.
 const cases: [input: Record<string, unknown>, shares: boolean, blocked: boolean][] = [
 	[{}, false, false],
 	[{ share: true }, true, true],
-	// pi converts a declared parameter before the tool runs, so this shares for real; the blocker converts too
-	[{ share: 'true' }, false, true],
+	[{ share: 'true' }, false, false],
 	[{ share: false }, false, false],
 	[{ options: { share: true } }, true, true],
 	[{ options: { share: 'true' } }, true, true],

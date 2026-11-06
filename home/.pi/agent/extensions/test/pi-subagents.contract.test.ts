@@ -1,26 +1,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { type TSchema, Type } from 'typebox';
-import { Value } from 'typebox/value';
 import { requestsShare } from '../no-subagent-share.ts';
 import { packageModule } from './harness.ts';
 
-// no-subagent-share mirrors where pi-subagents reads `share`; these fail when an update changes that
+// no-subagent-share mirrors where pi-subagents reads `share` and how it converts the value; these fail when an
+// update changes either
 
 type Options = { flattenSubagentToolOptions: (params: Record<string, unknown>) => Record<string, unknown> };
-type Schemas = {
-	SubagentFlatParams: TSchema;
-	SubagentOptionParams: TSchema;
-	SubagentParams: TSchema;
-};
 
 const { flattenSubagentToolOptions } = await packageModule<Options>(
 	'pi-subagents',
 	'src/extension/subagent-options.js',
-);
-const { SubagentFlatParams, SubagentOptionParams, SubagentParams } = await packageModule<Schemas>(
-	'pi-subagents',
-	'src/extension/schemas.js',
 );
 
 // whether pi-subagents would upload the session for this tool input
@@ -33,64 +23,33 @@ function shares(input: Record<string, unknown>) {
 	}
 }
 
-// the parts of a JSON schema that can declare nested properties
-const SchemaNode = Type.Object({
-	properties: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
-	items: Type.Optional(Type.Unknown()),
-	anyOf: Type.Optional(Type.Array(Type.Unknown())),
-	oneOf: Type.Optional(Type.Array(Type.Unknown())),
-	allOf: Type.Optional(Type.Array(Type.Unknown())),
-});
-
-// the dotted paths of every property called `share` in a JSON schema
-function sharePaths(schema: unknown, path = ''): string[] {
-	if (!Value.Check(SchemaNode, schema)) return [];
-	const { properties = {}, items, anyOf = [], oneOf = [], allOf = [] } = schema;
-	return [
-		...Object.entries(properties).flatMap(([key, value]) => {
-			const at = path ? `${path}.${key}` : key;
-			return [...(key === 'share' ? [at] : []), ...sharePaths(value, at)];
-		}),
-		...sharePaths(items, `${path}[]`),
-		...[...anyOf, ...oneOf, ...allOf].flatMap((variant) => sharePaths(variant, path)),
-	];
-}
-
-// the model's own parameters carry share only through `options`, whose keys are checked against their own schema,
-// and flat callers pass it at the top level; the blocker checks both places
-test('share is declared at the top level of the flat and option schemas only', () => {
-	assert.deepEqual(sharePaths(SubagentFlatParams), ['share']);
-	assert.deepEqual(sharePaths(SubagentOptionParams), ['share']);
-	assert.deepEqual(sharePaths(SubagentParams), []);
-});
-
-test('a share nested in a task is ignored', () => {
-	// pi-subagents reads share only where the tests above look; if this starts sharing, the blocker needs the nested
-	// check too
-	assert.equal(shares({ agent: 'worker', tasks: [{ agent: 'a', task: 'x', share: true }] }), false);
-});
+// every way pi-subagents decides to share, and the near misses the blocker must not confuse for one
+const cases: [input: Record<string, unknown>, shares: boolean][] = [
+	[{}, false],
+	[{ share: true }, true],
+	// pi converts a declared parameter before the tool runs, which is where a string `share` would become true
+	[{ share: 'true' }, false],
+	[{ share: false }, false],
+	[{ options: { share: true } }, true],
+	[{ options: { share: 'true' } }, true],
+	[{ options: { share: 'TRUE' } }, true],
+	[{ options: { share: 1 } }, true],
+	[{ options: { share: '1' } }, true],
+	[{ options: { share: 'false' } }, false],
+	[{ options: { share: 'yes' } }, false],
+	[{ options: { share: true, fast: true } }, true],
+	[{ share: true, options: { share: true } }, true],
+	// pi-subagents ignores a share nested in a task; if this starts sharing, the blocker needs the nested check
+	[{ tasks: [{ agent: 'a', task: 'x', share: true }] }, false],
+];
 
 test('blocks every input pi-subagents would share', () => {
-	const inputs = [
-		{},
-		{ share: true },
-		{ share: 'true' },
-		{ share: false },
-		{ options: { share: true } },
-		{ options: { share: 'true' } },
-		{ options: { share: 'TRUE' } },
-		{ options: { share: 1 } },
-		{ options: { share: '1' } },
-		{ options: { share: 'false' } },
-		{ options: { share: 'yes' } },
-		{ options: { share: true, async: true } },
-		{ share: true, options: { share: true } },
-		{ options: 'share' },
-	];
-	for (const input of inputs) {
+	for (const [input, expected] of cases) {
 		const call = { agent: 'worker', task: 'x', ...input };
-		if (shares(call)) assert.ok(requestsShare(call), `not blocked: ${JSON.stringify(input)}`);
+		const where = JSON.stringify(input);
+		assert.equal(shares(call), expected, `pi-subagents on ${where}`);
+		if (expected) assert.ok(requestsShare(call), `not blocked: ${where}`);
 	}
-	// the corpus has to reach pi-subagents' share path at all, or the loop proves nothing
-	assert.ok(inputs.some((input) => shares({ agent: 'worker', task: 'x', ...input })));
+	// the blocker may also block what pi-subagents rejects, but it has to block every way it shares
+	assert.ok(cases.some(([, expected]) => expected));
 });

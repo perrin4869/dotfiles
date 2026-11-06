@@ -53,6 +53,12 @@ test('share is a top-level parameter only', () => {
 	assert.deepEqual(sharePaths(SubagentFlatParams), ['share']);
 });
 
+test('a share nested in a task is ignored', () => {
+	// pi-subagents reads share only where the tests above look; if this starts sharing, the blocker needs the nested
+	// check too
+	assert.equal(shares({ agent: 'worker', tasks: [{ agent: 'a', task: 'x', share: true }] }), false);
+});
+
 test('blocks every input pi-subagents would share', () => {
 	const inputs = [
 		{},

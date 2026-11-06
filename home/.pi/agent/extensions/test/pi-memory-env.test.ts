@@ -69,17 +69,27 @@ test('an explicit setting wins', async () => {
 	assert.equal(await summarized(faux, { explicit: '0' }), false);
 });
 
-test('follows model changes', async () => {
-	// switching from a free provider to a paid one stops the summary the free one would have written
-	using free = scriptedFaux({ provider: 'ollama' });
-	using paid = scriptedFaux({ provider: 'anthropic', models: [{ id: 'paid' }] });
-	const switchedToPaid = await summarized(free, {
-		factories: [(pi) => pi.registerProvider(paid.provider)],
+// a session that starts on `from` and switches to the only model of `to` before quitting
+const switching = (from: HarnessFaux, to: ReturnType<typeof scriptedFaux>, id: string) =>
+	summarized(from, {
+		factories: [(pi) => pi.registerProvider(to.provider)],
 		after: async (h) => {
-			const model = h.session.modelRuntime.getModel('anthropic', 'paid');
+			const model = h.session.modelRuntime.getModel(to.provider.id, id);
 			assert.ok(model);
 			await h.session.setModel(model);
+			// the summary goes to the session's model at exit, now the one switched to
+			to.setResponses([fauxAssistantMessage(SUMMARY)]);
 		},
 	});
-	assert.equal(switchedToPaid, false);
+
+test('follows a switch to a free provider', async () => {
+	using paid = scriptedFaux({ provider: 'anthropic' });
+	using free = scriptedFaux({ provider: 'ollama', models: [{ id: 'free' }] });
+	assert.equal(await switching(paid, free, 'free'), true);
+});
+
+test('follows a switch to a paid provider', async () => {
+	using free = scriptedFaux({ provider: 'ollama' });
+	using paid = scriptedFaux({ provider: 'anthropic', models: [{ id: 'paid' }] });
+	assert.equal(await switching(free, paid, 'paid'), false);
 });

@@ -120,13 +120,13 @@ export function scriptedFaux(
 		models: core.models,
 		api: { stream: core.stream, streamSimple: core.streamSimple },
 	});
-	const sourceId = `pi-extensions-${core.provider}`;
-	registerApiProvider({ api: core.api, stream: core.stream, streamSimple: core.streamSimple }, sourceId);
+	// the API id is unique per core, so disposing one scripted model never unregisters another's
+	registerApiProvider({ api: core.api, stream: core.stream, streamSimple: core.streamSimple }, core.api);
 	return {
 		provider,
 		getModel: (id?: string) => (id === undefined ? core.getModel() : core.getModel(id)),
 		setResponses: (steps: FauxResponseStep[]) => core.setResponses(steps),
-		[Symbol.dispose]: () => unregisterApiProviders(sourceId),
+		[Symbol.dispose]: () => unregisterApiProviders(core.api),
 	};
 }
 

@@ -2,7 +2,7 @@ import { fauxAssistantMessage } from '@earendil-works/pi-ai';
 import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
 import {
@@ -10,13 +10,15 @@ import {
 	type Harness,
 	type HarnessFaux,
 	overrideEnv,
+	packageDir,
 	packageExtension,
 	scriptedFaux,
 	startSession,
 } from './harness.ts';
 
-// pi-memory resolves its directory when it loads, so point it somewhere disposable before the first session
-const memoryDir = join(import.meta.dirname, '..', '..', '..', '..', '..', 'node_modules', '.cache', 'pi-memory');
+// pi-memory resolves its directory when it loads, so point it at a disposable one before the first session; the
+// package's own location gives node_modules without counting path levels
+const memoryDir = join(dirname(packageDir('pi-memory')), '.cache', 'pi-memory');
 env.PI_MEMORY_DIR = memoryDir;
 env.PI_MEMORY_NO_SEARCH = '1';
 env.PI_MEMORY_QMD_UPDATE = 'off';

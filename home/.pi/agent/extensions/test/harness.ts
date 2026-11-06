@@ -30,7 +30,8 @@ export const extension = (name: string) => join(import.meta.dirname, '..', `${na
 
 const PiManifest = Type.Object({ pi: Type.Object({ extensions: Type.Array(Type.String(), { minItems: 1 }) }) });
 
-function packageDir(name: string) {
+// where an installed package lives, e.g. <repo>/node_modules/pi-memory
+export function packageDir(name: string) {
 	const manifest = findPackageJSON(name, import.meta.url);
 	if (manifest === undefined) throw new Error(`${name} is not installed`);
 	return dirname(manifest);

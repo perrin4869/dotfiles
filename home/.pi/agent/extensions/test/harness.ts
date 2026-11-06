@@ -131,7 +131,7 @@ export function scriptedFaux(
 
 // a real in-process pi session, not yet started: extensions load from their files, the model is scripted
 export async function createHarness(options: HarnessOptions): Promise<Harness> {
-	const faux: HarnessFaux & Partial<Disposable> =
+	const faux: HarnessFaux =
 		options.faux ?? fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(
 		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
@@ -173,10 +173,8 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 	return {
 		session,
 		respond: (...steps) => faux.setResponses(steps),
-		[Symbol.dispose]: () => {
-			session.dispose();
-			faux[Symbol.dispose]?.();
-		},
+		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
+		[Symbol.dispose]: () => session.dispose(),
 	};
 }
 

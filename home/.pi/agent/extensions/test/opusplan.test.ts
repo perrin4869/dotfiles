@@ -63,6 +63,23 @@ test('/opusplan enables it at once', async () => {
 	assert.equal(await turn(h), 'plan');
 });
 
+test('/opusplan twice keeps it enabled', async () => {
+	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
+	await h.session.prompt('/opusplan');
+	await h.session.prompt('/opusplan');
+	assert.equal(h.session.model?.id, 'execute');
+	await h.session.prompt('/plan start');
+	assert.equal(await turn(h), 'plan');
+});
+
+test('/opusplan keeps an enable from the settings', async () => {
+	using h = await start({ projectSettings: ENABLED });
+	await h.session.prompt('/opusplan');
+	assert.equal(await turn(h), 'execute');
+	await h.session.prompt('/plan start');
+	assert.equal(await turn(h), 'plan');
+});
+
 test('switching models disables it', async () => {
 	using h = await start({ projectSettings: ENABLED });
 	assert.equal(await turn(h), 'execute');

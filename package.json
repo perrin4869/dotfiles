@@ -11,6 +11,7 @@
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
     "oxlint-tsgolint": "^7.0.2005",
+    "skills": "1.7.6",
     "typescript": "^7.0.2"
   }
 }

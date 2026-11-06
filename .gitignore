@@ -93,6 +93,9 @@ home/.local/bin/metals
 tmp_bench.log
 *.installed
 
+# restored from home/skills-lock.json by `make skills`
+home/.agents/skills/skill-creator/
+
 home/.claude/*
 !home/.claude/CLAUDE.md
 !home/.claude/settings.json.in

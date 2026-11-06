@@ -7,14 +7,17 @@ import {
 	type HarnessOptions,
 	type NotifyListener,
 	type StartOptions,
+	packageExtension,
 	startSession,
 } from './harness.ts';
 
+// opusplan reads pi-plan-mode's state from its session entries, so these run against the real package
+const planMode = await packageExtension('@narumitw/pi-plan-mode');
 const models = [{ id: 'start' }, { id: 'plan' }, { id: 'execute' }];
 const ENABLED = { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/execute' } };
 
 const start = (options: Partial<HarnessOptions & StartOptions> = {}) =>
-	startSession({ extensions: [extension('opusplan')], models, model: 'start', ...options });
+	startSession({ extensions: [planMode, extension('opusplan')], models, model: 'start', ...options });
 
 async function turn(h: Harness) {
 	h.respond(fauxAssistantMessage('ok'));
@@ -29,10 +32,6 @@ async function firstTurn(options: Partial<HarnessOptions> = {}) {
 	return await turn(h);
 }
 
-// what pi-plan-mode records when /plan is toggled
-const setPlanning = (h: Harness, enabled: boolean) =>
-	h.session.sessionManager.appendCustomEntry('plan-mode-state', { enabled });
-
 test('does nothing unless enabled', async () => {
 	assert.equal(await firstTurn(), 'start');
 });
@@ -43,16 +42,16 @@ test('uses the execute model outside plan mode', async () => {
 
 test('switches with plan mode', async () => {
 	using h = await start({ projectSettings: ENABLED });
-	setPlanning(h, true);
+	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'plan');
-	setPlanning(h, false);
+	await h.session.prompt('/plan exit');
 	assert.equal(await turn(h), 'execute');
 });
 
 test('project settings override global ones per field', async () => {
 	using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { execute: 'faux/start' } } });
 	assert.equal(await turn(h), 'start');
-	setPlanning(h, true);
+	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'plan');
 });
 
@@ -68,7 +67,7 @@ test('/opusplan toggles it', async () => {
 	await h.session.prompt('/opusplan');
 	assert.equal(await turn(h), 'execute');
 	await h.session.prompt('/opusplan');
-	setPlanning(h, true);
+	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'execute');
 });
 

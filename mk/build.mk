@@ -187,7 +187,7 @@ node_modules: package-lock.json
 .PHONY: skills
 skills_target := .skills.installed
 $(skills_target): home/skills-lock.json node_modules
-	cd home && DISABLE_TELEMETRY=1 ../node_modules/.bin/skills experimental_install --force --frozen-lockfile
+	cd home && DISABLE_TELEMETRY=1 npx --no -- skills experimental_install --force --frozen-lockfile
 	@touch $@
 skills: $(skills_target)
 

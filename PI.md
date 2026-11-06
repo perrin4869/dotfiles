@@ -10,6 +10,8 @@ Project settings go in `.pi/settings.json` at the project root. That file is ign
 
 pi defaults to local Ollama (`gemma4:12b`). Claude through `pi-claude-bridge` is opt-in, per project or per session.
 
+Ollama Cloud comes from `pi-ollama-cloud` as the `ollama-cloud` provider, with its models discovered from the account and the key read from `OLLAMA_API_KEY` (or `/login`). Its web tools are off in `ollama-cloud.json`, since pi-web-access covers search and fetch.
+
 Per project, in `.pi/settings.json`:
 
 ```json
@@ -64,7 +66,7 @@ The reviewer model itself is global: `/advisor` picks it for every project (`~/.
 
 ## Memory exit summary
 
-pi-memory can summarise the session on exit, at the cost of one more model call. It runs only while the session model is from `ollama` or `claude-bridge`, and switches with `/model`.
+pi-memory can summarise the session on exit, at the cost of one more model call. It runs only while the session model is from local `ollama` or `claude-bridge` (not `ollama-cloud`, whose usage counts against the plan), and switches with `/model`.
 
 Force it on or off for a run:
 

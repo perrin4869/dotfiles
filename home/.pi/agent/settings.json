@@ -27,7 +27,8 @@
     "npm:@narumitw/pi-goal@0.54.15",
     "npm:@ff-labs/pi-fff@0.11.0",
     "npm:pi-token-speed@0.12.0",
-    "npm:@spences10/pi-themes@0.0.11"
+    "npm:@spences10/pi-themes@0.0.11",
+    "npm:pi-ollama-cloud@0.13.1"
   ],
   "theme": "gruvbox-dark",
   "extensionChangelogVersions": {

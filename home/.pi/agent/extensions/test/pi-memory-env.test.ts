@@ -69,12 +69,12 @@ test('an explicit setting wins', async () => {
 	assert.equal(await summarized(faux, { explicit: '0' }), false);
 });
 
-// a session that starts on `from` and switches to the only model of `to` before quitting
-const switching = (from: HarnessFaux, to: ReturnType<typeof scriptedFaux>, id: string) =>
+// a session that starts on `from` and switches to the model of `to` before quitting
+const switching = (from: HarnessFaux, to: HarnessFaux) =>
 	summarized(from, {
 		factories: [(pi) => pi.registerProvider(to.provider)],
 		after: async (h) => {
-			const model = h.session.modelRuntime.getModel(to.provider.id, id);
+			const model = to.getModel();
 			assert.ok(model);
 			await h.session.setModel(model);
 			// the summary goes to the session's model at exit, now the one switched to
@@ -84,12 +84,12 @@ const switching = (from: HarnessFaux, to: ReturnType<typeof scriptedFaux>, id: s
 
 test('follows a switch to a free provider', async () => {
 	using paid = scriptedFaux({ provider: 'anthropic' });
-	using free = scriptedFaux({ provider: 'ollama', models: [{ id: 'free' }] });
-	assert.equal(await switching(paid, free, 'free'), true);
+	using free = scriptedFaux({ provider: 'ollama' });
+	assert.equal(await switching(paid, free), true);
 });
 
 test('follows a switch to a paid provider', async () => {
 	using free = scriptedFaux({ provider: 'ollama' });
-	using paid = scriptedFaux({ provider: 'anthropic', models: [{ id: 'paid' }] });
-	assert.equal(await switching(free, paid, 'paid'), false);
+	using paid = scriptedFaux({ provider: 'anthropic' });
+	assert.equal(await switching(free, paid), false);
 });

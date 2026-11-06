@@ -61,11 +61,14 @@ export type HarnessOptions = {
 };
 
 // dispose with `using`, which disposes the session
+type NotifyListener = ExtensionUIContext['notify'];
+
 export type Harness = Disposable & {
 	// binds the extensions, which fires session_start; startSession calls it, createHarness leaves it to the test
 	start: () => Promise<void>;
 	session: AgentSession;
-	notifications: string[];
+	// calls the listener with every ctx.ui.notify(); returns a function that unsubscribes it
+	onNotify: (listener: NotifyListener) => () => void;
 	respond: (...steps: FauxResponseStep[]) => void;
 };
 
@@ -137,18 +140,23 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 	cleanup.defer(() => {
 		if (errors.length > 0) throw new Error(`extension errors: ${JSON.stringify(errors)}`);
 	});
-	const notifications: string[] = [];
-	// pi's own do-nothing UI, which it uses until one is bound, with notify() recorded
+	const listeners = new Set<NotifyListener>();
+	// pi's own do-nothing UI, which it uses until one is bound, with notify() passed on to the listeners
 	const uiContext: ExtensionUIContext = {
 		...session.extensionRunner.getUIContext(),
-		notify: (message) => void notifications.push(message),
+		notify: (message, type) => {
+			for (const listener of listeners) listener(message, type);
+		},
 	};
 	const resources = cleanup.move();
 
 	return {
 		start: () => session.bindExtensions({ uiContext, onError: (error) => errors.push(error) }),
 		session,
-		notifications,
+		onNotify: (listener) => {
+			listeners.add(listener);
+			return () => listeners.delete(listener);
+		},
 		respond: (...steps) => faux.setResponses(steps),
 		[Symbol.dispose]: () => resources.dispose(),
 	};

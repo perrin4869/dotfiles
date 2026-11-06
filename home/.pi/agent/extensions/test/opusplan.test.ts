@@ -75,9 +75,13 @@ test('ignores an untrusted project', async () => {
 
 test('warns once about invalid settings and falls back to the defaults', async () => {
 	using h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } } });
+	const warnings: string[] = [];
+	h.onNotify((message, type) => {
+		if (type === 'warning') warnings.push(message);
+	});
 	assert.equal(await turn(h), 'start');
 	assert.equal(await turn(h), 'start');
-	assert.deepEqual(h.notifications, [
+	assert.deepEqual(warnings, [
 		'ignoring invalid settings: opusplan.enabled must be boolean; opusplan.plan must match pattern "^[^/]+/.+$"',
 	]);
 });

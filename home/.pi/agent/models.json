@@ -16,47 +16,6 @@
           "reasoning": true
         }
       ]
-    },
-    "ollama-cloud": {
-      "api": "openai-completions",
-      "apiKey": "$OLLAMA_API_KEY",
-      "baseUrl": "https://ollama.com/v1",
-      "models": [
-        {
-          "contextWindow": 1048576,
-          "id": "deepseek-v4-pro:0813",
-          "input": [
-            "text"
-          ],
-          "reasoning": true
-        },
-        {
-          "contextWindow": 1048576,
-          "id": "glm-5.3",
-          "input": [
-            "text"
-          ],
-          "reasoning": true
-        },
-        {
-          "contextWindow": 1048576,
-          "id": "kimi-k3.1-pro",
-          "input": [
-            "text",
-            "image"
-          ],
-          "reasoning": true
-        },
-        {
-          "contextWindow": 131072,
-          "id": "gpt-oss:120b",
-          "input": [
-            "text"
-          ],
-          "reasoning": true
-        }
-      ],
-      "name": "Ollama Cloud"
     }
   }
 }

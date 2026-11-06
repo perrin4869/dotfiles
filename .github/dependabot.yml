@@ -30,6 +30,7 @@ updates:
           # pinned to the versions in pi's settings.json by utils/update_pi_packages
           - dependency-name: "pi-subagents"
           - dependency-name: "@narumitw/pi-plan-mode"
+          - dependency-name: "@juicesharp/rpiv-advisor"
       groups:
           npm:
               patterns:

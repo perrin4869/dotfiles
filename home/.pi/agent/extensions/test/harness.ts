@@ -88,10 +88,16 @@ function settingsStorage(files: Record<'global' | 'project', object>): SettingsS
 	};
 }
 
-// extensions loaded from their files but not yet running; start() creates the session and starts it
-export type LoadedExtensions = { extensions: Extension[]; start: () => Promise<Harness> };
+// extensions loaded from their files, with everything startHarness needs to create the session around them
+export type CreatedHarness = {
+	extensions: Extension[];
+	options: HarnessOptions;
+	faux: ReturnType<typeof fauxProvider>;
+	settingsManager: SettingsManager;
+	resourceLoader: DefaultResourceLoader;
+};
 
-export async function loadExtensions(options: HarnessOptions): Promise<LoadedExtensions> {
+export async function createHarness(options: HarnessOptions): Promise<CreatedHarness> {
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(
 		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
@@ -111,59 +117,64 @@ export async function loadExtensions(options: HarnessOptions): Promise<LoadedExt
 	await resourceLoader.reload();
 	const { extensions, errors } = resourceLoader.getExtensions();
 	if (errors.length > 0) throw new Error(`extensions failed to load: ${JSON.stringify(errors)}`);
+	return { extensions, options, faux, settingsManager, resourceLoader };
+}
 
-	const start = async (): Promise<Harness> => {
-		// releases what was set up so far if setup fails; on success the harness takes it over
-		using cleanup = new DisposableStack();
-		// in-memory stores, so nothing is written to agentDir; pi only switches to models whose provider has credentials
-		const modelRuntime = await ModelRuntime.create({
-			credentials: new InMemoryCredentialStore(),
-			modelsStore: new InMemoryModelsStore(),
-			modelsPath: null,
-		});
-		await modelRuntime.setRuntimeApiKey(faux.provider.id, 'test');
+// creates the session around the loaded extensions and starts them, which fires session_start
+export async function startHarness({
+	options,
+	faux,
+	settingsManager,
+	resourceLoader,
+}: CreatedHarness): Promise<Harness> {
+	// releases what was set up so far if setup fails; on success the harness takes it over
+	using cleanup = new DisposableStack();
+	// in-memory stores, so nothing is written to agentDir; pi only switches to models whose provider has credentials
+	const modelRuntime = await ModelRuntime.create({
+		credentials: new InMemoryCredentialStore(),
+		modelsStore: new InMemoryModelsStore(),
+		modelsPath: null,
+	});
+	await modelRuntime.setRuntimeApiKey(faux.provider.id, 'test');
 
-		const model = options.model === undefined ? faux.getModel() : faux.getModel(options.model);
-		const { session } = await createAgentSession({
-			cwd,
-			agentDir,
-			modelRuntime,
-			resourceLoader,
-			settingsManager,
-			sessionManager: SessionManager.inMemory(cwd),
-			model,
-		});
-		cleanup.defer(() => session.dispose());
-		// pi reports errors thrown by extension handlers here instead of to the caller
-		const handlerErrors: ExtensionError[] = [];
-		cleanup.defer(() => {
-			if (handlerErrors.length > 0) throw new Error(`extension errors: ${JSON.stringify(handlerErrors)}`);
-		});
-		const notifications: string[] = [];
-		// pi's own do-nothing UI, which it uses until one is bound, with notify() recorded
-		const uiContext: ExtensionUIContext = {
-			...session.extensionRunner.getUIContext(),
-			notify: (message) => void notifications.push(message),
-		};
-		// fires session_start
-		await session.bindExtensions({ uiContext, onError: (error) => handlerErrors.push(error) });
-		const resources = cleanup.move();
-
-		return {
-			session,
-			notifications,
-			respond: (...steps) => faux.setResponses(steps),
-			[Symbol.dispose]: () => resources.dispose(),
-		};
+	const model = options.model === undefined ? faux.getModel() : faux.getModel(options.model);
+	const { session } = await createAgentSession({
+		cwd,
+		agentDir,
+		modelRuntime,
+		resourceLoader,
+		settingsManager,
+		sessionManager: SessionManager.inMemory(cwd),
+		model,
+	});
+	cleanup.defer(() => session.dispose());
+	// pi reports errors thrown by extension handlers here instead of to the caller
+	const errors: ExtensionError[] = [];
+	cleanup.defer(() => {
+		if (errors.length > 0) throw new Error(`extension errors: ${JSON.stringify(errors)}`);
+	});
+	const notifications: string[] = [];
+	// pi's own do-nothing UI, which it uses until one is bound, with notify() recorded
+	const uiContext: ExtensionUIContext = {
+		...session.extensionRunner.getUIContext(),
+		notify: (message) => void notifications.push(message),
 	};
-	return { extensions, start };
+	await session.bindExtensions({ uiContext, onError: (error) => errors.push(error) });
+	const resources = cleanup.move();
+
+	return {
+		session,
+		notifications,
+		respond: (...steps) => faux.setResponses(steps),
+		[Symbol.dispose]: () => resources.dispose(),
+	};
 }
 
 // a real in-process pi session: extensions load from their files, the model is scripted
-export const startSession = async (options: HarnessOptions) => (await loadExtensions(options)).start();
+export const startSession = async (options: HarnessOptions) => startHarness(await createHarness(options));
 
 // pretend a loaded tool came from a package, e.g. 'npm:@narumitw/pi-lsp@1.0.0'; pi copies tool sources into the
-// session when start() creates it, so call it before
+// session when startHarness creates it, so call it before
 export function setToolSource(extensions: Extension[], name: string, source: string) {
 	for (const { tools } of extensions) {
 		const tool = tools.get(name);

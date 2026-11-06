@@ -55,12 +55,20 @@ test('a project can disable a global enable', async () => {
 	assert.equal(await turn(h), 'start');
 });
 
-test('/opusplan toggles it', async () => {
+test('/opusplan enables it at once', async () => {
 	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
 	await h.session.prompt('/opusplan');
+	assert.equal(h.session.model?.id, 'execute');
+	await h.session.prompt('/plan start');
+	assert.equal(await turn(h), 'plan');
+});
+
+test('switching models disables it', async () => {
+	using h = await start({ projectSettings: ENABLED });
 	assert.equal(await turn(h), 'execute');
-	await h.session.prompt('/opusplan');
-	assert.equal(h.session.model?.id, 'start');
+	const model = h.session.modelRuntime.getModel('faux', 'start');
+	assert.ok(model);
+	await h.session.setModel(model);
 	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'start');
 });

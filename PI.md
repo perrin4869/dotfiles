@@ -42,7 +42,7 @@ Off by default. Enable per project:
 * `plan` and `execute` are optional, as `provider/model`. The defaults are shown above.
 * Each field can also be set globally. A project value overrides only that field.
 
-`/opusplan` toggles it for the running pi process, overriding the settings until pi exits.
+`/opusplan` enables it for the running pi process, overriding the settings until pi exits. Switching models (`/model`, cycling) disables it the same way.
 
 ---
 

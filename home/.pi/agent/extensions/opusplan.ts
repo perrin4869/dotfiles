@@ -5,7 +5,8 @@ import { latestEntry } from './lib/session.ts';
 import { defineSettings } from './lib/settings.ts';
 
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
-// Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or toggle with /opusplan.
+// Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or with /opusplan; switching models
+// disables it.
 const readSettings = defineSettings(
 	'opusplan',
 	Type.Object({
@@ -25,31 +26,42 @@ const PlanState = Type.Object({ enabled: Type.Boolean() });
 const isPlanning = (ctx: ExtensionContext) => latestEntry(ctx, PLAN_STATE_ENTRY, PlanState)?.enabled ?? false;
 
 export default function (pi: ExtensionAPI) {
-	// set by /opusplan; overrides the settings for the rest of this pi process, including fresh implementation sessions
+	// set by /opusplan or a model switch; overrides the settings for the rest of this pi process, including fresh
+	// implementation sessions
 	let override: boolean | undefined;
-	const isEnabled = ({ enabled }: { enabled: boolean }) => override ?? enabled;
-	// the model in use before opusplan first switched, restored when /opusplan turns it off
-	let replaced: ExtensionContext['model'];
+	const isEnabled = (ctx: ExtensionContext) => override ?? readSettings(pi, ctx).enabled;
+	// pi reports opusplan's own switches as model_select too
+	let switching = false;
 
-	pi.registerCommand('opusplan', {
-		description: 'Toggle opusplan: plan on one model, implement on another',
-		handler: async (_args, ctx) => {
-			override = !isEnabled(readSettings(pi, ctx));
-			if (!override && replaced) {
-				await pi.setModel(replaced);
-				replaced = undefined;
-			}
-			ctx.ui.notify(`opusplan ${override ? 'enabled' : 'disabled'}`, 'info');
-		},
-	});
-
-	pi.on('before_agent_start', async (_event, ctx) => {
+	async function follow(ctx: ExtensionContext) {
 		const settings = readSettings(pi, ctx);
-		if (!isEnabled(settings)) return;
 		const ref = isPlanning(ctx) ? settings.plan : settings.execute;
 		if (ctx.model && modelRef(ctx.model) === ref) return;
 		const model = findModel(ctx, ref);
-		replaced ??= ctx.model;
-		if (!model || !(await pi.setModel(model))) ctx.ui.notify(`opusplan: cannot use ${ref}`, 'warning');
+		switching = true;
+		try {
+			if (!model || !(await pi.setModel(model))) ctx.ui.notify(`opusplan: cannot use ${ref}`, 'warning');
+		} finally {
+			switching = false;
+		}
+	}
+
+	pi.registerCommand('opusplan', {
+		description: 'Enable opusplan: plan on one model, implement on another; switching models disables it',
+		handler: async (_args, ctx) => {
+			override = true;
+			ctx.ui.notify('opusplan enabled', 'info');
+			await follow(ctx);
+		},
+	});
+
+	pi.on('model_select', (event, ctx) => {
+		if (switching || event.source === 'restore' || !isEnabled(ctx)) return;
+		override = false;
+		ctx.ui.notify('opusplan disabled', 'info');
+	});
+
+	pi.on('before_agent_start', async (_event, ctx) => {
+		if (isEnabled(ctx)) await follow(ctx);
 	});
 }

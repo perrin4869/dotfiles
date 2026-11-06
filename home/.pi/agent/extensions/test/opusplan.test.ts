@@ -25,19 +25,14 @@ async function turn(h: Harness) {
 	return h.session.model?.id;
 }
 
-// the model after one prompt in a fresh session
-async function firstTurn(options: Partial<HarnessOptions> = {}) {
-	using h = await start(options);
-	// awaited here, before `using` disposes the session
-	return await turn(h);
-}
-
 test('does nothing unless enabled', async () => {
-	assert.equal(await firstTurn(), 'start');
+	using h = await start();
+	assert.equal(await turn(h), 'start');
 });
 
 test('uses the execute model outside plan mode', async () => {
-	assert.equal(await firstTurn({ projectSettings: ENABLED }), 'execute');
+	using h = await start({ projectSettings: ENABLED });
+	assert.equal(await turn(h), 'execute');
 });
 
 test('switches with plan mode', async () => {
@@ -56,10 +51,8 @@ test('project settings override global ones per field', async () => {
 });
 
 test('a project can disable a global enable', async () => {
-	assert.equal(
-		await firstTurn({ globalSettings: ENABLED, projectSettings: { opusplan: { enabled: false } } }),
-		'start',
-	);
+	using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { enabled: false } } });
+	assert.equal(await turn(h), 'start');
 });
 
 test('/opusplan toggles it', async () => {
@@ -72,11 +65,13 @@ test('/opusplan toggles it', async () => {
 });
 
 test('keeps the model when the target is unavailable', async () => {
-	assert.equal(await firstTurn({ projectSettings: { opusplan: { enabled: true, execute: 'faux/missing' } } }), 'start');
+	using h = await start({ projectSettings: { opusplan: { enabled: true, execute: 'faux/missing' } } });
+	assert.equal(await turn(h), 'start');
 });
 
 test('ignores an untrusted project', async () => {
-	assert.equal(await firstTurn({ projectSettings: ENABLED, projectTrusted: false }), 'start');
+	using h = await start({ projectSettings: ENABLED, projectTrusted: false });
+	assert.equal(await turn(h), 'start');
 });
 
 test('warns once about invalid settings and falls back to the defaults', async () => {

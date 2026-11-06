@@ -60,15 +60,18 @@ export type HarnessOptions = {
 	projectTrusted?: boolean;
 };
 
-// dispose with `using`, which disposes the session
 export type NotifyListener = ExtensionUIContext['notify'];
 
+export type StartOptions = {
+	// receives every ctx.ui.notify()
+	onNotify?: NotifyListener;
+};
+
+// dispose with `using`, which disposes the session
 export type Harness = Disposable & {
 	// binds the extensions, which fires session_start; startSession calls it, createHarness leaves it to the test
-	start: () => Promise<void>;
+	start: (options?: StartOptions) => Promise<void>;
 	session: AgentSession;
-	// calls the listener with every ctx.ui.notify(); returns a function that unsubscribes it
-	onNotify: (listener: NotifyListener) => () => void;
 	respond: (...steps: FauxResponseStep[]) => void;
 };
 
@@ -94,9 +97,6 @@ function settingsStorage(files: Record<'global' | 'project', object>): SettingsS
 
 // a real in-process pi session, not yet started: extensions load from their files, the model is scripted
 export async function createHarness(options: HarnessOptions): Promise<Harness> {
-	// releases what was set up so far if setup fails; on success the harness takes it over
-	using cleanup = new DisposableStack();
-
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(
 		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
@@ -134,39 +134,31 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		sessionManager: SessionManager.inMemory(cwd),
 		model,
 	});
-	cleanup.defer(() => session.dispose());
-	// pi reports errors thrown by extension handlers here instead of to the caller
-	const errors: ExtensionError[] = [];
-	cleanup.defer(() => {
-		if (errors.length > 0) throw new Error(`extension errors: ${JSON.stringify(errors)}`);
-	});
-	const listeners = new Set<NotifyListener>();
-	// pi's own do-nothing UI, which it uses until one is bound, with notify() passed on to the listeners
-	const uiContext: ExtensionUIContext = {
-		...session.extensionRunner.getUIContext(),
-		notify: (message, type) => {
-			for (const listener of listeners) listener(message, type);
-		},
-	};
-	const resources = cleanup.move();
 
 	return {
-		start: () => session.bindExtensions({ uiContext, onError: (error) => errors.push(error) }),
-		session,
-		onNotify: (listener) => {
-			listeners.add(listener);
-			return () => listeners.delete(listener);
+		start: ({ onNotify } = {}) => {
+			// pi's own do-nothing UI, which it uses until one is bound
+			const ui = session.extensionRunner.getUIContext();
+			return session.bindExtensions({ uiContext: onNotify ? { ...ui, notify: onNotify } : ui, onError: rethrow });
 		},
+		session,
 		respond: (...steps) => faux.setResponses(steps),
-		[Symbol.dispose]: () => resources.dispose(),
+		[Symbol.dispose]: () => session.dispose(),
 	};
 }
 
+// pi reports errors thrown by extension handlers here and carries on; rethrowing rejects whatever fired the event,
+// so the test fails where the handler did
+function rethrow(error: ExtensionError): never {
+	throw new Error(`${error.extensionPath} failed on ${error.event}: ${error.error}`, { cause: error });
+}
+
 // a started session, for the tests that need nothing between creating and starting it
-export async function startSession(options: HarnessOptions) {
+export async function startSession(options: HarnessOptions & StartOptions) {
+	// disposes the session if starting it fails
 	using cleanup = new DisposableStack();
 	const harness = cleanup.use(await createHarness(options));
-	await harness.start();
+	await harness.start(options);
 	cleanup.move();
 	return harness;
 }

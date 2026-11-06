@@ -1,12 +1,19 @@
 import { fauxAssistantMessage } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
 import { mock, test } from 'node:test';
-import { extension, type Harness, type HarnessOptions, type NotifyListener, startSession } from './harness.ts';
+import {
+	extension,
+	type Harness,
+	type HarnessOptions,
+	type NotifyListener,
+	type StartOptions,
+	startSession,
+} from './harness.ts';
 
 const models = [{ id: 'start' }, { id: 'plan' }, { id: 'execute' }];
 const ENABLED = { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/execute' } };
 
-const start = (options: Partial<HarnessOptions> = {}) =>
+const start = (options: Partial<HarnessOptions & StartOptions> = {}) =>
 	startSession({ extensions: [extension('opusplan')], models, model: 'start', ...options });
 
 async function turn(h: Harness) {
@@ -74,9 +81,8 @@ test('ignores an untrusted project', async () => {
 });
 
 test('warns once about invalid settings and falls back to the defaults', async () => {
-	using h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } } });
 	const notify = mock.fn<NotifyListener>();
-	h.onNotify(notify);
+	using h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } }, onNotify: notify });
 	assert.equal(await turn(h), 'start');
 	assert.equal(await turn(h), 'start');
 	assert.equal(notify.mock.callCount(), 1);

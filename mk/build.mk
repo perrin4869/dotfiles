@@ -178,10 +178,18 @@ $(pi_target): $(DEPS)/$(pi_archive)
 	@touch $@
 pi: $(pi_target)
 
-# dev tooling for the npm workspaces, not needed at runtime; keep pi-coding-agent at .external_versions/pi
+# the skills CLI and dev tooling for the npm workspaces; keep pi-coding-agent at .external_versions/pi
 node_modules: package-lock.json
 	npm ci --ignore-scripts
 	@touch $@
+
+# skills that `npx skills add` (run from home/) locked; the restore skips present skills, so --force applies lock changes
+.PHONY: skills
+skills_target := .skills.installed
+$(skills_target): home/skills-lock.json node_modules
+	cd home && DISABLE_TELEMETRY=1 ../node_modules/.bin/skills experimental_install --force --frozen-lockfile
+	@touch $@
+skills: $(skills_target)
 
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin
@@ -409,6 +417,7 @@ TARGETS = \
 	emmylua_check \
 	yubikey-touch-detector \
 	pi \
+	skills \
 	i3status \
 	treesitter \
 	atuin \

@@ -1,0 +1,23 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn"
+	},
+	"rules": {
+		"no-unused-vars": ["error", { "ignoreUsingDeclarations": true }]
+	},
+	"options": {
+		"typeAware": true,
+		"denyWarnings": true
+	},
+	"overrides": [
+		{
+			"files": ["**/test/*.test.ts"],
+			"rules": {
+				"typescript/no-floating-promises": "off"
+			}
+		}
+	]
+}

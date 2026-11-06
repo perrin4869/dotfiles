@@ -47,6 +47,12 @@ M.markers = {
 	eslint = lazy(function()
 		return M.get_root_markers('eslint', vim.list_extend({ 'js', 'cjs', 'mjs', 'ts', 'mts' }, M.default_exts))
 	end),
+	oxlint = lazy(function()
+		return M.get_root_markers('oxlint', { 'json', 'jsonc', 'ts', 'mts', 'js' })
+	end),
+	oxfmt = lazy(function()
+		return M.get_root_markers('oxfmt', { 'json', 'jsonc', 'ts', 'mts', 'js' })
+	end),
 }
 
 return M

@@ -656,3 +656,15 @@
 [submodule "deps/yubikey-touch-detector"]
 	path = deps/yubikey-touch-detector
 	url = https://github.com/maximbaz/yubikey-touch-detector.git
+[submodule "deps/pi-acp"]
+	path = deps/pi-acp
+	url = https://github.com/svkozak/pi-acp
+[submodule "home/.local/share/nvim/site/pack/default/start/telescope-ui-select.nvim"]
+	path = home/.local/share/nvim/site/pack/default/start/telescope-ui-select.nvim
+	url = https://github.com/nvim-telescope/telescope-ui-select.nvim
+[submodule "home/.local/share/nvim/site/pack/default/opt/pi-ide.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/pi-ide.nvim
+	url = https://github.com/ldelossa/pi-ide.nvim
+[submodule "home/.local/share/nvim/site/pack/default/opt/pi.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/pi.nvim
+	url = https://github.com/Kidimos/pi.nvim

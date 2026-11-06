@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "workspaces": [
+    "home/.pi/agent/extensions"
+  ],
+  "scripts": {
+    "check": "npm run check --workspaces",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "oxlint-tsgolint": "^7.0.2005",
+    "typescript": "^7.0.2"
+  }
+}

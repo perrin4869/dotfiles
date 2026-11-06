@@ -97,6 +97,10 @@ test-lua-types: $(emmylua_check_target)
 		$(emmylua_check_target) home/.config/nvim -c .emmyrc.check.json --severity warn --warnings-as-errors \
 		&& echo "$(PASS) emmylua_check finds no type problems"
 
+.PHONY: test-pi
+test-pi:
+	@$(UTILS)/test_pi $(abspath $(pi_target)) && echo "$(PASS) pi starts cleanly with its packages"
+
 .PHONY: test
 test: \
 	check-submodule-mismatch \
@@ -107,4 +111,5 @@ test: \
 	test-fonts \
 	test-neovim \
 	test-neovim-cmds \
-	test-lua-types
+	test-lua-types \
+	test-pi

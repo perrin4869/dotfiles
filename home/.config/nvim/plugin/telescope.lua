@@ -8,13 +8,25 @@ yall.setup('telescope', {
 })
 yall.on_load('telescope', function()
 	-- Load extensions only after telescope itself is initialized
-	local extensions = { 'fzf', 'neoclip', 'file_browser', 'git_grep' }
+	local extensions = { 'fzf', 'neoclip', 'file_browser', 'git_grep', 'ui-select' }
 	for _, ext in ipairs(extensions) do
 		require('telescope').load_extension(ext)
 	end
 end)
 yall.pack('telescope', 'telescope.nvim')
 yall.cmd('Telescope', 'telescope')
+
+-- the ui-select extension replaces vim.ui.select when telescope loads, so load it on first use
+local lazy_select
+lazy_select = function(...)
+	yall.ensure('telescope')
+	if vim.ui.select == lazy_select then
+		error('telescope-ui-select did not replace vim.ui.select')
+	end
+	return vim.ui.select(...)
+end
+-- luacheck:ignore 122
+vim.ui.select = lazy_select
 
 -- Mappings.
 pickers.map('<C-p>', pickers.project_files, 'project_files')

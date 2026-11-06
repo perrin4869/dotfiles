@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+// Start pi with the installed config over RPC and list its commands. pi installs missing packages on
+// startup, with npm's output on stderr, and reports packages that fail to install or load there as
+// `Error:` or `Warning:` lines.
+import { spawn } from 'node:child_process';
+import { argv } from 'node:process';
+import { createInterface } from 'node:readline';
+import { Readable } from 'node:stream';
+
+const TIMEOUT_MS = 5 * 60 * 1000;
+// commands from our own extensions, which pi loads from ~/.pi/agent/extensions rather than as packages
+const EXPECTED_COMMANDS = ['opusplan'];
+
+class Failure extends Error {}
+
+function parse(line) {
+	try {
+		return JSON.parse(line);
+	} catch {
+		return undefined;
+	}
+}
+
+async function check() {
+	// killed when this returns or throws
+	using pi = spawn(argv[2] ?? 'pi', ['--mode', 'rpc', '--no-session'], { stdio: ['pipe', 'pipe', 'pipe'] });
+	let stderr = '';
+	pi.stderr.setEncoding('utf8').on('data', (chunk) => (stderr += chunk));
+	let spawnError;
+	pi.on('error', (error) => (spawnError = error));
+	pi.stdin.write(`${JSON.stringify({ type: 'get_commands' })}\n`);
+
+	// Readable.from only for its map/find; drop it once async iterators have them:
+	// https://github.com/tc39/proposal-async-iterator-helpers
+	const response = await Readable.from(createInterface({ input: pi.stdout }))
+		.map(parse)
+		.find((message) => message?.type === 'response' && message.command === 'get_commands', {
+			signal: AbortSignal.timeout(TIMEOUT_MS),
+		})
+		.catch(() => {
+			throw new Failure(`pi did not answer within ${TIMEOUT_MS / 1000}s\n${stderr}`);
+		});
+
+	if (spawnError) throw new Failure(`cannot start pi: ${spawnError.message}`);
+	if (!response) throw new Failure(`pi exited early with code ${pi.exitCode}\n${stderr}`);
+	if (!response.success) throw new Failure(`get_commands failed: ${JSON.stringify(response)}\n${stderr}`);
+
+	const names = new Set(response.data.commands.map((command) => command.name));
+	const missing = EXPECTED_COMMANDS.filter((name) => !names.has(name));
+	if (missing.length > 0) throw new Failure(`missing commands: ${missing.join(', ')}`);
+
+	const problems = stderr.split('\n').filter((line) => /^(Error|Warning):/.test(line));
+	if (problems.length > 0) throw new Failure(`pi reported problems on startup:\n${problems.join('\n')}`);
+
+	return names.size;
+}
+
+try {
+	console.log(`pi started cleanly with ${await check()} commands`);
+} catch (error) {
+	if (!(error instanceof Failure)) throw error;
+	console.error(error.message);
+	process.exitCode = 1;
+}

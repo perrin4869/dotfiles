@@ -1,0 +1,55 @@
+{
+  "enabled": true,
+  "enableAccessRequestTool": true,
+  "sandboxUserShell": false,
+  "network": {
+    "allowedDomains": [
+      "npmjs.org",
+      "*.npmjs.org",
+      "registry.npmjs.org",
+      "registry.yarnpkg.com",
+      "pypi.org",
+      "*.pypi.org",
+      "github.com",
+      "*.github.com",
+      "api.github.com",
+      "raw.githubusercontent.com",
+      "*.githubusercontent.com",
+      "crates.io",
+      "*.crates.io"
+    ],
+    "deniedDomains": []
+  },
+  "filesystem": {
+    "denyRead": [
+      "/home",
+      "~/dotfiles/home/.gnupg",
+      "~/dotfiles/home/.npmrc",
+      "~/dotfiles/home/.npmrc.local",
+      "~/dotfiles/home/.vim/undo",
+      "~/dotfiles/home/.vim/backup",
+      "~/dotfiles/home/.local/share/nvim/undo"
+    ],
+    "allowRead": [
+      ".",
+      "~/.local/bin",
+      "~/dotfiles/home/.local/bin",
+      "~/dotfiles/deps",
+      "~/.config/git",
+      "~/.cache",
+      "~/.npm"
+    ],
+    "allowWrite": [
+      ".",
+      "/tmp",
+      "~/.cache",
+      "~/.npm"
+    ],
+    "denyWrite": [
+      ".env",
+      ".env.*",
+      "*.pem",
+      "*.key"
+    ]
+  }
+}

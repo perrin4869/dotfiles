@@ -1,0 +1,45 @@
+{
+	"shellTools": {
+		"bg_run": {
+			"commandArgument": "command",
+			"workdirArgument": "cwd"
+		}
+	},
+	"permission": {
+		"*": "allow",
+		"path": {
+			"*": "allow",
+			"*.env": "deny",
+			"*.env.*": "deny",
+			"*.env.example": "allow",
+			"*.npmrc.local": "deny",
+			"~/.npmrc": "deny",
+			"~/.ssh/*": "deny",
+			"~/.gnupg/*": "deny",
+			"~/.password-store/*": "deny",
+			"~/.pi/agent/auth.json": "deny",
+			"~/.claude/.credentials.json": "deny"
+		},
+		"bash": {
+			"*": "ask",
+			"ls": "allow",
+			"ls *": "allow",
+			"pwd": "allow",
+			"cat *": "allow",
+			"head *": "allow",
+			"tail *": "allow",
+			"wc *": "allow",
+			"rg *": "allow",
+			"grep *": "allow",
+			"find *": "allow",
+			"git status*": "allow",
+			"git diff*": "allow",
+			"git log*": "allow",
+			"git show*": "allow",
+			"rm -rf *": "deny",
+			"find * -delete*": "ask",
+			"find * -exec*": "ask"
+		},
+		"external_directory": "ask"
+	}
+}

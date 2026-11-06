@@ -21,10 +21,10 @@ end
 local default_linters_by_ft = {
 	lua = { 'luacheck' },
 	css = { 'stylelint' },
-	javascript = { 'eslint_d' },
-	javascriptreact = { 'eslint_d' },
-	typescript = { 'eslint_d' },
-	typescriptreact = { 'eslint_d' },
+	javascript = { 'eslint_d', 'oxlint' },
+	javascriptreact = { 'eslint_d', 'oxlint' },
+	typescript = { 'eslint_d', 'oxlint' },
+	typescriptreact = { 'eslint_d', 'oxlint' },
 	json = { 'jsonlint' },
 }
 local linters_by_ft = vim.tbl_extend('force', default_linters_by_ft, vim.g.linters_by_ft or {})

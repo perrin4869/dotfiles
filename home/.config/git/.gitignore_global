@@ -37,3 +37,4 @@ kls_database.db
 .nvim.lua
 
 **/.claude/settings.local.json
+**/.pi/settings.json

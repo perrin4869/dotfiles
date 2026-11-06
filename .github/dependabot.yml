@@ -18,3 +18,21 @@ updates:
           # https://github.com/dependabot/dependabot-core/issues/1639#issuecomment-3991678824
           - dependency-name: "*"
             versions: ["> 0.0.0"]
+    - package-ecosystem: npm
+      directory: /
+      schedule:
+          interval: weekly
+      assignees:
+          - perrin4869
+      ignore:
+          # bumped together with the pi binary by update_deps.yml
+          - dependency-name: "@earendil-works/*"
+          # pinned to the versions in pi's settings.json by utils/update_pi_packages
+          - dependency-name: "pi-subagents"
+          - dependency-name: "@narumitw/pi-plan-mode"
+          - dependency-name: "@juicesharp/rpiv-advisor"
+          - dependency-name: "pi-memory"
+      groups:
+          npm:
+              patterns:
+                  - "*"

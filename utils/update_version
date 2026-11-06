@@ -9,3 +9,10 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
 VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
 
 echo "$NEW_VERSION" > "$VERSION_FILE"
+
+# the extensions are typed and tested against pi's SDK, which should match the binary
+if [ "$DEP" = pi ]; then
+  sdk="${NEW_VERSION#v}"
+  npm install --prefix "$SCRIPT_DIR/.." --workspace home/.pi/agent/extensions --save-dev --ignore-scripts \
+    "@earendil-works/pi-coding-agent@^$sdk" "@earendil-works/pi-ai@^$sdk"
+fi

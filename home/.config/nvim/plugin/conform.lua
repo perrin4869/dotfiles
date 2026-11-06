@@ -12,6 +12,9 @@ yall.on_load('conform', function()
 		if project_root and root_markers.has_marker(bufnr, project_root, root_markers.markers.eslint()) then
 			return { 'eslint_d' }
 		end
+		if vim.fs.root(bufnr, root_markers.markers.oxfmt()) then
+			return { 'oxfmt' }
+		end
 		return {}
 	end
 

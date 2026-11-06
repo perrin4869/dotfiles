@@ -1,0 +1,39 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  lua:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+      - name: luacheck
+        uses: lunarmodules/luacheck@v1
+      - name: stylua
+        uses: JohnnyMorganz/stylua-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check home/.config
+
+  typescript:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v7
+      - name: install node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          cache: npm
+      - name: install
+        run: npm ci --ignore-scripts
+      - name: tsc, oxlint, oxfmt
+        run: npm run check
+      - name: node --test
+        run: npm test

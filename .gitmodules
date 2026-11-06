@@ -668,3 +668,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/pi.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/pi.nvim
 	url = https://github.com/Kidimos/pi.nvim
+[submodule "home/.local/share/nvim/site/pack/default/opt/codecompanion.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/codecompanion.nvim
+	url = https://github.com/olimorris/codecompanion.nvim

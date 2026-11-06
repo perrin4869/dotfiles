@@ -25,32 +25,49 @@ import { pathToFileURL } from 'node:url';
 import { env } from 'node:process';
 import { Type } from 'typebox';
 import { Value } from 'typebox/value';
+import settings from '../../settings.json' with { type: 'json' };
 
 export const extension = (name: string) => join(import.meta.dirname, '..', `${name}.ts`);
 
+const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
+const pins = new Map(
+	settings.packages.flatMap((spec) => {
+		const match = PINNED.exec(spec);
+		return match ? [[match[1], match[2]] as const] : [];
+	}),
+);
+
+const Manifest = Type.Object({ version: Type.String() });
 const PiManifest = Type.Object({ pi: Type.Object({ extensions: Type.Array(Type.String(), { minItems: 1 }) }) });
 
-// where an installed package lives, e.g. <repo>/node_modules/pi-memory
-export function packageDir(name: string) {
-	const manifest = findPackageJSON(name, import.meta.url);
-	if (manifest === undefined) throw new Error(`${name} is not installed`);
-	return dirname(manifest);
+// an installed package, refused unless it is the version settings.json pins, so the tests run what pi installs
+async function installed(name: string) {
+	const path = findPackageJSON(name, import.meta.url);
+	if (path === undefined) throw new Error(`${name} is not installed`);
+	const { default: manifest }: { default: unknown } = await import(pathToFileURL(path).href, {
+		with: { type: 'json' },
+	});
+	if (!Value.Check(Manifest, manifest)) throw new Error(`${name} has no version`);
+	const pin = pins.get(name);
+	if (manifest.version !== pin) throw new Error(`${name} ${manifest.version} is installed, settings.json pins ${pin}`);
+	return { dir: dirname(path), manifest };
 }
+
+// where an installed package lives, e.g. <repo>/node_modules/pi-memory
+export const packageDir = async (name: string) => (await installed(name)).dir;
 
 const fileUrl = (dir: string, path: string) => pathToFileURL(join(dir, path)).href;
 
 // an installed package's pi extension entry point, as pi resolves it from the package's `pi.extensions` manifest
 export async function packageExtension(name: string) {
-	const dir = packageDir(name);
-	const { default: manifest }: { default: unknown } = await import(fileUrl(dir, 'package.json'), {
-		with: { type: 'json' },
-	});
+	const { dir, manifest } = await installed(name);
 	if (!Value.Check(PiManifest, manifest)) throw new Error(`${name} declares no pi extension`);
 	return join(dir, manifest.pi.extensions[0]);
 }
 
 // a module inside an installed package, past its `exports` map, for contract tests against its internals
-export const packageModule = <T>(name: string, path: string): Promise<T> => import(fileUrl(packageDir(name), path));
+export const packageModule = async <T>(name: string, path: string): Promise<T> =>
+	import(fileUrl(await packageDir(name), path));
 
 // what the harness needs from a scripted model; FauxProviderHandle and scriptedFaux both fit
 export type HarnessFaux = {

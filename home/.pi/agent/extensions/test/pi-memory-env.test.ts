@@ -18,7 +18,7 @@ import {
 
 // pi-memory resolves its directory when it loads, so point it at a disposable one before the first session; the
 // package's own location gives node_modules without counting path levels
-const memoryDir = join(dirname(packageDir('pi-memory')), '.cache', 'pi-memory');
+const memoryDir = join(dirname(await packageDir('pi-memory')), '.cache', 'pi-memory');
 env.PI_MEMORY_DIR = memoryDir;
 env.PI_MEMORY_NO_SEARCH = '1';
 env.PI_MEMORY_QMD_UPDATE = 'off';

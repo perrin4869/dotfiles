@@ -4,7 +4,8 @@ import { requestsShare } from '../no-subagent-share.ts';
 import { packageModule } from './harness.ts';
 
 // no-subagent-share mirrors where pi-subagents reads `share` and how it converts the value; these fail when an
-// update changes either
+// update changes either. They cover the tool input, which 0.84.0 makes the only way to share; a release that adds
+// another way (a config default, a slash command) passes them, so read its changes when bumping it.
 
 type Options = { flattenSubagentToolOptions: (params: Record<string, unknown>) => Record<string, unknown> };
 

@@ -24,3 +24,16 @@ test('installed pi packages match the versions pinned in settings.json', async (
 		if (Value.Check(PiPackage, manifest)) assert.equal(manifest.version, pinned.get(name), name);
 	}
 });
+
+const Versioned = Type.Object({ version: Type.String() });
+const Sdk = Type.Object({ dependencies: Type.Object({ typebox: Type.String() }) });
+
+// pi hands extensions its own typebox, so the tests and the type check must use that version
+test('installed typebox is the version pi provides', async () => {
+	const [sdk, typebox] = await Promise.all([
+		packageManifest('@earendil-works/pi-coding-agent'),
+		packageManifest('typebox'),
+	]);
+	assert.ok(Value.Check(Sdk, sdk) && Value.Check(Versioned, typebox));
+	assert.equal(typebox.version, sdk.dependencies.typebox);
+});

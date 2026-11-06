@@ -14,5 +14,6 @@ echo "$NEW_VERSION" > "$VERSION_FILE"
 if [ "$DEP" = pi ]; then
   sdk="${NEW_VERSION#v}"
   npm install --prefix "$SCRIPT_DIR/.." --workspace home/.pi/agent/extensions --save-dev --ignore-scripts \
-    "@earendil-works/pi-coding-agent@^$sdk" "@earendil-works/pi-ai@^$sdk"
+    "@earendil-works/pi-coding-agent@^$sdk" "@earendil-works/pi-ai@^$sdk" \
+    "typebox@$(npm view "@earendil-works/pi-coding-agent@$sdk" dependencies.typebox)"
 fi

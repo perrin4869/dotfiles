@@ -53,11 +53,27 @@ async function offersAdvisorIn(options?: Partial<HarnessOptions>) {
 const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
-test('declares neither the advisor nor the gate by default', async () => {
+test('keeps the advisor and the gate out of the prompt by default', async () => {
 	using h = await start();
-	for (const tools of await offeredTools(h)) {
-		assert.ok(!tools.includes('advisor') && !tools.includes('advisor_gate'), tools.join());
-	}
+	for (const tools of await offeredTools(h)) assert.ok(!tools.includes('advisor') && !tools.includes('advisor_gate'));
+});
+
+// opusplan switches models while the run starts, which makes rpiv-advisor re-add its tool
+test('keeps the advisor out when another extension switches models', async () => {
+	using h = await startSession({
+		extensions: [await packageExtension('@juicesharp/rpiv-advisor'), extension('advisor-gate'), extension('opusplan')],
+		models: [{ id: 'executor' }, { id: 'reviewer' }, { id: 'target' }],
+		model: 'executor',
+		projectSettings: { opusplan: { enabled: true, execute: 'faux/target' } },
+	});
+	const offered: string[][] = [];
+	h.respond((context) => {
+		offered.push(getCurrentTools(context.messages).map((tool) => tool.name));
+		return fauxAssistantMessage('done');
+	});
+	await h.session.prompt('go');
+	assert.equal(h.session.model?.id, 'target');
+	for (const tools of offered) assert.ok(!tools.includes('advisor'), tools.join());
 });
 
 test('hides the advisor by default', async () => {
@@ -66,11 +82,6 @@ test('hides the advisor by default', async () => {
 
 test('offers the advisor where the project enables it', async () => {
 	assert.deepEqual(await offersAdvisorIn({ projectSettings: ENABLED }), [true, true]);
-});
-
-test('declares the advisor but not the gate where the project enables it', async () => {
-	using h = await start({ projectSettings: ENABLED });
-	for (const tools of await offeredTools(h)) assert.ok(tools.includes('advisor') && !tools.includes('advisor_gate'));
 });
 
 test('a global enable applies to projects that say nothing', async () => {

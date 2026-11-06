@@ -6,9 +6,9 @@ import { defineSettings } from './lib/settings.ts';
 // conversation to that reviewer too. Offer it only where a project opts in with `"advisor": { "enabled": true }`.
 const readSettings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
 
-// The gate hides the advisor by having an active tool of its own hide that declaration: pi recomputes the loadout on
-// every prompt, so it holds whatever order the extensions loaded in or re-registered a tool. Hiding leaves a tool
-// callable, hence the block below: a call sends the whole conversation to the reviewer.
+// pi hides declarations only through an active tool's prepareLoadout, which it recomputes on every prompt. Dropping
+// the tool from the active set in before_agent_start is simpler, but any later handler that makes rpiv-advisor re-add
+// it (a model switch does) puts it back in that run's prompt. Hiding leaves the tool callable, hence the block.
 const GATE = 'advisor_gate';
 const ADVISOR = 'advisor';
 

@@ -65,7 +65,6 @@ export type HarnessOptions = {
 // dispose with `using`, which disposes the session
 export type Harness = Disposable & {
 	session: AgentSession;
-	sessionManager: SessionManager;
 	notifications: string[];
 	respond: (...steps: FauxResponseStep[]) => void;
 };
@@ -128,7 +127,6 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 	});
 	await modelRuntime.setRuntimeApiKey(faux.provider.id, 'test');
 
-	const sessionManager = SessionManager.inMemory(cwd);
 	const model = options.model === undefined ? faux.getModel() : faux.getModel(options.model);
 	const { session } = await createAgentSession({
 		cwd,
@@ -136,7 +134,7 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 		modelRuntime,
 		resourceLoader,
 		settingsManager,
-		sessionManager,
+		sessionManager: SessionManager.inMemory(cwd),
 		model,
 	});
 	cleanup.defer(() => session.dispose());
@@ -156,7 +154,6 @@ export async function startSession(options: HarnessOptions): Promise<Harness> {
 
 	return {
 		session,
-		sessionManager,
 		notifications,
 		respond: (...steps) => faux.setResponses(steps),
 		[Symbol.dispose]: () => resources.dispose(),

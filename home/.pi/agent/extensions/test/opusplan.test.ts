@@ -24,7 +24,7 @@ async function firstTurn(options: Partial<HarnessOptions> = {}) {
 
 // what pi-plan-mode records when /plan is toggled
 const setPlanning = (h: Harness, enabled: boolean) =>
-	h.sessionManager.appendCustomEntry('plan-mode-state', { enabled });
+	h.session.sessionManager.appendCustomEntry('plan-mode-state', { enabled });
 
 test('does nothing unless enabled', async () => {
 	assert.equal(await firstTurn(), 'start');

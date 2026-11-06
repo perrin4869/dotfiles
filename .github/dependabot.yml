@@ -27,6 +27,8 @@ updates:
       ignore:
           # bumped together with the pi binary by update_deps.yml
           - dependency-name: "@earendil-works/*"
+          # pi hands extensions its own copy, so ours must match it
+          - dependency-name: "typebox"
           # pinned to the versions in pi's settings.json by utils/update_pi_packages
           - dependency-name: "pi-subagents"
           - dependency-name: "@narumitw/pi-plan-mode"

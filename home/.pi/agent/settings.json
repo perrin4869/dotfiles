@@ -29,7 +29,7 @@
     "npm:@ff-labs/pi-fff@0.11.0",
     "npm:pi-token-speed@0.12.0"
   ],
-  "theme": "dark",
+  "theme": "gruvbox",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0"
   },

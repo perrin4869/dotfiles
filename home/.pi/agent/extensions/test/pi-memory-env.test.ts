@@ -1,4 +1,5 @@
 import { fauxAssistantMessage } from '@earendil-works/pi-ai';
+import type { ExtensionFactory } from '@earendil-works/pi-coding-agent';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
@@ -7,9 +8,10 @@ import { test } from 'node:test';
 import {
 	extension,
 	type Harness,
-	type HarnessOptions,
+	type HarnessFaux,
 	overrideEnv,
 	packageExtension,
+	scriptedFaux,
 	startSession,
 } from './harness.ts';
 
@@ -32,19 +34,15 @@ function dailyLog() {
 
 // runs two prompts and quits the way pi does, then reports whether pi-memory summarised the session
 async function summarized(
-	provider: string,
-	options: {
-		explicit?: string;
-		providers?: HarnessOptions['providers'];
-		after?: (harness: Harness) => Promise<void>;
-	} = {},
+	faux: HarnessFaux,
+	options: { explicit?: string; factories?: ExtensionFactory[]; after?: (harness: Harness) => Promise<void> } = {},
 ) {
 	rmSync(memoryDir, { recursive: true, force: true });
 	using restoreEnv = overrideEnv({ PI_MEMORY_EXIT_SUMMARY: options.explicit });
 	using h = await startSession({
 		extensions: [await packageExtension('pi-memory'), extension('pi-memory-env')],
-		provider,
-		providers: options.providers,
+		faux,
+		factories: options.factories,
 	});
 	h.respond(fauxAssistantMessage('one'), fauxAssistantMessage('two'), fauxAssistantMessage(SUMMARY));
 	await h.session.prompt('first');
@@ -55,21 +53,26 @@ async function summarized(
 }
 
 test('summarises the session on exit with a free provider', async () => {
-	assert.equal(await summarized('ollama'), true);
+	using faux = scriptedFaux({ provider: 'ollama' });
+	assert.equal(await summarized(faux), true);
 });
 
 test('skips the summary on exit with a paid provider', async () => {
-	assert.equal(await summarized('anthropic'), false);
+	using faux = scriptedFaux({ provider: 'anthropic' });
+	assert.equal(await summarized(faux), false);
 });
 
 test('an explicit setting wins', async () => {
-	assert.equal(await summarized('ollama', { explicit: '0' }), false);
+	using faux = scriptedFaux({ provider: 'ollama' });
+	assert.equal(await summarized(faux, { explicit: '0' }), false);
 });
 
 test('follows model changes', async () => {
 	// switching from a free provider to a paid one stops the summary the free one would have written
-	const switchedToPaid = await summarized('ollama', {
-		providers: [{ provider: 'anthropic', models: [{ id: 'paid' }] }],
+	using free = scriptedFaux({ provider: 'ollama' });
+	using paid = scriptedFaux({ provider: 'anthropic', models: [{ id: 'paid' }] });
+	const switchedToPaid = await summarized(free, {
+		factories: [(pi) => pi.registerProvider(paid.provider)],
 		after: async (h) => {
 			const model = h.session.modelRuntime.getModel('anthropic', 'paid');
 			assert.ok(model);

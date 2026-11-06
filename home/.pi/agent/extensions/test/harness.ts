@@ -1,6 +1,8 @@
 import {
 	createFauxCore,
+	fauxProvider,
 	type FauxModelDefinition,
+	type FauxProviderHandle,
 	type FauxResponseStep,
 	InMemoryCredentialStore,
 	InMemoryModelsStore,
@@ -49,12 +51,19 @@ export async function packageExtension(name: string) {
 // a module inside an installed package, past its `exports` map, for contract tests against its internals
 export const packageModule = <T>(name: string, path: string): Promise<T> => import(fileUrl(packageDir(name), path));
 
+// what the harness needs from a scripted model; FauxProviderHandle and scriptedFaux both fit
+export type HarnessFaux = {
+	provider: FauxProviderHandle['provider'];
+	getModel(id?: string): ReturnType<FauxProviderHandle['getModel']>;
+	setResponses(steps: FauxResponseStep[]): void;
+};
+
 export type HarnessOptions = {
 	extensions: string[];
 	factories?: ExtensionFactory[];
-	// the scripted provider the session starts on, and any others its model registry should offer
+	// the scripted model; defaults to pi-ai's fauxProvider built from provider/models; see scriptedFaux
+	faux?: HarnessFaux;
 	provider?: string;
-	providers?: { provider: string; models?: FauxModelDefinition[] }[];
 	models?: FauxModelDefinition[];
 	model?: string;
 	globalSettings?: object;
@@ -98,9 +107,11 @@ function settingsStorage(files: Record<'global' | 'project', object>): SettingsS
 	};
 }
 
-// A scripted model for the session, also registered as pi-ai's API provider, which its global completion functions
-// (`complete`, `completeSimple`) resolve; extensions such as pi-memory call those directly.
-function scriptedModel(options: { provider?: string; models?: FauxModelDefinition[] }) {
+// A scripted model that also serves pi-ai's global completion functions (complete, completeSimple), which
+// extensions such as pi-memory call directly; pi-ai resolves those through a registry only this constructor fills.
+export function scriptedFaux(
+	options: { provider?: string; models?: FauxModelDefinition[] } = {},
+): HarnessFaux & Disposable {
 	const core = createFauxCore({ provider: options.provider ?? 'faux', models: options.models });
 	const provider = createProvider({
 		id: core.provider,
@@ -110,18 +121,18 @@ function scriptedModel(options: { provider?: string; models?: FauxModelDefinitio
 	});
 	const sourceId = `pi-extensions-${core.provider}`;
 	registerApiProvider({ api: core.api, stream: core.stream, streamSimple: core.streamSimple }, sourceId);
-	return { provider, core, sourceId };
+	return {
+		provider,
+		getModel: (id?: string) => (id === undefined ? core.getModel() : core.getModel(id)),
+		setResponses: (steps: FauxResponseStep[]) => core.setResponses(steps),
+		[Symbol.dispose]: () => unregisterApiProviders(sourceId),
+	};
 }
-
-const registerProvider =
-	({ provider }: ReturnType<typeof scriptedModel>): ExtensionFactory =>
-	(pi) =>
-		pi.registerProvider(provider);
 
 // a real in-process pi session, not yet started: extensions load from their files, the model is scripted
 export async function createHarness(options: HarnessOptions): Promise<Harness> {
-	const faux = scriptedModel(options);
-	const others = (options.providers ?? []).map(scriptedModel);
+	const faux: HarnessFaux & Partial<Disposable> =
+		options.faux ?? fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(
 		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
 		{ projectTrusted: options.projectTrusted ?? true },
@@ -131,7 +142,7 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		agentDir,
 		settingsManager,
 		additionalExtensionPaths: options.extensions,
-		extensionFactories: [registerProvider(faux), ...others.map(registerProvider), ...(options.factories ?? [])],
+		extensionFactories: [(pi) => pi.registerProvider(faux.provider), ...(options.factories ?? [])],
 		noSkills: true,
 		noPromptTemplates: true,
 		noThemes: true,
@@ -148,7 +159,7 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 	});
 	await modelRuntime.setRuntimeApiKey(faux.provider.id, 'test');
 
-	const model = options.model === undefined ? faux.core.getModel() : faux.core.getModel(options.model);
+	const model = options.model === undefined ? faux.getModel() : faux.getModel(options.model);
 	const { session } = await createAgentSession({
 		cwd,
 		agentDir,
@@ -161,10 +172,10 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 
 	return {
 		session,
-		respond: (...steps) => faux.core.setResponses(steps),
+		respond: (...steps) => faux.setResponses(steps),
 		[Symbol.dispose]: () => {
 			session.dispose();
-			for (const { sourceId } of [faux, ...others]) unregisterApiProviders(sourceId);
+			faux[Symbol.dispose]?.();
 		},
 	};
 }

@@ -32,11 +32,11 @@ const toolNames = (context: Parameters<FauxResponseFactory>[0]) =>
 
 // the tools offered to any request of a prompt that calls one tool and then finishes
 async function offeredTools(h: Harness) {
-	const offered = new Set<string>();
+	let offered = new Set<string>();
 	const recording =
 		(reply: ReturnType<typeof fauxAssistantMessage>): FauxResponseFactory =>
 		(context) => {
-			for (const name of toolNames(context)) offered.add(name);
+			offered = offered.union(toolNames(context));
 			return reply;
 		};
 	h.respond(
@@ -69,9 +69,9 @@ test('keeps the advisor out when another extension switches models', async () =>
 		model: 'executor',
 		projectSettings: { opusplan: { enabled: true, execute: 'faux/target' } },
 	});
-	const offered = new Set<string>();
+	let offered = new Set<string>();
 	h.respond((context) => {
-		for (const name of toolNames(context)) offered.add(name);
+		offered = offered.union(toolNames(context));
 		return fauxAssistantMessage('done');
 	});
 	await h.session.prompt('go');

@@ -23,33 +23,34 @@ function sharesReported(input: Record<string, unknown>) {
 	}
 }
 
-// Each row: the tool input, whether pi-subagents' own option handling reports a share, and whether the blocker
-// blocks. pi coerces only declared parameters, and `share` is not one, so a string at the top level shares nowhere.
-const cases: [input: Record<string, unknown>, shares: boolean, blocked: boolean][] = [
-	[{}, false, false],
-	[{ share: true }, true, true],
-	[{ share: 'true' }, false, false],
-	[{ share: false }, false, false],
-	[{ options: { share: true } }, true, true],
-	[{ options: { share: 'true' } }, true, true],
-	[{ options: { share: 'TRUE' } }, true, true],
-	[{ options: { share: 1 } }, true, true],
-	[{ options: { share: '1' } }, true, true],
-	[{ options: { share: 'false' } }, false, false],
-	[{ options: { share: 'yes' } }, false, false],
-	[{ options: { share: true, fast: true } }, true, true],
-	[{ share: true, options: { share: true } }, true, true],
+// Each row: a tool input and whether pi-subagents shares it. The blocker has to answer the same: blocking a call
+// that would not share rejects work pi-subagents would run, and missing one uploads the session.
+const cases: [input: Record<string, unknown>, shares: boolean][] = [
+	[{}, false],
+	[{ share: true }, true],
+	// pi coerces only declared parameters, and `share` is not one, so a string at the top level shares nowhere
+	[{ share: 'true' }, false],
+	[{ share: false }, false],
+	[{ options: { share: true } }, true],
+	[{ options: { share: 'true' } }, true],
+	[{ options: { share: 'TRUE' } }, true],
+	[{ options: { share: 1 } }, true],
+	[{ options: { share: '1' } }, true],
+	[{ options: { share: 'false' } }, false],
+	[{ options: { share: 'yes' } }, false],
+	[{ options: { share: true, fast: true } }, true],
+	[{ share: true, options: { share: true } }, true],
 	// pi-subagents ignores a share nested in a task; if this starts sharing, the blocker needs the nested check
-	[{ tasks: [{ agent: 'a', task: 'x', share: true }] }, false, false],
+	[{ tasks: [{ agent: 'a', task: 'x', share: true }] }, false],
 ];
 
-test('blocks every input pi-subagents would share', () => {
-	for (const [input, shares, blocked] of cases) {
+test('blocks exactly the inputs pi-subagents shares', () => {
+	for (const [input, shares] of cases) {
 		const call = { agent: 'worker', task: 'x', ...input };
 		const where = JSON.stringify(input);
 		assert.equal(sharesReported(call), shares, `pi-subagents on ${where}`);
-		assert.equal(requestsShare(call), blocked, `blocker on ${where}`);
+		assert.equal(requestsShare(call), shares, `blocker on ${where}`);
 	}
-	// every way pi-subagents shares has to be blocked
-	assert.ok(cases.every(([, shares, blocked]) => !shares || blocked));
+	// the corpus has to reach both answers, or a blocker that always said the same would pass
+	assert.ok(cases.some(([, shares]) => shares) && cases.some(([, shares]) => !shares));
 });

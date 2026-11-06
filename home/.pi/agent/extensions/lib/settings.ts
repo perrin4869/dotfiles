@@ -24,7 +24,7 @@ export function defineSettings<T extends TObject>(key: string, schema: T) {
 	// warn once per problem rather than on every read
 	const unreported = firstSeen();
 
-	return (pi: ExtensionAPI, ctx: ExtensionContext): Static<T> => {
+	const read = (pi: ExtensionAPI, ctx: ExtensionContext): Static<T> => {
 		// pi's Settings type lists only pi's own keys; getSettings() returns a copy, so Value.Default may fill it in place
 		const raw: unknown = Reflect.get(pi.getSettings(), key);
 		const section = Value.Default(schema, raw ?? {});
@@ -34,4 +34,6 @@ export function defineSettings<T extends TObject>(key: string, schema: T) {
 		if (unreported(problems)) ctx.ui.notify(`ignoring invalid settings: ${problems}`, 'warning');
 		return Value.Create(schema);
 	};
+	// the key and schema let scripts/settings-schema.ts describe the section for editors
+	return Object.assign(read, { key, schema });
 }

@@ -9,7 +9,6 @@ import {
 	type AgentSession,
 	createAgentSession,
 	DefaultResourceLoader,
-	type Extension,
 	type ExtensionError,
 	type ExtensionFactory,
 	type ExtensionUIContext,
@@ -63,6 +62,8 @@ export type HarnessOptions = {
 
 // dispose with `using`, which disposes the session
 export type Harness = Disposable & {
+	// binds the extensions, which fires session_start; startSession calls it, createHarness leaves it to the test
+	start: () => Promise<void>;
 	session: AgentSession;
 	notifications: string[];
 	respond: (...steps: FauxResponseStep[]) => void;
@@ -88,16 +89,11 @@ function settingsStorage(files: Record<'global' | 'project', object>): SettingsS
 	};
 }
 
-// extensions loaded from their files, with everything startHarness needs to create the session around them
-export type CreatedHarness = {
-	extensions: Extension[];
-	options: HarnessOptions;
-	faux: ReturnType<typeof fauxProvider>;
-	settingsManager: SettingsManager;
-	resourceLoader: DefaultResourceLoader;
-};
+// a real in-process pi session, not yet started: extensions load from their files, the model is scripted
+export async function createHarness(options: HarnessOptions): Promise<Harness> {
+	// releases what was set up so far if setup fails; on success the harness takes it over
+	using cleanup = new DisposableStack();
 
-export async function createHarness(options: HarnessOptions): Promise<CreatedHarness> {
 	const faux = fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(
 		settingsStorage({ global: options.globalSettings ?? {}, project: options.projectSettings ?? {} }),
@@ -115,20 +111,8 @@ export async function createHarness(options: HarnessOptions): Promise<CreatedHar
 		noContextFiles: true,
 	});
 	await resourceLoader.reload();
-	const { extensions, errors } = resourceLoader.getExtensions();
-	if (errors.length > 0) throw new Error(`extensions failed to load: ${JSON.stringify(errors)}`);
-	return { extensions, options, faux, settingsManager, resourceLoader };
-}
-
-// creates the session around the loaded extensions and starts them, which fires session_start
-export async function startHarness({
-	options,
-	faux,
-	settingsManager,
-	resourceLoader,
-}: CreatedHarness): Promise<Harness> {
-	// releases what was set up so far if setup fails; on success the harness takes it over
-	using cleanup = new DisposableStack();
+	const loadErrors = resourceLoader.getExtensions().errors;
+	if (loadErrors.length > 0) throw new Error(`extensions failed to load: ${JSON.stringify(loadErrors)}`);
 	// in-memory stores, so nothing is written to agentDir; pi only switches to models whose provider has credentials
 	const modelRuntime = await ModelRuntime.create({
 		credentials: new InMemoryCredentialStore(),
@@ -159,10 +143,10 @@ export async function startHarness({
 		...session.extensionRunner.getUIContext(),
 		notify: (message) => void notifications.push(message),
 	};
-	await session.bindExtensions({ uiContext, onError: (error) => errors.push(error) });
 	const resources = cleanup.move();
 
 	return {
+		start: () => session.bindExtensions({ uiContext, onError: (error) => errors.push(error) }),
 		session,
 		notifications,
 		respond: (...steps) => faux.setResponses(steps),
@@ -170,16 +154,22 @@ export async function startHarness({
 	};
 }
 
-// a real in-process pi session: extensions load from their files, the model is scripted
-export const startSession = async (options: HarnessOptions) => startHarness(await createHarness(options));
+// a started session, for the tests that need nothing between creating and starting it
+export async function startSession(options: HarnessOptions) {
+	using cleanup = new DisposableStack();
+	const harness = cleanup.use(await createHarness(options));
+	await harness.start();
+	cleanup.move();
+	return harness;
+}
 
-// pretend a loaded tool came from a package, e.g. 'npm:@narumitw/pi-lsp@1.0.0'; pi copies tool sources into the
-// session when startHarness creates it, so call it before
-export function setToolSource(extensions: Extension[], name: string, source: string) {
-	for (const { tools } of extensions) {
-		const tool = tools.get(name);
-		if (tool) tool.sourceInfo = { ...tool.sourceInfo, source };
-	}
+// Pretend the extension that registered this tool came from a package, e.g. 'npm:@narumitw/pi-lsp@1.0.0'. pi shares
+// the extension's source with all its tools and the session, so this relabels the whole extension, in place; call it
+// before start(), since extensions may read tool sources on session_start.
+export function setToolSource(session: AgentSession, name: string, source: string) {
+	const tool = session.extensionRunner.getAllRegisteredTools().find(({ definition }) => definition.name === name);
+	if (tool === undefined) throw new Error(`no extension registered ${name}`);
+	tool.sourceInfo.source = source;
 }
 
 type EnvValues = Record<string, string | undefined>;

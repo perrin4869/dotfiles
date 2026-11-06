@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
-import { createHarness, extension, overrideEnv, setToolSource, startHarness, stubTools } from './harness.ts';
+import { createHarness, extension, overrideEnv, setToolSource, stubTools } from './harness.ts';
 
 // read when the extension loads; node --test runs each file in its own process
 env.XDG_DATA_HOME = '/xdg';
@@ -12,12 +12,13 @@ const MASON_BIN = join('/xdg', 'nvim', 'mason', 'bin');
 // PATH after a fresh session that starts with `path` runs these tools
 async function pathAfter(tools: string[], path = '/usr/bin') {
 	using restoreEnv = overrideEnv({ PATH: path });
-	const created = await createHarness({
+	using harness = await createHarness({
 		extensions: [extension('mason-path')],
-		factories: [stubTools('lsp_hover', 'other')],
+		// separate extensions: setToolSource relabels the one that registered lsp_hover
+		factories: [stubTools('lsp_hover'), stubTools('other')],
 	});
-	setToolSource(created.extensions, 'lsp_hover', 'npm:@narumitw/pi-lsp@1.0.0');
-	using harness = await startHarness(created);
+	setToolSource(harness.session, 'lsp_hover', 'npm:@narumitw/pi-lsp@1.0.0');
+	await harness.start();
 	for (const tool of tools) {
 		harness.respond(
 			fauxAssistantMessage(fauxToolCall(tool, {}), { stopReason: 'toolUse' }),

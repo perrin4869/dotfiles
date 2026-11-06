@@ -64,9 +64,17 @@ test('/opusplan toggles it', async () => {
 	assert.equal(await turn(h), 'execute');
 });
 
-test('keeps the model when the target is unavailable', async () => {
-	using h = await start({ projectSettings: { opusplan: { enabled: true, execute: 'faux/missing' } } });
+test('keeps the model and warns when the target is unavailable', async () => {
+	const notify = mock.fn<NotifyListener>();
+	using h = await start({
+		projectSettings: { opusplan: { enabled: true, execute: 'faux/missing' } },
+		onNotify: notify,
+	});
 	assert.equal(await turn(h), 'start');
+	assert.deepEqual(
+		notify.mock.calls.map((call) => call.arguments),
+		[['opusplan: cannot use faux/missing', 'warning']],
+	);
 });
 
 test('ignores an untrusted project', async () => {

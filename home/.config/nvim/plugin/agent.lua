@@ -15,6 +15,12 @@ local agents = {
 			vim.cmd.ClaudeCode()
 		end,
 	},
+	codecompanion = {
+		filetype = 'codecompanion',
+		toggle = function()
+			vim.cmd('CodeCompanionChat Toggle')
+		end,
+	},
 	pi = {
 		filetype = 'pi_terminal',
 		toggle = function()

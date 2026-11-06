@@ -13,7 +13,7 @@ function firstSeen() {
 }
 
 // validation errors as `key.field message`, joined into one line
-const describeErrors = (key: string, schema: TSchema, value: unknown) =>
+export const describeErrors = (key: string, schema: TSchema, value: unknown) =>
 	Value.Errors(schema, value)
 		.map(({ instancePath, message }) => `${key}${instancePath.replaceAll('/', '.')} ${message}`)
 		.join('; ');

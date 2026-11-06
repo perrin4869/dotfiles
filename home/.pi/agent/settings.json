@@ -15,7 +15,6 @@
     "npm:pi-memory@0.4.2",
     "npm:pi-rewind-hook@1.8.8",
     "npm:@juicesharp/rpiv-todo@2.15.0",
-    "npm:@raidou/pi-notify@0.11.0",
     "npm:@narumitw/pi-lsp@0.49.11",
     "npm:@juicesharp/rpiv-ask-user-question@2.15.0",
     "npm:@juicesharp/rpiv-btw@2.15.0",
@@ -40,11 +39,5 @@
       "maxAgeDays": 30,
       "pinLabeledEntries": true
     }
-  },
-  "piNotify": {
-    "dashboardTmuxKeyNeedsPrefix": true,
-    "osc777": false,
-    "osc9": false,
-    "finishedThrottleSecs": 30
   }
 }

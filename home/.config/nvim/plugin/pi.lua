@@ -13,7 +13,10 @@ local function is_pi_terminal(bufnr)
 	if not ok or not chan_info.argv then
 		return false
 	end
-	return vim.fs.basename(chan_info.argv[1] or '') == 'pi'
+	-- a session restore respawns it through 'shell' ({ 'zsh', '-c', '/path/to/pi' })
+	return vim.tbl_contains(chan_info.argv, function(arg)
+		return vim.fs.basename(vim.split(arg, ' ')[1]) == 'pi'
+	end, { predicate = true })
 end
 
 -- like the claude terminal, a session restore recreates pi as a plain terminal; replace it with the

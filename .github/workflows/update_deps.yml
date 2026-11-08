@@ -30,7 +30,8 @@ jobs:
       - name: Check for update
         id: check
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # the run's own token, for the release notes in the PR body
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"
           if [[ -n "$new_version" ]]; then
@@ -84,7 +85,8 @@ jobs:
       - name: Update pinned packages
         id: update
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # the run's own token, for the release notes in the PR body
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           {
             echo 'changes<<PI_PACKAGES_EOF'

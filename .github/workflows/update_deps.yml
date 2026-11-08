@@ -83,11 +83,13 @@ jobs:
 
       - name: Update pinned packages
         id: update
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           {
-            echo 'changes<<EOF'
+            echo 'changes<<PI_PACKAGES_EOF'
             utils/update_pi_packages
-            echo EOF
+            echo PI_PACKAGES_EOF
           } >> "$GITHUB_OUTPUT"
 
       - name: Create PR
@@ -99,10 +101,7 @@ jobs:
           delete-branch: true
           title: "Update pi packages"
           commit-message: "chore(deps): bump pi packages"
-          body: |
-            ```
-            ${{ steps.update.outputs.changes }}
-            ```
+          body: ${{ steps.update.outputs.changes }}
           token: ${{ secrets.PAT }}
 
       - name: Assign PR

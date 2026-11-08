@@ -99,19 +99,21 @@ async function releaseNotes(name, current, version, document, limit) {
 const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
-const bumps = [];
-
-const packages = await Promise.all(
+// one entry per pinned package, in settings order; a spec that is not pinned stays as it is
+const resolved = await Promise.all(
 	(settings.packages ?? []).map(async (spec) => {
 		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
-		if (!match) return spec;
+		if (!match) return { spec };
 		const [, name, current] = match;
 		const document = await registry(name);
 		const version = document['dist-tags'].latest;
-		if (version !== current) bumps.push({ name, current, version, document });
-		return `npm:${name}@${version}`;
+		if (version === current) return { spec };
+		return { spec: `npm:${name}@${version}`, bump: { name, current, version, document } };
 	}),
 );
+
+const packages = resolved.map(({ spec }) => spec);
+const bumps = resolved.flatMap(({ bump }) => (bump ? [bump] : []));
 
 // pi records the last seen version per package on boot, so move those records along with the pins
 // instead of leaving the next launch to rewrite settings.json

@@ -40,5 +40,10 @@
       "maxAgeDays": 30,
       "pinLabeledEntries": true
     }
+  },
+  "contextInclude": {
+    "allowedRoots": [
+      "~/.agents"
+    ]
   }
 }

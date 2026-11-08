@@ -1,3 +1,5 @@
+@~/.agents/AGENTS.md
+
 # Memory
 
 Memory (`memory_write`, `scratchpad`) is shared by every project, personal and work alike, so keep it small and durable.
@@ -14,3 +16,7 @@ Do not save:
 - Task progress or details that only matter to the current session; use the conversation for those.
 
 Write to the daily log only when I ask. Before saving, check whether an existing entry covers it and update that instead of adding a duplicate.
+
+# sudo
+
+- `sudo` cannot run while the sandbox is on: commands run with `no new privileges`, so sudo never gets root. If a task needs it, ask me to turn the sandbox off (`/sandbox-disable`), run the command, and ask me to turn it back on (`/sandbox-enable`).

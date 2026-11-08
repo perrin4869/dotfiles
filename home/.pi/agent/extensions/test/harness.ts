@@ -178,7 +178,12 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		session,
 		respond: (...steps) => faux.setResponses(steps),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
-		[Symbol.dispose]: () => session.dispose(),
+		[Symbol.dispose]: () => {
+			// extensions stop their timers on session_shutdown, which session.dispose() does not fire; awaiting it is
+			// not an option either, since a handler that uses its ctx then runs after the session is gone
+			void session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' }).catch(() => {});
+			session.dispose();
+		},
 	};
 }
 

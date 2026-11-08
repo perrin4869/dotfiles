@@ -30,7 +30,7 @@ jobs:
       - name: Check for update
         id: check
         env:
-          # the run's own token, for the release notes in the PR body
+          # the run's own token, for the GitHub lookups check_upstream_version makes
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"

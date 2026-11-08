@@ -15,8 +15,6 @@ const registry = async (name) => {
 	return response.json();
 };
 
-const latest = async (name) => (await registry(name))['dist-tags'].latest;
-
 const NOTES_LIMIT = 4000;
 
 const repoOf = ({ repository }) => {
@@ -25,8 +23,7 @@ const repoOf = ({ repository }) => {
 };
 
 // Release notes of every version after `current`, up to and including `version`; empty when unavailable
-async function releaseNotes(name, current, version) {
-	const { time, repository } = await registry(name);
+async function releaseNotes(name, current, version, { time, repository }) {
 	const repo = repoOf({ repository });
 	if (!repo) return '';
 	// publish order stands in for semver order, which node lacks
@@ -50,11 +47,6 @@ async function releaseNotes(name, current, version) {
 	return text.length > NOTES_LIMIT ? `${text.slice(0, NOTES_LIMIT)}\n\n_(truncated)_` : text;
 }
 
-const tap = (f) => (arg) => {
-	f(arg);
-	return arg;
-};
-
 const bumps = [];
 
 const packages = await Promise.all(
@@ -62,9 +54,11 @@ const packages = await Promise.all(
 		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
 		if (!match) return spec;
 		const [, name, current] = match;
-		return latest(name)
-			.then(tap((version) => version !== current && bumps.push({ name, current, version })))
-			.then((version) => `npm:${name}@${version}`);
+		return registry(name).then((document) => {
+			const version = document['dist-tags'].latest;
+			if (version !== current) bumps.push({ name, current, version, document });
+			return `npm:${name}@${version}`;
+		});
 	}),
 );
 
@@ -99,8 +93,8 @@ if (tested.length > 0) {
 	);
 }
 
-for (const { name, current, version } of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
-	const notes = await releaseNotes(name, current, version).catch(() => '');
+for (const { name, current, version, document } of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
+	const notes = await releaseNotes(name, current, version, document).catch(() => '');
 	const title = `Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 	console.log(
 		notes

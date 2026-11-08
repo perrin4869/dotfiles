@@ -9,16 +9,35 @@ import settings from '../home/.pi/agent/settings.json' with { type: 'json' };
 
 const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
 
+// at most this many characters of notes per package, so the whole body stays under what GitHub accepts
+const NOTES_PER_PACKAGE = 4000;
+const NOTES_BUDGET = 60000;
+
+// a repo tags every release the same way; these spellings are tried newest version first
+const TAG_FORMATS = [
+	(name, version) => `v${version}`,
+	(_name, version) => version,
+	(name, version) => `${name}@${version}`,
+];
+
 const registry = async (name) => {
 	const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2F')}`);
 	if (!response.ok) throw new Error(`${name}: registry answered ${response.status}`);
 	return response.json();
 };
 
-// GitHub rejects PR bodies over 65536 characters; the rest is headroom for the bump lines
-const NOTES_BUDGET = 60000;
+// the release a repo has for a tag, or undefined when it has none
+const release = async (repo, tag) => {
+	const response = await fetch(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`, {
+		headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {},
+	});
+	if (response.status === 404) return undefined;
+	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${tag}`);
+	return response.json();
+};
 
-const repoOf = ({ repository }) => {
+// `owner/repo` of a package's repository field, when it is on GitHub
+const githubRepo = ({ repository }) => {
 	const url = typeof repository === 'string' ? repository : repository?.url;
 	return /github\.com[/:]([^/]+\/[^/.]+)/.exec(url ?? '')?.[1];
 };
@@ -26,75 +45,71 @@ const repoOf = ({ repository }) => {
 const parseVersion = (version) => /^(\d+)\.(\d+)\.(\d+)$/.exec(version)?.slice(1).map(Number);
 const compareVersions = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 
-// release notes are written for their own repo: point its issue references there and keep mentions from notifying
+// stable versions published after `from` up to `to`, newest first
+const versionsBetween = (versions, from, to) =>
+	Object.keys(versions)
+		.map((version) => [version, parseVersion(version)])
+		.filter(([, parsed]) => parsed && compareVersions(parsed, from) > 0 && compareVersions(parsed, to) <= 0)
+		.sort(([, a], [, b]) => compareVersions(b, a))
+		.map(([version]) => version);
+
+// release notes are written for their own repo: point its issue references there, and keep mentions from notifying
 const relink = (repo, body) =>
 	body
 		.replace(/(^|[^\w/`])#(\d+)\b/g, `$1${repo}#$2`)
 		.replace(/(^|[^\w/`])@([A-Za-z\d](?:[A-Za-z\d-]*[A-Za-z\d])?)\b(?![./]\w)/g, '$1`@$2`');
 
-const TAG_FORMATS = [(name, v) => `v${v}`, (name, v) => v, (name, v) => `${name}@${v}`];
-
-// the release for this tag, or undefined when there is none
-async function release(repo, tag) {
-	const response = await fetch(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`, {
-		headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {},
-	});
-	if (response.status === 404) return undefined;
-	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${tag}`);
-	return response.json();
-}
-
-const formatNote = (repo, version, { body, html_url }) =>
+// one version's section of the body, or '' when that release has no notes
+const note = (repo, version, { body, html_url }) =>
 	body?.trim() ? `### [${version}](${html_url})\n\n${relink(repo, body.trim())}` : '';
+
+// the releases of every version in `between`, once the tag format is known; undefined when the repo publishes none
+async function releases(name, repo, between) {
+	for (const format of TAG_FORMATS) {
+		const newest = await release(repo, format(name, between[0]));
+		if (!newest) continue;
+		const older = await Promise.all(between.slice(1).map((version) => release(repo, format(name, version))));
+		return [newest, ...older];
+	}
+	return undefined;
+}
 
 // Release notes of every stable version after `current`, up to and including `version`, newest first, cut at whole
 // versions to fit `limit`; empty when unavailable
-async function releaseNotes(name, current, version, { versions, repository }, limit) {
-	const repo = repoOf({ repository });
+async function releaseNotes(name, current, version, document, limit) {
+	const repo = githubRepo(document);
 	const [from, to] = [parseVersion(current), parseVersion(version)];
 	if (!repo || !from || !to) return '';
-	const between = Object.keys(versions)
-		.map((v) => [v, parseVersion(v)])
-		.filter(([, parsed]) => parsed && compareVersions(parsed, from) > 0 && compareVersions(parsed, to) <= 0)
-		.sort(([, a], [, b]) => compareVersions(b, a))
-		.map(([v]) => v);
-	if (between.length === 0) return '';
-	// a repo tags every release the same way, so find the format on the newest and use it for the rest
-	let format;
-	let newest;
-	for (const candidate of TAG_FORMATS) {
-		newest = await release(repo, candidate(name, between[0]));
-		if (newest) {
-			format = candidate;
-			break;
-		}
-	}
-	if (!format) return '';
-	const older = await Promise.all(between.slice(1).map((v) => release(repo, format(name, v))));
-	const notes = [newest, ...older]
-		.map((found, i) => (found ? formatNote(repo, between[i], found) : ''))
-		.filter(Boolean);
+	const between = versionsBetween(document.versions, from, to);
+	const found = between.length > 0 ? await releases(name, repo, between) : undefined;
+	if (!found) return '';
+
 	const kept = [];
-	for (const note of notes) {
-		if ([...kept, note].join('\n\n').length > limit) break;
-		kept.push(note);
+	let size = 0;
+	for (const [index, released] of found.entries()) {
+		const text = released ? note(repo, between[index], released) : '';
+		if (!text) continue;
+		size += (kept.length > 0 ? 2 : 0) + text.length;
+		if (size > limit) return kept.join('\n\n') + `\n\n[More release notes](https://github.com/${repo}/releases)`;
+		kept.push(text);
 	}
-	const more = kept.length < notes.length ? `\n\n[More release notes](https://github.com/${repo}/releases)` : '';
-	return kept.join('\n\n') + more;
+	return kept.join('\n\n');
 }
+
+const bumpLine = ({ name, current, version }) =>
+	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
 const bumps = [];
 
 const packages = await Promise.all(
-	(settings.packages ?? []).map((spec) => {
+	(settings.packages ?? []).map(async (spec) => {
 		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
 		if (!match) return spec;
 		const [, name, current] = match;
-		return registry(name).then((document) => {
-			const version = document['dist-tags'].latest;
-			if (version !== current) bumps.push({ name, current, version, document });
-			return `npm:${name}@${version}`;
-		});
+		const document = await registry(name);
+		const version = document['dist-tags'].latest;
+		if (version !== current) bumps.push({ name, current, version, document });
+		return `npm:${name}@${version}`;
 	}),
 );
 
@@ -116,10 +131,9 @@ await writeFile(
 );
 
 // the extension tests run against these packages' internals, so they follow the pinned versions
-const tested = packages
-	.map((spec) => (typeof spec === 'string' ? PINNED.exec(spec) : null))
-	.filter((match) => match && match[1] in extensions.devDependencies)
-	.map(([, name, version]) => `${name}@${version}`);
+const tested = bumps
+	.filter(({ name }) => name in extensions.devDependencies)
+	.map(({ name, version }) => `${name}@${version}`);
 if (tested.length > 0) {
 	execFileSync(
 		'npm',
@@ -129,17 +143,12 @@ if (tested.length > 0) {
 	);
 }
 
-const limit = Math.min(4000, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
-for (const { name, current, version, document } of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
-	// missing notes should not hold back the bump
-	const notes = await releaseNotes(name, current, version, document, limit).catch((error) => {
-		console.error(`${name}: no release notes: ${error.message}`);
+const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
+for (const bump of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
+	// a missing release should not hold back the bump
+	const notes = await releaseNotes(bump.name, bump.current, bump.version, bump.document, limit).catch((error) => {
+		console.error(`${bump.name}: no release notes: ${error.message}`);
 		return '';
 	});
-	const title = `Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
-	console.log(
-		notes
-			? `<details>\n<summary>${title}</summary>\n\n${notes}\n</details>\n`
-			: `- ${title}`,
-	);
+	console.log(notes ? `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${notes}\n</details>\n` : `- ${bumpLine(bump)}`);
 }

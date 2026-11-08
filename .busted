@@ -1,0 +1,12 @@
+-- Specs describe the Neovim config in ../home/.config/nvim. nlua is busted's interpreter, so `vim` in a spec is the
+-- real API. Run with `make test-nvim-spec`, or `busted` from the repository root.
+return {
+	_all = {
+		coverage = false,
+		lpath = 'home/.config/nvim/lua/?.lua;home/.config/nvim/lua/?/init.lua',
+		lua = 'nlua',
+	},
+	default = {
+		verbose = true,
+	},
+}

@@ -89,6 +89,13 @@ test-neovim-cmds:
 	@NVIM_NOEXRC=1 nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
+.PHONY: test-nvim-spec
+# busted and nlua stay in ./.luarocks (luarocks init --local), never installed system-wide
+test-nvim-spec:
+	$(call require,luarocks)
+	@test -f .luarocks/config-5.1.lua || luarocks init --local --lua-version 5.1
+	@eval "$$(luarocks path)" && luarocks test --prepare && echo "$(PASS) the nvim specs pass"
+
 .PHONY: test-lua-types
 # .emmyrc.check.json lists the library that lazydev provides per file in the editor; with HOME set to
 # the repo's home, Neovim reports this checkout's pack dir rather than the installed one
@@ -111,5 +118,6 @@ test: \
 	test-fonts \
 	test-neovim \
 	test-neovim-cmds \
+	test-nvim-spec \
 	test-lua-types \
 	test-pi

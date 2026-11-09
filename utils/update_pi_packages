@@ -82,8 +82,8 @@ function tagsOf(repo) {
 const tagOf = (tags, name, version) =>
 	[`${name}@${version}`, `v${version}`, version].find((tag) => tags.includes(tag));
 
-// the release for that tag, if the repo published one
-const releaseOf = async (repo, tags, name, version) => {
+// the release for the tag this package used at `version`, if the repo published one
+const releaseOf = (repo, tags, name) => async (version) => {
 	const tag = tagOf(tags, name, version);
 	return tag ? releaseByTag(repo, tag) : undefined;
 };
@@ -106,7 +106,7 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
-	const releases = await Promise.all(between.map((published) => releaseOf(repo, tags, name, published)));
+	const releases = await Promise.all(between.map(releaseOf(repo, tags, name)));
 	const notes = releases.flatMap((release, index) => {
 		const note = release ? noteFor(repo, between[index], release) : '';
 		return note ? [note] : [];

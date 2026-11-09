@@ -101,7 +101,7 @@ jobs:
         with:
           branch: update/pi-packages
           delete-branch: true
-          title: "Update pi packages"
+          title: "chore(deps): bump pi packages"
           commit-message: "chore(deps): bump pi packages"
           body: ${{ steps.update.outputs.changes }}
           token: ${{ secrets.PAT }}

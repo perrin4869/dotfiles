@@ -136,18 +136,14 @@ const bumps = resolvedPins.filter(({ current, version }) => version !== current)
 // pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,
 // and writes the new one on the next start. A bump that leaves the record behind makes that start show a notice for a
 // version we just pinned and rewrite settings.json, so move the records along with the pins.
-function movedChangelogRecords(records = {}, bumps) {
-	const moved = new Map(bumps.map(({ name, current, version }) => [`npm:${name}@${current}`, { name, version }]));
-	return Object.fromEntries(
-		Object.entries(records).map(([key, shown]) => {
-			const { source, ...rest } = JSON.parse(key);
-			const next = moved.get(source);
-			return next ? [JSON.stringify({ source: `npm:${next.name}@${next.version}`, ...rest }), next.version] : [key, shown];
-		}),
-	);
-}
-
-const extensionChangelogVersions = movedChangelogRecords(settings.extensionChangelogVersions, bumps);
+const movedPins = new Map(bumps.map(({ name, current, version }) => [`npm:${name}@${current}`, { name, version }]));
+const extensionChangelogVersions = Object.fromEntries(
+	Object.entries(settings.extensionChangelogVersions ?? {}).map(([key, shown]) => {
+		const { source, ...rest } = JSON.parse(key);
+		const moved = movedPins.get(source);
+		return moved ? [JSON.stringify({ source: `npm:${moved.name}@${moved.version}`, ...rest }), moved.version] : [key, shown];
+	}),
+);
 
 // pi writes the file this way, so an update only shows the changed versions
 await writeFile(

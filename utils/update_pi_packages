@@ -127,9 +127,8 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
-// each package in settings order, pinned to the version the registry resolved it to; the registry document contributes
-// only what the rest of the script reads
-const resolvedPins = await Promise.all(
+// the registry's answer for each package in settings order, keeping only what the rest of the script reads from it
+const registry = await Promise.all(
 	(settings.packages ?? []).map(async (spec) => {
 		const { name, current } = parsePin(spec);
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
@@ -137,8 +136,8 @@ const resolvedPins = await Promise.all(
 	}),
 );
 
-const packages = resolvedPins.map(({ name, version }) => `npm:${name}@${version}`);
-const bumps = resolvedPins.filter(({ current, version }) => version !== current);
+const packages = registry.map(({ name, version }) => `npm:${name}@${version}`);
+const bumps = registry.filter(({ current, version }) => version !== current);
 
 // pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,
 // and writes the new one on the next start. A bump that leaves the record behind makes that start show a notice for a

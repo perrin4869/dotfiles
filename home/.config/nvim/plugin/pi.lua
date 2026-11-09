@@ -6,7 +6,6 @@ yall.setup('pi', { keymap_prefix = '<leader>P' })
 yall.very_lazy('pi')
 
 local map = require('map').create({ desc = 'pi', desc_separator = ': ' })
-local pi_terminal = require('pi_terminal')
 
 --- @param bufnr integer
 local function is_pi_terminal(bufnr)
@@ -14,7 +13,7 @@ local function is_pi_terminal(bufnr)
 	if not ok or not chan_info.argv then
 		return false
 	end
-	return pi_terminal.matches(chan_info.argv)
+	return vim.fs.basename(chan_info.argv[1] or '') == 'pi'
 end
 
 -- like the claude terminal, a session restore recreates pi as a plain terminal; replace it with the

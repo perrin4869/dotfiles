@@ -112,14 +112,16 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 		return note ? [note] : [];
 	});
 
+	// notes sit a blank line apart, and the budget has to count those separators as well as the notes
+	const separator = '\n\n';
 	const kept = [];
 	let size = 0;
 	for (const note of notes) {
-		size += (kept.length > 0 ? 2 : 0) + note.length;
-		if (size > limit) return `${kept.join('\n\n')}\n\n[More release notes](https://github.com/${repo}/releases)`;
+		size += (kept.length > 0 ? separator.length : 0) + note.length;
+		if (size > limit) return `${kept.join(separator)}${separator}[More release notes](https://github.com/${repo}/releases)`;
 		kept.push(note);
 	}
-	return kept.join('\n\n');
+	return kept.join(separator);
 }
 
 const bumpLine = ({ name, current, version }) =>

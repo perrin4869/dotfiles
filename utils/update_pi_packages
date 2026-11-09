@@ -7,7 +7,8 @@ import { writeFile } from 'node:fs/promises';
 import extensions from '../home/.pi/agent/extensions/package.json' with { type: 'json' };
 import settings from '../home/.pi/agent/settings.json' with { type: 'json' };
 
-const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
+// an npm source pinned to an exact version, which is the only kind this script knows how to bump
+const PINNED_SPEC = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
 
 // at most this many characters of notes per package, so the whole body stays under what GitHub accepts
 const NOTES_PER_PACKAGE = 4000;
@@ -29,8 +30,8 @@ async function releaseByTag(repo, tag) {
 	return response.json();
 }
 
-// `owner/repo` of a package's repository field, when it is on GitHub
-const githubRepo = ({ repository }) => {
+// `owner/repo` of a registry document's repository field, when it is on GitHub
+const githubRepo = (repository) => {
 	const url = typeof repository === 'string' ? repository : repository?.url;
 	return /github\.com[/:]([^/]+\/[^/.]+)/.exec(url ?? '')?.[1];
 };
@@ -87,12 +88,12 @@ const noteFor = (repo, version, { body, html_url }) =>
 
 // Release notes of every stable version after `current` up to `version`, newest first, cut at whole versions to fit
 // `limit`; empty when the repo publishes none
-async function releaseNotes({ name, current, version, registry }, limit) {
-	const repo = githubRepo(registry);
+async function releaseNotes({ name, current, version, versions, repository }, limit) {
+	const repo = githubRepo(repository);
 	const [from, to] = [parseVersion(current), parseVersion(version)];
 	if (!repo || !from || !to) return '';
 
-	const between = versionsBetween(registry.versions, from, to);
+	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
 	const releases = await Promise.all(between.map((published) => releaseOf(repo, tags, name, published)));
 	const notes = releases.flatMap((release, index) => {
@@ -113,32 +114,44 @@ async function releaseNotes({ name, current, version, registry }, limit) {
 const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
-// one entry per pinned package, in settings order; a spec that is not pinned stays as it is
+// One entry per package, in settings order: what to write into settings, and from the registry document only what the
+// rest of the script needs. A spec this script does not pin is carried through as it is.
 const resolved = await Promise.all(
 	(settings.packages ?? []).map(async (spec) => {
-		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
-		if (!match) return { spec };
+		const match = typeof spec === 'string' ? PINNED_SPEC.exec(spec) : null;
+		if (!match) {
+			// a `git:` or path source is none of this script's business, but an npm source that is not a pin will never
+			// be updated, which is a mistake someone should hear about
+			if (typeof spec === 'string' && spec.startsWith('npm:')) {
+				console.error(`${spec}: not an npm:<name>@<version> pin, leaving it as it is`);
+			}
+			return { spec };
+		}
 		const [, name, current] = match;
-		const registry = await getRegistry(name);
-		const version = registry['dist-tags'].latest;
-		if (version === current) return { spec };
-		return { spec: `npm:${name}@${version}`, bump: { name, current, version, registry } };
+		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
+		const version = tags.latest;
+		return { spec: `npm:${name}@${version}`, name, current, version, versions, repository };
 	}),
 );
 
 const packages = resolved.map(({ spec }) => spec);
-const bumps = resolved.flatMap(({ bump }) => (bump ? [bump] : []));
+const bumps = resolved.filter((entry) => entry.current !== undefined && entry.current !== entry.version);
 
-// pi records the last seen version per package on boot, so move those records along with the pins
-// instead of leaving the next launch to rewrite settings.json
-const bumped = new Map(bumps.map(({ name, current, version }) => [`npm:${name}@${current}`, { name, version }]));
-const extensionChangelogVersions = Object.fromEntries(
-	Object.entries(settings.extensionChangelogVersions ?? {}).map(([key, seen]) => {
-		const { source, ...rest } = JSON.parse(key);
-		const next = bumped.get(source);
-		return next ? [JSON.stringify({ source: `npm:${next.name}@${next.version}`, ...rest }), next.version] : [key, seen];
-	}),
-);
+// pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,
+// and writes the new one on the next start. A bump that leaves the record behind makes that start show a notice for a
+// version we just pinned and rewrite settings.json, so move the records along with the pins.
+function movedChangelogRecords(records = {}, bumps) {
+	const moved = new Map(bumps.map(({ name, current, version }) => [`npm:${name}@${current}`, { name, version }]));
+	return Object.fromEntries(
+		Object.entries(records).map(([key, shown]) => {
+			const { source, ...rest } = JSON.parse(key);
+			const next = moved.get(source);
+			return next ? [JSON.stringify({ source: `npm:${next.name}@${next.version}`, ...rest }), next.version] : [key, shown];
+		}),
+	);
+}
+
+const extensionChangelogVersions = movedChangelogRecords(settings.extensionChangelogVersions, bumps);
 
 // pi writes the file this way, so an update only shows the changed versions
 await writeFile(

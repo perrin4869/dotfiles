@@ -668,3 +668,11 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/pi.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/pi.nvim
 	url = https://github.com/Kidimos/pi.nvim
+[submodule "deps/busted"]
+	path = deps/busted
+	url = https://github.com/LuaCATS/busted
+	ignore = untracked
+[submodule "deps/luassert"]
+	path = deps/luassert
+	url = https://github.com/LuaCATS/luassert
+	ignore = untracked

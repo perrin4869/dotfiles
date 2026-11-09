@@ -20,19 +20,14 @@
           "*/*/*/*.lua",
           "*/*/plenary.nvim/lua/plenary/busted.lua"
         ]
-      }
+      },
+      "deps/busted/library",
+      "deps/luassert/library"
     ]
   },
   "diagnostics": {
     "disable": [
       "unnecessary-if"
-    ],
-    "globals": [
-      "describe",
-      "before_each",
-      "after_each",
-      "it",
-      "assert"
     ]
   }
 }

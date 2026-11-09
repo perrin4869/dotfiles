@@ -58,7 +58,7 @@ jobs:
         with:
           branch: update/${{ matrix.dep }}/${{ steps.check.outputs.version }}
           delete-branch: true
-          title: "Update ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
+          title: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           commit-message: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           token: ${{ secrets.PAT }}
           # Review cannot be requested from pull request author. - https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request

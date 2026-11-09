@@ -114,10 +114,12 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
-// One entry per package, in settings order: what to write into settings, and from the registry document only what the
-// rest of the script needs. A spec this script does not pin is carried through as it is.
+const specs = settings.packages ?? [];
+
+// What the registry says about each pinned spec, in the same order as `specs`, with `undefined` where a spec is not a
+// pin: only the fields the rest of the script reads, not the whole registry document.
 const resolved = await Promise.all(
-	(settings.packages ?? []).map(async (spec) => {
+	specs.map(async (spec) => {
 		const match = typeof spec === 'string' ? PINNED_SPEC.exec(spec) : null;
 		if (!match) {
 			// a `git:` or path source is none of this script's business, but an npm source that is not a pin will never
@@ -125,17 +127,22 @@ const resolved = await Promise.all(
 			if (typeof spec === 'string' && spec.startsWith('npm:')) {
 				console.error(`${spec}: not an npm:<name>@<version> pin, leaving it as it is`);
 			}
-			return { spec };
+			return undefined;
 		}
 		const [, name, current] = match;
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
 		const version = tags.latest;
-		return { spec: `npm:${name}@${version}`, name, current, version, versions, repository };
+		return { name, current, version, versions, repository };
 	}),
 );
 
-const packages = resolved.map(({ spec }) => spec);
-const bumps = resolved.filter((entry) => entry.current !== undefined && entry.current !== entry.version);
+// the pin to write for each spec: the version the registry resolved to, or the spec itself where nothing resolved
+const packages = specs.map((spec, index) => {
+	const found = resolved[index];
+	return found ? `npm:${found.name}@${found.version}` : spec;
+});
+
+const bumps = resolved.filter((found) => found && found.version !== found.current);
 
 // pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,
 // and writes the new one on the next start. A bump that leaves the record behind makes that start show a notice for a

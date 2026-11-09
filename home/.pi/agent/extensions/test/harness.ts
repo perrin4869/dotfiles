@@ -1,3 +1,4 @@
+import type { TUI } from '@earendil-works/pi-tui';
 import {
 	createFauxCore,
 	fauxProvider,
@@ -74,6 +75,8 @@ export type HarnessOptions = {
 	projectSettings?: object;
 	// pi leaves project settings out until the project is trusted
 	projectTrusted?: boolean;
+	// a TUI to install as the session's UI, for extensions that need one for widgets or terminal input
+	tui?: TUI;
 };
 
 export type NotifyListener = ExtensionUIContext['notify'];
@@ -89,6 +92,7 @@ export type StartOptions = {
 export type Harness = Disposable & {
 	session: AgentSession;
 	respond: (...steps: FauxResponseStep[]) => void;
+	tui?: TUI;
 };
 
 // Everything lives in memory, so these paths are never created: pi only needs them to look for resources there.
@@ -174,19 +178,41 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		model,
 	});
 
-	return {
+	const harness: Harness = {
 		session,
+		tui: options.tui,
 		respond: (...steps) => faux.setResponses(steps),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
-		[Symbol.dispose]: () => session.dispose(),
+		[Symbol.dispose]: () => {
+			// extensions stop their timers on session_shutdown, which session.dispose() does not fire; awaiting it is
+			// not an option either, since a handler that uses its ctx then runs after the session is gone
+			void session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' }).catch(() => {});
+			session.dispose();
+		},
 	};
+	return harness;
 }
 
 // binds the extensions, which fires session_start; startSession does it right away, createHarness leaves it to the test
-export function startHarness({ session }: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
+export function startHarness(harness: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
+	const { session, tui } = harness;
 	// pi's own do-nothing UI, which it uses until one is bound
 	const ui = session.extensionRunner.getUIContext();
-	return session.bindExtensions({ uiContext: onNotify ? { ...ui, notify: onNotify } : ui, onError });
+	// With a TUI, the two members that need one are wired to it the way pi's interactive UI does: a widget factory
+	// receives the TUI, and raw input goes to the TUI's own listener list, ahead of any focused component.
+	const uiContext: ExtensionUIContext = tui
+		? {
+				...ui,
+				notify: onNotify ?? ((message, type) => ui.notify(message, type)),
+				setWidget: (_key, content) => {
+					if (typeof content === 'function') content(tui, ui.theme);
+				},
+				onTerminalInput: (handler) => tui.addInputListener(handler),
+			}
+		: onNotify
+			? { ...ui, notify: onNotify }
+			: ui;
+	return session.bindExtensions({ uiContext, onError });
 }
 
 // pi reports errors thrown by extension handlers to onError and carries on; rethrowing rejects whatever fired the

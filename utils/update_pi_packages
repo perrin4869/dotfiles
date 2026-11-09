@@ -115,34 +115,34 @@ const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
 const specs = settings.packages ?? [];
+const pinned = specs.flatMap((spec) => {
+	const match = typeof spec === 'string' ? PINNED_SPEC.exec(spec) : null;
+	if (match) return [{ name: match[1], current: match[2] }];
+	// a `git:` or path source is none of this script's business, but an npm source that is not a pin will never be
+	// updated, which is a mistake someone should hear about
+	if (typeof spec === 'string' && spec.startsWith('npm:')) {
+		console.error(`${spec}: not an npm:<name>@<version> pin, leaving it as it is`);
+	}
+	return [];
+});
 
-// What the registry says about each pinned spec, in the same order as `specs`, with `undefined` where a spec is not a
-// pin: only the fields the rest of the script reads, not the whole registry document.
-const resolved = await Promise.all(
-	specs.map(async (spec) => {
-		const match = typeof spec === 'string' ? PINNED_SPEC.exec(spec) : null;
-		if (!match) {
-			// a `git:` or path source is none of this script's business, but an npm source that is not a pin will never
-			// be updated, which is a mistake someone should hear about
-			if (typeof spec === 'string' && spec.startsWith('npm:')) {
-				console.error(`${spec}: not an npm:<name>@<version> pin, leaving it as it is`);
-			}
-			return undefined;
-		}
-		const [, name, current] = match;
+// only what the rest of the script reads from a registry document
+const checked = await Promise.all(
+	pinned.map(async ({ name, current }) => {
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
-		const version = tags.latest;
-		return { name, current, version, versions, repository };
+		return { name, current, version: tags.latest, versions, repository };
 	}),
 );
 
-// the pin to write for each spec: the version the registry resolved to, or the spec itself where nothing resolved
-const packages = specs.map((spec, index) => {
-	const found = resolved[index];
-	return found ? `npm:${found.name}@${found.version}` : spec;
-});
+const bumps = checked.filter(({ current, version }) => version !== current);
+const latestByName = new Map(checked.map(({ name, version }) => [name, version]));
 
-const bumps = resolved.filter((found) => found && found.version !== found.current);
+// the pin to write for each spec: the version the registry resolved to, or the spec itself where nothing resolved
+const packages = specs.map((spec) => {
+	const name = typeof spec === 'string' ? PINNED_SPEC.exec(spec)?.[1] : undefined;
+	const version = name === undefined ? undefined : latestByName.get(name);
+	return version === undefined ? spec : `npm:${name}@${version}`;
+});
 
 // pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,
 // and writes the new one on the next start. A bump that leaves the record behind makes that start show a notice for a

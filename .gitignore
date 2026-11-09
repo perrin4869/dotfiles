@@ -110,3 +110,6 @@ home/.npmrc.local
 /lua_modules
 /luarocks
 /lua
+
+# headless Neovim writes this into the working directory when its state dir is unusable
+/nvim.log

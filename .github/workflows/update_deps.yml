@@ -30,7 +30,8 @@ jobs:
       - name: Check for update
         id: check
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # the run's own token, for the GitHub lookups check_upstream_version makes
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"
           if [[ -n "$new_version" ]]; then
@@ -83,11 +84,14 @@ jobs:
 
       - name: Update pinned packages
         id: update
+        env:
+          # the run's own token, for the release notes in the PR body
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           {
-            echo 'changes<<EOF'
+            echo 'changes<<PI_PACKAGES_EOF'
             utils/update_pi_packages
-            echo EOF
+            echo PI_PACKAGES_EOF
           } >> "$GITHUB_OUTPUT"
 
       - name: Create PR
@@ -99,10 +103,7 @@ jobs:
           delete-branch: true
           title: "Update pi packages"
           commit-message: "chore(deps): bump pi packages"
-          body: |
-            ```
-            ${{ steps.update.outputs.changes }}
-            ```
+          body: ${{ steps.update.outputs.changes }}
           token: ${{ secrets.PAT }}
 
       - name: Assign PR

@@ -96,8 +96,13 @@ const noteFor = (repo, version, { body, html_url }) =>
 // `limit`; empty when the repo publishes none
 async function releaseNotes({ name, current, version, versions, repository }, limit) {
 	const repo = githubRepo(repository);
+	if (!repo) {
+		console.error(`${name}: no GitHub repository in the registry document, so no release notes`);
+		return '';
+	}
+	// a pin or a dist-tag that is not x.y.z leaves no range to walk; the caller turns this into a per-package error
 	const [from, to] = [parseVersion(current), parseVersion(version)];
-	if (!repo || !from || !to) return '';
+	if (!from || !to) throw new Error(`cannot read a version range from ${current} to ${version}`);
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);

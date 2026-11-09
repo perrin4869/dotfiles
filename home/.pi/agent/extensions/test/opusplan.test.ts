@@ -6,7 +6,7 @@ import {
 	type Harness,
 	type HarnessOptions,
 	type NotifyListener,
-	type StartOptions,
+	type BindOptions,
 	packageExtension,
 	startSession,
 } from './harness.ts';
@@ -16,7 +16,7 @@ const planMode = await packageExtension('@narumitw/pi-plan-mode');
 const models = [{ id: 'start' }, { id: 'plan' }, { id: 'execute' }];
 const ENABLED = { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/execute' } };
 
-const start = (options: Partial<HarnessOptions & StartOptions> = {}) =>
+const start = (options: Partial<HarnessOptions & BindOptions> = {}) =>
 	startSession({ extensions: [planMode, extension('opusplan')], models, model: 'start', ...options });
 
 async function turn(h: Harness) {

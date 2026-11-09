@@ -75,13 +75,13 @@ export type HarnessOptions = {
 	projectSettings?: object;
 	// pi leaves project settings out until the project is trusted
 	projectTrusted?: boolean;
-	// a TUI to install as the session's UI, for extensions that need one for widgets or terminal input
-	tui?: TUI;
 };
 
 export type NotifyListener = ExtensionUIContext['notify'];
 
-export type StartOptions = {
+export type BindOptions = {
+	// a TUI to install as the session's UI, for extensions that need one for widgets or terminal input
+	tui?: TUI;
 	// receives every ctx.ui.notify()
 	onNotify?: NotifyListener;
 	// receives errors thrown by extension handlers; by default they fail whatever fired the event
@@ -92,7 +92,6 @@ export type StartOptions = {
 export type Harness = Disposable & {
 	session: AgentSession;
 	respond: (...steps: FauxResponseStep[]) => void;
-	tui?: TUI;
 };
 
 // Everything lives in memory, so these paths are never created: pi only needs them to look for resources there.
@@ -180,7 +179,6 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 
 	const harness: Harness = {
 		session,
-		tui: options.tui,
 		respond: (...steps) => faux.setResponses(steps),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
 		[Symbol.dispose]: () => {
@@ -194,8 +192,8 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 }
 
 // binds the extensions, which fires session_start; startSession does it right away, createHarness leaves it to the test
-export function startHarness(harness: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
-	const { session, tui } = harness;
+export function bindExtensions(harness: Harness, { tui, onNotify, onError = rethrow }: BindOptions = {}) {
+	const { session } = harness;
 	// pi's own do-nothing UI, which it uses until one is bound
 	const ui = session.extensionRunner.getUIContext();
 	// With a TUI, the two members that need one are wired to it the way pi's interactive UI does: a widget factory
@@ -222,18 +220,18 @@ function rethrow(error: ExtensionError): never {
 }
 
 // a started session, for the tests that need nothing between creating and starting it
-export async function startSession(options: HarnessOptions & StartOptions) {
+export async function startSession(options: HarnessOptions & BindOptions) {
 	// disposes the session if starting it fails
 	using cleanup = new DisposableStack();
 	const harness = cleanup.use(await createHarness(options));
-	await startHarness(harness, options);
+	await bindExtensions(harness, options);
 	cleanup.move();
 	return harness;
 }
 
 // Pretend the extension that registered this tool came from a package, e.g. 'npm:@narumitw/pi-lsp@1.0.0'. pi shares
 // the extension's source with all its tools and the session, so this relabels the whole extension, in place; call it
-// before startHarness, since extensions may read tool sources on session_start.
+// before bindExtensions, since extensions may read tool sources on session_start.
 export function setToolSource(session: AgentSession, name: string, source: string) {
 	const tool = session.extensionRunner.getAllRegisteredTools().find(({ definition }) => definition.name === name);
 	if (tool === undefined) throw new Error(`no extension registered ${name}`);

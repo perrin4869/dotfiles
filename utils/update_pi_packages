@@ -126,16 +126,16 @@ const pinned = specs.flatMap((spec) => {
 	return [];
 });
 
-// only what the rest of the script reads from a registry document
-const checked = await Promise.all(
+// each pin resolved against the registry, keeping only what the rest of the script reads from it
+const resolvedPins = await Promise.all(
 	pinned.map(async ({ name, current }) => {
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
 		return { name, current, version: tags.latest, versions, repository };
 	}),
 );
 
-const bumps = checked.filter(({ current, version }) => version !== current);
-const latestByName = new Map(checked.map(({ name, version }) => [name, version]));
+const bumps = resolvedPins.filter(({ current, version }) => version !== current);
+const latestByName = new Map(resolvedPins.map(({ name, version }) => [name, version]));
 
 // the pin to write for each spec: the version the registry resolved to, or the spec itself where nothing resolved
 const packages = specs.map((spec) => {

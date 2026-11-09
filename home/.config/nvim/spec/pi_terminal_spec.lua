@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field -- luassert hangs its own fields on `assert`
 local pi_terminal = require('pi_terminal')
 
 describe('pi_terminal.matches', function()

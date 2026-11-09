@@ -5,8 +5,16 @@ local M = {}
 
 local ROOT = vim.fn.getcwd()
 
+---@class Child
+---@field channel integer
+---@field lua fun(code: string, ...: any): any
+---@field lua_get fun(code: string): any
+---@field cmd fun(command: string): table
+---@field call fun(method: string, ...: any): any
+---@field stop fun()
+
 --- @param opts? { config?: boolean, width?: integer, height?: integer }
---- @return table child
+--- @return Child
 function M.start(opts)
 	opts = opts or {}
 	local args = { vim.v.progpath, '--embed', '--headless' }

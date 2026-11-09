@@ -26,6 +26,13 @@
   "diagnostics": {
     "disable": [
       "unnecessary-if"
+    ],
+    "globals": [
+      "describe",
+      "before_each",
+      "after_each",
+      "it",
+      "assert"
     ]
   }
 }

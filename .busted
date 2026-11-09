@@ -3,7 +3,8 @@
 return {
 	_all = {
 		coverage = false,
-		lpath = 'home/.config/nvim/lua/?.lua;home/.config/nvim/lua/?/init.lua;spec/?.lua',
+		lpath = 'home/.config/nvim/lua/?.lua;home/.config/nvim/lua/?/init.lua;home/.config/nvim/spec/?.lua',
+		ROOT = { 'home/.config/nvim/spec' },
 		lua = 'nlua',
 	},
 	default = {

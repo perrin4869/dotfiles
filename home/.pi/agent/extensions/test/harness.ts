@@ -1,3 +1,4 @@
+import type { TUI, TuiInputListener } from '@earendil-works/pi-tui';
 import {
 	createFauxCore,
 	fauxProvider,
@@ -74,6 +75,8 @@ export type HarnessOptions = {
 	projectSettings?: object;
 	// pi leaves project settings out until the project is trusted
 	projectTrusted?: boolean;
+	// a TUI to install as the session's UI, for extensions that need one for widgets or terminal input
+	tui?: TUI;
 };
 
 export type NotifyListener = ExtensionUIContext['notify'];
@@ -89,7 +92,24 @@ export type StartOptions = {
 export type Harness = Disposable & {
 	session: AgentSession;
 	respond: (...steps: FauxResponseStep[]) => void;
+	// what the terminal would hand to the input listeners, e.g. the bytes a key produces; true when one consumed it
+	type: (data: string) => boolean;
+	tui?: TUI;
 };
+
+// the input listeners the UI registered, per harness
+const inputListeners = new WeakMap<Harness, Set<TuiInputListener>>();
+
+// pi-tui's dispatch: a listener may consume the input or hand on something else
+function dispatch(listeners: Set<TuiInputListener>, data: string): boolean {
+	let current = data;
+	for (const listener of listeners) {
+		const result = listener(current);
+		if (result?.consume) return true;
+		if (result?.data !== undefined) current = result.data;
+	}
+	return false;
+}
 
 // Everything lives in memory, so these paths are never created: pi only needs them to look for resources there.
 const agentDir = '/nonexistent/pi-test/agent';
@@ -174,9 +194,12 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		model,
 	});
 
-	return {
+	const listeners = new Set<TuiInputListener>();
+	const harness: Harness = {
 		session,
+		tui: options.tui,
 		respond: (...steps) => faux.setResponses(steps),
+		type: (data) => dispatch(listeners, data),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
 		[Symbol.dispose]: () => {
 			// extensions stop their timers on session_shutdown, which session.dispose() does not fire; awaiting it is
@@ -185,13 +208,35 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 			session.dispose();
 		},
 	};
+	inputListeners.set(harness, listeners);
+	return harness;
 }
 
 // binds the extensions, which fires session_start; startSession does it right away, createHarness leaves it to the test
-export function startHarness({ session }: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
+export function startHarness(harness: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
+	const { session, tui } = harness;
 	// pi's own do-nothing UI, which it uses until one is bound
 	const ui = session.extensionRunner.getUIContext();
-	return session.bindExtensions({ uiContext: onNotify ? { ...ui, notify: onNotify } : ui, onError });
+	const listeners = inputListeners.get(harness) ?? new Set<TuiInputListener>();
+	const base: ExtensionUIContext = {
+		...ui,
+		notify: onNotify ?? ((message, type) => ui.notify(message, type)),
+		// raw input reaches listeners before any focused component, so the harness dispatches it for them
+		onTerminalInput: (handler) => {
+			listeners.add(handler);
+			return () => listeners.delete(handler);
+		},
+	};
+	// an extension only reaches a TUI through a widget factory, as in pi's interactive UI
+	const uiContext: ExtensionUIContext = tui
+		? {
+				...base,
+				setWidget: (_key, content) => {
+					if (typeof content === 'function') content(tui, ui.theme);
+				},
+			}
+		: base;
+	return session.bindExtensions({ uiContext, onError });
 }
 
 // pi reports errors thrown by extension handlers to onError and carries on; rethrowing rejects whatever fired the

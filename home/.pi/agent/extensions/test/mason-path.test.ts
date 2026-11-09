@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
-import { createHarness, extension, overrideEnv, setToolSource, startHarness, stubTools } from './harness.ts';
+import { bindExtensions, createHarness, extension, overrideEnv, setToolSource, stubTools } from './harness.ts';
 
 // read when the extension loads; node --test runs each file in its own process
 env.XDG_DATA_HOME = '/xdg';
@@ -18,7 +18,7 @@ async function pathAfter(tools: string[], path = '/usr/bin') {
 		factories: [stubTools('lsp_hover'), stubTools('other')],
 	});
 	setToolSource(harness.session, 'lsp_hover', 'npm:@narumitw/pi-lsp@1.0.0');
-	await startHarness(harness);
+	await bindExtensions(harness);
 	for (const tool of tools) {
 		harness.respond(
 			fauxAssistantMessage(fauxToolCall(tool, {}), { stopReason: 'toolUse' }),

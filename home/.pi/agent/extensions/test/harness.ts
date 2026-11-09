@@ -1,3 +1,4 @@
+import type { TUI } from '@earendil-works/pi-tui';
 import {
 	createFauxCore,
 	fauxProvider,
@@ -78,7 +79,9 @@ export type HarnessOptions = {
 
 export type NotifyListener = ExtensionUIContext['notify'];
 
-export type StartOptions = {
+export type BindOptions = {
+	// a TUI to install as the session's UI, for extensions that need one for widgets or terminal input
+	tui?: TUI;
 	// receives every ctx.ui.notify()
 	onNotify?: NotifyListener;
 	// receives errors thrown by extension handlers; by default they fail whatever fired the event
@@ -174,19 +177,40 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		model,
 	});
 
-	return {
+	const harness: Harness = {
 		session,
 		respond: (...steps) => faux.setResponses(steps),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
-		[Symbol.dispose]: () => session.dispose(),
+		[Symbol.dispose]: () => {
+			// extensions stop their timers on session_shutdown, which session.dispose() does not fire; awaiting it is
+			// not an option either, since a handler that uses its ctx then runs after the session is gone
+			void session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' }).catch(() => {});
+			session.dispose();
+		},
 	};
+	return harness;
 }
 
 // binds the extensions, which fires session_start; startSession does it right away, createHarness leaves it to the test
-export function startHarness({ session }: Harness, { onNotify, onError = rethrow }: StartOptions = {}) {
+export function bindExtensions(harness: Harness, { tui, onNotify, onError = rethrow }: BindOptions = {}) {
+	const { session } = harness;
 	// pi's own do-nothing UI, which it uses until one is bound
 	const ui = session.extensionRunner.getUIContext();
-	return session.bindExtensions({ uiContext: onNotify ? { ...ui, notify: onNotify } : ui, onError });
+	// With a TUI, the two members that need one are wired to it the way pi's interactive UI does: a widget factory
+	// receives the TUI, and raw input goes to the TUI's own listener list, ahead of any focused component.
+	const uiContext: ExtensionUIContext = tui
+		? {
+				...ui,
+				notify: onNotify ?? ((message, type) => ui.notify(message, type)),
+				setWidget: (_key, content) => {
+					if (typeof content === 'function') content(tui, ui.theme);
+				},
+				onTerminalInput: (handler) => tui.addInputListener(handler),
+			}
+		: onNotify
+			? { ...ui, notify: onNotify }
+			: ui;
+	return session.bindExtensions({ uiContext, onError });
 }
 
 // pi reports errors thrown by extension handlers to onError and carries on; rethrowing rejects whatever fired the
@@ -196,18 +220,18 @@ function rethrow(error: ExtensionError): never {
 }
 
 // a started session, for the tests that need nothing between creating and starting it
-export async function startSession(options: HarnessOptions & StartOptions) {
+export async function startSession(options: HarnessOptions & BindOptions) {
 	// disposes the session if starting it fails
 	using cleanup = new DisposableStack();
 	const harness = cleanup.use(await createHarness(options));
-	await startHarness(harness, options);
+	await bindExtensions(harness, options);
 	cleanup.move();
 	return harness;
 }
 
 // Pretend the extension that registered this tool came from a package, e.g. 'npm:@narumitw/pi-lsp@1.0.0'. pi shares
 // the extension's source with all its tools and the session, so this relabels the whole extension, in place; call it
-// before startHarness, since extensions may read tool sources on session_start.
+// before bindExtensions, since extensions may read tool sources on session_start.
 export function setToolSource(session: AgentSession, name: string, source: string) {
 	const tool = session.extensionRunner.getAllRegisteredTools().find(({ definition }) => definition.name === name);
 	if (tool === undefined) throw new Error(`no extension registered ${name}`);

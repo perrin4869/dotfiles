@@ -3,5 +3,7 @@
   "tui.editor.historyPrevious": "ctrl+p",
   "tui.editor.historyNext": "ctrl+n",
   "app.model.cycleForward": "alt+p",
-  "app.model.cycleBackward": "alt+shift+p"
+  "app.model.cycleBackward": "alt+shift+p",
+  "app.model.select": "alt+l",
+  "app.tree.filter.labeledOnly": "alt+shift+l"
 }

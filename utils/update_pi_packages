@@ -13,28 +13,21 @@ const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
 const NOTES_PER_PACKAGE = 4000;
 const NOTES_BUDGET = 60000;
 
-// a repo tags every release the same way; these spellings are tried newest version first
-const TAG_FORMATS = [
-	(name, version) => `v${version}`,
-	(_name, version) => version,
-	(name, version) => `${name}@${version}`,
-];
-
 const registry = async (name) => {
 	const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2F')}`);
 	if (!response.ok) throw new Error(`${name}: registry answered ${response.status}`);
 	return response.json();
 };
 
-// the release a repo has for a tag, or undefined when it has none
-const release = async (repo, tag) => {
+// the release behind one tag; a repo that spells its tags differently answers 404, which is not an error
+async function releaseByTag(repo, tag) {
 	const response = await fetch(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`, {
 		headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {},
 	});
 	if (response.status === 404) return undefined;
 	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${tag}`);
 	return response.json();
-};
+}
 
 // `owner/repo` of a package's repository field, when it is on GitHub
 const githubRepo = ({ repository }) => {
@@ -59,39 +52,42 @@ const relink = (repo, body) =>
 		.replace(/(^|[^\w/`])#(\d+)\b/g, `$1${repo}#$2`)
 		.replace(/(^|[^\w/`])@([A-Za-z\d](?:[A-Za-z\d-]*[A-Za-z\d])?)\b(?![./]\w)/g, '$1`@$2`');
 
-// one version's section of the body, or '' when that release has no notes
-const note = (repo, version, { body, html_url }) =>
-	body?.trim() ? `### [${version}](${html_url})\n\n${relink(repo, body.trim())}` : '';
+// A repo spells its tags one way or another: `name@1.2.3` in a monorepo, `v1.2.3`, or bare `1.2.3`. Tried most
+// specific first, since a monorepo tags several packages in one namespace and a bare version could be another's.
+const tagSpellings = (name, version) => [`${name}@${version}`, `v${version}`, version];
 
-// the releases of every version in `between`, once the tag format is known; undefined when the repo publishes none
-async function releases(name, repo, between) {
-	for (const format of TAG_FORMATS) {
-		const newest = await release(repo, format(name, between[0]));
-		if (!newest) continue;
-		const older = await Promise.all(between.slice(1).map((version) => release(repo, format(name, version))));
-		return [newest, ...older];
+async function releaseOf(repo, name, version) {
+	for (const tag of tagSpellings(name, version)) {
+		const release = await releaseByTag(repo, tag);
+		if (release) return release;
 	}
 	return undefined;
 }
 
-// Release notes of every stable version after `current`, up to and including `version`, newest first, cut at whole
-// versions to fit `limit`; empty when unavailable
-async function releaseNotes(name, current, version, document, limit) {
+// one version's section of the body, or '' when that release has no notes
+const noteFor = (repo, version, { body, html_url }) =>
+	body?.trim() ? `### [${version}](${html_url})\n\n${relink(repo, body.trim())}` : '';
+
+// Release notes of every stable version after `current` up to `version`, newest first, cut at whole versions to fit
+// `limit`; empty when the repo publishes none
+async function releaseNotes({ name, current, version, document }, limit) {
 	const repo = githubRepo(document);
 	const [from, to] = [parseVersion(current), parseVersion(version)];
 	if (!repo || !from || !to) return '';
+
 	const between = versionsBetween(document.versions, from, to);
-	const found = between.length > 0 ? await releases(name, repo, between) : undefined;
-	if (!found) return '';
+	const releases = await Promise.all(between.map((published) => releaseOf(repo, name, published)));
+	const notes = releases.flatMap((release, index) => {
+		const note = release ? noteFor(repo, between[index], release) : '';
+		return note ? [note] : [];
+	});
 
 	const kept = [];
 	let size = 0;
-	for (const [index, released] of found.entries()) {
-		const text = released ? note(repo, between[index], released) : '';
-		if (!text) continue;
-		size += (kept.length > 0 ? 2 : 0) + text.length;
-		if (size > limit) return kept.join('\n\n') + `\n\n[More release notes](https://github.com/${repo}/releases)`;
-		kept.push(text);
+	for (const note of notes) {
+		size += (kept.length > 0 ? 2 : 0) + note.length;
+		if (size > limit) return `${kept.join('\n\n')}\n\n[More release notes](https://github.com/${repo}/releases)`;
+		kept.push(note);
 	}
 	return kept.join('\n\n');
 }
@@ -148,7 +144,7 @@ if (tested.length > 0) {
 const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
 for (const bump of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
 	// a missing release should not hold back the bump
-	const notes = await releaseNotes(bump.name, bump.current, bump.version, bump.document, limit).catch((error) => {
+	const notes = await releaseNotes(bump, limit).catch((error) => {
 		console.error(`${bump.name}: no release notes: ${error.message}`);
 		return '';
 	});

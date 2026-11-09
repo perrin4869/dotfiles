@@ -13,7 +13,7 @@ const PINNED = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
 const NOTES_PER_PACKAGE = 4000;
 const NOTES_BUDGET = 60000;
 
-const registry = async (name) => {
+const getRegistry = async (name) => {
 	const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2F')}`);
 	if (!response.ok) throw new Error(`${name}: registry answered ${response.status}`);
 	return response.json();
@@ -87,12 +87,12 @@ const noteFor = (repo, version, { body, html_url }) =>
 
 // Release notes of every stable version after `current` up to `version`, newest first, cut at whole versions to fit
 // `limit`; empty when the repo publishes none
-async function releaseNotes({ name, current, version, document }, limit) {
-	const repo = githubRepo(document);
+async function releaseNotes({ name, current, version, registry }, limit) {
+	const repo = githubRepo(registry);
 	const [from, to] = [parseVersion(current), parseVersion(version)];
 	if (!repo || !from || !to) return '';
 
-	const between = versionsBetween(document.versions, from, to);
+	const between = versionsBetween(registry.versions, from, to);
 	const tags = tagsOf(repo);
 	const releases = await Promise.all(between.map((published) => releaseOf(repo, tags, name, published)));
 	const notes = releases.flatMap((release, index) => {
@@ -119,10 +119,10 @@ const resolved = await Promise.all(
 		const match = typeof spec === 'string' ? PINNED.exec(spec) : null;
 		if (!match) return { spec };
 		const [, name, current] = match;
-		const document = await registry(name);
-		const version = document['dist-tags'].latest;
+		const registry = await getRegistry(name);
+		const version = registry['dist-tags'].latest;
 		if (version === current) return { spec };
-		return { spec: `npm:${name}@${version}`, bump: { name, current, version, document } };
+		return { spec: `npm:${name}@${version}`, bump: { name, current, version, registry } };
 	}),
 );
 

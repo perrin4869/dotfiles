@@ -89,11 +89,17 @@ test-neovim-cmds:
 	@NVIM_NOEXRC=1 nvim --headless --cmd 'luafile $(UTILS)/test_nvim_cmds.lua' \
 		&& echo "$(PASS) lazy-loaded commands match their plugins"
 
-.PHONY: test-nvim-spec
-# busted and nlua stay in ./.luarocks (luarocks init --local), never installed system-wide
-test-nvim-spec:
+# busted and nlua live in ./.luarocks, never installed system-wide, and run under the LuaJIT that Neovim embeds
+LUAROCKS_CONFIG := .luarocks/config-5.1.lua
+
+$(LUAROCKS_CONFIG):
 	$(call require,luarocks)
-	@test -f .luarocks/config-5.1.lua || luarocks init --local --lua-version 5.1
+	luarocks init --local --lua-version 5.1
+
+.PHONY: test-nvim-spec
+test-nvim-spec: $(LUAROCKS_CONFIG)
+	@# luarocks uses the system interpreter by default; luajit is the one a spec should see
+	@grep -q '^lua_interpreter' $< || echo 'lua_interpreter = "luajit"' >> $<
 	@eval "$$(luarocks path)" && luarocks test --prepare && echo "$(PASS) the nvim specs pass"
 
 .PHONY: test-lua-types

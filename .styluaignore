@@ -2,3 +2,4 @@ home/.local/
 home/.vim/
 deps/
 node_modules/
+home/.config/nvim/spec/libs/

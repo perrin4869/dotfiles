@@ -1,3 +1,4 @@
+local assert = require('luassert')
 local nvim = require('helpers/nvim')
 
 -- These run in a child Neovim rather than in the spec runner, so what is exercised is the config's own behaviour in a

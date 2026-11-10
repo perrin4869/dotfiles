@@ -1,3 +1,4 @@
+local assert = require('luassert')
 local map = require('map')
 local cleanup = require('helpers/cleanup')
 

@@ -12,7 +12,6 @@
       "spec/libs/**"
     ],
     "library": [
-      "home/.config/nvim/spec/types",
       "$VIMRUNTIME",
       {
         "path": "$NVIM_PACK",

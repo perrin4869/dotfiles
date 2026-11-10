@@ -6,15 +6,15 @@ yall.on_bufreadpre(function()
 		pattern = (vim.lsp.config --[[@as table<string, vim.lsp.Config>]])['emmylua_ls'].filetypes,
 		callback = function()
 			vim.cmd.packadd('lazydev.nvim')
-			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; busted and luassert
-			-- publish their own LuaCATS libraries, stowed under the data dir next to the specs' typed assert
+			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; the rest is for specs,
+			-- so it loads on their words or on the module they require rather than in every Lua file
 			local spec = vim.fn.stdpath('config') .. '/spec'
 			require('lazydev').setup({
 				library = {
-					{ path = spec .. '/libs/yo-dawg.nvim/lua' },
-					{ path = spec .. '/libs/busted/library' },
-					{ path = spec .. '/libs/luassert/library' },
-					{ path = spec .. '/types' },
+					{ path = spec .. '/libs/yo-dawg.nvim/lua', mods = { 'yo-dawg' } },
+					{ path = spec .. '/libs/busted/library', words = { 'describe' } },
+					{ path = spec .. '/libs/luassert/library', words = { 'assert' } },
+					{ path = spec .. '/types', words = { 'assert' } },
 				},
 			})
 

@@ -13,7 +13,7 @@ yall.on_bufreadpre(function()
 				library = {
 					{ path = spec .. '/libs/yo-dawg.nvim/lua', mods = { 'yo-dawg' } },
 					{ path = spec .. '/libs/busted/library', words = { 'describe' } },
-					{ path = spec .. '/libs/luassert/library', words = { 'assert' } },
+					{ path = spec .. '/libs/luassert/library', mods = { 'luassert' } },
 				},
 			})
 

@@ -97,6 +97,7 @@ $(LUAROCKS_CONFIG):
 	$(call require,luarocks)
 	luarocks init --local --lua-version 5.1
 
+# the specs run in nlua, a child of busted that only inherits the environment: export what `luarocks path` prints
 .PHONY: test-nvim-spec
 test-nvim-spec: $(LUAROCKS_CONFIG)
 	@eval "$$(luarocks path)" && luarocks test --prepare && echo "$(PASS) the nvim specs pass"

@@ -25,3 +25,21 @@ describe('yall.ensure', function()
 		assert.is_false(child:exec_lua([[return require('yall').ensure('not-a-plugin')]], {}))
 	end)
 end)
+
+-- Registering a loader is enough: `ensure` runs it without requiring anything, so the two cases differ only in the
+-- environment
+describe('yall.disable through the environment', function()
+	it('loads a module the variable does not name', function()
+		local yall = require('yall')
+		yall.on_load('probe-module', function() end)
+		assert.is_true(yall.ensure('probe-module'))
+	end)
+
+	it('leaves a module whose variable is set unloaded', function()
+		local yall = require('yall')
+		yall.on_load('switched-off', function() end)
+		vim.env.YALL_DISABLE_SWITCHED_OFF = '1'
+		assert.is_false(yall.ensure('switched-off'))
+		vim.env.YALL_DISABLE_SWITCHED_OFF = nil
+	end)
+end)

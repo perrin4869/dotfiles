@@ -59,7 +59,7 @@ end
 --- @param mod Yall.Entry
 --- @return boolean
 local function is_disabled(mod, name)
-	return mod.disabled or vim.env['DEFER_DISABLE_' .. string.upper(string.gsub(name, '-', '_'))] ~= nil
+	return mod.disabled or vim.env['YALL_DISABLE_' .. string.upper(string.gsub(name, '-', '_'))] ~= nil
 end
 
 local M = {}

@@ -8,8 +8,11 @@
     ]
   },
   "workspace": {
+    "ignoreGlobs": [
+      "spec/libs/**"
+    ],
     "library": [
-      "home/.config/nvim/lua-types",
+      "home/.config/nvim/spec/types",
       "$VIMRUNTIME",
       {
         "path": "$NVIM_PACK",
@@ -22,9 +25,9 @@
           "*/*/plenary.nvim/lua/plenary/busted.lua"
         ]
       },
-      "home/.local/share/nvim/lua-libs/yo-dawg.nvim/lua",
-      "home/.local/share/nvim/lua-types/busted/library",
-      "home/.local/share/nvim/lua-types/luassert/library"
+      "home/.config/nvim/spec/libs/yo-dawg.nvim/lua",
+      "home/.config/nvim/spec/libs/busted/library",
+      "home/.config/nvim/spec/libs/luassert/library"
     ]
   },
   "diagnostics": {

@@ -238,7 +238,8 @@ end
 ---@param name string The command name
 ---@param module string The module to load
 function M.cmd(name, module)
-	if vim.fn.exists(':' .. name) ~= 0 then
+	-- `exists()` also answers for a name that is merely a prefix of other commands, which is no reason to refuse it
+	if vim.api.nvim_get_commands({})[name] ~= nil or vim.fn.exists(':' .. name) == 2 then
 		error("yall.cmd: '" .. name .. "' already exists")
 	end
 

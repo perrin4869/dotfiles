@@ -100,7 +100,7 @@ $(LUAROCKS_CONFIG):
 # the specs run in nlua, a child of busted that only inherits the environment: export what `luarocks path` prints
 .PHONY: test-nvim-spec
 test-nvim-spec: $(LUAROCKS_CONFIG)
-	@eval "$$(luarocks path)" && luarocks test --prepare && echo "$(PASS) the nvim specs pass"
+	@eval "$$(luarocks path)" && luarocks test && echo "$(PASS) the nvim specs pass"
 
 .PHONY: test-lua-types
 # .emmyrc.check.json lists the library that lazydev provides per file in the editor; with HOME set to

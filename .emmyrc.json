@@ -14,10 +14,6 @@
       "home/.local/share/nvim/mason/**",
       "home/.local/share/nvim/mason-registry/**",
       "home/.local/share/nvim/undo/**"
-    ],
-    "library": [
-      "deps/busted/library",
-      "deps/luassert/library"
     ]
   },
   "diagnostics": {

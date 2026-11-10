@@ -6,13 +6,13 @@ yall.on_bufreadpre(function()
 		pattern = (vim.lsp.config --[[@as table<string, vim.lsp.Config>]])['emmylua_ls'].filetypes,
 		callback = function()
 			vim.cmd.packadd('lazydev.nvim')
-			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; the LuaCATS libraries
-			-- and the specs' typed assert live in the checkout, three directories up from the config
-			local repo = vim.fn.fnamemodify(vim.fn.stdpath('config') .. '/../../..', ':p')
+			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; busted and luassert
+			-- publish their own LuaCATS libraries, stowed under the data dir next to the specs' typed assert
+			local types = vim.fn.stdpath('data') .. '/lua-types'
 			require('lazydev').setup({
 				library = {
-					{ path = repo .. 'deps/busted/library' },
-					{ path = repo .. 'deps/luassert/library' },
+					{ path = types .. '/busted/library' },
+					{ path = types .. '/luassert/library' },
 					{ path = vim.fn.stdpath('config') .. '/lua-types' },
 				},
 			})

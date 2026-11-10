@@ -22,8 +22,8 @@
           "*/*/plenary.nvim/lua/plenary/busted.lua"
         ]
       },
-      "deps/busted/library",
-      "deps/luassert/library"
+      "home/.local/share/nvim/lua-types/busted/library",
+      "home/.local/share/nvim/lua-types/luassert/library"
     ]
   },
   "diagnostics": {

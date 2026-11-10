@@ -12,6 +12,12 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: neovim-cmds
+        name: neovim command placeholders
+        entry: make test-neovim-cmds
+        language: system
+        pass_filenames: false
+        files: ^home/\.config/nvim/.*\.lua$
       - id: typescript
         name: typescript (tsc, oxlint, oxfmt, node --test)
         entry: sh -c 'npm run --silent check && npm test --silent'

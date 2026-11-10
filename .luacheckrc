@@ -3,7 +3,7 @@
 max_comment_line_length = 180
 
 -- lua-types declares globals for the type checker; it is never run
-exclude_files = { 'home/.local/share/', 'home/.vim/undo', 'home/.vim/pack', 'lua-types' }
+exclude_files = { 'home/.local/share/', 'home/.vim/undo', 'home/.vim/pack', 'home/.config/nvim/lua-types' }
 
 -- busted provides these to specs, which run under nlua
 files['home/.config/nvim/spec/'] = {

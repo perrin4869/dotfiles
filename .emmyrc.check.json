@@ -9,7 +9,7 @@
   },
   "workspace": {
     "library": [
-      "lua-types",
+      "home/.config/nvim/lua-types",
       "$VIMRUNTIME",
       {
         "path": "$NVIM_PACK",

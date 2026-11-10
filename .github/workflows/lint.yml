@@ -14,16 +14,15 @@ jobs:
         uses: actions/checkout@v7
       - name: luacheck
         uses: lunarmodules/luacheck@v1
-      - name: stylua
+      - name: install stylua
         uses: JohnnyMorganz/stylua-action@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          # -a reaches the repository's own files below hidden paths (`home/.local`, `.busted`); the vendored trees
-          # are formatted by the projects they come from
-          args: >-
-            --check -a . -g '*.lua' -g '*.rockspec' -g '.busted' -g '.luacheckrc'
-            -g '!home/.local/**' -g '!home/.vim/**' -g '!deps/**' -g '!node_modules/**'
+          # this step only installs it and puts it on PATH; the check itself is the target pre-commit runs
+          args: --version
+      - name: stylua
+        run: make test-stylua
 
   typescript:
     runs-on: ubuntu-26.04

@@ -8,11 +8,7 @@ repos:
         types: [lua]
       - id: stylua
         name: stylua
-        # the check CI runs: .busted, .luacheckrc and rockspecs are Lua too, and the repository's own files sit below
-        # hidden paths, so neither the extensions nor the defaults would find them
-        entry: >-
-          stylua --check -a . -g '*.lua' -g '*.rockspec' -g '.busted' -g '.luacheckrc'
-          -g '!home/.local/**' -g '!home/.vim/**' -g '!deps/**' -g '!node_modules/**'
+        entry: make test-stylua
         language: system
         pass_filenames: false
         always_run: true

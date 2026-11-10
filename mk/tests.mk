@@ -102,6 +102,13 @@ $(LUAROCKS_CONFIG):
 test-nvim-spec: $(LUAROCKS_CONFIG)
 	@eval "$$(luarocks path)" && luarocks test && echo "$(PASS) the nvim specs pass"
 
+.PHONY: test-stylua
+# stylua only picks up *.lua by itself, and .busted, .luacheckrc and the rockspec are Lua too; .styluaignore holds the
+# trees whose own projects format them
+test-stylua:
+	@stylua --check -a . -g '*.lua' -g '*.rockspec' -g '.busted' -g '.luacheckrc' \
+		&& echo "$(PASS) stylua finds no formatting problems"
+
 .PHONY: test-lua-types
 # .emmyrc.check.json lists the library that lazydev provides per file in the editor; with HOME set to
 # the repo's home, Neovim reports this checkout's pack dir rather than the installed one

@@ -8,7 +8,8 @@ local function on_attach()
 		persistence.load()
 
 		require('restore').restore()
-	else
+	elseif #vim.api.nvim_list_uis() > 0 then
+		-- a headless process has no UI to put a picker in
 		pickers.project_files()
 	end
 end

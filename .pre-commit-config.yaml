@@ -8,10 +8,10 @@ repos:
         types: [lua]
       - id: stylua
         name: stylua
-        entry: stylua --check
+        entry: make test-stylua
         language: system
-        types: [lua]
-        files: ^home/\.config/
+        pass_filenames: false
+        always_run: true
       - id: typescript
         name: typescript (tsc, oxlint, oxfmt, node --test)
         entry: sh -c 'npm run --silent check && npm test --silent'

@@ -1,0 +1,4 @@
+home/.local/
+home/.vim/
+deps/
+node_modules/

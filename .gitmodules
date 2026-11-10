@@ -676,3 +676,6 @@
 	path = deps/luassert
 	url = https://github.com/LuaCATS/luassert
 	ignore = untracked
+[submodule "home/.local/share/nvim/site/pack/default/opt/yo-dawg.nvim"]
+	path = home/.local/share/nvim/site/pack/default/opt/yo-dawg.nvim
+	url = https://gitlab.com/HiPhish/yo-dawg.nvim

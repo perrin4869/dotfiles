@@ -5,6 +5,7 @@ return {
 		coverage = false,
 		lpath = 'home/.config/nvim/lua/?.lua;home/.config/nvim/lua/?/init.lua;home/.config/nvim/spec/?.lua',
 		ROOT = { 'home/.config/nvim/spec' },
+		helper = 'home/.config/nvim/spec/helpers/pack.lua',
 		lua = 'nlua',
 	},
 	default = {

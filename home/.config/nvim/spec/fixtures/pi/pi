@@ -1,0 +1,3 @@
+#!/bin/sh
+# stands in for pi in the specs: a terminal that stays open, so it keeps a channel to inspect
+exec sleep 30

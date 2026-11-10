@@ -8,11 +8,12 @@ yall.on_bufreadpre(function()
 			vim.cmd.packadd('lazydev.nvim')
 			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; busted and luassert
 			-- publish their own LuaCATS libraries, stowed under the data dir next to the specs' typed assert
-			local types = vim.fn.stdpath('data') .. '/lua-types'
+			local data = vim.fn.stdpath('data')
 			require('lazydev').setup({
 				library = {
-					{ path = types .. '/busted/library' },
-					{ path = types .. '/luassert/library' },
+					{ path = data .. '/lua-libs/yo-dawg.nvim/lua' },
+					{ path = data .. '/lua-types/busted/library' },
+					{ path = data .. '/lua-types/luassert/library' },
 					{ path = vim.fn.stdpath('config') .. '/lua-types' },
 				},
 			})

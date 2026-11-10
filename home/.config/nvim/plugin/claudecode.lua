@@ -1,12 +1,6 @@
 local yall = require('yall')
 yall.pack('claudecode', 'claudecode.nvim')
-yall.setup('claudecode', { -- https://github.com/coder/claudecode.nvim/pull/308/changes
-	diff_opts = {
-		-- also returns focus to the terminal after a same-tab diff is
-		-- accepted/rejected, not just when it opens
-		keep_terminal_focus = true,
-	},
-})
+yall.setup('claudecode')
 
 for _, cmd in ipairs({
 	'',

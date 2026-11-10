@@ -1,10 +1,6 @@
 -- A child Neovim driven over RPC, named like the harness in Neovim's own functional tests: `exec_lua`, `cmd`,
 -- `cmd_capture`, `eval`, `api`, `fn`, `stop`. A spec that needs a process of its own gets one instead of borrowing the
 -- runner's, which is what `nvim --embed` plus the job's channel provides.
---
--- `config = true` boots the checkout's own init.lua, and it does not currently work: with `--embed --headless` the
--- child never reaches the point where it answers RPC, and with `--embed` alone the init only runs once a UI attaches.
--- Booting this config therefore needs it to degrade without a UI first — separate work, not a helper option.
 local M = {}
 
 local ROOT = vim.fn.getcwd()
@@ -22,9 +18,7 @@ local ROOT = vim.fn.getcwd()
 --- @return Child
 function M.start(opts)
 	opts = opts or {}
-	-- `--embed` already runs without a UI; adding `--headless` to it stops a real config from reaching the point where
-	-- it answers RPC, which is why the child never wakes up
-	local args = { vim.v.progpath, '--embed', '-i', 'NONE' }
+	local args = { vim.v.progpath, '--embed', '--headless', '-i', 'NONE' }
 	-- the repository's home, so `~/.vimrc`, `~/.config/nvim` and `stdpath('data')` are the checkout's, not the machine's
 	local env = vim.tbl_extend('force', vim.fn.environ(), { HOME = ROOT .. '/home' })
 	if opts.config then

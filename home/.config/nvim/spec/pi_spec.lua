@@ -12,8 +12,6 @@ describe('plugin/pi.lua', function()
 
 	before_each(function()
 		child = nvim.start({ env = { PATH = PI_DIR .. ':' .. vim.env.PATH } })
-		-- the config fires VeryLazy from UIEnter, which a headless child never gets, and pi.nvim is registered there
-		child:exec_lua([[vim.api.nvim_exec_autocmds('User', { pattern = 'VeryLazy' })]], {})
 	end)
 
 	after_each(function()

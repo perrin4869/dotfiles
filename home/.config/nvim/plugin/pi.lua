@@ -2,8 +2,26 @@ local yall = require('yall')
 yall.pack('pi', 'pi.nvim')
 -- its default <leader>p prefix clashes with cokeline's buffer pick; <leader>P pairs with claudecode's <leader>C
 yall.setup('pi', { keymap_prefix = '<leader>P' })
--- setup creates the keymaps, so it can't wait for a command
+-- setup creates the keymaps, so it can't wait for a command;
 yall.very_lazy('pi')
+for _, cmd in ipairs({
+	'',
+	'AddFile',
+	'AddSelection',
+	'Close',
+	'Continue',
+	'Focus',
+	'Fork',
+	'New',
+	'NewNamed',
+	'Open',
+	'QuickChat',
+	'Resume',
+	'Send',
+	'Session',
+}) do
+	yall.cmd('Pi' .. cmd, 'pi')
+end
 
 local map = require('map').create({ desc = 'pi', desc_separator = ': ' })
 

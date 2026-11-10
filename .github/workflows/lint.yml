@@ -19,7 +19,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
-          args: --check home/.config
+          # -a reaches the repository's own files below hidden paths (`home/.local`, `.busted`); the vendored trees
+          # are formatted by the projects they come from
+          args: >-
+            --check -a . -g '*.lua' -g '*.rockspec' -g '.busted' -g '.luacheckrc'
+            -g '!home/.local/**' -g '!home/.vim/**' -g '!deps/**' -g '!node_modules/**'
 
   typescript:
     runs-on: ubuntu-26.04

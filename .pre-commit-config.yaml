@@ -18,6 +18,12 @@ repos:
         language: system
         pass_filenames: false
         files: ^home/\.config/nvim/.*\.lua$
+      - id: lua-types
+        name: emmylua types
+        entry: make test-lua-types
+        language: system
+        pass_filenames: false
+        files: ^home/\.config/nvim/.*\.lua$
       - id: typescript
         name: typescript (tsc, oxlint, oxfmt, node --test)
         entry: sh -c 'npm run --silent check && npm test --silent'

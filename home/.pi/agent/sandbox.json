@@ -16,7 +16,9 @@
       "raw.githubusercontent.com",
       "*.githubusercontent.com",
       "crates.io",
-      "*.crates.io"
+      "*.crates.io",
+      "luarocks.org",
+      "*.luarocks.org"
     ],
     "deniedDomains": []
   },

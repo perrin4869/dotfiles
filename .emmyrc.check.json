@@ -8,6 +8,9 @@
     ]
   },
   "workspace": {
+    "ignoreGlobs": [
+      "spec/libs/**"
+    ],
     "library": [
       "$VIMRUNTIME",
       {
@@ -20,7 +23,10 @@
           "*/*/*/*.lua",
           "*/*/plenary.nvim/lua/plenary/busted.lua"
         ]
-      }
+      },
+      "home/.config/nvim/spec/libs/yo-dawg.nvim/lua",
+      "home/.config/nvim/spec/libs/busted/library",
+      "home/.config/nvim/spec/libs/luassert/library"
     ]
   },
   "diagnostics": {

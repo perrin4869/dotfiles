@@ -6,8 +6,16 @@ yall.on_bufreadpre(function()
 		pattern = (vim.lsp.config --[[@as table<string, vim.lsp.Config>]])['emmylua_ls'].filetypes,
 		callback = function()
 			vim.cmd.packadd('lazydev.nvim')
-			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds
-			require('lazydev').setup({})
+			-- vim.uv types come with $VIMRUNTIME (lua/uv/_meta.lua), which lazydev always adds; the rest is for specs,
+			-- so it loads on their words or on the module they require rather than in every Lua file
+			local spec = vim.fn.stdpath('config') .. '/spec'
+			require('lazydev').setup({
+				library = {
+					{ path = spec .. '/libs/yo-dawg.nvim/lua', mods = { 'yo-dawg' } },
+					{ path = spec .. '/libs/busted/library', words = { 'describe' } },
+					{ path = spec .. '/libs/luassert/library', mods = { 'luassert' } },
+				},
+			})
 
 			-- emmylua_ls keeps the last non-null of its `Lua` and `emmylua` sections, and lazydev fills `Lua`
 			vim.lsp.config('emmylua_ls', { settings = { emmylua = vim.NIL } })

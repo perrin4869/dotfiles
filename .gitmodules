@@ -668,3 +668,14 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/pi.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/pi.nvim
 	url = https://github.com/Kidimos/pi.nvim
+[submodule "home/.config/nvim/spec/libs/busted"]
+	path = home/.config/nvim/spec/libs/busted
+	url = https://github.com/LuaCATS/busted
+	ignore = untracked
+[submodule "home/.config/nvim/spec/libs/luassert"]
+	path = home/.config/nvim/spec/libs/luassert
+	url = https://github.com/LuaCATS/luassert
+	ignore = untracked
+[submodule "home/.config/nvim/spec/libs/yo-dawg.nvim"]
+	path = home/.config/nvim/spec/libs/yo-dawg.nvim
+	url = https://gitlab.com/HiPhish/yo-dawg.nvim

@@ -13,7 +13,8 @@
       "home/.local/share/qutebrowser/**",
       "home/.local/share/nvim/mason/**",
       "home/.local/share/nvim/mason-registry/**",
-      "home/.local/share/nvim/undo/**"
+      "home/.local/share/nvim/undo/**",
+      "home/.config/nvim/spec/libs/**"
     ]
   },
   "diagnostics": {

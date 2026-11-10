@@ -26,7 +26,7 @@ local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' }
 local prefix = '<leader>C'
 
 --- @param bufnr integer
-local function is_claude_terminal(bufnr) -- https://github.com/coder/claudecode.nvim/pull/202/changes
+local function is_claude_terminal(bufnr)
 	if vim.bo[bufnr].buftype ~= 'terminal' then
 		return false
 	end
@@ -85,11 +85,10 @@ end)
 -- <C-o> is kept as plain exit-to-Normal-mode (e.g. to paste register contents),
 -- so use a separate key to leave the claude terminal and refocus the
 -- previous window in one step
-vim.api.nvim_create_autocmd('TermOpen', {
+vim.api.nvim_create_autocmd('FileType', {
+	group = vim.api.nvim_create_augroup('claudecode_terminal_mappings', { clear = true }),
+	pattern = 'claudecode',
 	callback = function(args)
-		if not is_claude_terminal(args.buf) then
-			return
-		end
 		map('t', '<C-q>', '<C-\\><C-n><C-w>p', { buffer = args.buf, desc = 'unfocus' })
 	end,
 })

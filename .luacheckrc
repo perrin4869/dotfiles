@@ -2,11 +2,12 @@
 
 max_comment_line_length = 180
 
-exclude_files = { 'home/.local/share/', 'home/.vim/undo', 'home/.vim/pack' }
+-- lua-types declares globals for the type checker; it is never run
+exclude_files = { 'home/.local/share/', 'home/.vim/undo', 'home/.vim/pack', 'lua-types' }
 
 -- busted provides these to specs, which run under nlua
-files['spec/'] = {
-	read_globals = { 'describe', 'it', 'before_each', 'after_each' },
+files['home/.config/nvim/spec/'] = {
+	std = '+busted',
 }
 
 -- Rerun tests only if their modification time changed.

@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field -- luassert hangs its own fields on `assert`
 local nvim = require('helpers/nvim')
 
 -- These run in a child Neovim rather than in the spec runner, so what is exercised is the config's own behaviour in a

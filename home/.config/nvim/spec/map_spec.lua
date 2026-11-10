@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field -- luassert hangs its own fields on `assert`
 local map = require('map')
 
 -- Each case declares the mappings and buffers it creates; after_each removes exactly those, so a case that fails

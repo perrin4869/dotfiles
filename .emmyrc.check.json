@@ -9,6 +9,7 @@
   },
   "workspace": {
     "library": [
+      "lua-types",
       "$VIMRUNTIME",
       {
         "path": "$NVIM_PACK",

@@ -2,8 +2,11 @@
   "$schema": "https://pi.dev/schemas/keybindings.schema.json",
   "tui.editor.historyPrevious": "ctrl+p",
   "tui.editor.historyNext": "ctrl+n",
+  "tui.select.up": ["up", "ctrl+p"],
+  "tui.select.down": ["down", "ctrl+n"],
   "app.model.cycleForward": "alt+p",
   "app.model.cycleBackward": "alt+shift+p",
   "app.model.select": "alt+l",
+  "app.models.toggleProvider": "alt+p",
   "app.tree.filter.labeledOnly": "alt+shift+l"
 }

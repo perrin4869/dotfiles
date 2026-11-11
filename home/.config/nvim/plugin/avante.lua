@@ -1,11 +1,8 @@
 local yall = require('yall')
 local provider = vim.g.avante_provider
 yall.pack('avante', 'avante.nvim')
-local deps = { 'telescope', 'cmp', 'nui', 'mega.cmdparse' }
-if provider == 'copilot' then
-	table.insert(deps, 'copilot')
-end
-yall.deps('avante', deps)
+-- avante authenticates copilot itself now (:Avante copilot login), so copilot.lua is not one of its dependencies
+yall.deps('avante', { 'telescope', 'cmp', 'nui', 'mega.cmdparse' })
 local with = yall.with('avante')
 -- acp providers run a CLI over the agent protocol, so they are not entries in `providers`
 local acp_providers = {
@@ -83,7 +80,6 @@ local config = {
 		claude = {
 			endpoint = 'https://api.anthropic.com',
 			model = vim.g.avante_claude_model or 'claude-sonnet-5',
-			timeout = 30000, -- Timeout in milliseconds
 			extra_request_body = {
 				temperature = 0.75,
 				max_tokens = 20480,
@@ -92,15 +88,16 @@ local config = {
 		-- https://github.com/deepseek-ai/awesome-deepseek-integration/blob/main/docs/avante.nvim/README.md
 		deepseek = {
 			__inherited_from = 'openai',
-			api_key_name = os.getenv('DEEPSEEK_API_KEY'),
+			-- an OpenAI-compatible provider picks its Rig dialect explicitly
+			dialect = 'deepseek',
+			api_key_name = 'DEEPSEEK_API_KEY',
 			endpoint = 'https://api.deepseek.com',
 			model = vim.g.avante_deepseek_model or 'deepseek-coder',
-			max_tokens = 8192,
 		},
 	},
 }
 if vim.g.avante_claude_auth_type then
-	-- default is 'api' and requires an api key, for 'pro', 'max' or 'teams' accounts use 'max' auth type
+	-- "api_key" needs ANTHROPIC_API_KEY; "subscription" uses a pro/max account after `:Avante claude login`
 	config.providers.claude.auth_type = vim.g.avante_claude_auth_type
 end
 yall.setup('avante', config)

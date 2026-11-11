@@ -189,18 +189,29 @@ async function commitsNote(repo, from, to, version) {
 	return `### [${version}](${compare})\n\n${relink(repo, listed.join('\n'))}`;
 }
 
-// What one version changed, from the first source that describes it: its release notes, else the repo's changelog
+// the release notes for a version, or '' when the repo published no release for it
+const releaseNote = async (repo, tags, name, version) => {
+	const release = await releaseOf(repo, tags, name)(version);
+	return release ? noteFor(repo, version, release) : '';
+};
+
+// the repo's changelog section for a version, or '' when its changelog says nothing about it
+const changelogNoteFor = async (repo, version) => {
+	const changelog = await changelogOf(repo);
+	return changelog ? changelogNote(repo, changelog, version, changelogSection(changelog.text, version)) : '';
+};
+
+// What one version changed, from the first source with something to say: its release notes, else the repo's changelog
 // section for it, else the commits it brought in, as dependabot lists them when nothing else does
 async function versionNote(repo, name, tags, version, since) {
-	const release = await releaseOf(repo, tags, name)(version);
-	const published = release && noteFor(repo, version, release);
-	if (published) return published;
-	const changelog = await changelogOf(repo);
-	const section = changelog ? changelogNote(repo, changelog, version, changelogSection(changelog.text, version)) : '';
-	if (section) return section;
-	// either end being untagged leaves nothing to compare
+	// either end being untagged leaves this version's commits unknown
 	const [from, to] = [tagOf(tags, name, since), tagOf(tags, name, version)];
-	return from && to ? commitsNote(repo, from, to, version) : '';
+	// a release can exist with an empty body, which has to fall through rather than end the search
+	return (
+		(await releaseNote(repo, tags, name, version)) ||
+		(await changelogNoteFor(repo, version)) ||
+		(from && to ? await commitsNote(repo, from, to, version) : '')
+	);
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit

@@ -201,7 +201,7 @@ $(atuin_target): $(atuin_head_file)
 atuin: $(atuin_target)
 
 .PHONY: avante
-avante_target = $(addprefix $(AVANTE_ROOT)/lua/,avante_html2md.so  avante_repo_map.so  avante_templates.so  avante_tokenizers.so)
+avante_target = $(addprefix $(AVANTE_ROOT)/lua/,avante_acp.so  avante_html2md.so  avante_llm.so  avante_repo_map.so  avante_templates.so  avante_tokenizers.so)
 $(eval $(call git_submodule,avante,$(AVANTE_ROOT)))
 $(avante_target): $(avante_head_file)
 	$(call require,cargo)

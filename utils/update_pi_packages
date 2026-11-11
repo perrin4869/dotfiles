@@ -20,10 +20,23 @@ const parsePin = (spec) => {
 const NOTES_PER_PACKAGE = 4000;
 const NOTES_BUDGET = 60000;
 
-const getRegistry = async (name) => {
-	const response = await fetch(`https://registry.npmjs.org/${name.replace('/', '%2F')}`);
-	if (!response.ok) throw new Error(`${name}: registry answered ${response.status}`);
+// The registry document at `path` under the package's base URL, the base itself being the packument; a scoped name
+// has its slash escaped, which is how the registry spells it in a URL
+const registryDocument = async (name, path, headers) => {
+	const base = `https://registry.npmjs.org/${name.replace('/', '%2F')}`;
+	const response = await fetch(`${base}${path}`, { headers });
+	if (!response.ok) throw new Error(`${name}${path}: registry answered ${response.status}`);
 	return response.json();
+};
+
+// The abbreviated packument carries `dist-tags` and `versions` at a third of the bytes, but drops `repository`, which
+// the one-version document has for a single package
+const getRegistry = async (name) => {
+	const [abbreviated, latest] = await Promise.all([
+		registryDocument(name, '', { accept: 'application/vnd.npm.install-v1+json' }),
+		registryDocument(name, '/latest'),
+	]);
+	return { ...abbreviated, repository: latest.repository };
 };
 
 // the release behind a tag; a repo can carry a tag without publishing a release for it, which answers 404

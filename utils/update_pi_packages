@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Bump each pinned `npm:<name>@<version>` package in pi's settings to its latest release.
 // `pi update` leaves pinned versions alone, so this does it for the update PRs.
-// Prints a markdown PR body: one bullet per bump, with release notes when GitHub has them.
+// Prints a markdown PR body: one bullet per bump, with what changed, taken from the release notes, else the repo's
+// changelog, else the list of commits.
 import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 import extensions from '../home/.pi/agent/extensions/package.json' with { type: 'json' };
@@ -39,11 +40,13 @@ const getRegistry = async (name) => {
 	return { ...abbreviated, repository: latest.repository };
 };
 
+// GitHub's answer for `url`, under the token CI gives this run for its rate limit
+const github = (url) =>
+	fetch(url, { headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {} });
+
 // the release behind a tag; a repo can carry a tag without publishing a release for it, which answers 404
 async function releaseByTag(repo, tag) {
-	const response = await fetch(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`, {
-		headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {},
-	});
+	const response = await github(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`);
 	if (response.status === 404) return undefined;
 	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${tag}`);
 	return response.json();
@@ -101,12 +104,81 @@ const releaseOf = (repo, tags, name) => async (version) => {
 	return tag ? releaseByTag(repo, tag) : undefined;
 };
 
+// The spellings of a changelog a repo keeps at its root; one with none answers 404 to all of them
+const CHANGELOG_FILES = ['CHANGELOG.md', 'Changelog.md', 'changelog.md', 'CHANGELOG.markdown'];
+
+// The repo's changelog, read from its default branch and once per repo: a repo can write releases there well before
+// it tags them, if it tags them at all. Asked for only when a version has no release notes, and held as a promise so
+// versions of one package ask once.
+const changelogsByRepo = new Map();
+const changelogOf = (repo) => {
+	if (!changelogsByRepo.has(repo)) changelogsByRepo.set(repo, readChangelog(repo));
+	return changelogsByRepo.get(repo);
+};
+async function readChangelog(repo) {
+	for (const file of CHANGELOG_FILES) {
+		const response = await github(`https://raw.githubusercontent.com/${repo}/HEAD/${file}`);
+		if (response.status === 404) continue;
+		if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${file}`);
+		return { file, text: await response.text() };
+	}
+	return undefined;
+}
+
+const HEADING = /^(#{1,6})\s+(.*)$/;
+const HEADING_VERSION = /\bv?(\d+\.\d+\.\d+(?:-[\dA-Za-z.]+)?)\b/;
+
+// What a changelog says about `version`: its heading reads `## 0.12.0 — 2026-11-10`, `## [1.2.3]` or `## v1.2.3`, and
+// its section runs to the next heading of the same or a higher level
+function changelogSection(text, version) {
+	const lines = text.split('\n');
+	const headingOf = (index) => HEADING.exec(lines[index]);
+	const start = lines.findIndex((_, index) => HEADING_VERSION.exec(headingOf(index)?.[2] ?? '')?.[1] === version);
+	if (start < 0) return '';
+	const level = headingOf(start)[1].length;
+	const end = lines.findIndex((_, index) => index > start && headingOf(index) && headingOf(index)[1].length <= level);
+	return lines.slice(start + 1, end < 0 ? undefined : end).join('\n').trim();
+}
+
 // one version's section of the body, or '' when that release has no notes
 const noteFor = (repo, version, { body, html_url }) =>
 	body?.trim() ? `### [${version}](${html_url})\n\n${relink(repo, body.trim())}` : '';
 
-// Release notes of every stable version after `current` up to `version`, newest first, cut at whole versions to fit
-// `limit`; empty when the repo publishes none
+// the same section, taken from the repo's changelog because it published no release for the version
+const changelogNote = (repo, { file }, version, body) =>
+	body ? `### [${version}](https://github.com/${repo}/blob/HEAD/${file})\n\n${relink(repo, body)}` : '';
+
+// The commits `from` brought up to `to`, which is the list dependabot publishes when no release describes them; the
+// section heads at the compare view, so the version still links somewhere useful
+async function commitsNote(repo, from, to, version) {
+	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
+	const response = await github(`https://api.github.com/repos/${repo}/compare/${from}...${to}`);
+	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${from}...${to}`);
+	const { commits } = await response.json();
+	if (commits.length === 0) return '';
+	const listed = commits.map(
+		({ sha, commit }) =>
+			`- [\`${sha.slice(0, 7)}\`](https://github.com/${repo}/commit/${sha}) ${commit.message.split('\n')[0]}`,
+	);
+	return `### [${version}](${compare})\n\n${relink(repo, listed.join('\n'))}`;
+}
+
+// What one version changed, from the first source that describes it: its release notes, else the repo's changelog
+// section for it, else the commits it brought in, as dependabot lists them when nothing else does
+async function versionNote(repo, name, tags, version, since) {
+	const release = await releaseOf(repo, tags, name)(version);
+	const published = release && noteFor(repo, version, release);
+	if (published) return published;
+	const changelog = await changelogOf(repo);
+	const section = changelog ? changelogNote(repo, changelog, version, changelogSection(changelog.text, version)) : '';
+	if (section) return section;
+	// either end being untagged leaves nothing to compare
+	const [from, to] = [tagOf(tags, name, since), tagOf(tags, name, version)];
+	return from && to ? commitsNote(repo, from, to, version) : '';
+}
+
+// What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit
+// `limit`; empty when the repo says nothing about them, in a release, a changelog or its commits
 async function releaseNotes({ name, current, version, versions, repository }, limit) {
 	const repo = githubRepo(repository);
 	if (!repo) {
@@ -119,11 +191,15 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
-	const releases = await Promise.all(between.map(releaseOf(repo, tags, name)));
-	const notes = releases.flatMap((release, index) => {
-		const note = release ? noteFor(repo, between[index], release) : '';
-		return note ? [note] : [];
-	});
+	const notes = (
+		await Promise.all(
+			between.map((version, index) => {
+				// the nearest tagged version below this one bounds its commits, with `current` as the last candidate
+				const since = between.slice(index + 1).find((lower) => tagOf(tags, name, lower)) ?? current;
+				return versionNote(repo, name, tags, version, since);
+			}),
+		)
+	).filter(Boolean);
 
 	// notes sit a blank line apart, and the budget has to count those separators as well as the notes
 	const separator = '\n\n';

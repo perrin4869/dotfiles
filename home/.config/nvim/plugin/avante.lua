@@ -181,7 +181,7 @@ end
 
 vim.api.nvim_create_autocmd('FileType', {
 	group = vim.api.nvim_create_augroup('avante_mappings', { clear = true }),
-	pattern = { 'Avante', 'AvanteInput', 'AvanteSelectedFiles', 'AvanteTodos' },
+	pattern = { 'markdown.Avante', 'AvanteInput', 'AvanteSelectedFiles', 'AvanteTodos' },
 	callback = function(args)
 		-- same as <C-q> in the claude terminal: leave the sidebar for the code window it was opened from
 		require('map').map({ 'n', 'i' }, '<C-q>', function()
@@ -217,7 +217,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('WinEnter', {
 	group = vim.api.nvim_create_augroup('avante_focus_input', { clear = true }),
 	callback = function()
-		if vim.bo.filetype ~= 'Avante' then
+		if vim.bo.filetype ~= 'markdown.Avante' then
 			return
 		end
 		local sidebar = require('avante').get()
@@ -230,7 +230,7 @@ vim.api.nvim_create_autocmd('WinEnter', {
 	end,
 })
 
-require('restore').add_quitpre_ft('Avante')
+require('restore').add_quitpre_ft('markdown.Avante')
 require('restore').add_quitpre_ft('AvanteInput')
 require('restore').add_quitpre_ft('AvanteSelectedFiles')
 require('restore').add_quitpre_ft('AvanteTodos')

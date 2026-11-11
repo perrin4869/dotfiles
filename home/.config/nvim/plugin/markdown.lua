@@ -1,6 +1,6 @@
 local yall = require('yall')
 yall.pack('render-markdown', 'render-markdown.nvim')
-local fts = { 'markdown', 'Avante' }
+local fts = { 'markdown', 'markdown.Avante' }
 yall.on_ft('render-markdown', {
 	once = true,
 	pattern = fts,

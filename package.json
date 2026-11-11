@@ -1,4 +1,5 @@
 {
+  "name": "dotfiles",
   "private": true,
   "workspaces": [
     "home/.pi/agent/extensions"

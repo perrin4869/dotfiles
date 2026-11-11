@@ -180,9 +180,12 @@ const changelogNote = (repo, { file }, version, body) =>
 // hundreds
 const COMMITS_SHOWN = 20;
 
-// The commits from `from` up to `to`, which is the list dependabot publishes when no release describes them; the
-// heading links the compare view, where the commits that did not fit are
-async function commitsNote(repo, from, to, current, version) {
+// The commits from the pinned version up to the new one, which is the list dependabot publishes when no release
+// describes the bump; the heading links the compare view, where the commits that did not fit are
+async function commitsNote(repo, name, tags, current, version) {
+	const [from, to] = [tagOf(tags, name, current), tagOf(tags, name, version)];
+	// an untagged pin, or a dist-tag behind it, leaves nothing to compare against
+	if (!from || !to) return '';
 	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
 	const response = await github(`https://api.github.com/repos/${repo}/compare/${from}...${to}`);
 	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${from}...${to}`);
@@ -230,20 +233,11 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
-	const described = await Promise.all(between.map((version) => versionNote(repo, name, tags, version)));
-	const notes = described.filter(Boolean);
-	// A weekly bump can move a package over several versions, and the newest of them may have no release yet. The gap
-	// runs from the newest version that was described up to the pin, so its commits are listed without repeating notes
-	// the section above already carries
-	const gap = described.findIndex((note) => !note);
-	if (gap >= 0) {
-		const lower = between[gap + 1] ?? current;
-		const [fromTag, toTag] = [tagOf(tags, name, lower), tagOf(tags, name, version)];
-		// either end being untagged leaves the gap's commits unknown
-		if (fromTag && toTag) {
-			const commits = await commitsNote(repo, fromTag, toTag, lower, version);
-			if (commits) notes.push(commits);
-		}
+	const notes = (await Promise.all(between.map((version) => versionNote(repo, name, tags, version)))).filter(Boolean);
+	// Nothing described any version in the bump, so the range from the pin to the new one covers all of it
+	if (notes.length === 0) {
+		const commits = await commitsNote(repo, name, tags, current, version);
+		if (commits) notes.push(commits);
 	}
 
 	// notes sit a blank line apart, and the budget has to count those separators as well as the notes

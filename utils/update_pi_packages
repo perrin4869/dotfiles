@@ -166,16 +166,10 @@ function changelogSection(text, version) {
 	return start < 0 ? '' : text.slice(start + 1, end).trim();
 }
 
-// one version's section of the body, or '' when that release has no notes
-const noteFor = (repo, version, { body, html_url }) =>
-	body?.trim() ? `### [${version}](${html_url})\n\n${relink(repo, body.trim())}` : '';
+// one version's section of the body, or '' when its source says nothing about that version
+const noteSection = (repo, version, url, body) =>
+	body?.trim() ? `### [${version}](${url})\n\n${relink(repo, body.trim())}` : '';
 
-// the same section, taken from the repo's changelog because it published no release for the version
-const changelogNote = (repo, { file }, version, body) =>
-	body ? `### [${version}](https://github.com/${repo}/blob/HEAD/${file})\n\n${relink(repo, body)}` : '';
-
-// The commits `from` brought up to `to`, which is the list dependabot publishes when no release describes them; the
-// section heads at the compare view, so the version still links somewhere useful
 // How many commits a note lists before it defers to the compare view; a bump that spans several versions can carry
 // hundreds
 const COMMITS_SHOWN = 20;
@@ -204,19 +198,20 @@ async function commitsNote(repo, name, tags, current, version) {
 // the release notes for a version, or '' when the repo published no release for it
 const releaseNote = async (repo, tags, name, version) => {
 	const release = await releaseOf(repo, tags, name)(version);
-	return release ? noteFor(repo, version, release) : '';
+	return release ? noteSection(repo, version, release.html_url, release.body) : '';
 };
 
 // the repo's changelog section for a version, or '' when its changelog says nothing about it
-const changelogNoteFor = async (repo, version) => {
+const changelogNote = async (repo, version) => {
 	const changelog = await changelogOf(repo);
-	return changelog ? changelogNote(repo, changelog, version, changelogSection(changelog.text, version)) : '';
+	const body = changelog ? changelogSection(changelog.text, version) : '';
+	return body ? noteSection(repo, version, `https://github.com/${repo}/blob/HEAD/${changelog.file}`, body) : '';
 };
 
 // What one version changed, from the first source with something to say: its release notes, else the repo's changelog
 // section for it
 async function versionNote(repo, name, tags, version) {
-	return (await releaseNote(repo, tags, name, version)) || (await changelogNoteFor(repo, version));
+	return (await releaseNote(repo, tags, name, version)) || (await changelogNote(repo, version));
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit

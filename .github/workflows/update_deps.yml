@@ -94,6 +94,11 @@ jobs:
             echo PI_PACKAGES_EOF
           } >> "$GITHUB_OUTPUT"
 
+      - name: Settle the lockfile
+        # the update rewrites the extension manifest, and npm keeps package-lock.json in step only while npm is the one
+        # writing it, so let it have the last word before the commit
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
       - name: Create PR
         id: pr
         if: steps.update.outputs.changes != ''

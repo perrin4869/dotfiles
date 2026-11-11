@@ -72,7 +72,8 @@ const versionsBetween = (versions, from, to) =>
 // release notes are written for their own repo: point its issue references there, and keep mentions from notifying
 const relink = (repo, body) =>
 	body
-		.replace(/(^|[^\w/`])#(\d+)\b/g, `$1${repo}#$2`)
+		// `&` keeps an HTML entity such as `&#39;` intact
+		.replace(/(^|[^\w/`&])#(\d+)\b/g, `$1${repo}#$2`)
 		.replace(/(^|[^\w/`])@([A-Za-z\d](?:[A-Za-z\d-]*[A-Za-z\d])?)\b(?![./]\w)/g, '$1`@$2`');
 
 // The repo's own tags, read once per repo: asking git beats guessing at the API, which answers 404 for every wrong
@@ -93,37 +94,39 @@ function tagsOf(repo) {
 	return tags;
 }
 
-// A monorepo prefixes the package name, a single package uses `v`, and one repo can carry both: `narumiruna/pi-extensions`
-// tags every package *and* has repo-wide `v*` tags. The namespaced tag wins where it exists.
+// A monorepo prefixes the package name, either the npm way or release-please's `<name>-v<version>` (as in
+// `gotgenes/pi-packages`), and a single package uses `v`. One repo can carry both: `narumiruna/pi-extensions` tags
+// every package *and* has repo-wide `v*` tags, so the namespaced tag wins where it exists.
 const tagOf = (tags, name, version) =>
-	[`${name}@${version}`, `v${version}`, version].find((tag) => tags.includes(tag));
+	[`${name}@${version}`, `${name.replace(/^@[^/]+\//, '')}-v${version}`, `v${version}`, version].find((tag) =>
+		tags.includes(tag),
+	);
 
-// the release for the tag this package used at `version`, if the repo published one
-const releaseOf = (repo, tags, name) => async (version) => {
-	const tag = tagOf(tags, name, version);
-	return tag ? releaseByTag(repo, tag) : undefined;
+const CHANGELOG_FILE = /^changelog\.(md|markdown)$/i;
+
+// The changelog in a directory of the repo, read from its default branch and once per directory: a repo can write
+// releases there well before it tags them, if it tags them at all. Held as a promise so a package's versions ask once.
+const changelogsByDirectory = new Map();
+const changelogIn = (repo, directory) => {
+	const key = `${repo}/${directory}`;
+	if (!changelogsByDirectory.has(key)) changelogsByDirectory.set(key, readChangelog(repo, directory));
+	return changelogsByDirectory.get(key);
 };
-
-// The spellings of a changelog a repo keeps at its root; one with none answers 404 to all of them
-const CHANGELOG_FILES = ['CHANGELOG.md', 'Changelog.md', 'changelog.md', 'CHANGELOG.markdown'];
-
-// The repo's changelog, read from its default branch and once per repo: a repo can write releases there well before
-// it tags them, if it tags them at all. Asked for only when a version has no release notes, and held as a promise so
-// versions of one package ask once.
-const changelogsByRepo = new Map();
-const changelogOf = (repo) => {
-	if (!changelogsByRepo.has(repo)) changelogsByRepo.set(repo, readChangelog(repo));
-	return changelogsByRepo.get(repo);
-};
-async function readChangelog(repo) {
-	for (const file of CHANGELOG_FILES) {
-		const response = await github(`https://raw.githubusercontent.com/${repo}/HEAD/${file}`);
-		if (response.status === 404) continue;
-		if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${file}`);
-		return { file, text: await response.text() };
-	}
-	return undefined;
+async function readChangelog(repo, directory) {
+	// listing the directory finds the changelog under any spelling in one request
+	const listing = await github(`https://api.github.com/repos/${repo}/contents/${directory}`);
+	if (listing.status === 404) return undefined;
+	if (!listing.ok) throw new Error(`GitHub answered ${listing.status} for ${repo}/${directory}`);
+	const entry = (await listing.json()).find(({ type, name }) => type === 'file' && CHANGELOG_FILE.test(name));
+	if (!entry) return undefined;
+	const response = await github(entry.download_url);
+	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${entry.html_url}`);
+	return { url: entry.html_url, text: await response.text() };
 }
+
+// A monorepo package keeps its changelog in its own directory, which the registry names; the root one is the fallback
+const changelogOf = async (repo, directory) =>
+	(directory && (await changelogIn(repo, directory))) || changelogIn(repo, '');
 
 const HASH = 35;
 const WHITESPACE = /\s/;
@@ -166,9 +169,10 @@ function changelogSection(text, version) {
 	return start < 0 ? '' : text.slice(start + 1, end).trim();
 }
 
-// one version's section of the body, or '' when its source says nothing about that version
-const noteSection = (repo, version, url, body) =>
-	body?.trim() ? `### [${version}](${url})\n\n${relink(repo, body.trim())}` : '';
+// One section of the body with the URL it came from, which is where to read the rest when it is cut; undefined when
+// its source says nothing
+const noteSection = (repo, heading, url, body) =>
+	body?.trim() ? { url, text: `### [${heading}](${url})\n\n${relink(repo, body.trim())}` } : undefined;
 
 // How many commits a note lists before it defers to the compare view; a bump that spans several versions can carry
 // hundreds
@@ -179,47 +183,52 @@ const COMMITS_SHOWN = 20;
 async function commitsNote(repo, name, tags, current, version) {
 	const [from, to] = [tagOf(tags, name, current), tagOf(tags, name, version)];
 	// an untagged pin, or a dist-tag behind it, leaves nothing to compare against
-	if (!from || !to) return '';
+	if (!from || !to) return undefined;
 	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
 	const response = await github(`https://api.github.com/repos/${repo}/compare/${from}...${to}`);
 	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${from}...${to}`);
 	const { commits, total_commits: total } = await response.json();
-	if (commits.length === 0) return '';
-	const shown = commits.slice(-COMMITS_SHOWN);
-	const listed = shown.map(
-		({ sha, commit }) =>
-			`- [\`${sha.slice(0, 7)}\`](https://github.com/${repo}/commit/${sha}) ${commit.message.split('\n')[0]}`,
-	);
-	const all = Math.max(total ?? commits.length, commits.length);
-	const more = all > shown.length ? `\n\n[See all ${all} commits](${compare})` : '';
-	return `### [${current}...${version}](${compare})\n\n${relink(repo, listed.join('\n'))}${more}`;
+	const listed = commits
+		.slice(-COMMITS_SHOWN)
+		.map(
+			({ sha, commit }) =>
+				`- [\`${sha.slice(0, 7)}\`](https://github.com/${repo}/commit/${sha}) ${commit.message.split('\n')[0]}`,
+		);
+	const more = total > listed.length ? `\n\n[See all ${total} commits](${compare})` : '';
+	return noteSection(repo, `${current}...${version}`, compare, listed.length > 0 ? `${listed.join('\n')}${more}` : '');
 }
 
-// the release notes for a version, or '' when the repo published no release for it
-const releaseNote = async (repo, tags, name, version) => {
-	const release = await releaseOf(repo, tags, name)(version);
-	return release ? noteSection(repo, version, release.html_url, release.body) : '';
-};
+// the release notes for a version, or undefined when the repo published no release for it
+async function releaseNote(repo, tags, name, version) {
+	const tag = tagOf(tags, name, version);
+	const release = tag && (await releaseByTag(repo, tag));
+	return release ? noteSection(repo, version, release.html_url, release.body) : undefined;
+}
 
-// the repo's changelog section for a version, or '' when its changelog says nothing about it
-const changelogNote = async (repo, version) => {
-	const changelog = await changelogOf(repo);
-	const body = changelog ? changelogSection(changelog.text, version) : '';
-	return body ? noteSection(repo, version, `https://github.com/${repo}/blob/HEAD/${changelog.file}`, body) : '';
-};
+// the changelog's section for a version, or undefined when the changelog says nothing about it
+async function changelogNote(repo, directory, version) {
+	const changelog = await changelogOf(repo, directory);
+	return changelog && noteSection(repo, version, changelog.url, changelogSection(changelog.text, version));
+}
 
-// What one version changed, from the first source with something to say: its release notes, else the repo's changelog
+// What one version changed, from the first source with something to say: its release notes, else the changelog's
 // section for it
-async function versionNote(repo, name, tags, version) {
-	return (await releaseNote(repo, tags, name, version)) || (await changelogNote(repo, version));
+const versionNote = async (repo, directory, name, tags, version) =>
+	(await releaseNote(repo, tags, name, version)) || changelogNote(repo, directory, version);
+
+// `text` cut at the last line that fits in `room`, closing a code block the cut leaves open
+function cut(text, room) {
+	const end = text.lastIndexOf('\n', room);
+	const kept = end < 0 ? '' : text.slice(0, end).trimEnd();
+	return (kept.match(/^```/gm)?.length ?? 0) % 2 ? `${kept}\n\`\`\`` : kept;
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit
 // `limit`; empty when the repo says nothing about them, in a release, a changelog or its commits
-async function releaseNotes({ name, current, version, versions, repository }, limit) {
+async function bumpNotes({ name, current, version, versions, repository }, limit) {
 	const repo = githubRepo(repository);
 	if (!repo) {
-		console.error(`${name}: no GitHub repository in the registry document, so no release notes`);
+		console.error(`${name}: no GitHub repository in the registry document, so no notes`);
 		return '';
 	}
 	// a pin or a dist-tag that is not x.y.z leaves no range to walk; the caller turns this into a per-package error
@@ -228,7 +237,9 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
-	const notes = (await Promise.all(between.map((version) => versionNote(repo, name, tags, version)))).filter(Boolean);
+	const notes = (
+		await Promise.all(between.map((version) => versionNote(repo, repository.directory, name, tags, version)))
+	).filter(Boolean);
 	// Nothing described any version in the bump, so the range from the pin to the new one covers all of it
 	if (notes.length === 0) {
 		const commits = await commitsNote(repo, name, tags, current, version);
@@ -239,10 +250,15 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 	const separator = '\n\n';
 	const kept = [];
 	let size = 0;
-	for (const note of notes) {
-		size += (kept.length > 0 ? separator.length : 0) + note.length;
-		if (size > limit) return `${kept.join(separator)}${separator}[More release notes](https://github.com/${repo}/releases)`;
-		kept.push(note);
+	for (const { url, text } of notes) {
+		size += (kept.length > 0 ? separator.length : 0) + text.length;
+		if (size <= limit) {
+			kept.push(text);
+			continue;
+		}
+		// a first note longer than the whole budget would otherwise leave nothing but the link
+		if (kept.length === 0) kept.push(cut(text, limit));
+		return [...kept, `[More](${url})`].filter(Boolean).join(separator);
 	}
 	return kept.join(separator);
 }
@@ -296,8 +312,8 @@ if (tested.length > 0) {
 const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
 for (const bump of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
 	// a missing release should not hold back the bump
-	const notes = await releaseNotes(bump, limit).catch((error) => {
-		console.error(`${bump.name}: no release notes: ${error.message}`);
+	const notes = await bumpNotes(bump, limit).catch((error) => {
+		console.error(`${bump.name}: no notes: ${error.message}`);
 		return '';
 	});
 	console.log(notes ? `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${notes}\n</details>\n` : `- ${bumpLine(bump)}`);

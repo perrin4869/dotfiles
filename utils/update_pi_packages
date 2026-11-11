@@ -176,17 +176,26 @@ const changelogNote = (repo, { file }, version, body) =>
 
 // The commits `from` brought up to `to`, which is the list dependabot publishes when no release describes them; the
 // section heads at the compare view, so the version still links somewhere useful
-async function commitsNote(repo, from, to, version) {
+// How many commits a note lists before it defers to the compare view; a bump that spans several versions can carry
+// hundreds
+const COMMITS_SHOWN = 20;
+
+// The commits from `from` up to `to`, which is the list dependabot publishes when no release describes them; the
+// heading links the compare view, where the commits that did not fit are
+async function commitsNote(repo, from, to, current, version) {
 	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
 	const response = await github(`https://api.github.com/repos/${repo}/compare/${from}...${to}`);
 	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${from}...${to}`);
-	const { commits } = await response.json();
+	const { commits, total_commits: total } = await response.json();
 	if (commits.length === 0) return '';
-	const listed = commits.map(
+	const shown = commits.slice(-COMMITS_SHOWN);
+	const listed = shown.map(
 		({ sha, commit }) =>
 			`- [\`${sha.slice(0, 7)}\`](https://github.com/${repo}/commit/${sha}) ${commit.message.split('\n')[0]}`,
 	);
-	return `### [${version}](${compare})\n\n${relink(repo, listed.join('\n'))}`;
+	const all = Math.max(total ?? commits.length, commits.length);
+	const more = all > shown.length ? `\n\n[See all ${all} commits](${compare})` : '';
+	return `### [${current}...${version}](${compare})\n\n${relink(repo, listed.join('\n'))}${more}`;
 }
 
 // the release notes for a version, or '' when the repo published no release for it
@@ -202,16 +211,9 @@ const changelogNoteFor = async (repo, version) => {
 };
 
 // What one version changed, from the first source with something to say: its release notes, else the repo's changelog
-// section for it, else the commits it brought in, as dependabot lists them when nothing else does
-async function versionNote(repo, name, tags, version, since) {
-	// either end being untagged leaves this version's commits unknown
-	const [from, to] = [tagOf(tags, name, since), tagOf(tags, name, version)];
-	// a release can exist with an empty body, which has to fall through rather than end the search
-	return (
-		(await releaseNote(repo, tags, name, version)) ||
-		(await changelogNoteFor(repo, version)) ||
-		(from && to ? await commitsNote(repo, from, to, version) : '')
-	);
+// section for it
+async function versionNote(repo, name, tags, version) {
+	return (await releaseNote(repo, tags, name, version)) || (await changelogNoteFor(repo, version));
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit
@@ -228,15 +230,17 @@ async function releaseNotes({ name, current, version, versions, repository }, li
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
-	const notes = (
-		await Promise.all(
-			between.map((version, index) => {
-				// the nearest tagged version below this one bounds its commits, with `current` as the last candidate
-				const since = between.slice(index + 1).find((lower) => tagOf(tags, name, lower)) ?? current;
-				return versionNote(repo, name, tags, version, since);
-			}),
-		)
-	).filter(Boolean);
+	const notes = (await Promise.all(between.map((version) => versionNote(repo, name, tags, version)))).filter(Boolean);
+	// A bump that spans several versions would leave the commits of the versions no source describes unread, so list the
+	// whole range instead: one list that runs from the pin, the way dependabot shows a range that has no release notes
+	if (notes.length < between.length) {
+		const [fromTag, toTag] = [tagOf(tags, name, current), tagOf(tags, name, version)];
+		// an untagged pin, or a dist-tag behind it, leaves nothing to compare against
+		if (fromTag && toTag) {
+			const commits = await commitsNote(repo, fromTag, toTag, current, version);
+			if (commits) notes.push(commits);
+		}
+	}
 
 	// notes sit a blank line apart, and the budget has to count those separators as well as the notes
 	const separator = '\n\n';

@@ -1,6 +1,6 @@
 -- Make escape work in the Neovim terminal.
 -- Esc is useful in zsh in vim-mode, so use <C-o> instead
--- <Esc><Esc> makes a single <Esc> be delayed, so not ideal
+-- <Esc><Esc> makes a single <Esc> be delayed, not ideal
 require('map').map('t', '<C-o>', '<C-\\><C-n>')
 
 -- autocmd TermOpen * startinsert
@@ -8,7 +8,7 @@ require('map').map('t', '<C-o>', '<C-\\><C-n>')
 vim.api.nvim_create_autocmd('TermOpen', {
 	pattern = '*',
 	callback = function()
-		vim.cmd.startinsert()
+		vim.cmd('startinsert')
 	end,
 })
 -- autocmd TermOpen * startinsert

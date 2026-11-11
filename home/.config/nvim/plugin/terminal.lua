@@ -12,3 +12,10 @@ vim.api.nvim_create_autocmd('TermOpen', {
 	end,
 })
 -- autocmd TermOpen * startinsert
+
+-- A terminal emulator can lose a button release and then report every movement of the pointer as a drag with that
+-- button held (Ghostty does, ghostty-org/ghostty#12078). A drag is not a movement, so Neovim answers it by leaving
+-- terminal mode, and the terminal sits in normal mode while the pointer merely moves. The extra buttons mean nothing
+-- inside a terminal, so swallow their drags before Neovim's terminal handling acts on them.
+require('map').map('t', '<X1Drag>', '<Nop>')
+require('map').map('t', '<X2Drag>', '<Nop>')

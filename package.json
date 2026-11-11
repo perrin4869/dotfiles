@@ -14,5 +14,11 @@
     "oxlint-tsgolint": "^7.0.2006",
     "skills": "1.7.6",
     "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "@google/genai": false,
+    "protobufjs": false,
+    "pi-memory": false,
+    "tree-sitter-bash@0.25.1": true
   }
 }

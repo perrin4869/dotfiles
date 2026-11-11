@@ -113,3 +113,6 @@ home/.npmrc.local
 
 # headless Neovim writes this into the working directory when its state dir is unusable
 /nvim.log
+
+# the pty child its listener socket leaves behind
+home/.config/nvim/spec/.nvim.sock

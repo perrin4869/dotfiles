@@ -65,6 +65,8 @@ GEOCLUE2=$(
 run_bg_guarded sxhkd
 run_bg_guarded blueman-applet
 run_bg_guarded dunst
+# takes ownership of the clipboard, so a copy survives the app that made it exiting
+CM_OWN_CLIPBOARD=1 run_bg_guarded clipmenud
 # notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
 run_bg_guarded yubikey-touch-detector --notify
 run_bg_guarded yubikey-touch-sound

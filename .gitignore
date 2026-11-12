@@ -52,9 +52,6 @@ home/.local/share/nvim/telescope_history
 
 # this thing is generated somehow
 home/.config/gtk-3.0/bookmarks
-# written by KDE's gtkconfig kded module from kdeglobals
-home/.config/gtk-3.0/colors.css
-home/.config/gtk-3.0/gtk.css
 
 home/.config/qutebrowser/quickmarks
 home/.config/qutebrowser/qsettings

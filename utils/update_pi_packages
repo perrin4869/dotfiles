@@ -176,13 +176,13 @@ async function releaseNote(repo, tags, name, version) {
 	const tag = tagOf(tags, name, version);
 	// a repo can carry a tag without publishing a release for it
 	const release = tag && (await github(repo, `releases/tags/${encodeURIComponent(tag)}`));
-	return release ? noteSection(repo, version, release.html_url, release.body) : undefined;
+	return noteSection(repo, version, release?.html_url, release?.body);
 }
 
 // the changelog's section for a version, or undefined when the changelog says nothing about it
 async function changelogNote(repo, directory, version) {
 	const changelog = await changelogOf(repo, directory);
-	return changelog && noteSection(repo, version, changelog.url, changelogSection(changelog.text, version));
+	return noteSection(repo, version, changelog?.url, changelog && changelogSection(changelog.text, version));
 }
 
 // What one version changed, from the first source with something to say: its release notes, else the changelog's

@@ -46,6 +46,17 @@ test-ibus-config:
 	@dconf dump /org/freedesktop/ibus/ | cmp -s - ${DCONF}/ibus-engine.dconf
 	@echo "$(PASS) ibus configuration present"
 
+.PHONY: test-interface-config
+test-interface-config:
+	@# other keys in this dir are machine-specific, so check only the ones we set
+	@while IFS== read -r key value; do \
+		if [ "$$(dconf read /org/gnome/desktop/interface/$$key)" != "$$value" ]; then \
+			echo "$(FAIL) interface $$key is not $$value"; \
+			exit 1; \
+		fi; \
+	done < <(grep = ${DCONF}/interface.dconf)
+	@echo "$(PASS) gtk interface configuration present"
+
 test-cron:
 	@if ! crontab -l 2>/dev/null | cmp -s - $(CRONTAB_SRC); then \
 		echo "$(FAIL) cron contents do not match"; \
@@ -127,6 +138,7 @@ test: \
 	test-dirs \
 	test-install-targets \
 	test-ibus-config \
+	test-interface-config \
 	test-cron \
 	test-fonts \
 	test-neovim \

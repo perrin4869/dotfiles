@@ -40,16 +40,19 @@ const getRegistry = async (name) => {
 	return { ...abbreviated, repository: latest.repository };
 };
 
-// GitHub's answer for `url`, under the token CI gives this run for its rate limit
-const github = (url) =>
-	fetch(url, { headers: process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {} });
-
-// the release behind a tag; a repo can carry a tag without publishing a release for it, which answers 404
-async function releaseByTag(repo, tag) {
-	const response = await github(`https://api.github.com/repos/${repo}/releases/tags/${encodeURIComponent(tag)}`);
+// The API's answer for `path` under `repo`, or undefined where it has none; `raw` asks for a file's bare contents
+async function github(repo, path, { raw = false } = {}) {
+	const token = process.env.GITHUB_TOKEN;
+	const response = await fetch(`https://api.github.com/repos/${repo}/${path}`, {
+		headers: {
+			accept: raw ? 'application/vnd.github.raw+json' : 'application/vnd.github+json',
+			// CI passes its own token, for the higher rate limit
+			...(token && { authorization: `Bearer ${token}` }),
+		},
+	});
 	if (response.status === 404) return undefined;
-	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${tag}`);
-	return response.json();
+	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo}/${path}`);
+	return raw ? response.text() : response.json();
 }
 
 // `owner/repo` of a registry document's repository field, when it is on GitHub
@@ -114,14 +117,9 @@ const changelogIn = (repo, directory) => {
 };
 async function readChangelog(repo, directory) {
 	// listing the directory finds the changelog under any spelling in one request
-	const listing = await github(`https://api.github.com/repos/${repo}/contents/${directory}`);
-	if (listing.status === 404) return undefined;
-	if (!listing.ok) throw new Error(`GitHub answered ${listing.status} for ${repo}/${directory}`);
-	const entry = (await listing.json()).find(({ type, name }) => type === 'file' && CHANGELOG_FILE.test(name));
-	if (!entry) return undefined;
-	const response = await github(entry.download_url);
-	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${entry.html_url}`);
-	return { url: entry.html_url, text: await response.text() };
+	const listing = await github(repo, `contents/${directory}`);
+	const entry = listing?.find(({ type, name }) => type === 'file' && CHANGELOG_FILE.test(name));
+	return entry && { url: entry.html_url, text: await github(repo, `contents/${entry.path}`, { raw: true }) };
 }
 
 // A monorepo package keeps its changelog in its own directory, which the registry names; the root one is the fallback
@@ -162,9 +160,7 @@ async function commitsNote(repo, name, tags, current, version) {
 	// an untagged pin, or a dist-tag behind it, leaves nothing to compare against
 	if (!from || !to) return undefined;
 	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
-	const response = await github(`https://api.github.com/repos/${repo}/compare/${from}...${to}`);
-	if (!response.ok) throw new Error(`GitHub answered ${response.status} for ${repo} ${from}...${to}`);
-	const { commits, total_commits: total } = await response.json();
+	const { commits, total_commits: total } = await github(repo, `compare/${from}...${to}`);
 	const listed = commits
 		.slice(-COMMITS_SHOWN)
 		.map(
@@ -178,7 +174,8 @@ async function commitsNote(repo, name, tags, current, version) {
 // the release notes for a version, or undefined when the repo published no release for it
 async function releaseNote(repo, tags, name, version) {
 	const tag = tagOf(tags, name, version);
-	const release = tag && (await releaseByTag(repo, tag));
+	// a repo can carry a tag without publishing a release for it
+	const release = tag && (await github(repo, `releases/tags/${encodeURIComponent(tag)}`));
 	return release ? noteSection(repo, version, release.html_url, release.body) : undefined;
 }
 

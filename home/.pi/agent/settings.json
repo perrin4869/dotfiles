@@ -28,11 +28,13 @@
     "npm:@ff-labs/pi-fff@0.11.0",
     "npm:pi-token-speed@0.12.0",
     "npm:@spences10/pi-themes@0.0.11",
-    "npm:pi-ollama-cloud@0.13.1"
+    "npm:pi-ollama-cloud@0.13.1",
+    "npm:pi-tidy@0.9.5"
   ],
   "theme": "gruvbox-dark",
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0"
+    "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0",
+    "{\"source\":\"npm:pi-tidy@0.9.5\",\"scope\":\"user\"}": "0.9.5"
   },
   "rewind": {
     "retention": {

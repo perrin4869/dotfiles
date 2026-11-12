@@ -1,0 +1,10 @@
+# kded6 still reads kded5rc; these modules overwrite the i3 session's display layout and GTK settings
+
+[Module-device_automounter]
+autoload=false
+
+[Module-gtkconfig]
+autoload=false
+
+[Module-kscreen]
+autoload=false

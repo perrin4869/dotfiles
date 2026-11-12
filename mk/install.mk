@@ -55,6 +55,7 @@ ifneq ($(DBUS_SESSION_BUS_ADDRESS),)
 	@dconf load /desktop/ibus/ < ${DCONF}/ibus.dconf
 	@# dconf dump /org/freedesktop/ibus/ > ibus-engine.dconf
 	@dconf load /org/freedesktop/ibus/ < ${DCONF}/ibus-engine.dconf # anthy should input hiragana by default
+	@dconf load /org/gnome/desktop/interface/ < ${DCONF}/interface.dconf # libadwaita apps take dark mode from here, not settings.ini
 else
 	@echo "⚠️  D-Bus session address not found in environment. Skipping dconf load."
 	@exit 1

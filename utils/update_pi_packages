@@ -128,45 +128,22 @@ async function readChangelog(repo, directory) {
 const changelogOf = async (repo, directory) =>
 	(directory && (await changelogIn(repo, directory))) || changelogIn(repo, '');
 
-const HASH = 35;
-const WHITESPACE = /\s/;
 const HEADING_VERSION = /\bv?(\d+\.\d+\.\d+(?:-[\dA-Za-z.]+)?)\b/;
-
-// the heading a line holds, as its hash count and its text, or undefined when the line is not one
-function headingAt(text, from, to) {
-	let level = 0;
-	while (text.charCodeAt(from + level) === HASH) level++;
-	let start = from + level;
-	while (start < to && WHITESPACE.test(text[start])) start++;
-	// seven hashes or more is not a heading, and neither is one with nothing after its hashes
-	if (level === 0 || level > 6 || start === from + level) return undefined;
-	return { level, text: text.slice(start, to) };
-}
+// an ATX heading: one to six `#`, then its text after a space or a tab, or nothing at all
+const HEADING = /^(#{1,6})(?:[ \t]+(.*))?$/gm;
 
 // What a changelog says about `version`: its heading reads `## 0.12.0 — 2026-11-10`, `## [1.2.3]` or `## v1.2.3`, and
-// its section runs to the next heading of the same or a higher level. Walked by line boundaries rather than split,
-// which a section near the top of the file ends before reaching.
+// its section runs to the next heading of the same or a higher level
 function changelogSection(text, version) {
-	let start = -1;
-	let level = 0;
-	let end = text.length;
-	for (let line = 0; line <= text.length; ) {
-		const newline = text.indexOf('\n', line);
-		const lineEnd = newline < 0 ? text.length : newline;
-		const heading = headingAt(text, line, lineEnd);
-		if (start < 0) {
-			if (heading && HEADING_VERSION.exec(heading.text)?.[1] === version) {
-				start = lineEnd;
-				level = heading.level;
-			}
-		} else if (heading && heading.level <= level) {
-			end = line;
-			break;
-		}
-		if (newline < 0) break;
-		line = newline + 1;
+	const headings = text.matchAll(HEADING);
+	for (const heading of headings) {
+		if (HEADING_VERSION.exec(heading[2] ?? '')?.[1] !== version) continue;
+		const start = heading.index + heading[0].length;
+		// the same iterator, so the search for the end resumes after the version's heading
+		const end = headings.find((next) => next[1].length <= heading[1].length);
+		return text.slice(start, end?.index).trim();
 	}
-	return start < 0 ? '' : text.slice(start + 1, end).trim();
+	return '';
 }
 
 // One section of the body with the URL it came from, which is where to read the rest when it is cut; undefined when

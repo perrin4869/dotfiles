@@ -1,0 +1,7 @@
+# kded6 modules that overwrite the i3 session's display layout and GTK settings
+
+[Module-gtkconfig]
+autoload=false
+
+[Module-kscreen]
+autoload=false

@@ -16,7 +16,7 @@
     "@earendil-works/pi-tui": "^1.5.0",
     "@gotgenes/pi-permission-system": "42.0.0",
     "@juicesharp/rpiv-advisor": "2.15.0",
-    "@narumitw/pi-plan-mode": "0.60.0",
+    "@narumitw/pi-plan-mode": "0.60.1",
     "@types/node": "^26.6.6",
     "pi-memory": "0.4.2",
     "pi-subagents": "0.88.0",

@@ -190,11 +190,20 @@ async function changelogNote(repo, directory, version) {
 const versionNote = async (repo, directory, name, tags, version) =>
 	(await releaseNote(repo, tags, name, version)) || changelogNote(repo, directory, version);
 
-// `text` cut at the last line that fits in `room`, closing a code block the cut leaves open
+// `text` cut to fit in `room`: at the last line that fits, else at the last word, marked with an ellipsis; a code
+// block the cut leaves open is closed
 function cut(text, room) {
 	const end = text.lastIndexOf('\n', room);
-	const kept = end < 0 ? '' : text.slice(0, end).trimEnd();
+	const kept = end < 0 ? cutWord(text, room) : text.slice(0, end).trimEnd();
 	return (kept.match(/^```/gm)?.length ?? 0) % 2 ? `${kept}\n\`\`\`` : kept;
+}
+
+// the last word of `text` that fits in `room`, marked as cut, for a text whose first line is too long on its own
+function cutWord(text, room) {
+	const sliced = text.slice(0, room);
+	// a word the cut lands inside is dropped, one it ends on is kept whole
+	const words = room < text.length && !/\s/.test(text[room]) ? sliced.replace(/\s+\S*$/, '') : sliced.trimEnd();
+	return words ? `${words}...` : '';
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit

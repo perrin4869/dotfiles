@@ -125,9 +125,22 @@ async function readChangelog(repo, directory) {
 	return entry && { url: entry.html_url, text: await github(repo, `contents/${entry.path}`, { raw: true }) };
 }
 
-// A monorepo package keeps its changelog in its own directory, which the registry names; the root one is the fallback
-const changelogOf = async (repo, directory) =>
-	(directory && (await changelogIn(repo, directory))) || changelogIn(repo, '');
+// A monorepo package keeps its changelog in its own directory, which the registry names. One whose only changelog is
+// at the repo's root has not come up yet, and that changelog may describe other packages, so it is reported rather
+// than read
+async function changelogOf(repo, directory) {
+	if (!directory) return changelogIn(repo, '');
+	const own = await changelogIn(repo, directory);
+	if (own) return own;
+	const root = await changelogIn(repo, '');
+	if (root) {
+		throw new Error(
+			`${directory} has no changelog but ${root.url} does: a monorepo layout this script does not handle yet, decide ` +
+				'whether that changelog describes the package',
+		);
+	}
+	return undefined;
+}
 
 const HEADING_VERSION = /\bv?(\d+\.\d+\.\d+(?:-[\dA-Za-z.]+)?)\b/;
 // an ATX heading: one to six `#`, then its text after a space or a tab, or nothing at all

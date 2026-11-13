@@ -185,11 +185,6 @@ async function changelogNote(repo, directory, version) {
 	return noteSection(repo, version, changelog?.url, changelog && changelogSection(changelog.text, version));
 }
 
-// What one version changed, from the first source with something to say: its release notes, else the changelog's
-// section for it
-const versionNote = async (repo, directory, name, tags, version) =>
-	(await releaseNote(repo, tags, name, version)) || changelogNote(repo, directory, version);
-
 // `text` cut to fit in `room`: at the last line that fits, else at the last word, marked with an ellipsis; a code
 // block the cut leaves open is closed
 function cut(text, room) {
@@ -220,8 +215,16 @@ async function bumpNotes({ name, current, version, versions, repository }, limit
 
 	const between = versionsBetween(versions, from, to);
 	const tags = tagsOf(repo);
+	// a version's note comes from its release, else from the changelog's section for it, which a monorepo keeps in the
+	// package's own directory
 	const notes = (
-		await Promise.all(between.map((version) => versionNote(repo, repository.directory, name, tags, version)))
+		await Promise.all(
+			between.map((version) =>
+				releaseNote(repo, tags, name, version).then(
+					(release) => release || changelogNote(repo, repository.directory, version),
+				),
+			),
+		)
 	).filter(Boolean);
 	// Nothing described any version in the bump, so the range from the pin to the new one covers all of it
 	if (notes.length === 0) {

@@ -149,3 +149,40 @@ System settings required:
   sudo udevadm trigger -s backlight -c add
   ```
   (also requires your user to be in the `video` group)
+
+## Calendar
+
+Google Calendar is mirrored to `~/.local/share/calendars/` with [`vdirsyncer`](https://vdirsyncer.pimutils.org/) and read with [`khal`](https://khal.readthedocs.io/). `calendar-sync` runs from cron every five minutes; `calendar-notify` runs from `.xprofile` and shows a dunst notification ten minutes before each event, once per occurrence.
+
+### Setup
+
+1. Install the tools, stow the configuration and (re)install the crontab:
+   ```sh
+   make calendar
+   make install
+   ```
+2. In the [Google Cloud console](https://console.cloud.google.com/), create a project and enable the **CalDAV API** (not the Calendar API, which is a different product).
+3. Configure the OAuth consent screen as **External**, add your account as a test user, then publish the app (**In production**). Personal use does not need verification, but an app left in **Testing** gets refresh tokens that expire after seven days.
+4. Create an OAuth client ID of type **Desktop app** and put both values in one `pass` entry, so unlocking them needs a single YubiKey touch (run `pass init <gpg-id>` first if the store does not exist yet):
+   ```sh
+   pass insert -m google/calendar-oauth-client
+   ```
+   Paste the two lines, then press Ctrl-D:
+   ```
+   client_id=...
+   client_secret=...
+   ```
+5. Pick the calendars Google should expose at <https://calendar.google.com/calendar/syncselect>.
+6. Authorize once and take the first sync. Expect the unverified-app warning; it is the normal flow for a personal client.
+   ```sh
+   vdirsyncer discover google_calendar
+   vdirsyncer sync
+   ```
+
+The configuration holds no secrets. On first use `calendar-secret` shows a dunst notification, plays a sound, and runs `pass show google/calendar-oauth-client` once; it then caches both values in `~/.local/share/vdirsyncer/client-id` and `client-secret` (mode 0600). Later syncs and later logins read that cache, so the YubiKey is needed once, not once per sync or per session, unless the cache is deleted. `.xprofile` fills the cache at login while the notification daemon is up, and leaves the session bus address in `~/.local/state/xsession/dbus-address` for a sync that has to prompt.
+
+The OAuth token in `~/.local/share/vdirsyncer/google-token` is also a 0600 file. At-rest protection is whatever the disk offers, so this assumes full-disk encryption. To avoid the YubiKey entirely, write the two cache files with the values from the Google console instead of using `pass`.
+
+Google is the source of truth: local edits lose conflicts (`conflict_resolution = "b wins"`), and Google rejects `VTODO` items over CalDAV, so keep tasks elsewhere.
+
+`calendar-notify` records the occurrences it has announced in `~/.local/state/calendar-notify/notified`, so an event is not announced twice if the loop or the session restarts. Running `calendar-notify` by hand shows what would be notified right now.

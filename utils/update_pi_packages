@@ -55,10 +55,11 @@ async function github(repo, path, { raw = false } = {}) {
 	return raw ? response.text() : response.json();
 }
 
-// `owner/repo` of a registry document's repository field, when it is on GitHub
+// `owner/repo` of a registry document's repository field, when it is on GitHub; a repo name can hold dots, as in
+// `pi-foo.nvim`, so only a trailing `.git` is dropped
 const githubRepo = (repository) => {
 	const url = typeof repository === 'string' ? repository : repository?.url;
-	return /github\.com[/:]([^/]+\/[^/.]+)/.exec(url ?? '')?.[1];
+	return /github\.com[/:]([^/]+\/[^/#?]+?)(?:\.git)?(?:[/#?]|$)/.exec(url ?? '')?.[1];
 };
 
 const parseVersion = (version) => /^(\d+)\.(\d+)\.(\d+)$/.exec(version)?.slice(1).map(Number);
@@ -72,7 +73,7 @@ const versionsBetween = (versions, from, to) =>
 		.sort(([, a], [, b]) => compareVersions(b, a))
 		.map(([version]) => version);
 
-// release notes are written for their own repo: point its issue references there, and keep mentions from notifying
+// notes are written for their own repo: point its issue references there, and keep mentions from notifying
 const relink = (repo, body) =>
 	body
 		// `&` keeps an HTML entity such as `&#39;` intact
@@ -89,10 +90,12 @@ function tagsOf(repo) {
 		encoding: 'utf8',
 		timeout: 60_000,
 	});
-	const tags = listed
-		.split('\n')
-		.map((line) => line.slice(line.indexOf('refs/tags/') + 'refs/tags/'.length))
-		.filter(Boolean);
+	const tags = new Set(
+		listed
+			.split('\n')
+			.map((line) => line.slice(line.indexOf('refs/tags/') + 'refs/tags/'.length))
+			.filter(Boolean),
+	);
 	tagsByRepo.set(repo, tags);
 	return tags;
 }
@@ -100,10 +103,10 @@ function tagsOf(repo) {
 // A monorepo prefixes the package name, either the npm way or release-please's `<name>-v<version>` (as in
 // `gotgenes/pi-packages`), and a single package uses `v`. One repo can carry both: `narumiruna/pi-extensions` tags
 // every package *and* has repo-wide `v*` tags, so the namespaced tag wins where it exists.
-const tagOf = (tags, name, version) =>
-	[`${name}@${version}`, `${name.replace(/^@[^/]+\//, '')}-v${version}`, `v${version}`, version].find((tag) =>
-		tags.includes(tag),
-	);
+const tagOf = (tags, name, version) => {
+	const unscoped = name.replace(/^@[^/]+\//, '');
+	return [`${name}@${version}`, `${unscoped}-v${version}`, `v${version}`, version].find((tag) => tags.has(tag));
+};
 
 const CHANGELOG_FILE = /^changelog\.(md|markdown)$/i;
 
@@ -146,8 +149,10 @@ function changelogSection(text, version) {
 
 // One section of the body with the URL it came from, which is where to read the rest when it is cut; undefined when
 // its source says nothing
-const noteSection = (repo, heading, url, body) =>
-	body?.trim() ? { url, text: `### [${heading}](${url})\n\n${relink(repo, body.trim())}` } : undefined;
+function noteSection(repo, heading, url, body) {
+	const trimmed = body?.trim();
+	return trimmed ? { url, text: `### [${heading}](${url})\n\n${relink(repo, trimmed)}` } : undefined;
+}
 
 // How many commits a note lists before it defers to the compare view; a bump that spans several versions can carry
 // hundreds
@@ -202,7 +207,8 @@ function cutWord(text, room) {
 }
 
 // What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit
-// `limit`; empty when the repo says nothing about them, in a release, a changelog or its commits
+// `limit`, or within the first when it alone is too long; empty when the repo says nothing about them, in a release, a
+// changelog or its commits
 async function bumpNotes({ name, current, version, versions, repository }, limit) {
 	const repo = githubRepo(repository);
 	if (!repo) {
@@ -226,7 +232,7 @@ async function bumpNotes({ name, current, version, versions, repository }, limit
 			),
 		)
 	).filter(Boolean);
-	// Nothing described any version in the bump, so the range from the pin to the new one covers all of it
+	// nothing described any version in the bump, so the range from the pin to the new one covers all of it
 	if (notes.length === 0) {
 		const commits = await commitsNote(repo, name, tags, current, version);
 		if (commits) notes.push(commits);
@@ -297,7 +303,7 @@ if (tested.length > 0) {
 
 const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
 for (const bump of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
-	// a missing release should not hold back the bump
+	// notes that fail to load should not hold back the bump
 	const notes = await bumpNotes(bump, limit).catch((error) => {
 		console.error(`${bump.name}: no notes: ${error.message}`);
 		return '';

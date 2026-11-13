@@ -21,10 +21,6 @@ const parsePin = (spec) => {
 	return { name: match[1], current: match[2] };
 };
 
-// at most this many characters of notes per package, so the whole body stays under what GitHub accepts
-const NOTES_PER_PACKAGE = 4000;
-const NOTES_BUDGET = 60000;
-
 // `work` tried again while `shouldRetry` says the answer may change, pausing `wait`'s milliseconds before each try; a
 // throw is tried again too, unless the attempts run out
 async function retry(work, shouldRetry, { attempts = 3, wait = (_, attempt) => 1000 * 2 ** (attempt - 1) } = {}) {
@@ -253,18 +249,22 @@ function cut(text, room) {
 	return (kept.match(/^```/gm)?.length ?? 0) % 2 ? `${kept}\n\`\`\`` : kept;
 }
 
-// the last word of `text` that fits in `room`, marked as cut, for a text whose first line is too long on its own
+// the mark a cut leaves where the rest of the note would be
+const ELLIPSIS = '...';
+
+// the last word of `text` that fits in `room` once the ellipsis is counted, for a text with no line short enough
 function cutWord(text, room) {
-	const sliced = text.slice(0, room);
+	if (text.length <= room) return text;
+	const width = Math.max(0, room - ELLIPSIS.length);
 	// a word the cut lands inside is dropped, one it ends on is kept whole
-	const words = room < text.length && !/\s/.test(text[room]) ? sliced.replace(/\s+\S*$/, '') : sliced.trimEnd();
-	return words ? `${words}...` : '';
+	const sliced = text.slice(0, width);
+	const words = /\s/.test(text[width]) ? sliced.trimEnd() : sliced.replace(/\s+\S*$/, '');
+	return words ? `${words}${ELLIPSIS}` : '';
 }
 
-// What every stable version after `current` up to `version` changed, newest first, cut at whole versions to fit
-// `limit`, or within the first when it alone is too long; empty when the repo says nothing about them, in a release, a
-// changelog or its commits
-async function bumpNotes({ name, current, version, versions, repository }, limit) {
+// What every stable version after `current` up to `version` changed, newest first; empty when the repo says nothing
+// about them, in a release, a changelog or its commits
+async function bumpNotes({ name, current, version, versions, repository }) {
 	const repo = githubRepo(repository);
 	if (!repo) {
 		console.error(`${name}: no GitHub repository in the registry document, so no notes`);
@@ -292,20 +292,27 @@ async function bumpNotes({ name, current, version, versions, repository }, limit
 		const commits = await commitsNote(repo, name, tags, current, version);
 		if (commits) notes.push(commits);
 	}
+	return notes;
+}
 
-	// notes sit a blank line apart, and the budget has to count those separators as well as the notes
+// A package's notes joined into one markdown block within `limit`, ending where the rest is when they do not fit
+function fit(notes, limit) {
 	const separator = '\n\n';
 	const kept = [];
 	let size = 0;
 	for (const { url, text } of notes) {
-		size += (kept.length > 0 ? separator.length : 0) + text.length;
-		if (size <= limit) {
+		const gap = kept.length > 0 ? separator.length : 0;
+		if (size + gap + text.length <= limit) {
+			size += gap + text.length;
 			kept.push(text);
 			continue;
 		}
-		// a first note longer than the whole budget would otherwise leave nothing but the link
-		if (kept.length === 0) kept.push(cut(text, limit));
-		return [...kept, `[More](${url})`].filter(Boolean).join(separator);
+		// the link that says where the rest is comes out of the same allowance
+		const more = `[More](${url})`;
+		// a note that follows others ends the block where it stands; a first one is cut to leave the link its room
+		if (kept.length > 0) return [...kept, more].join(separator);
+		const room = limit - separator.length - more.length;
+		return [room > 0 ? cut(text, room) : '', more].filter(Boolean).join(separator);
 	}
 	return kept.join(separator);
 }
@@ -364,16 +371,44 @@ if (tested.length > 0) {
 	);
 }
 
-const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
+const section = (bump, body) => `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${body}\n</details>\n`;
+const bullet = (bump) => `- ${bumpLine(bump)}`;
+
+// A body is one GitHub comment of 65,536 characters, wrappers included, and `create-pull-request` truncates past it
+const BODY_LIMIT = 65000;
+
+// What each package's notes may take: an equal share of what the wrappers leave, and what the short ones leave unused
+// going to the long ones
+function allowances(sizes, budget) {
+	if (sizes.length === 0) return [];
+	const share = Math.floor(budget / sizes.length);
+	const spare = budget - sizes.reduce((sum, size) => sum + Math.min(size, share), 0);
+	const over = sizes.filter((size) => size > share).length;
+	const extra = over > 0 ? Math.floor(spare / over) : 0;
+	return sizes.map((size) => (size > share ? share + extra : size));
+}
+
 // each package's notes are independent, so they load together and still print in order
-const rendered = await Promise.all(
+const gathered = await Promise.all(
 	bumps.sort((a, b) => a.name.localeCompare(b.name)).map(async (bump) => {
 		// notes that fail to load should not hold back the bump
-		const notes = await bumpNotes(bump, limit).catch((error) => {
+		const notes = await bumpNotes(bump).catch((error) => {
 			console.error(`${bump.name}: no notes: ${error.message}`);
-			return '';
+			return [];
 		});
-		return notes ? `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${notes}\n</details>\n` : `- ${bumpLine(bump)}`;
+		return { bump, notes };
 	}),
 );
-for (const entry of rendered) console.log(entry);
+// the wrappers and bullets come out of the same budget, and so does the newline each console.log adds
+const overhead = gathered.reduce(
+	(sum, { bump, notes }) => sum + (notes.length > 0 ? section(bump, '').length : bullet(bump).length) + 1,
+	0,
+);
+const sizes = gathered.map(({ notes }) =>
+	notes.reduce((sum, { text }, index) => sum + text.length + (index > 0 ? 2 : 0), 0),
+);
+const room = allowances(sizes, BODY_LIMIT - overhead);
+for (const [index, { bump, notes }] of gathered.entries()) {
+	const body = fit(notes, room[index]);
+	console.log(body ? section(bump, body) : bullet(bump));
+}

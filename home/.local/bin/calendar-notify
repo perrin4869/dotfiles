@@ -2,7 +2,7 @@
 # Notify once about each event starting within ten minutes, using khal's view of the vdirsyncer mirror.
 set -euo pipefail
 
-LEAD=10m
+LEAD_MINUTES=10
 state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/calendar-notify
 state=$state_dir/notified
 
@@ -39,7 +39,7 @@ notify_event() {
 	local start_epoch mins body
 	start_epoch=$(date -d "$start" +%s) || return 0
 	mins=$(((start_epoch - $(date +%s) + 59) / 60))
-	((mins > 0)) || return 0
+	((mins > 0 && mins <= LEAD_MINUTES)) || return 0
 
 	body="Starts in $mins min (${start#* })"
 	[[ -n $location ]] && body+=" — $location"
@@ -54,7 +54,7 @@ notify_event() {
 awk -F'\t' -v cutoff=$(($(date +%s) - 86400)) '$1 >= cutoff' "$state" >"$state.tmp"
 mv "$state.tmp" "$state"
 
-events=$(khal list --notstarted --json uid --json start-full --json all-day --json title --json location now "$LEAD" 2>/dev/null | jq -s 'add // []') || events='[]'
+events=$(khal list --notstarted --json uid --json start-full --json all-day --json title --json location now "${LEAD_MINUTES}m" 2>/dev/null | jq -s 'add // []') || events='[]'
 
 while IFS=$'\t' read -r uid start allday title location; do
 	[[ $allday == True ]] && continue

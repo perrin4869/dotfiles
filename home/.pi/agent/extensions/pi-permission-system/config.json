@@ -1,4 +1,5 @@
 {
+	"yoloMode": true,
 	"shellTools": {
 		"bg_run": {
 			"commandArgument": "command",

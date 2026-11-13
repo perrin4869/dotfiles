@@ -119,10 +119,16 @@ const changelogIn = (repo, directory) => {
 	return changelogsByDirectory.get(key);
 };
 async function readChangelog(repo, directory) {
-	// listing the directory finds the changelog under any spelling in one request
-	const listing = await github(repo, `contents/${directory}`);
-	const entry = listing?.find(({ type, name }) => type === 'file' && CHANGELOG_FILE.test(name));
-	return entry && { url: entry.html_url, text: await github(repo, `contents/${entry.path}`, { raw: true }) };
+	try {
+		// listing the directory finds the changelog under any spelling in one request
+		const listing = await github(repo, `contents/${directory}`);
+		const entry = listing?.find(({ type, name }) => type === 'file' && CHANGELOG_FILE.test(name));
+		return entry && { url: entry.html_url, text: await github(repo, `contents/${entry.path}`, { raw: true }) };
+	} catch (error) {
+		// an unreadable changelog must not take the release notes of the package's other versions with it
+		console.error(`${repo}/${directory}: changelog unreadable: ${error.message}`);
+		return undefined;
+	}
 }
 
 // A monorepo package keeps its changelog in its own directory, which the registry names. One whose only changelog is
@@ -181,7 +187,10 @@ async function commitsNote(repo, name, tags, current, version) {
 	// an untagged pin, or a dist-tag behind it, leaves nothing to compare against
 	if (!from || !to) return undefined;
 	const compare = `https://github.com/${repo}/compare/${from}...${to}`;
-	const { commits, total_commits: total } = await github(repo, `compare/${from}...${to}`);
+	// GitHub answers 404 when it cannot compare the two tags, which leaves the bump without a list
+	const comparison = await github(repo, `compare/${from}...${to}`);
+	if (!comparison) return undefined;
+	const { commits, total_commits: total } = comparison;
 	const listed = commits
 		.slice(-COMMITS_SHOWN)
 		.map(

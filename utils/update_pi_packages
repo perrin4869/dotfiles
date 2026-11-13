@@ -274,12 +274,20 @@ async function bumpNotes({ name, current, version, versions, repository }, limit
 const bumpLine = ({ name, current, version }) =>
 	`Bump [${name}](https://www.npmjs.com/package/${name}) from ${current} to ${version}`;
 
+// a maintainer can move `latest` back below the pin, as when a bad release is pulled; like dependabot, keep the pin
+function target(name, current, latest) {
+	const [pinned, offered] = [parseVersion(current), parseVersion(latest)];
+	if (!pinned || !offered || compareVersions(offered, pinned) >= 0) return latest;
+	console.error(`${name}: latest is ${latest}, behind the pinned ${current}, so it stays`);
+	return current;
+}
+
 // the registry's answer for each package in settings order, keeping only what the rest of the script reads from it
 const registry = await Promise.all(
 	(settings.packages ?? []).map(async (spec) => {
 		const { name, current } = parsePin(spec);
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
-		return { name, current, version: tags.latest, versions, repository };
+		return { name, current, version: target(name, current, tags.latest), versions, repository };
 	}),
 );
 

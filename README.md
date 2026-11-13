@@ -163,10 +163,14 @@ Google Calendar is mirrored to `~/.local/share/calendars/` with [`vdirsyncer`](h
    ```
 2. In the [Google Cloud console](https://console.cloud.google.com/), create a project and enable the **CalDAV API** (not the Calendar API, which is a different product).
 3. Configure the OAuth consent screen as **External**, add your account as a test user, then publish the app (**In production**). Personal use does not need verification, but an app left in **Testing** gets refresh tokens that expire after seven days.
-4. Create an OAuth client ID of type **Desktop app** and store its credentials in `pass` (run `pass init <gpg-id>` first if the store does not exist yet):
+4. Create an OAuth client ID of type **Desktop app** and put both values in one `pass` entry, so unlocking them needs a single YubiKey touch (run `pass init <gpg-id>` first if the store does not exist yet):
    ```sh
-   pass insert google/calendar-client-id
-   pass insert google/calendar-client-secret
+   pass insert -m google/calendar-oauth-client
+   ```
+   Paste the two lines, then press Ctrl-D:
+   ```
+   client_id=...
+   client_secret=...
    ```
 5. Pick the calendars Google should expose at <https://calendar.google.com/calendar/syncselect>.
 6. Authorize once and take the first sync. Expect the unverified-app warning; it is the normal flow for a personal client.
@@ -175,7 +179,9 @@ Google Calendar is mirrored to `~/.local/share/calendars/` with [`vdirsyncer`](h
    vdirsyncer sync
    ```
 
-The configuration holds no secrets: `vdirsyncer` fetches the client ID and secret from `pass` on every run and stores the OAuth token in `~/.local/share/vdirsyncer/google-token`. That means cron needs an unlocked GPG agent; the existing `max-cache-ttl` keeps it unlocked for ten days, and `calendar-sync` stays out of the way until the token exists.
+The configuration holds no secrets. On first use `calendar-secret` shows a dunst notification, plays a sound, and runs `pass show google/calendar-oauth-client` once; it then caches both values in `~/.local/share/vdirsyncer/client-id` and `client-secret` (mode 0600). Later syncs and later logins read that cache, so the YubiKey is needed once, not once per sync or per session, unless the cache is deleted. `.xprofile` fills the cache at login while the notification daemon is up, and leaves the session bus address in `~/.local/state/xsession/dbus-address` for a sync that has to prompt.
+
+The OAuth token in `~/.local/share/vdirsyncer/google-token` is also a 0600 file. At-rest protection is whatever the disk offers, so this assumes full-disk encryption. To avoid the YubiKey entirely, write the two cache files with the values from the Google console instead of using `pass`.
 
 Google is the source of truth: local edits lose conflicts (`conflict_resolution = "b wins"`), and Google rejects `VTODO` items over CalDAV, so keep tasks elsewhere.
 

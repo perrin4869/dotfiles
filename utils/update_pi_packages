@@ -149,7 +149,8 @@ const HEADING_VERSION = /\bv?(\d+\.\d+\.\d+(?:-[\dA-Za-z.]+)?)\b/;
 const HEADING = /^(#{1,6})(?:[ \t]+(.*))?$/gm;
 
 // What a changelog says about `version`: its heading reads `## 0.12.0 — 2026-11-10`, `## [1.2.3]` or `## v1.2.3`, and
-// its section runs to the next heading of the same or a higher level
+// its section runs to the next heading of the same or a higher level. `matchAll` matches lazily, a heading per step, so
+// only the headings down to the end of the section are ever read
 function changelogSection(text, version) {
 	const headings = text.matchAll(HEADING);
 	for (const heading of headings) {

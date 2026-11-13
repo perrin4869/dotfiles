@@ -28,6 +28,12 @@ else
 endif
 zmk_cli: $(zmk_cli_target)
 
+$(eval $(call pipx_package,khal,khal))
+$(eval $(call pipx_package,vdirsyncer,'vdirsyncer[google]'))
+
+.PHONY: calendar
+calendar: khal vdirsyncer
+
 .PHONY: gitflow
 $(eval $(call git_submodule,gitflow,$(GITFLOW_ROOT)))
 gitflow_target = $(PREFIX)/bin/git-flow
@@ -111,7 +117,7 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval .PHONY: zen-$(ZEN_PROFILE_NAME))\
 )
 
-INSTALL_TARGETS = gitflow qmk_cli zmk_cli $(ZEN_PROFILE_TASKS)
+INSTALL_TARGETS = gitflow qmk_cli zmk_cli khal vdirsyncer $(ZEN_PROFILE_TASKS)
 .PHONY: prepare
 prepare:
 	@if command -v pre-commit >/dev/null 2>&1; then \

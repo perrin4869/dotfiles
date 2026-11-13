@@ -18,6 +18,25 @@ define require
 fi
 endef
 
+# A PyPI package installed through pipx, or through pip's --user layout where pipx is unavailable.
+# $(1) names both the pipx venv and the installed binary, $(2) is the spec to install (extras included).
+# $(call pipx_package,name,spec)
+define pipx_package
+ifeq ($(strip $(PIPX_LOCAL_VENVS)),)
+$1_target = $(BINDIR)/$1
+$$($1_target):
+	$(call require,pip)
+	pip install --user $(2)
+else
+$1_target = $(PIPX_LOCAL_VENVS)/$1/bin/$1
+$$($1_target):
+	$(call require,pipx)
+	[ -e $$@ ] && pipx upgrade $1 || pipx install $(2)
+endif
+.PHONY: $1
+$1: $$($1_target)
+endef
+
 OP := (
 CP := )
 

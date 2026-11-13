@@ -1,0 +1,63 @@
+#!/bin/bash
+# Notify once about each event starting within ten minutes, using khal's view of the vdirsyncer mirror.
+set -euo pipefail
+
+LEAD=10m
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/calendar-notify
+state=$state_dir/notified
+
+for dep in khal jq; do
+	if ! command -v "$dep" >/dev/null 2>&1; then
+		echo "calendar-notify: missing dependency: $dep" >&2
+		exit 0
+	fi
+done
+
+if command -v notify-send >/dev/null 2>&1; then
+	notify=(notify-send)
+elif command -v dunstify >/dev/null 2>&1; then
+	notify=(dunstify)
+else
+	echo "calendar-notify: missing dependency: notify-send or dunstify" >&2
+	exit 0
+fi
+
+mkdir -p "$state_dir"
+exec 9>"$state_dir/lock"
+flock -n 9 || exit 0
+: >>"$state"
+
+notified() {
+	awk -F'\t' -v uid="$1" -v start="$2" \
+		'$2 == uid && $3 == start { found = 1 } END { exit !found }' "$state"
+}
+
+notify_event() {
+	local uid=$1 start=$2 title=$3 location=$4
+	notified "$uid" "$start" && return 0
+
+	local start_epoch mins body
+	start_epoch=$(date -d "$start" +%s) || return 0
+	mins=$(((start_epoch - $(date +%s) + 59) / 60))
+	((mins > 0)) || return 0
+
+	body="Starts in $mins min (${start#* })"
+	[[ -n $location ]] && body+=" — $location"
+
+	# record only what the daemon accepted, so a failure is retried on the next poll
+	if "${notify[@]}" -a calendar "$title" "$body"; then
+		printf '%s\t%s\t%s\n' "$(date +%s)" "$uid" "$start" >>"$state"
+	fi
+}
+
+# drop yesterday's keys so the file does not grow for the life of the session
+awk -F'\t' -v cutoff=$(($(date +%s) - 86400)) '$1 >= cutoff' "$state" >"$state.tmp"
+mv "$state.tmp" "$state"
+
+events=$(khal list --notstarted --json uid --json start-full --json all-day --json title --json location now "$LEAD" 2>/dev/null | jq -s 'add // []') || events='[]'
+
+while IFS=$'\t' read -r uid start allday title location; do
+	[[ $allday == True ]] && continue
+	[[ -n $uid && -n $start ]] || continue
+	notify_event "$uid" "$start" "${title:-Untitled event}" "$location"
+done < <(jq -r '.[] | [.uid, ."start-full", ."all-day", (.title // ""), (.location // "")] | @tsv' <<<"$events")

@@ -4,7 +4,7 @@ import { defineSettings } from './lib/settings.ts';
 
 // rpiv-advisor keeps one global reviewer for every session, so an Ollama project would send its whole
 // conversation to that reviewer too. Offer it only where a project opts in with `"advisor": { "enabled": true }`.
-const readSettings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
+export const readSettings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
 
 // pi hides declarations only through an active tool's prepareLoadout, which it recomputes on every prompt. Dropping
 // the tool from the active set in before_agent_start is simpler, but any later handler that makes rpiv-advisor re-add

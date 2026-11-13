@@ -3,11 +3,14 @@
 // `pi update` leaves pinned versions alone, so this does it for the update PRs.
 // Prints a markdown PR body: one bullet per bump, with what changed, taken from the release notes, else the repo's
 // changelog, else the list of commits.
-import { execFileSync } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { promisify } from 'node:util';
 import extensions from '../home/.pi/agent/extensions/package.json' with { type: 'json' };
 import settings from '../home/.pi/agent/settings.json' with { type: 'json' };
+
+const execFileAsync = promisify(execFile);
 
 // an npm source pinned to an exact version, which is the only kind this script knows how to bump
 const PINNED_SPEC = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
@@ -108,25 +111,30 @@ const relink = (repo, body) =>
 		.replace(/(^|[^\w/`&])#(\d+)\b/g, `$1${repo}#$2`)
 		.replace(/(^|[^\w/`])@([A-Za-z\d](?:[A-Za-z\d-]*[A-Za-z\d])?)\b(?![./]\w)/g, '$1`@$2`');
 
-// The repo's own tags, read once per repo: asking git beats guessing at the API, which answers 404 for every wrong
-// spelling and spends a request doing it
-const tagsByRepo = new Map();
-function tagsOf(repo) {
-	const known = tagsByRepo.get(repo);
-	if (known) return known;
-	const listed = execFileSync('git', ['ls-remote', '--tags', '--refs', `https://github.com/${repo}`], {
+// `load` called once per set of arguments; the promise is kept, so callers that arrive while it is pending share it
+function once(load) {
+	const loaded = new Map();
+	return (...args) => {
+		const key = args.join('\0');
+		if (!loaded.has(key)) loaded.set(key, load(...args));
+		return loaded.get(key);
+	};
+}
+
+// The repo's own tags: asking git beats guessing at the API, which answers 404 for every wrong spelling and spends a
+// request doing it
+const tagsOf = once(async (repo) => {
+	const { stdout } = await execFileAsync('git', ['ls-remote', '--tags', '--refs', `https://github.com/${repo}`], {
 		encoding: 'utf8',
 		timeout: 60_000,
 	});
-	const tags = new Set(
-		listed
+	return new Set(
+		stdout
 			.split('\n')
 			.map((line) => line.slice(line.indexOf('refs/tags/') + 'refs/tags/'.length))
 			.filter(Boolean),
 	);
-	tagsByRepo.set(repo, tags);
-	return tags;
-}
+});
 
 // A monorepo prefixes the package name, either the npm way or release-please's `<name>-v<version>` (as in
 // `gotgenes/pi-packages`), and a single package uses `v`. One repo can carry both: `narumiruna/pi-extensions` tags
@@ -138,15 +146,9 @@ const tagOf = (tags, name, version) => {
 
 const CHANGELOG_FILE = /^changelog\.(md|markdown)$/i;
 
-// The changelog in a directory of the repo, read from its default branch and once per directory: a repo can write
-// releases there well before it tags them, if it tags them at all. Held as a promise so a package's versions ask once.
-const changelogsByDirectory = new Map();
-const changelogIn = (repo, directory) => {
-	const key = `${repo}/${directory}`;
-	if (!changelogsByDirectory.has(key)) changelogsByDirectory.set(key, readChangelog(repo, directory));
-	return changelogsByDirectory.get(key);
-};
-async function readChangelog(repo, directory) {
+// The changelog in a directory of the repo, read from its default branch: a repo can write releases there well before
+// it tags them, if it tags them at all
+const changelogIn = once(async (repo, directory) => {
 	try {
 		// listing the directory finds the changelog under any spelling in one request
 		const listing = await github(repo, `contents/${directory}`);
@@ -157,7 +159,7 @@ async function readChangelog(repo, directory) {
 		console.error(`${repo}/${directory}: changelog unreadable: ${error.message}`);
 		return undefined;
 	}
-}
+});
 
 // A monorepo package keeps its changelog in its own directory, which the registry names. One whose only changelog is
 // at the repo's root has not come up yet, and that changelog may describe other packages, so it is reported rather
@@ -273,7 +275,7 @@ async function bumpNotes({ name, current, version, versions, repository }, limit
 	if (!from || !to) throw new Error(`cannot read a version range from ${current} to ${version}`);
 
 	const between = versionsBetween(versions, from, to);
-	const tags = tagsOf(repo);
+	const tags = await tagsOf(repo);
 	// a version's note comes from its release, else from the changelog's section for it, which a monorepo keeps in the
 	// package's own directory
 	const notes = (
@@ -354,7 +356,7 @@ const tested = bumps
 	.filter(({ name }) => name in extensions.devDependencies)
 	.map(({ name, version }) => `${name}@${version}`);
 if (tested.length > 0) {
-	execFileSync(
+	await execFileAsync(
 		'npm',
 		['install', '--workspace', 'home/.pi/agent/extensions', '--save-dev', '--save-exact', '--ignore-scripts', ...tested],
 		// stdout is the PR body
@@ -363,11 +365,15 @@ if (tested.length > 0) {
 }
 
 const limit = Math.min(NOTES_PER_PACKAGE, Math.floor(NOTES_BUDGET / Math.max(bumps.length, 1)));
-for (const bump of bumps.sort((a, b) => a.name.localeCompare(b.name))) {
-	// notes that fail to load should not hold back the bump
-	const notes = await bumpNotes(bump, limit).catch((error) => {
-		console.error(`${bump.name}: no notes: ${error.message}`);
-		return '';
-	});
-	console.log(notes ? `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${notes}\n</details>\n` : `- ${bumpLine(bump)}`);
-}
+// each package's notes are independent, so they load together and still print in order
+const rendered = await Promise.all(
+	bumps.sort((a, b) => a.name.localeCompare(b.name)).map(async (bump) => {
+		// notes that fail to load should not hold back the bump
+		const notes = await bumpNotes(bump, limit).catch((error) => {
+			console.error(`${bump.name}: no notes: ${error.message}`);
+			return '';
+		});
+		return notes ? `<details>\n<summary>${bumpLine(bump)}</summary>\n\n${notes}\n</details>\n` : `- ${bumpLine(bump)}`;
+	}),
+);
+for (const entry of rendered) console.log(entry);

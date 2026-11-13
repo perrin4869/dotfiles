@@ -65,6 +65,12 @@ GEOCLUE2=$(
 run_bg_guarded sxhkd
 run_bg_guarded blueman-applet
 run_bg_guarded dunst
+# notify ten minutes before each event, from caldir's local calendar directory
+if have calendar-notify && have caldir && have jq; then
+  run_bg_guarded sh -c 'while :; do calendar-notify; sleep 60; done'
+else
+  warn_missing calendar-notify/caldir/jq
+fi
 # notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
 run_bg_guarded yubikey-touch-detector --notify
 run_bg_guarded yubikey-touch-sound

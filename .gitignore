@@ -84,6 +84,9 @@ deps/emmylua_check-*.tar.gz
 deps/pi
 deps/pi-*-linux-*.tar.gz
 
+deps/caldir
+deps/caldir-*-unknown-linux-musl.tar.gz
+
 deps/coursier
 deps/metals
 home/.local/bin/metals

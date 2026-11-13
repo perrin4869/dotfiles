@@ -397,6 +397,24 @@ $(npmrc_target): $(NPMRC).in $(wildcard $(NPMRC_LOCAL))
 	chmod 600 $@
 npmrc: $(npmrc_target)
 
+.PHONY: caldir
+caldir_version = $(call get_version,caldir)
+caldir_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo x86_64 ;; \
+	aarch64|arm64$(CP) echo aarch64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+# upstream has no version in the asset name, so add one to fetch it again on bumps
+caldir_archive = caldir-$(caldir_version)-$(caldir_arch)-unknown-linux-musl.tar.gz
+$(DEPS)/$(caldir_archive):
+	$(call require,wget)
+	wget https://github.com/t4t5/caldir/releases/download/v$(caldir_version)/caldir-$(caldir_arch)-unknown-linux-musl.tar.gz -O $@
+caldir_target = $(DEPS)/caldir/caldir $(DEPS)/caldir/caldir-provider-google
+$(caldir_target) &: $(DEPS)/$(caldir_archive)
+	mkdir -p $(DEPS)/caldir
+	tar xzf $< -C $(DEPS)/caldir
+caldir: $(caldir_target)
+
 # --keep-going: -k ensures independent branches continue even if one fails.
 # MAKEFLAGS += -k
 TARGETS = \

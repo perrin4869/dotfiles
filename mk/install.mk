@@ -111,7 +111,10 @@ $(foreach pair,$(ZEN_PROFILE_PAIRS),\
   $(eval .PHONY: zen-$(ZEN_PROFILE_NAME))\
 )
 
-INSTALL_TARGETS = gitflow qmk_cli zmk_cli $(ZEN_PROFILE_TASKS)
+INSTALL_TARGETS = gitflow qmk_cli zmk_cli caldir $(ZEN_PROFILE_TASKS)
+.PHONY: calendar
+calendar: caldir
+
 .PHONY: prepare
 prepare:
 	@if command -v pre-commit >/dev/null 2>&1; then \

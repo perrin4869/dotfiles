@@ -1,51 +1,128 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env node
+// Prints the version a dependency should move to, and writes the release notes for that jump when asked, so its update
+// PR carries them. Prints nothing when the pin is current, or the version was turned down before.
+import { execFile } from 'node:child_process';
+import { readFile, writeFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
+import { BODY_LIMIT, fit, github, noteSection } from './release_notes.js';
 
-DEP="$1"
+const execFileAsync = promisify(execFile);
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)
-VERSION_FILE="$SCRIPT_DIR/../.external_versions/$DEP"
+const REPOS = {
+	metals: 'scalameta/metals',
+	coursier: 'coursier/coursier',
+	iosevka: 'be5invis/Iosevka',
+	carapace: 'carapace-sh/carapace-bin',
+	emmylua_check: 'EmmyLuaLs/emmylua-analyzer-rust',
+	nerdfonts: 'ryanoasis/nerd-fonts',
+	pi: 'earendil-works/pi',
+};
 
-github_repo() {
-  case "$1" in
-    metals)    echo "scalameta/metals" ;;
-    coursier)  echo "coursier/coursier" ;;
-    iosevka)   echo "be5invis/Iosevka" ;;
-    carapace)  echo "carapace-sh/carapace-bin" ;;
-    emmylua_check) echo "EmmyLuaLs/emmylua-analyzer-rust" ;;
-    nerdfonts) echo "ryanoasis/nerd-fonts" ;;
-    pi)        echo "earendil-works/pi" ;;
-    *)
-      echo "Unknown dependency: $1" >&2
-      exit 1
-      ;;
-  esac
+// a tag that names a version: `nightly`, `pants_release_1.5.x` and `v1.0-beta6` name something else, and
+// `releases/latest` can answer with one of them
+const VERSION_TAG = /^v?(\d+)\.(\d+)\.(\d+)$/;
+
+// how many releases a jump may describe, since a pin left alone for months should not pull in a hundred bodies
+const RELEASES_SHOWN = 20;
+
+const parseVersion = (tag) => VERSION_TAG.exec(tag)?.slice(1).map(Number);
+const compareVersions = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+
+// the tags after `current` up to `latest`, newest first: tags rather than releases, since a repo lists a release by
+// creation date and those can disagree with version order
+async function tagsBetween(repo, current, latest) {
+	const { stdout } = await execFileAsync('git', ['ls-remote', '--tags', '--refs', `https://github.com/${repo}`], {
+		encoding: 'utf8',
+		timeout: 60_000,
+	});
+	const [from, to] = [parseVersion(current), parseVersion(latest)];
+	const versions = new Map();
+	for (const line of stdout.split('\n')) {
+		const tag = line.slice(line.indexOf('refs/tags/') + 'refs/tags/'.length);
+		const version = tag && parseVersion(tag);
+		if (!version || compareVersions(version, from) <= 0 || compareVersions(version, to) > 0) continue;
+		// a repo can carry both `1.2.3` and `v1.2.3` for the same version
+		versions.set(version.join('.'), { tag, version });
+	}
+	return [...versions.values()]
+		.sort((a, b) => compareVersions(b.version, a.version))
+		.slice(0, RELEASES_SHOWN)
+		.map(({ tag }) => tag);
 }
 
-# A version we've deliberately rejected (e.g. a broken upstream release) gets
-# its update PR closed with the "wontfix" label instead of merged. Checking
-# for that PR - by its branch name, which GitHub keeps even after the branch
-# itself is deleted - lets us skip re-proposing it without committing
-# anything to the repo.
-was_rejected() {
-  dep="$1"
-  version="$2"
-
-  count="$(gh pr list --state closed --head "update/$dep/$version" --label wontfix --json number --jq 'length' 2>/dev/null)" || return 1
-  [ "${count:-0}" -gt 0 ]
+// the notes for the releases behind those tags, newest first
+async function notesFor(repo, tags) {
+	const sections = await Promise.all(
+		tags.map(async (tag) => {
+			const release = await github(repo, `releases/tags/${encodeURIComponent(tag)}`);
+			// a tag can be there without a release, and a prerelease says nothing about the upgrade
+			if (!release || release.draft || release.prerelease) return undefined;
+			return noteSection(repo, tag, release.html_url, release.body);
+		}),
+	);
+	return sections.filter(Boolean);
 }
 
-if [ ! -f "$VERSION_FILE" ]; then
-  echo "Missing version file for $DEP" >&2
-  exit 1
-fi
+// whether a closed PR turned this exact update down before, which the workflow reads as "leave it"
+async function rejected(dep, version) {
+	try {
+		const { stdout } = await execFileAsync(
+			'gh',
+			[
+				'pr', 'list',
+				'--state', 'closed',
+				'--head', `update/${dep}/${version}`,
+				'--label', 'wontfix',
+				'--json', 'number',
+				'--jq', 'length',
+			],
+			{ encoding: 'utf8' },
+		);
+		return Number(stdout.trim()) > 0;
+	} catch {
+		// with no answer from gh, nothing was turned down
+		return false;
+	}
+}
 
-REPO="$(github_repo "$DEP")"
+const [dep, flag, notesPath] = process.argv.slice(2);
 
-LATEST="$(gh api "repos/$REPO/releases/latest" --jq '.tag_name')"
+const repo = REPOS[dep];
+if (!repo) {
+	console.error(`Unknown dependency: ${dep}`);
+	process.exit(1);
+}
+if (flag === '--notes' && !notesPath) {
+	console.error('--notes needs the file to write');
+	process.exit(1);
+}
 
-CURRENT="$(cat "$VERSION_FILE")"
+let current;
+try {
+	current = (await readFile(new URL(`../.external_versions/${dep}`, import.meta.url), 'utf8')).trim();
+} catch {
+	console.error(`Missing version file for ${dep}`);
+	process.exit(1);
+}
 
-if [ "$LATEST" != "$CURRENT" ] && ! was_rejected "$DEP" "$LATEST"; then
-  printf '%s\n' "$LATEST"
-fi
+const latest = (await github(repo, 'releases/latest'))?.tag_name;
+if (!latest) {
+	console.error(`${repo}: has no latest release`);
+	process.exit(1);
+}
+// a moving release, such as coursier's `nightly`, would otherwise be pinned as an upgrade
+if (!VERSION_TAG.test(latest)) {
+	console.error(`${repo}: latest release is '${latest}', which is not a version, so the upgrade is left alone`);
+	process.exit(1);
+}
+
+if (latest === current || (await rejected(dep, latest))) {
+	process.exit(0);
+}
+
+console.log(latest);
+
+if (flag === '--notes') {
+	const body = fit(await notesFor(repo, await tagsBetween(repo, current, latest)), BODY_LIMIT);
+	await writeFile(notesPath, body || `- Bump ${dep} from ${current} to ${latest}\n`);
+}

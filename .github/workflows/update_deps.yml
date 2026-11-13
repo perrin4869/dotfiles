@@ -33,9 +33,11 @@ jobs:
           # the run's own token, for the GitHub lookups check_upstream_version makes
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          new_version="$(utils/check_upstream_version "${{ matrix.dep }}")"
+          notes="$RUNNER_TEMP/notes.md"
+          new_version="$(utils/check_upstream_version "${{ matrix.dep }}" --notes "$notes")"
           if [[ -n "$new_version" ]]; then
             echo "version=$new_version" >> "$GITHUB_OUTPUT"
+            echo "notes=$notes" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Apply update
@@ -60,6 +62,8 @@ jobs:
           delete-branch: true
           title: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
           commit-message: "chore(deps): bump ${{ matrix.dep }} to ${{ steps.check.outputs.version }}"
+          # the notes live outside the checkout, so the action never commits them
+          body-path: ${{ steps.check.outputs.notes }}
           token: ${{ secrets.PAT }}
           # Review cannot be requested from pull request author. - https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request
           # reviewers: ${{ github.actor }}

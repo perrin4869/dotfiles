@@ -88,10 +88,18 @@ function M.start()
 	)
 
 	local chan = vim.fn.sockconnect('pipe', SOCKET, { rpc = true })
-	-- the socket is up before the config has finished starting
+	-- the socket is up before the config has finished starting, so ask until it says it has; the timeout keeps one
+	-- answer from outliving the wait
 	assert(
 		vim.wait(20000, function()
-			local ok, entered = pcall(vim.rpcrequest, chan, 'nvim_exec_lua', 'return vim.v.vim_did_enter', {})
+			local ok, entered = pcall(
+				vim.rpcrequest,
+				chan,
+				{ timeout = 1000 },
+				'nvim_exec_lua',
+				'return vim.v.vim_did_enter',
+				{}
+			)
 			return ok and entered == 1
 		end, 100),
 		'the child never finished starting'

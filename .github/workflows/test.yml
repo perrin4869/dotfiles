@@ -18,6 +18,8 @@ jobs:
       # build.incremental, since cargo disables incremental on CI otherwise, even if the profile enables it;
       # "true" not "1": sccache aborts every compile (ccls too) when CARGO_{BUILD_,}INCREMENTAL is "1"
       CARGO_BUILD_INCREMENTAL: "true"
+      # overrides difftastic.nvim's target-cpu=native: its cached proc-macros otherwise SIGILL on runners with older CPUs
+      RUSTFLAGS: ""
       CMAKE_C_COMPILER_LAUNCHER: sccache
       CMAKE_CXX_COMPILER_LAUNCHER: sccache
     steps:

@@ -1,0 +1,1 @@
+text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -dump -force_html %s; copiousoutput; nametemplate=%s.html

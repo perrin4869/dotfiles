@@ -16,6 +16,7 @@ const REPOS = {
 	emmylua_check: 'EmmyLuaLs/emmylua-analyzer-rust',
 	nerdfonts: 'ryanoasis/nerd-fonts',
 	pi: 'earendil-works/pi',
+	oama: 'pdobsan/oama',
 };
 
 // a tag that names a version: `nightly`, `pants_release_1.5.x` and `v1.0-beta6` name something else, and

@@ -149,6 +149,24 @@ $(emmylua_check_target): $(DEPS)/$(emmylua_check_archive)
 	@touch $@
 emmylua_check: $(emmylua_check_target)
 
+.PHONY: oama
+oama_version = $(call get_version,oama)
+oama_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo x86_64 ;; \
+	aarch64|arm64$(CP) echo aarch64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+oama_archive = oama-$(oama_version)-Linux-$(oama_arch).tar.gz
+$(DEPS)/$(oama_archive):
+	$(call require,wget)
+	wget https://github.com/pdobsan/oama/releases/download/$(oama_version)/$(oama_archive) -P $(DEPS)
+oama_target = $(DEPS)/oama/oama
+$(oama_target): $(DEPS)/$(oama_archive)
+	mkdir -p $(@D)
+	tar xzf $< -C $(@D) --strip-components=1
+	@touch $@
+oama: $(oama_target)
+
 .PHONY: yubikey-touch-detector
 # release binaries link gpgme 1.x (libgpgme.so.11), so build against the system's gpgme
 yubikey-touch-detector_target = $(YUBIKEY_TOUCH_DETECTOR_ROOT)/yubikey-touch-detector
@@ -415,6 +433,7 @@ TARGETS = \
 	iosevka \
 	carapace \
 	emmylua_check \
+	oama \
 	yubikey-touch-detector \
 	pi \
 	skills \

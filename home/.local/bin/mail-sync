@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pull every mbsync channel, then index what arrived; quiet until mbsync is configured.
+set -eu
+
+# cron's PATH lacks ~/.local/bin, where mail-credential and oama live
+PATH=$HOME/.local/bin:$PATH
+export PATH
+
+config=${XDG_CONFIG_HOME:-$HOME/.config}
+command -v mbsync >/dev/null 2>&1 || exit 0
+[ -f "$config/isyncrc" ] || exit 0
+
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/mail-sync
+mkdir -p "$state_dir"
+exec 9>"$state_dir/lock"
+# another sync still running is not an error
+flock -n 9 || exit 0
+
+# one failing account should not keep the others' new mail out of the index
+status=0
+mbsync --all --quiet || status=$?
+if command -v notmuch >/dev/null 2>&1 && [ -f "$config/notmuch/default/config" ]; then
+    notmuch new --quiet
+fi
+exit "$status"

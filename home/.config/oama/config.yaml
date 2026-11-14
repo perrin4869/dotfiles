@@ -1,12 +1,12 @@
-# Tokens are encrypted to the mail credentials key, which mail-credential unlocks in gpg-agent.
+# Tokens are encrypted to the credentials key, which credential unlocks in gpg-agent.
 encryption:
   tag: GPG
-  contents: mail-credentials@localhost
+  contents: credentials@localhost
 
 services:
   google:
     # oama runs these on every call, so they read the touch-free store rather than the YubiKey one
     client_id_cmd: |
-      mail-credential pass show google-oauth-client | sed -n 's/^client_id=//p'
+      credential pass show google-oauth-client | sed -n 's/^client_id=//p'
     client_secret_cmd: |
-      mail-credential pass show google-oauth-client | sed -n 's/^client_secret=//p'
+      credential pass show google-oauth-client | sed -n 's/^client_secret=//p'

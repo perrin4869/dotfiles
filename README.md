@@ -87,41 +87,47 @@ make prepare
 
 It runs `luacheck` and `stylua --check` on staged Lua files, the same checks as the `lint` job in CI.
 
-## Mail
+## Credentials
 
-`mbsync` mirrors every account into `~/.local/share/mail/<account>` every five minutes from cron (`mail-sync`), `notmuch` indexes it, `neomutt` reads it, and `msmtp` sends. The account configs hold addresses, so they stay out of the repo; the templates below go in `~/.config`.
-
-### Credentials
-
-All mail secrets are encrypted to a dedicated GPG key, whose passphrase is kept in the main (YubiKey) pass store. `mail-credential <command>` unlocks that key in gpg-agent and then runs the command, so the first sync after boot or login asks for one YubiKey touch, with a notification saying what for, and every later sync or send needs none. A passphrase preset into gpg-agent lasts until the agent restarts or `max-cache-ttl` runs out (ten days here). `gpg-agent.conf` already allows presetting.
+Secrets that background jobs need (mail passwords, OAuth clients and tokens) live in a separate pass store, `~/.local/share/credentials`, encrypted to a dedicated GPG key whose passphrase is kept in the main (YubiKey) pass store. `credential <command>` unlocks that key in gpg-agent and then runs the command with `PASSWORD_STORE_DIR` pointing at the store. The first use after boot asks for one YubiKey touch, with a notification naming the command that asked, and later uses need none: a passphrase preset into gpg-agent lasts until the agent restarts or `max-cache-ttl` runs out (ten days here). `.xprofile` asks at login, and `gpg-agent.conf` already allows presetting.
 
 1. Create the key, with a passphrase, and keep that passphrase in pass:
    ```sh
-   gpg --quick-gen-key 'Mail credentials <mail-credentials@localhost>' default default never
-   pass insert gpg/mail-credentials
+   gpg --quick-gen-key 'Credentials <credentials@localhost>' default default never
+   pass insert gpg/credentials
    ```
-2. Create the mail credentials store, encrypted to that key:
+2. Create the store, encrypted to that key:
    ```sh
-   PASSWORD_STORE_DIR=~/.local/share/mail-credentials pass init mail-credentials@localhost
+   PASSWORD_STORE_DIR=~/.local/share/credentials pass init credentials@localhost
    ```
-3. For each password-based IMAP account, store the password on a single line:
+
+### Google OAuth client
+
+One Desktop OAuth client serves every Google integration.
+
+1. In Google Cloud, create a project, set the OAuth consent screen to External, add yourself as a test user, and publish it **In production**: a Testing app's refresh token expires after seven days.
+2. Create a Desktop OAuth client and store it:
    ```sh
-   mail-credential pass insert imap/example.com
+   credential pass insert -m google-oauth-client   # client_id=... and client_secret=... lines
    ```
+
+## Mail
+
+`mbsync` mirrors every account into `~/.local/share/mail/<account>` every five minutes from cron (`mail-sync`), `notmuch` indexes it, `neomutt` reads it, and `msmtp` sends. The account configs hold addresses, so they stay out of the repo; the templates below go in `~/.config`. Passwords and tokens come from the [credentials store](#credentials).
+
+For each password-based IMAP account, store the password on a single line:
+
+```sh
+credential pass insert imap/example.com
+```
 
 ### Gmail
 
-[`oama`](https://github.com/pdobsan/oama) (installed by `make`) keeps the OAuth2 tokens, GPG-encrypted to the same key, and renews the hourly access token on its own.
+[`oama`](https://github.com/pdobsan/oama) (installed by `make`) keeps the OAuth2 tokens, GPG-encrypted to the credentials key, and renews the hourly access token on its own. With the [Google OAuth client](#google-oauth-client) stored, authorize once, which opens the browser:
 
-1. In Google Cloud, create a project (the calendar one works), set the OAuth consent screen to External, add yourself as a test user, and publish it **In production**: a Testing app's refresh token expires after seven days.
-2. Create a Desktop OAuth client and store it:
-   ```sh
-   mail-credential pass insert -m google-oauth-client   # client_id=... and client_secret=... lines
-   ```
-3. Authorize, which opens the browser:
-   ```sh
-   mail-credential oama authorize google you@gmail.com
-   ```
+```sh
+credential oama authorize google you@gmail.com
+```
 
 ### Templates
 
@@ -132,7 +138,7 @@ IMAPAccount gmail
 Host imap.gmail.com
 User you@gmail.com
 AuthMechs XOAUTH2
-PassCmd "mail-credential oama access you@gmail.com"
+PassCmd "credential oama access you@gmail.com"
 TLSType IMAPS
 
 IMAPStore gmail-remote
@@ -155,7 +161,7 @@ SyncState *
 IMAPAccount example
 Host imap.example.com
 User you@example.com
-PassCmd "mail-credential pass show imap/example.com"
+PassCmd "credential pass show imap/example.com"
 TLSType IMAPS
 
 IMAPStore example-remote
@@ -189,13 +195,13 @@ host smtp.gmail.com
 from you@gmail.com
 user you@gmail.com
 auth oauthbearer
-passwordeval mail-credential oama access you@gmail.com
+passwordeval credential oama access you@gmail.com
 
 account example
 host smtp.example.com
 from you@example.com
 user you@example.com
-passwordeval mail-credential pass show imap/example.com
+passwordeval credential pass show imap/example.com
 
 account default : gmail
 ```

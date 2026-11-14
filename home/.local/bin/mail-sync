@@ -2,7 +2,7 @@
 # Pull every mbsync channel, then index what arrived; quiet until mbsync is configured.
 set -eu
 
-# cron's PATH lacks ~/.local/bin, where mail-credential and oama live
+# cron's PATH lacks ~/.local/bin, where credential and oama live
 PATH=$HOME/.local/bin:$PATH
 export PATH
 

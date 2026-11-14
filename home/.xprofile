@@ -49,7 +49,7 @@ else
   log "dbus session already existing $DBUS_SESSION_BUS_ADDRESS"
 fi
 
-# cron helpers (mail-credential) can only reach the session bus through a file
+# cron helpers (credential) can only reach the session bus through a file
 if [[ -n ${DBUS_SESSION_BUS_ADDRESS:-} ]]; then
   printf '%s\n' "$DBUS_SESSION_BUS_ADDRESS" >"$LOG_DIR/dbus-address"
   chmod 600 "$LOG_DIR/dbus-address"
@@ -177,7 +177,7 @@ if have xwinwrap && have xrandr; then
   video_background
 fi
 
-# ask for the mail credentials touch now, while someone is at the screen, rather than from a later cron sync
-if [[ -f ${XDG_DATA_HOME:-$HOME/.local/share}/mail-credentials/.gpg-id ]]; then
-  run_bg_guarded mail-credential
+# ask for the credentials touch now, while someone is at the screen, rather than from a later cron sync
+if [[ -f ${XDG_DATA_HOME:-$HOME/.local/share}/credentials/.gpg-id ]]; then
+  run_bg_guarded credential
 fi

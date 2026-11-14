@@ -36,7 +36,8 @@ jobs:
         id: rust
         run: |
           rustup update stable && rustup default stable
-          echo "cachekey=$(rustc -V | cut -d' ' -f2)" >> "$GITHUB_OUTPUT"
+          # cargo rebuilds everything when rustflags change, so a target cached under other flags is useless
+          echo "cachekey=$(rustc -V | cut -d' ' -f2)-$(printf %s "$RUSTFLAGS" | sha256sum | cut -c1-8)" >> "$GITHUB_OUTPUT"
       - name: install node.js # various dependencies
         uses: actions/setup-node@v7
         with:

@@ -6,11 +6,11 @@
     "npm:pi-claude-bridge@0.12.0",
     "npm:pi-web-access@0.47.0",
     "npm:@ldelossa/pi-ide@0.2.6",
-    "npm:pi-subagents@0.88.0",
+    "npm:pi-subagents@0.88.1",
     "npm:@narumitw/pi-plan-mode@0.60.1",
     "npm:cc-safety-net@2.7.12",
     "npm:@gotgenes/pi-permission-system@42.0.0",
-    "npm:pi-sandbox@0.8.1",
+    "npm:pi-sandbox@0.8.2",
     "npm:pi-background@0.4.2",
     "npm:pi-memory@0.4.2",
     "npm:pi-rewind-hook@1.8.8",
@@ -24,17 +24,17 @@
     "npm:@d3ara1n/pi-context-include@3.0.0",
     "npm:pi-context-view@0.8.4",
     "npm:@sting8k/pi-vcc@0.11.2",
-    "npm:@narumitw/pi-goal@0.55.1",
+    "npm:@narumitw/pi-goal@0.55.3",
     "npm:@ff-labs/pi-fff@0.11.0",
     "npm:pi-token-speed@0.12.0",
     "npm:@spences10/pi-themes@0.0.11",
     "npm:pi-ollama-cloud@0.13.1",
-    "npm:pi-tidy@0.9.5"
+    "npm:pi-tidy@0.9.7"
   ],
   "theme": "gruvbox-dark",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0",
-    "{\"source\":\"npm:pi-tidy@0.9.5\",\"scope\":\"user\"}": "0.9.5"
+    "{\"source\":\"npm:pi-tidy@0.9.7\",\"scope\":\"user\"}": "0.9.7"
   },
   "rewind": {
     "retention": {

@@ -93,13 +93,45 @@ test('switching models disables it', async () => {
 test('keeps the model and warns when the target is unavailable', async () => {
 	const notify = mock.fn<NotifyListener>();
 	using h = await start({
-		projectSettings: { opusplan: { enabled: true, execute: 'faux/missing' } },
+		projectSettings: { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/missing' } },
 		onNotify: notify,
 	});
 	assert.equal(await turn(h), 'start');
 	assert.deepEqual(
 		notify.mock.calls.map((call) => call.arguments),
-		[['opusplan: cannot use faux/missing', 'warning']],
+		[
+			['opusplan: faux/missing is not a known model', 'warning'],
+			['opusplan: cannot use faux/missing', 'warning'],
+		],
+	);
+});
+
+test('warns about an unknown plan model when the session starts', async () => {
+	const notify = mock.fn<NotifyListener>();
+	using h = await start({
+		projectSettings: { opusplan: { enabled: true, plan: 'faux/missing', execute: 'faux/execute' } },
+		onNotify: notify,
+	});
+	assert.deepEqual(
+		notify.mock.calls.map((call) => call.arguments),
+		[['opusplan: faux/missing is not a known model', 'warning']],
+	);
+});
+
+test('checks the models when /opusplan enables it', async () => {
+	const notify = mock.fn<NotifyListener>();
+	using h = await start({
+		globalSettings: { opusplan: { plan: 'faux/missing', execute: 'faux/execute' } },
+		onNotify: notify,
+	});
+	assert.equal(notify.mock.callCount(), 0);
+	await h.session.prompt('/opusplan');
+	assert.deepEqual(
+		notify.mock.calls.map((call) => call.arguments),
+		[
+			['opusplan enabled', 'info'],
+			['opusplan: faux/missing is not a known model', 'warning'],
+		],
 	);
 });
 

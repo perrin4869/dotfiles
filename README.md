@@ -149,3 +149,32 @@ System settings required:
   sudo udevadm trigger -s backlight -c add
   ```
   (also requires your user to be in the `video` group)
+
+## Calendar
+
+[`caldir`](https://caldir.org/) keeps each calendar as a directory of `.ics` files (under `~/caldir` by default) and syncs it with Google. `calendar-sync` runs from cron every five minutes; `calendar-notify` runs from `.xprofile` and shows a dunst notification ten minutes before each event, once per occurrence.
+
+Caldir's generic CalDAV provider only speaks HTTP basic auth, and Google's CalDAV endpoint requires OAuth, so this variant uses caldir's **Google Calendar API provider**. If staying on CalDAV matters more, the `feat/google-calendar` branch does the same job with vdirsyncer and khal.
+
+### Setup
+
+1. Install caldir, stow the scripts and (re)install the crontab:
+   ```sh
+   make calendar
+   make install
+   ```
+2. In the [Google Cloud console](https://console.cloud.google.com/), create a project and enable the **Google Calendar API**.
+3. Configure the OAuth consent screen as **External**, add your account as a test user, then publish the app (**In production**). Personal use does not need verification, but an app left in **Testing** gets refresh tokens that expire after seven days.
+4. Create an OAuth client ID of type **Desktop app**, then connect once. `--hosted=false` keeps the OAuth client and token with you instead of caldir.org:
+   ```sh
+   caldir connect google --hosted=false
+   ```
+   Paste the client ID and secret and finish the browser flow when prompted.
+5. Sync:
+   ```sh
+   caldir sync
+   ```
+
+Caldir stores the OAuth client and tokens under `~/.config/caldir/providers/google/` in files readable only by you. It never calls `pass`, so the YubiKey is not involved in syncing.
+
+`calendar-notify` records the occurrences it has announced in `~/.local/state/calendar-notify/notified`, so an event is not announced twice if the loop or the session restarts. Running `calendar-notify` by hand shows what would be notified right now.

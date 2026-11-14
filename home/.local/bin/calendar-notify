@@ -1,0 +1,65 @@
+#!/bin/bash
+# Notify once about each event starting within ten minutes, using caldir's event view.
+set -euo pipefail
+
+LEAD_MINUTES=10
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/calendar-notify
+state=$state_dir/notified
+
+for dep in caldir jq; do
+	if ! command -v "$dep" >/dev/null 2>&1; then
+		echo "calendar-notify: missing dependency: $dep" >&2
+		exit 0
+	fi
+done
+
+if command -v notify-send >/dev/null 2>&1; then
+	notify=(notify-send)
+elif command -v dunstify >/dev/null 2>&1; then
+	notify=(dunstify)
+else
+	echo "calendar-notify: missing dependency: notify-send or dunstify" >&2
+	exit 0
+fi
+
+mkdir -p "$state_dir"
+exec 9>"$state_dir/lock"
+flock -n 9 || exit 0
+: >>"$state"
+
+notified() {
+	awk -F'\t' -v uid="$1" -v start="$2" \
+		'$2 == uid && $3 == start { found = 1 } END { exit !found }' "$state"
+}
+
+notify_event() {
+	local uid=$1 start=$2 title=$3 location=$4
+	notified "$uid" "$start" && return 0
+
+	local start_epoch mins starts_at body
+	start_epoch=$(date -d "$start" +%s) || return 0
+	mins=$(((start_epoch - $(date +%s) + 59) / 60))
+	((mins > 0 && mins <= LEAD_MINUTES)) || return 0
+
+	starts_at=$(date -d "$start" +%H:%M)
+	body="Starts in $mins min ($starts_at)"
+	[[ -n $location ]] && body+=" — $location"
+
+	# record only what the daemon accepted, so a failure is retried on the next poll
+	if "${notify[@]}" -a calendar "$title" "$body"; then
+		printf '%s\t%s\t%s\n' "$(date +%s)" "$uid" "$start" >>"$state"
+	fi
+}
+
+# drop yesterday's keys so the file does not grow for the life of the session
+awk -F'\t' -v cutoff=$(($(date +%s) - 86400)) '$1 >= cutoff' "$state" >"$state.tmp"
+mv "$state.tmp" "$state"
+
+# query two days so a window that crosses midnight still sees tomorrow
+events=$(caldir events --json --from "$(date +%F)" --to "$(date -d '+2 days' +%F)" 2>/dev/null) || events='[]'
+
+while IFS=$'\t' read -r uid start allday title location; do
+	[[ $allday == true ]] && continue
+	[[ -n $uid && -n $start ]] || continue
+	notify_event "$uid" "$start" "${title:-Untitled event}" "$location"
+done < <(jq -r '.[] | [.instance_id, .start, (.all_day | tostring), (.title // .summary // ""), (.location // "")] | @tsv' <<<"$events")

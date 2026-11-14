@@ -1,0 +1,22 @@
+#!/bin/sh
+# Sync caldir calendars; cron has a minimal PATH, so use the installed binary directly.
+set -eu
+
+binary=$HOME/.local/bin/caldir
+[ -x "$binary" ] || exit 0
+
+# caldir creates this when a provider is connected; until then there is nothing to sync
+providers=${XDG_CONFIG_HOME:-$HOME/.config}/caldir/providers
+[ -d "$providers" ] || exit 0
+
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/calendar-sync
+mkdir -p "$state_dir"
+
+# 75 means another sync still holds the lock, which is not an error
+if flock -n -E 75 "$state_dir/lock" "$binary" sync; then
+	exit 0
+else
+	status=$?
+	[ "$status" -eq 75 ] && exit 0
+	exit "$status"
+fi

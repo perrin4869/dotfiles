@@ -47,8 +47,5 @@
     "allowedRoots": [
       "~/.agents"
     ]
-  },
-  "pi-ide": {
-    "autoconnect": false
   }
 }

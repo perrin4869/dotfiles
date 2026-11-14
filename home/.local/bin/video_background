@@ -3,6 +3,16 @@
 # supports having different videos per screen, for example, backgroud.DP-4.mkv
 BACKGROUND_VIDEO_STEM=~/.config/background
 
+if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
+  while read -r screen; do
+    video="$BACKGROUND_VIDEO_STEM.$screen.mkv"
+    # -o is written verbatim to an mpv config file (one option per line); bottom layer stays above swaybg
+    [[ -e "$video" ]] &&
+      mpvpaper -f -l bottom -o $'no-audio\nloop=inf\nstop-screensaver=no' "$screen" "$video"
+  done < <(swaymsg -t get_outputs | jq -r '.[] | select(.active) | .name')
+  exit 0
+fi
+
 while IFS=' ' read -r screen geometry;
 do
   video="$BACKGROUND_VIDEO_STEM.$screen.mkv"

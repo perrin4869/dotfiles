@@ -1,0 +1,64 @@
+// ported from ~/.config/i3status/config.template
+{
+  "position": "top",
+  "modules-left": ["sway/workspaces", "sway/mode"],
+  "modules-right": [
+    "disk",
+    "network",
+    "battery",
+    "temperature",
+    "cpu",
+    "memory",
+    "load",
+    "clock",
+    "pulseaudio",
+    "tray"
+  ],
+  "disk": {
+    "path": "/",
+    "format": " {free}",
+    "states": { "warning": 80 }
+  },
+  "network": {
+    "format-wifi": "{signalStrength}%  {essid} {ipaddr}",
+    "format-ethernet": "{ipaddr}",
+    "format-disconnected": ""
+  },
+  "battery": {
+    "format": " {capacity}% {time}",
+    "format-charging": " {capacity}% {time}",
+    "format-full": " {capacity}%",
+    "format-time": "{H}:{m}",
+    "states": { "critical": 11 }
+  },
+  "temperature": {
+    // the AMD sensor the i3status build target looks for; waybar falls back to thermal_zone0 without it
+    "hwmon-path": ["/sys/class/hwmon/hwmon2/temp1_input"],
+    "format": " {temperatureC}°C"
+  },
+  "cpu": {
+    "interval": 1,
+    "format": " {usage}%"
+  },
+  "memory": {
+    "interval": 1,
+    "format": "{used:0.1f}G",
+    "format-warning": "MEMORY: {avail:0.1f}G",
+    "states": { "warning": 90 }
+  },
+  "load": {
+    "interval": 1,
+    "format": " {load1}"
+  },
+  "clock": {
+    "interval": 1,
+    "format": " {:%A %B%e  %H:%M:%S}"
+  },
+  "pulseaudio": {
+    "format": "{volume}% ",
+    "format-muted": ""
+  },
+  "tray": {
+    "spacing": 8
+  }
+}

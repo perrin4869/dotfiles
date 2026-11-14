@@ -2,46 +2,11 @@
 
 set -u
 
-. "$HOME/.local/libexec/guards"
+. "$HOME/.local/libexec/session"
 
-XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
-LOG_DIR="$XDG_STATE_HOME/xsession"
-LOG_FILE="$LOG_DIR/session.log"
-
-mkdir -p "$LOG_DIR"
-exec > >(tee -a "$LOG_FILE") 2>&1
-
-log() { printf '[%s] ~/.xprofile: %s\n' "$(date +'%F %T')" "$*"; }
-warn_missing() { log "missing: $*"; }
-run_guarded() { have "$1" && "$@" || warn_missing "$1"; }
-run_bg_guarded() { have "$1" && ( "$@" & ) || warn_missing "$1"; }
-
-export TERMINAL="${TERMINAL:-terminal}"
-export FILE="${FILE:-filemanager}"
-export MENU="${MENU:-menu}"
-export BROWSER="${BROWSER:-browser}"
-export EDITOR="${EDITOR:-editor}"
-
-if [[ -z ${IM+x} ]]; then
-  if have fcitx5 || have fcitx; then
-    IM=fcitx
-  elif have ibus; then
-    IM=ibus
-  fi
-fi
-
-if [[ -n ${IM:-} ]]; then
-  log "IM auto-detected as $IM"
-  export IM
-
-  # X Input Method (xim)
-  export GTK_IM_MODULE=${IM/ibus/xim} # fix ibus integration with chromium/chrome (ibus xim emulation is broken?), keep fcitx
-  export XMODIFIERS=@im=$IM
-  export QT_IM_MODULE=$IM # qutebrowser does not support xim
-  export GLFW_IM_MODULE=ibus # https://github.com/kovidgoyal/kitty/issues/469
-else
-  log "IM was not auto-detected, skipping IM setup"
-fi
+export XDG_SESSION_TYPE=x11
+session_log xsession
+session_env
 
 if [[ -z ${DBUS_SESSION_BUS_ADDRESS:-} ]]; then
   have dbus-launch && export $(dbus-launch --exit-with-x11) || warn_missing dbus-launch
@@ -54,94 +19,14 @@ fi
 # not available, if required, set it via .pam_environment or similar
 [[ -v SOFTWARE_VSYNC ]] && PICOM_VSYNC=--vsync
 
-FCITX=$(have fcitx5 && echo fcitx5 || echo fcitx)
-GEOCLUE2=$(
-  # libexec is used in slackware, lib is in arch
-  [[ -x /usr/libexec/geoclue-2.0/demos/agent ]] \
-    && echo /usr/libexec/geoclue-2.0/demos/agent \
-    || echo /usr/lib/geoclue-2.0/demos/agent
-)
-
 run_bg_guarded sxhkd
-run_bg_guarded blueman-applet
-run_bg_guarded dunst
-# notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
-run_bg_guarded yubikey-touch-detector --notify
-run_bg_guarded yubikey-touch-sound
+session_daemons
 run_bg_guarded xscreensaver -no-splash
-run_bg_guarded udiskie --tray
-run_bg_guarded $GEOCLUE2 # required for redshift
 run_bg_guarded redshift-gtk
-run_bg_guarded joystickwake --loglevel debug
-[[ ${IM:-} == "ibus" ]] && run_guarded ibus-daemon -d -r --xim
-[[ ${IM:-} == "fcitx" ]] && run_guarded $FCITX -d -r
 run_guarded picom -b ${PICOM_VSYNC:-}
 
 # if autorandr-launcher is installed (presumably because udev was not) then daemonize
 run_guarded autorandr-launcher --daemonize
-
-# if pipewire is available and not already running (e.g. via /etc/profile.d/pipewire.sh
-# on Slackware, or systemd user services elsewhere), start it as a fallback.
-# Test pipewire's own lockfile (the same one it uses internally to refuse a second
-# instance - see pipewire's "unable to lock lockfile ... maybe another daemon is
-# running" error) rather than matching on process name, which is fragile.
-# Bail if PulseAudio is already in charge (autospawn, or already running per its
-# own --check flag), to avoid pipewire-pulse fighting it for the same socket.
-PIPEWIRE_LOCK="${XDG_RUNTIME_DIR:-/tmp}/pipewire-0.lock"
-if have pipewire \
-  && ! grep -q '^autospawn *= *yes' /etc/pulse/client.conf 2>/dev/null \
-  && ! (have pulseaudio && pulseaudio --check 2>/dev/null) \
-  && flock -n "$PIPEWIRE_LOCK" true 2>/dev/null; then
-  INIT=$(ps --no-headers -o comm 1)
-  if [[ "$INIT" != "systemd" ]]; then
-    # on slackware we don't use systemd, so enable logging explicitly
-    export PIPEWIRE_LOG=~/.pipewire.log
-  fi
-
-  # deliberately no setsid here: this is a fallback scoped to this X session
-  # (only runs because nothing else already claimed pipewire), so it should
-  # live and die with it, not outlive it as an orphaned, detached process.
-  pipewire &
-
-  ( # wait for pipewire's own socket before starting its dependents, instead of
-    # racing all three at once - same class of fix applied to the system's own
-    # /etc/profile.d/pipewire.sh, which used to race inotifywait against pipewire's
-    # own startup.
-    timeout=100
-    while [ $timeout -gt 0 ]; do
-      [ -S "${XDG_RUNTIME_DIR:-/tmp}/pipewire-0" ] && break
-      sleep 0.2
-      timeout=$((timeout - 1))
-    done
-
-    if [ "$timeout" -eq 0 ]; then
-      log "ERROR: pipewire socket did not appear within 20s, not starting pipewire-pulse/wireplumber"
-    else
-      pipewire-pulse &
-      if have wireplumber; then
-        log "pipewire session manager: running wireplumber"
-        wireplumber &
-      elif have pipewire-media-session; then
-        log "pipewire session manager: running pipewire-media-session"
-        pipewire-media-session &
-      else
-        log "pipewire session manager: not found"
-      fi
-    fi
-  ) &
-fi
-
-if [[ -e "/etc/slackware-version" ]]; then
-  if have sun; then
-    sun status | grep -q "SUN is running" || sun start
-    sun start --tray
-  else
-    warn_missing sun
-  fi
-fi
-
-# if NetworkManager is running and nm-applet is installed, run it
-pidof NetworkManager >/dev/null && run_bg_guarded nm-applet
 
 # bashism
 # a monitor may be connected but not have a resolution
@@ -163,9 +48,7 @@ if [ -x "$HOME/.screenlayout/default.sh" ]; then
   "$HOME/.screenlayout/default.sh"
 fi
 
-if [[ -d ~/.wallpaper ]]; then
-  run_guarded feh --bg-fill --randomize ~/.wallpaper/*
-fi
+wallpaper
 
 if have xwinwrap && have xrandr; then
   video_background

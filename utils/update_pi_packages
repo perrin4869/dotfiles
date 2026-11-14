@@ -15,9 +15,13 @@ const execFileAsync = promisify(execFile);
 // an npm source pinned to an exact version, which is the only kind this script knows how to bump
 const PINNED_SPEC = /^npm:((?:@[^/@]+\/)?[^@]+)@(\d[^@]*)$/;
 
-const parsePin = (spec) => {
-	const match = PINNED_SPEC.exec(spec);
-	if (!match) throw new Error(`${spec}: expected npm:<name>@<version>`);
+// an entry is its source, or an object that filters the package's resources, as pi writes one turned off with
+// `"extensions": []`
+const sourceOf = (entry) => (typeof entry === 'string' ? entry : entry.source);
+
+const parsePin = (entry) => {
+	const match = PINNED_SPEC.exec(sourceOf(entry));
+	if (!match) throw new Error(`${sourceOf(entry)}: expected npm:<name>@<version>`);
 	return { name: match[1], current: match[2] };
 };
 
@@ -231,14 +235,18 @@ function target(name, current, latest) {
 
 // the registry's answer for each package in settings order, keeping only what the rest of the script reads from it
 const registry = await Promise.all(
-	(settings.packages ?? []).map(async (spec) => {
-		const { name, current } = parsePin(spec);
+	(settings.packages ?? []).map(async (entry) => {
+		const { name, current } = parsePin(entry);
 		const { versions, repository, 'dist-tags': tags } = await getRegistry(name);
-		return { name, current, version: target(name, current, tags.latest), versions, repository };
+		return { entry, name, current, version: target(name, current, tags.latest), versions, repository };
 	}),
 );
 
-const packages = registry.map(({ name, version }) => `npm:${name}@${version}`);
+// an object entry keeps its filters, so a package turned off stays off across a bump
+const packages = registry.map(({ entry, name, version }) => {
+	const source = `npm:${name}@${version}`;
+	return typeof entry === 'string' ? source : { ...entry, source };
+});
 const bumps = registry.filter(({ current, version }) => version !== current);
 
 // pi records, per package, the version it last showed a changelog notice for, keyed by a JSON {"source","scope"} string,

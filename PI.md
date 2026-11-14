@@ -129,7 +129,7 @@ vim.g.avante_provider = 'pi'
 
 ### pi-ide diff review
 
-pi-ide's diff review of pi's edits is off by default, so edits apply directly.
+pi-ide's diff review of pi's edits is off by default, so edits apply directly. The extension is off in `settings.json` (`"extensions": []`) until ldelossa/pi-ide#3 is fixed, so no diff reaches Neovim; the plugin and these commands stay for when it returns.
 
 * `:PiDiffEnable`: review each edit in a diff before it is applied.
 * `:PiDiffDisable`: apply edits without review.

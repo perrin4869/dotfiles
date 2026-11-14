@@ -1,0 +1,13 @@
+#!/bin/bash
+# starts sway from a tty with the environment ~/.xprofile gives the X session
+
+set -u
+
+. "$HOME/.local/libexec/session"
+
+export XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=sway
+session_log sway
+session_env
+
+[[ -n ${DBUS_SESSION_BUS_ADDRESS:-} ]] && exec sway "$@"
+exec dbus-run-session sway "$@"

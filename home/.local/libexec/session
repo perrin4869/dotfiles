@@ -1,0 +1,153 @@
+#!/bin/bash
+# Shared by the X session (~/.xprofile) and the sway session (sway-session, session-daemons).
+
+. "$HOME/.local/libexec/guards"
+
+XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+
+log() { printf '[%s] %s: %s\n' "$(date +'%F %T')" "${0##*/}" "$*"; }
+warn_missing() { log "missing: $*"; }
+run_guarded() { have "$1" && "$@" || warn_missing "$1"; }
+run_bg_guarded() { have "$1" && ( "$@" & ) || warn_missing "$1"; }
+is_wayland() { [[ ${XDG_SESSION_TYPE:-} == wayland ]]; }
+
+# $1: directory under $XDG_STATE_HOME, rotated by ~/.config/logrotate/xsession.conf
+session_log() {
+  mkdir -p "$XDG_STATE_HOME/$1"
+  exec > >(tee -a "$XDG_STATE_HOME/$1/session.log") 2>&1
+}
+
+session_env() {
+  export TERMINAL="${TERMINAL:-terminal}"
+  export FILE="${FILE:-filemanager}"
+  export MENU="${MENU:-menu}"
+  export BROWSER="${BROWSER:-browser}"
+  export EDITOR="${EDITOR:-editor}"
+
+  if is_wayland; then
+    # rofi-pass defaults to xdotool and xclip, which only reach X11 windows
+    export ROFI_PASS_BACKEND="${ROFI_PASS_BACKEND:-wtype}"
+    export ROFI_PASS_CLIPBOARD_BACKEND="${ROFI_PASS_CLIPBOARD_BACKEND:-wl-clipboard}"
+  fi
+
+  if [[ -z ${IM+x} ]]; then
+    if have fcitx5 || have fcitx; then
+      IM=fcitx
+    elif have ibus; then
+      IM=ibus
+    fi
+  fi
+
+  if [[ -n ${IM:-} ]]; then
+    log "IM auto-detected as $IM"
+    export IM
+
+    if is_wayland; then
+      # the xim module only works for GTK's X11 backend
+      export GTK_IM_MODULE=$IM
+    else
+      # X Input Method (xim)
+      export GTK_IM_MODULE=${IM/ibus/xim} # fix ibus integration with chromium/chrome (ibus xim emulation is broken?), keep fcitx
+    fi
+    export XMODIFIERS=@im=$IM
+    export QT_IM_MODULE=$IM # qutebrowser does not support xim
+    export GLFW_IM_MODULE=ibus # https://github.com/kovidgoyal/kitty/issues/469
+  else
+    log "IM was not auto-detected, skipping IM setup"
+  fi
+}
+
+# Daemons both sessions run; each session starts its display-server specific ones itself.
+session_daemons() {
+  local fcitx geoclue2 udiskie_sni= nm_applet_sni=
+  fcitx=$(have fcitx5 && echo fcitx5 || echo fcitx)
+  geoclue2=$(
+    # libexec is used in slackware, lib is in arch
+    [[ -x /usr/libexec/geoclue-2.0/demos/agent ]] \
+      && echo /usr/libexec/geoclue-2.0/demos/agent \
+      || echo /usr/lib/geoclue-2.0/demos/agent
+  )
+  # waybar's tray only speaks StatusNotifierItem, i3bar's only XEmbed
+  if is_wayland; then
+    udiskie_sni=--appindicator
+    nm_applet_sni=--indicator
+  fi
+
+  run_bg_guarded blueman-applet
+  run_bg_guarded dunst
+  # notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
+  run_bg_guarded yubikey-touch-detector --notify
+  run_bg_guarded yubikey-touch-sound
+  run_bg_guarded udiskie --tray $udiskie_sni
+  run_bg_guarded $geoclue2 # required for redshift/gammastep
+  run_bg_guarded joystickwake --loglevel debug
+  [[ ${IM:-} == "ibus" ]] && run_guarded ibus-daemon -d -r --xim
+  [[ ${IM:-} == "fcitx" ]] && run_guarded $fcitx -d -r
+
+  start_pipewire
+
+  if [[ -e "/etc/slackware-version" ]]; then
+    if have sun; then
+      sun status | grep -q "SUN is running" || sun start
+      sun start --tray
+    else
+      warn_missing sun
+    fi
+  fi
+
+  # if NetworkManager is running and nm-applet is installed, run it
+  pidof NetworkManager >/dev/null && run_bg_guarded nm-applet $nm_applet_sni
+}
+
+# if pipewire is available and not already running (e.g. via /etc/profile.d/pipewire.sh
+# on Slackware, or systemd user services elsewhere), start it as a fallback.
+# Test pipewire's own lockfile (the same one it uses internally to refuse a second
+# instance - see pipewire's "unable to lock lockfile ... maybe another daemon is
+# running" error) rather than matching on process name, which is fragile.
+# Bail if PulseAudio is already in charge (autospawn, or already running per its
+# own --check flag), to avoid pipewire-pulse fighting it for the same socket.
+start_pipewire() {
+  local pipewire_lock="${XDG_RUNTIME_DIR:-/tmp}/pipewire-0.lock"
+  have pipewire \
+    && ! grep -q '^autospawn *= *yes' /etc/pulse/client.conf 2>/dev/null \
+    && ! (have pulseaudio && pulseaudio --check 2>/dev/null) \
+    && flock -n "$pipewire_lock" true 2>/dev/null \
+    || return 0
+
+  if [[ "$(ps --no-headers -o comm 1)" != "systemd" ]]; then
+    # on slackware we don't use systemd, so enable logging explicitly
+    export PIPEWIRE_LOG=~/.pipewire.log
+  fi
+
+  # deliberately no setsid here: this is a fallback scoped to this session
+  # (only runs because nothing else already claimed pipewire), so it should
+  # live and die with it, not outlive it as an orphaned, detached process.
+  pipewire &
+
+  ( # wait for pipewire's own socket before starting its dependents, instead of
+    # racing all three at once - same class of fix applied to the system's own
+    # /etc/profile.d/pipewire.sh, which used to race inotifywait against pipewire's
+    # own startup.
+    timeout=100
+    while [ $timeout -gt 0 ]; do
+      [ -S "${XDG_RUNTIME_DIR:-/tmp}/pipewire-0" ] && break
+      sleep 0.2
+      timeout=$((timeout - 1))
+    done
+
+    if [ "$timeout" -eq 0 ]; then
+      log "ERROR: pipewire socket did not appear within 20s, not starting pipewire-pulse/wireplumber"
+    else
+      pipewire-pulse &
+      if have wireplumber; then
+        log "pipewire session manager: running wireplumber"
+        wireplumber &
+      elif have pipewire-media-session; then
+        log "pipewire session manager: running pipewire-media-session"
+        pipewire-media-session &
+      else
+        log "pipewire session manager: not found"
+      fi
+    fi
+  ) &
+}

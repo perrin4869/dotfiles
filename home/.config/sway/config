@@ -1,0 +1,214 @@
+# sway config, ported from ~/.config/i3/config and ~/.config/sxhkd/sxhkdrc
+# Start it from a tty with sway-session, which sets up the same environment as ~/.xprofile.
+# See sway(5) for a complete reference.
+
+set $mod Mod4
+set $exit ~/.local/bin/chpwr
+set $running_sink $(pactl list short sinks | grep RUNNING | cut -f1)
+
+font pango:Meslo LG S DZ 8
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 15
+gaps outer 15
+
+# compose key on right alt, as in /etc/X11/xorg.conf.d/90-custom-kbd.conf for X
+input type:keyboard xkb_options compose:ralt
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod normal
+# fix for file saving dialog windows opening too big
+floating_maximum_size 1500 x 1000
+# zenity/pinentry request activation on map, and focusing via activation drops fullscreen
+focus_on_window_activation urgent
+
+### Applications (sxhkdrc on X)
+
+bindsym $mod+Return exec $TERMINAL
+bindsym $mod+t exec $TERMINAL
+bindsym $mod+d exec rofi -show combi
+bindsym $mod+Shift+d exec rofi-pass
+bindsym $mod+m exec $TERMINAL -e ncmpcpp
+bindsym $mod+p exec screenshot -s
+bindsym $mod+Shift+p exec screenshot
+bindsym Print exec screenshot -s
+bindsym Shift+Print exec screenshot
+bindsym $mod+Shift+w exec $BROWSER
+bindsym $mod+Shift+g exec gimp
+bindsym $mod+Shift+v exec $TERMINAL -e pulsemixer
+
+# sway has no key chords, so super+o ; <key> becomes a mode
+mode "open" {
+    bindsym t exec $TERMINAL, mode "default"
+    bindsym e exec $TERMINAL -e $EDITOR, mode "default"
+    bindsym w exec qutebrowser, mode "default"
+    bindsym m exec $TERMINAL -e $MAIL, mode "default"
+    bindsym f exec $TERMINAL -e $FILE, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+o mode "open"
+
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioPrev exec playerctl previous
+bindsym --locked XF86AudioMute exec pactl set-sink-mute $running_sink toggle
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume $running_sink -5%
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume $running_sink +5%
+# SIGUSR1 makes swayidle run its timeouts now, like xscreensaver-command -activate
+bindsym XF86ScreenSaver exec pkill -USR1 swayidle
+
+### Windows
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+### Workspaces
+
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Make the currently focused window a scratchpad
+bindsym $mod+Shift+minus move scratchpad
+
+# Show the first scratchpad window
+bindsym $mod+minus scratchpad show
+
+### Session
+
+# sway has no in-place restart, reload covers it
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+mode "resize" {
+    bindsym j resize shrink width 10 px or 10 ppt
+    bindsym k resize grow height 10 px or 10 ppt
+    bindsym l resize shrink height 10 px or 10 ppt
+    bindsym semicolon resize grow width 10 px or 10 ppt
+
+    bindsym Left resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec $exit lock, mode "default"
+    bindsym e exec $exit logout, mode "default"
+    bindsym s exec $exit suspend, mode "default"
+    bindsym h exec $exit hibernate, mode "default"
+    bindsym r exec $exit reboot, mode "default"
+    bindsym Shift+s exec $exit shutdown, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Shift+s mode "$mode_system"
+
+bar {
+    swaybar_command waybar
+}
+
+### Window rules
+
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+# new tiled windows leave fullscreen, which focus_on_window_activation urgent no longer does
+for_window [tiling workspace="__focused__"] focus
+# keep the screen on under fullscreen video, which mpv and browsers did through xscreensaver on X
+for_window [shell=".*"] inhibit_idle fullscreen
+
+### Autostart (~/.xprofile on X)
+
+# distro snippets, e.g. importing the environment into systemd user services
+include /etc/sway/config.d/*
+# lets D-Bus activated services such as xdg-desktop-portal-wlr find this session
+exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+
+exec ~/.local/libexec/session-daemons
+# xscreensaver's dpmsStandby; it never locked, so neither does this
+exec swayidle -w timeout 1200 'swaymsg "output * power off"' resume 'swaymsg "output * power on"'
+exec gammastep-indicator
+# outputs are configured per machine in ~/.config/kanshi/config, like ~/.screenlayout on X
+exec kanshi
+exec wallpaper
+exec video_background

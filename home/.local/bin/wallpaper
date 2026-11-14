@@ -1,0 +1,17 @@
+#!/bin/bash
+# sets a random image from ~/.wallpaper as the desktop background
+
+. "$HOME/.local/libexec/guards"
+
+shopt -s nullglob
+images=(~/.wallpaper/*)
+(( ${#images[@]} )) || exit 0
+
+if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
+  have swaybg || exit 0
+  # swaybg stays in the foreground for as long as it draws the background
+  swaybg -m fill -i "${images[RANDOM % ${#images[@]}]}" &
+  exit 0
+fi
+
+have feh && feh --bg-fill --randomize "${images[@]}"

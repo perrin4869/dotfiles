@@ -1,4 +1,4 @@
-@XDG_STATE_HOME@/xsession/*.log {
+@XDG_STATE_HOME@/xsession/*.log @XDG_STATE_HOME@/sway/*.log {
     rotate 7
     daily
     compress

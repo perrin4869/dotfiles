@@ -56,6 +56,26 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `logrotate`
 - `cron`
 
+### Wayland (sway)
+
+`sway-session` starts sway from a tty with the same environment `~/.xprofile` gives the X session. The sway setup additionally uses:
+
+- `sway` (provides `swaymsg` and `swaynag`)
+- `swayidle` (replaces `xscreensaver`)
+- `swaylock` (replaces `i3lock`)
+- `swaybg` (replaces `feh` for `~/.wallpaper`)
+- `waybar` (replaces `i3status`; its tray shows StatusNotifierItem applets only, not XEmbed ones)
+- `grim` and `slurp` (replace `maim`)
+- `wl-clipboard` (replaces `xclip`/`xsel`)
+- `wtype` (replaces `xdotool` for `rofi-pass`)
+- `gammastep` (replaces `redshift-gtk`, reusing the redshift backlight hook)
+- `kanshi` (replaces `autorandr` and `~/.screenlayout`; configure outputs per machine in `~/.config/kanshi/config`)
+- `wdisplays` (replaces `arandr`)
+- `mpvpaper` (replaces `xwinwrap`)
+- `foot` (preferred by `terminal` under Wayland)
+- `xdg-desktop-portal-wlr` (screen sharing)
+- `xwayland` (runs X11-only applications)
+
 ### Slackware-specific
 
 On Slackware systems, the following additional dependency is optional:

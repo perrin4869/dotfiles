@@ -38,3 +38,4 @@ kls_database.db
 
 **/.claude/settings.local.json
 **/.pi/settings.json
+**/.pi/sandbox.json

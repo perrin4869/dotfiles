@@ -21,6 +21,7 @@ floating_modifier $mod normal
 floating_maximum_size 1500 x 1000
 # zenity/pinentry request activation on map, and focusing via activation drops fullscreen
 focus_on_window_activation urgent
+# no popup_during_fullscreen all, so pinentry/zenity stay hidden under fullscreen: https://github.com/swaywm/sway/issues/8746
 
 ### Applications (sxhkdrc on X)
 

@@ -1,21 +1,25 @@
 import { readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { type TObject, Type } from 'typebox';
+import { Type, type TObject } from 'typebox';
+import { definedSettings } from '../lib/settings.ts';
 
 const ROOT = join(import.meta.dirname, '..');
 export const SCHEMA_FILE = join(ROOT, 'settings.schema.json');
 
-type Section = { key: string; schema: TObject };
-
 // pi's settings.json schema, extended with the sections our extensions read through defineSettings, as JSON
 export async function settingsSchema() {
-	const properties: Record<string, TObject> = {};
+	// what makes defineSettings record its section, as the extensions load
+	process.env.PI_SETTINGS_RECORD = '1';
 	for (const file of readdirSync(ROOT)
 		.filter((name) => name.endsWith('.ts'))
 		.toSorted()) {
-		const { readSettings }: { readSettings?: Section } = await import(join(ROOT, file));
+		await import(join(ROOT, file));
+	}
+
+	const properties: Record<string, TObject> = {};
+	for (const [key, schema] of definedSettings()) {
 		// every field has a default, so a settings file may set any subset
-		if (readSettings) properties[readSettings.key] = Type.Partial(readSettings.schema);
+		properties[key] = Type.Partial(schema);
 	}
 	return JSON.stringify({
 		$schema: 'https://json-schema.org/draft/2020-12/schema',

@@ -1,4 +1,5 @@
 {
+  "$schema": "./extensions/settings.schema.json",
   "defaultModel": "gemma4:12b",
   "defaultProvider": "ollama",
   "lastChangelogVersion": "1.5.0",

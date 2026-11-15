@@ -38,7 +38,7 @@ test('PI.md shows every settings field in an example', async () => {
 	const defined = new Set(
 		definedSettings()
 			.entries()
-			.flatMap(([key, fields]) => fields.map((f) => `${key}.${f}`)),
+			.flatMap(([key, schema]) => Object.keys(schema.properties).map((field) => `${key}.${field}`)),
 	);
 	// without this the comparison passes when nothing was recorded at all
 	assert.ok(defined.size > 0, 'nothing was recorded: is PI_SETTINGS_RECORD set before the boot?');

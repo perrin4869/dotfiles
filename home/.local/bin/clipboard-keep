@@ -1,13 +1,21 @@
 #!/bin/sh
-# autocutsel mirrors CLIPBOARD into CUTBUFFER0 but never re-owns CLIPBOARD once its owner exits, so an app
-# that closes takes the selection with it. This holds the text in its own memory and puts the selection
-# back when nobody owns it; the next copy replaces it, so nothing accumulates and nothing touches disk.
-last=
+# A copy only lives as long as the process that owns the selection, and a sandboxed command takes its
+# processes with it, so an app that closes would otherwise take the text away. This takes the selection
+# over as soon as a copy is made and holds it until the next one: one slot, held in memory, gone as soon
+# as something else is copied.
+#
+# It deliberately never puts text back after losing the selection: a copy whose owner dies before we can
+# read it is indistinguishable from one we just took, and restoring would then revert the user's newest
+# copy to the previous one. An empty clipboard is the safer failure.
+held=
 while :; do
 	if cur=$(xclip -selection clipboard -o 2>/dev/null); then
-		last=$cur
-	elif [ -n "$last" ]; then
-		printf '%s' "$last" | xclip -quiet -selection clipboard -in
+		if [ -n "$cur" ] && [ "$cur" != "$held" ]; then
+			held=$cur
+			printf '%s' "$held" | xclip -quiet -selection clipboard -in
+			continue
+		fi
 	fi
-	sleep 0.5
+	# Nothing to do: wait for the next copy instead of polling.
+	clipnotify || sleep 1
 done

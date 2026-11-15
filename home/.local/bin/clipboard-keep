@@ -1,23 +1,17 @@
 #!/bin/sh
 # A copy only lives as long as the process that owns the selection, and a sandboxed command takes its
-# processes with it, so an app that closes would otherwise take the text away. This takes the selection
-# over as soon as a copy is made and holds it until the next one: one slot, held in memory, gone as soon
-# as something else is copied.
+# processes with it, so an app that closes would otherwise take the text away. This owns the selection
+# permanently instead: every copy has to take it from us, which unblocks the xclip holding it, and what
+# the copier left behind becomes the one slot we hold. No event source, no polling, nothing on disk.
 #
-# It deliberately never puts text back after losing the selection: a copy whose owner dies before we can
-# read it is indistinguishable from one we just took, and restoring would then revert the user's newest
-# copy to the previous one. An empty clipboard is the safer failure.
-# clipnotify, shipped with clipmenu, supplies the selection-change event; without it the loop falls back to
-# polling, because X has no other way to announce that someone else took the selection.
+# A client that takes the selection and dies before we read it leaves nothing to read, and the slot is
+# emptied rather than restored: restoring would revert the newest copy to the previous one, and an empty
+# clipboard is the safer failure.
 held=
 while :; do
-	if cur=$(xclip -selection clipboard -o 2>/dev/null); then
-		if [ -n "$cur" ] && [ "$cur" != "$held" ]; then
-			held=$cur
-			printf '%s' "$held" | xclip -quiet -selection clipboard -in
-			continue
-		fi
-	fi
-	# Nothing to do: wait for the next copy instead of polling.
-	clipnotify 2>/dev/null || sleep 0.5
+	# Hold the slot; xclip returns as soon as some other client takes the selection.
+	printf '%s' "$held" | xclip -quiet -selection clipboard -in
+	# Whatever is there now is the newest copy, including an explicit clear; unreadable means the copier
+	# went away, so drop to empty.
+	held=$(xclip -selection clipboard -o 2>/dev/null) || held=
 done

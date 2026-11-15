@@ -16,5 +16,5 @@ repos:
         name: typescript (tsc, oxlint, oxfmt, node --test)
         entry: sh -c 'npm run --silent check && npm test --silent'
         language: system
-        files: ^(home/\.pi/agent/extensions/|package(-lock)?\.json$|\.ox(lint|fmt)rc\.json$)
+        files: ^(home/\.pi/agent/extensions/|PI\.md$|package(-lock)?\.json$|\.ox(lint|fmt)rc\.json$)
         pass_filenames: false

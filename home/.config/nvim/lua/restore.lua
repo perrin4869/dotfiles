@@ -22,6 +22,24 @@ function M.add_buf_match(match, restore)
 	matches[match] = restore or function() end
 end
 
+--- @param program string
+--- @return fun(bufnr: integer): boolean # whether the buffer is a terminal running `program`
+function M.terminal(program)
+	return function(bufnr)
+		if vim.bo[bufnr].buftype ~= 'terminal' then
+			return false
+		end
+		local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
+		if not ok or not chan_info.argv then
+			return false
+		end
+		-- a session restore respawns it through 'shell' ({ 'zsh', '-c', '/path/to/claude --resume' })
+		return vim.tbl_contains(chan_info.argv, function(arg)
+			return vim.fs.basename(vim.split(arg, ' ')[1]) == program
+		end, { predicate = true })
+	end
+end
+
 --- restore opened windows
 function M.restore()
 	local wins = vim.api.nvim_list_wins()

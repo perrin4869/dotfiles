@@ -25,17 +25,7 @@ end
 
 local map = require('map').create({ desc = 'pi', desc_separator = ': ' })
 
---- @param bufnr integer
-local function is_pi_terminal(bufnr)
-	local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
-	if not ok or not chan_info.argv then
-		return false
-	end
-	-- a session restore respawns it through 'shell' ({ 'zsh', '-c', '/path/to/pi' })
-	return vim.tbl_contains(chan_info.argv, function(arg)
-		return vim.fs.basename(vim.split(arg, ' ')[1]) == 'pi'
-	end, { predicate = true })
-end
+local is_pi_terminal = require('restore').terminal('pi')
 
 -- like the claude terminal, a session restore recreates pi as a plain terminal; replace it with the
 -- pi.nvim-managed one, continuing the last session

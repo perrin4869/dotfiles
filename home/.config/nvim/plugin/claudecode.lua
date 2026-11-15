@@ -25,19 +25,6 @@ end
 local map = require('map').create({ desc = 'cloudecode', desc_separator = ': ' })
 local prefix = '<leader>C'
 
---- @param bufnr integer
-local function is_claude_terminal(bufnr)
-	if vim.bo[bufnr].buftype ~= 'terminal' then
-		return false
-	end
-	local ok, chan_info = pcall(vim.api.nvim_get_chan_info, vim.bo[bufnr].channel)
-	if not ok or not chan_info.argv then
-		return false
-	end
-	return vim.tbl_contains(chan_info.argv, function(a)
-		return vim.fs.basename(a) == 'claude'
-	end, { predicate = true })
-end
 local claude = function(cmd, args)
 	if type(cmd) == 'table' then
 		args = cmd
@@ -78,7 +65,7 @@ end, 'toggle')
 -- reopen it properly instead.
 -- match on the terminal's actual argv (not the bufname, which embeds the
 -- cwd and could false-positive e.g. inside a directory named "claude-*")
-require('restore').add_buf_match(is_claude_terminal, function()
+require('restore').add_buf_match(require('restore').terminal('claude'), function()
 	vim.cmd.ClaudeCodeOpen()
 end)
 

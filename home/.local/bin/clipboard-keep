@@ -1,0 +1,13 @@
+#!/bin/sh
+# autocutsel mirrors CLIPBOARD into CUTBUFFER0 but never re-owns CLIPBOARD once its owner exits, so an app
+# that closes takes the selection with it. This holds the text in its own memory and puts the selection
+# back when nobody owns it; the next copy replaces it, so nothing accumulates and nothing touches disk.
+last=
+while :; do
+	if cur=$(xclip -selection clipboard -o 2>/dev/null); then
+		last=$cur
+	elif [ -n "$last" ]; then
+		printf '%s' "$last" | xclip -quiet -selection clipboard -in
+	fi
+	sleep 0.5
+done

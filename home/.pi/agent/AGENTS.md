@@ -25,7 +25,6 @@ Write to the daily log only when I ask. Before saving, check whether an existing
 
 The clipboard rules in `~/.agents/AGENTS.md` need one adjustment while the sandbox is on, and it is toggled per session (`/sandbox-disable`, `/sandbox-enable`):
 
-- Sandboxed, each command runs in its own PID namespace (`bwrap --unshare-pid --die-with-parent`), so the clipboard tool's forked child dies with the command and the paste is empty. `clipmenud` runs outside the sandbox and takes ownership, but it needs a moment to fetch, so let the copy outlast it: `xclip -selection clipboard -in <file>; sleep 0.5`. `-loops 1` is not enough, since xsel asks for the target list and then the data.
+- Sandboxed, each command runs in its own PID namespace (`bwrap --unshare-pid --die-with-parent`), so the clipboard tool's forked child dies with the command and the paste is empty. `clipmenud` runs outside the sandbox and takes ownership, but it needs a moment to fetch, so let the copy outlast it: `xclip -selection clipboard -in <file>; sleep 0.5`. `-loops N` is not a substitute: xsel's request count varies, so truncating it can serve the copy without storing it.
 - Unsandboxed there is no namespace to tear down, so a plain invocation is enough; the forked child outlives the command and keeps serving the selection.
-- Get this right in one call instead of verifying it: a read in the same command always passes, because the owner is alive at that instant, and the extra call costs money.
-- If a check is genuinely needed, do it from a later command (`xclip -selection clipboard -out`, `wl-paste`, `pbpaste`). That is a diagnostic after a reported empty paste, not a routine step.
+- If a check is genuinely needed, do it from a later command (`xclip -selection clipboard -out`, `wl-paste`, `pbpaste`): a read in the same command always passes, because the owner is alive at that instant.

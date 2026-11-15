@@ -1,10 +1,11 @@
 local assert = require('luassert')
+local here = require('helpers/here')
 local nvim = require('helpers/nvim')
 
 -- The fixture directory goes on the child's PATH, so claudecode.nvim starts the stand-in instead of the real claude.
 local info = debug.getinfo(1, 'S')
 ---@cast info -nil
-local HERE = vim.fn.fnamemodify(info.source:sub(2), ':p:h')
+local HERE = here.dir(info)
 local CLAUDE_DIR = HERE .. '/fixtures/claude'
 
 -- Opens `term://…` beside a file, as a session would restore it, and returns that terminal's window.

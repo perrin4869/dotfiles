@@ -2,12 +2,13 @@
 -- child has none of, and a channel is either a UI or an RPC endpoint: the pty provides the UI, the listener socket carries
 -- the handle. The child boots this config like any other session, so the plugin under test is loaded the way a user's is.
 local yd = require('yo-dawg')
+local here = require('helpers/here')
 
 local M = {}
 
 local info = debug.getinfo(1, 'S')
 ---@cast info -nil
-local CONFIG = vim.fn.fnamemodify(info.source:sub(2), ':p:h:h:h')
+local CONFIG = here.dir(info, 2)
 local HOME = vim.fn.fnamemodify(CONFIG, ':h:h')
 local SOCKET = CONFIG .. '/spec/.nvim.sock'
 -- opening a tracked file rather than nothing keeps the dashboard out of the way; the specs only ever look at it

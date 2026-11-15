@@ -1,11 +1,12 @@
 local assert = require('luassert')
+local here = require('helpers/here')
 local nvim = require('helpers/nvim')
 
 -- The fixtures sit next to this spec, wherever the checkout is, and each one has a directory of its own; the child gets
 -- the directory on its PATH so `:Pi` starts the stand-in instead of the real thing.
 local info = debug.getinfo(1, 'S')
 ---@cast info -nil
-local HERE = vim.fn.fnamemodify(info.source:sub(2), ':p:h')
+local HERE = here.dir(info)
 local PI_DIR = HERE .. '/fixtures/pi'
 
 describe('plugin/pi.lua', function()

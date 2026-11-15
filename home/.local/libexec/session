@@ -81,6 +81,13 @@ session_daemons() {
   run_bg_guarded udiskie --tray $udiskie_sni
   run_bg_guarded $geoclue2 # required for redshift/gammastep
   run_bg_guarded joystickwake --loglevel debug
+  # takes the selection at copy time and holds it in memory, so a copy outlives the app that made it.
+  # Absolute path: ~/.local/bin only reaches PATH through .zshrc, not the session
+  if is_wayland; then
+    run_bg_guarded wl-clip-persist --clipboard regular
+  else
+    run_bg_guarded "$HOME/.local/bin/clipboard-keep"
+  fi
   [[ ${IM:-} == "ibus" ]] && run_guarded ibus-daemon -d -r --xim
   [[ ${IM:-} == "fcitx" ]] && run_guarded $fcitx -d -r
 

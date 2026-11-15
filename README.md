@@ -67,6 +67,7 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `waybar` (replaces `i3status`; its tray shows StatusNotifierItem applets only, not XEmbed ones)
 - `grim` and `slurp` (replace `maim`)
 - `wl-clipboard` (replaces `xclip`/`xsel`)
+- `wl-clip-persist` (does what `clipboard-keep` does on X11: holds the selection in memory, so a copy outlives the app that made it, with no history and nothing on disk)
 - `wtype` (replaces `xdotool` for `rofi-pass`)
 - `gammastep` (replaces `redshift-gtk`, reusing the redshift backlight hook)
 - `kanshi` (replaces `autorandr` and `~/.screenlayout`; configure outputs per machine in `~/.config/kanshi/config`)

@@ -25,7 +25,6 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `pass-otp`
 - `rofi`
 - `rofi-pass`
-- `autocutsel`
 - `sxhkd`
 - `blueman`
 - `dunst`

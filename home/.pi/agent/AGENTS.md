@@ -25,6 +25,6 @@ Write to the daily log only when I ask. Before saving, check whether an existing
 
 The clipboard rules in `~/.agents/AGENTS.md` need one adjustment while the sandbox is on, and it is toggled per session (`/sandbox-disable`, `/sandbox-enable`):
 
-- Sandboxed, each command runs in its own PID namespace (`bwrap --unshare-pid --die-with-parent`), so the clipboard tool's forked child dies with the command and the paste is empty. Write the X cutbuffer instead, which lives in the server rather than in a process: `xclip -selection buffer-cut -in <file>`. `autocutsel` promotes it to `CLIPBOARD` and keeps it there until the next copy.
+- Sandboxed, each command runs in its own PID namespace (`bwrap --unshare-pid --die-with-parent`), so the clipboard tool's forked child dies with the command and the paste is empty. Keep xclip in the foreground until `clipboard-keep` takes the selection: `timeout 3 xclip -quiet -selection clipboard -in <file> >/dev/null 2>&1`. It exits as soon as the daemon owns the text; exit 124 means the daemon is not running and the copy is lost.
 - Unsandboxed there is no namespace to tear down, so a plain invocation is enough; the forked child outlives the command and keeps serving the selection.
 - If a check is genuinely needed, do it from a later command (`xclip -selection clipboard -out`, `wl-paste`, `pbpaste`): a read in the same command always passes, because the owner is alive at that instant.

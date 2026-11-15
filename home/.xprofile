@@ -65,8 +65,7 @@ GEOCLUE2=$(
 run_bg_guarded sxhkd
 run_bg_guarded blueman-applet
 run_bg_guarded dunst
-# keeps the selection while the app that copied is open, and puts it back when that app exits
-run_bg_guarded autocutsel -selection CLIPBOARD
+# holds the selection itself, so a copy outlives the app that made it; one slot, nothing on disk
 run_bg_guarded "$HOME/.local/bin/clipboard-keep"
 # notify and ping while the YubiKey waits for a touch (gpg, ssh through gpg-agent, FIDO)
 run_bg_guarded yubikey-touch-detector --notify

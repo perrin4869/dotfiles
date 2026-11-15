@@ -1,5 +1,6 @@
 {
 	"yoloMode": true,
+	"authorizerChain": ["bash-syntax"],
 	"shellTools": {
 		"bg_run": {
 			"commandArgument": "command",

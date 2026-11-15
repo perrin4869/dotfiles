@@ -25,6 +25,7 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `pass-otp`
 - `rofi`
 - `rofi-pass`
+- `clipnotify`
 - `sxhkd`
 - `blueman`
 - `dunst`

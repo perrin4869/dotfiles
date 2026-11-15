@@ -7,6 +7,8 @@
 # It deliberately never puts text back after losing the selection: a copy whose owner dies before we can
 # read it is indistinguishable from one we just took, and restoring would then revert the user's newest
 # copy to the previous one. An empty clipboard is the safer failure.
+# clipnotify, shipped with clipmenu, supplies the selection-change event; without it the loop falls back to
+# polling, because X has no other way to announce that someone else took the selection.
 held=
 while :; do
 	if cur=$(xclip -selection clipboard -o 2>/dev/null); then
@@ -17,5 +19,5 @@ while :; do
 		fi
 	fi
 	# Nothing to do: wait for the next copy instead of polling.
-	clipnotify || sleep 1
+	clipnotify 2>/dev/null || sleep 0.5
 done

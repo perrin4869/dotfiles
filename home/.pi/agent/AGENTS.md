@@ -20,3 +20,11 @@ Write to the daily log only when I ask. Before saving, check whether an existing
 # sudo
 
 - `sudo` cannot run while the sandbox is on: commands run with `no new privileges`, so sudo never gets root. If a task needs it, ask me to turn the sandbox off (`/sandbox-disable`), run the command, and ask me to turn it back on (`/sandbox-enable`).
+
+# Clipboard
+
+The clipboard rules in `~/.agents/AGENTS.md` need one adjustment while the sandbox is on, and it is toggled per session (`/sandbox-disable`, `/sandbox-enable`):
+
+- Sandboxed, each command runs in its own PID namespace (`bwrap --unshare-pid --die-with-parent`), so the clipboard tool's forked child dies with the command and the paste is empty. `clipmenud` runs outside the sandbox and takes ownership, so keep xclip in the foreground until it does: `timeout 2 xclip -quiet -selection clipboard -in <file> >/dev/null 2>&1`. xclip exits as soon as clipmenud re-owns the clipboard; exit 124 means clipmenud isn't running and the copy is lost.
+- Unsandboxed there is no namespace to tear down, so a plain invocation is enough; the forked child outlives the command and keeps serving the selection.
+- If a check is genuinely needed, do it from a later command (`xclip -selection clipboard -out`, `wl-paste`, `pbpaste`): a read in the same command always passes, because the owner is alive at that instant.

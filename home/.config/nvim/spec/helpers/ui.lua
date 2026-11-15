@@ -8,7 +8,7 @@ local M = {}
 
 local info = debug.getinfo(1, 'S')
 ---@cast info -nil
-local CONFIG = here.dir(info, 3)
+local CONFIG = here.dir(info, 2)
 local HOME = vim.fn.fnamemodify(CONFIG, ':h:h')
 local SOCKET = CONFIG .. '/spec/.nvim.sock'
 -- opening a tracked file rather than nothing keeps the dashboard out of the way; the specs only ever look at it

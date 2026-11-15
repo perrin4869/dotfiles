@@ -2,7 +2,7 @@
 -- calls it. So each spec does its own `debug.getinfo` and hands the result here for the path arithmetic.
 local M = {}
 
---- Directory holding the file that called `debug.getinfo`, `up` levels above it.
+--- Directory of the file that called `debug.getinfo`, then climbed `up` levels above it.
 ---@param info table  what `debug.getinfo(1, 'S')` returned
 ---@param up? integer
 ---@return string

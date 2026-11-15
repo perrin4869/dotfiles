@@ -6,7 +6,7 @@ import { defineSettings } from './lib/settings.ts';
 
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
 // Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or with /opusplan; switching models
-// disables it.
+// disables it until /opusplan, for the rest of the session.
 const readSettings = defineSettings(
 	'opusplan',
 	Type.Object({
@@ -25,11 +25,14 @@ const PlanState = Type.Object({ enabled: Type.Boolean() });
 
 const isPlanning = (ctx: ExtensionContext) => latestEntry(ctx, PLAN_STATE_ENTRY, PlanState)?.enabled ?? false;
 
+// /opusplan and model switches are recorded in the session, so they survive /reload, which restarts this extension
+const STATE_ENTRY = 'opusplan-state';
+const State = Type.Object({ enabled: Type.Boolean() });
+
 export default function (pi: ExtensionAPI) {
-	// set by /opusplan or a model switch; overrides the settings for the rest of this pi process, including fresh
-	// implementation sessions
-	let override: boolean | undefined;
-	const isEnabled = (ctx: ExtensionContext) => override ?? readSettings(pi, ctx).enabled;
+	const isEnabled = (ctx: ExtensionContext) =>
+		latestEntry(ctx, STATE_ENTRY, State)?.enabled ?? readSettings(pi, ctx).enabled;
+	const record = (enabled: boolean) => pi.appendEntry(STATE_ENTRY, { enabled });
 	// pi reports opusplan's own switches as model_select too
 	let switching = false;
 
@@ -49,7 +52,7 @@ export default function (pi: ExtensionAPI) {
 	pi.registerCommand('opusplan', {
 		description: 'Enable opusplan: plan on one model, implement on another; switching models disables it',
 		handler: async (_args, ctx) => {
-			override = true;
+			record(true);
 			ctx.ui.notify('opusplan enabled', 'info');
 			await follow(ctx);
 		},
@@ -57,7 +60,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on('model_select', (event, ctx) => {
 		if (switching || event.source === 'restore' || !isEnabled(ctx)) return;
-		override = false;
+		record(false);
 		ctx.ui.notify('opusplan disabled', 'info');
 	});
 

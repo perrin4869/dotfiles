@@ -90,6 +90,24 @@ test('switching models disables it', async () => {
 	assert.equal(await turn(h), 'start');
 });
 
+test('a model switch survives /reload', async () => {
+	using h = await start({ projectSettings: ENABLED });
+	assert.equal(await turn(h), 'execute');
+	const model = h.session.modelRuntime.getModel('faux', 'start');
+	assert.ok(model);
+	await h.session.setModel(model);
+	await h.session.reload();
+	assert.equal(await turn(h), 'start');
+});
+
+test('/opusplan survives /reload', async () => {
+	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
+	await h.session.prompt('/opusplan');
+	await h.session.reload();
+	await h.session.prompt('/plan start');
+	assert.equal(await turn(h), 'plan');
+});
+
 test('keeps the model and warns when the target is unavailable', async () => {
 	const notify = mock.fn<NotifyListener>();
 	using h = await start({

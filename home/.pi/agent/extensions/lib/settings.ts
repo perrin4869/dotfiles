@@ -18,18 +18,18 @@ const describeErrors = (key: string, schema: TSchema, value: unknown) =>
 		.map(({ instancePath, message }) => `${key}${instancePath.replaceAll('/', '.')} ${message}`)
 		.join('; ');
 
-// The settings sections recorded in this process, keyed by section, with their top-level fields; only PI_SETTINGS_RECORD
-// fills this, so nothing accumulates in pi itself. The slot is on globalThis through Symbol.for because pi loads
-// extensions through its own module graph: a module-level one is an instance the extensions never fill.
+// The settings sections recorded in this process, keyed by section; only PI_SETTINGS_RECORD fills this, so nothing
+// accumulates in pi itself. The slot is on globalThis through Symbol.for because pi loads extensions through its own
+// module graph: a module-level one is an instance the extensions never fill.
 const DEFINED = Symbol.for('pi-extensions:settings');
 
-const definedMap = (): Map<string, string[]> | undefined => Reflect.get(globalThis, DEFINED);
+const definedMap = (): Map<string, TObject> | undefined => Reflect.get(globalThis, DEFINED);
 
 /** @return the sections recorded so far; empty unless PI_SETTINGS_RECORD was set before pi loaded the extensions */
-export function definedSettings(): Map<string, string[]> {
+export function definedSettings(): Map<string, TObject> {
 	const existing = definedMap();
 	if (existing) return existing;
-	const created = new Map<string, string[]>();
+	const created = new Map<string, TObject>();
 	Reflect.set(globalThis, DEFINED, created);
 	return created;
 }
@@ -37,7 +37,7 @@ export function definedSettings(): Map<string, string[]> {
 // A reader for a top-level key of pi's settings.json owned by one of our extensions, with a default for every field.
 // pi.getSettings() merges project settings over global ones, field by field, and only once the project is trusted.
 export function defineSettings<T extends TObject>(key: string, schema: T) {
-	if (process.env.PI_SETTINGS_RECORD !== undefined) definedSettings().set(key, Object.keys(schema.properties));
+	if (process.env.PI_SETTINGS_RECORD !== undefined) definedSettings().set(key, schema);
 	// warn once per problem rather than on every read
 	const unreported = firstSeen();
 

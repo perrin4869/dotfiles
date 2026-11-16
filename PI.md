@@ -4,6 +4,8 @@ The pi config lives in `home/.pi/agent` and is stowed to `~/.pi/agent`. This fil
 
 Project settings go in `.pi/settings.json` at the project root. That file is ignored globally, so it stays local to each checkout. Project values take precedence over the global `~/.pi/agent/settings.json`, field by field, and apply only once pi trusts the project. A section with an invalid value is ignored, with a warning, and its defaults apply.
 
+`home/.pi/agent/settings.json` names the generated `extensions/settings.schema.json` in its `$schema`, so an editor that reads that key, jsonls included, completes the sections below and checks their values. A project gets the same by pointing `$schema` at that file in its own `.pi/settings.json`, relative to where that file sits.
+
 ---
 
 ## Model

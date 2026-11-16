@@ -1,6 +1,7 @@
 {
   "defaultModel": "gemma4:12b",
   "defaultProvider": "ollama",
+  "defaultTools": ["+codemode"],
   "lastChangelogVersion": "1.5.0",
   "packages": [
     "npm:pi-claude-bridge@0.12.0",

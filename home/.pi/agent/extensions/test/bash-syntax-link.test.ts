@@ -1,6 +1,6 @@
 import { fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
-import { copyFileSync, mkdirSync, mkdtempDisposableSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempDisposableSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { mock, test } from 'node:test';
@@ -17,14 +17,11 @@ const CONFIG = {
 // only the link can let an asking command run.
 async function passes(command: string) {
 	using agentDir = mkdtempDisposableSync(join(tmpdir(), 'bash-syntax-'));
-	// pi loads the link through ~/.pi/agent/extensions, outside any node_modules that has pi-permission-system
-	const link = join(agentDir.path, 'bash-syntax-link.ts');
-	copyFileSync(extension('bash-syntax-link'), link);
 	const configDir = join(agentDir.path, 'extensions', 'pi-permission-system');
 	mkdirSync(configDir, { recursive: true });
 	writeFileSync(join(configDir, 'config.json'), JSON.stringify(CONFIG));
 	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: agentDir.path });
-	using harness = await startSession({ extensions: [permissionSystem, link] });
+	using harness = await startSession({ extensions: [permissionSystem, extension('bash-syntax-link')] });
 	harness.respond(
 		fauxAssistantMessage(fauxToolCall('bash', { command }), { stopReason: 'toolUse' }),
 		fauxAssistantMessage('done'),
@@ -65,12 +62,10 @@ test('keeps asking for a command a word only looks like an assignment in', async
 
 test('says so when pi-permission-system published no service', async () => {
 	using agentDir = mkdtempDisposableSync(join(tmpdir(), 'bash-syntax-'));
-	// pi loads the link through ~/.pi/agent/extensions, outside any node_modules that has pi-permission-system
-	const link = join(agentDir.path, 'bash-syntax-link.ts');
-	copyFileSync(extension('bash-syntax-link'), link);
 	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: agentDir.path });
 	const notify = mock.fn<NotifyListener>();
-	using harness = await startSession({ extensions: [link], onNotify: notify });
+	// the link alone: no extension publishes a service, so nothing registers it
+	using harness = await startSession({ extensions: [extension('bash-syntax-link')], onNotify: notify });
 	harness.respond(fauxAssistantMessage('ok'));
 	await harness.session.prompt('go');
 	assert.deepEqual(

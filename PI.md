@@ -27,6 +27,20 @@ Per session: `/model`, or `Alt+P` / `Alt+Shift+P` to cycle.
 
 ---
 
+## Tools
+
+`codemode` is on by default. It lets the model write a JavaScript script that calls pi's other tools in a QuickJS sandbox, so a script can run calls in parallel and filter large output before the model sees it. The switch is `defaultTools`, the list of tools enabled at startup:
+
+```json
+{
+  "defaultTools": ["+codemode"]
+}
+```
+
+`+name` and `-name` change the inherited selection rather than replacing it, so the default `read`, `bash`, `edit` and `write` stay. A project turns codemode off with `"defaultTools": ["-codemode"]`, and `/reload` picks up a tool added this way.
+
+---
+
 ## opusplan
 
 Plans on one model and implements on another, like Claude Code's `opusplan`. It follows `/plan` (pi-plan-mode), including the fresh implementation session.

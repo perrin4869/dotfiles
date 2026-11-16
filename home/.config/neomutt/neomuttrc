@@ -1,0 +1,24 @@
+# mbsync mirrors every account into its own Maildir under here
+set folder = "~/.local/share/mail"
+set mbox_type = Maildir
+set header_cache = "~/.cache/neomutt"
+
+# msmtp picks the account whose from matches the envelope sender
+set sendmail = "msmtp"
+set use_envelope_from = yes
+
+set use_threads = threads
+set sort = reverse-last-date
+set mail_check_stats = yes
+set sidebar_visible = yes
+
+set mailcap_path = "~/.config/neomutt/mailcap"
+alternative_order text/plain text/enriched text/html
+auto_view text/html
+
+# nm_default_url needs an absolute path
+set nm_default_url = "notmuch://`echo $HOME`/.local/share/mail"
+bind index,pager \eX vfolder-from-query
+
+# per-machine accounts (mailboxes, from, record and folder-hooks), kept out of the repo
+source "cat ~/.config/neomutt/accounts/*.muttrc 2>/dev/null |"

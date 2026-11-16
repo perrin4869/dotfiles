@@ -1,0 +1,12 @@
+# Tokens are encrypted to the credentials key, which credential unlocks in gpg-agent.
+encryption:
+  tag: GPG
+  contents: credentials@localhost
+
+services:
+  google:
+    # oama runs these on every call, so they read the touch-free store rather than the YubiKey one
+    client_id_cmd: |
+      credential pass show google-oauth-client | sed -n 's/^client_id=//p'
+    client_secret_cmd: |
+      credential pass show google-oauth-client | sed -n 's/^client_secret=//p'

@@ -84,6 +84,12 @@ deps/emmylua_check-*.tar.gz
 deps/pi
 deps/pi-*-linux-*.tar.gz
 
+deps/oama
+deps/oama-*-Linux-*.tar.gz
+
+# stow links ~/.config/neomutt into the repo, and each machine's accounts stay local
+home/.config/neomutt/accounts/
+
 deps/coursier
 deps/metals
 home/.local/bin/metals

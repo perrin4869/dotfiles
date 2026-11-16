@@ -49,6 +49,12 @@ else
   log "dbus session already existing $DBUS_SESSION_BUS_ADDRESS"
 fi
 
+# cron helpers (credential) can only reach the session bus through a file
+if [[ -n ${DBUS_SESSION_BUS_ADDRESS:-} ]]; then
+  printf '%s\n' "$DBUS_SESSION_BUS_ADDRESS" >"$LOG_DIR/dbus-address"
+  chmod 600 "$LOG_DIR/dbus-address"
+fi
+
 # SOFTWARE_VSYNC is a user-local option specific to this repository 
 # to toggle compositor vsync on environments where hardware vsync is 
 # not available, if required, set it via .pam_environment or similar
@@ -171,4 +177,9 @@ fi
 
 if have xwinwrap && have xrandr; then
   video_background
+fi
+
+# ask for the credentials touch now, while someone is at the screen, rather than from a later cron sync
+if [[ -f ${XDG_DATA_HOME:-$HOME/.local/share}/credentials/.gpg-id ]]; then
+  run_bg_guarded credential
 fi

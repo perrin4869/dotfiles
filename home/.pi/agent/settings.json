@@ -2,7 +2,7 @@
   "$schema": "./extensions/settings.schema.json",
   "defaultModel": "gemma4:12b",
   "defaultProvider": "ollama",
-  "defaultTools": ["+codemode"],
+  "defaultTools": ["+codemode", "+tool_search"],
   "lastChangelogVersion": "1.5.0",
   "packages": [
     "npm:pi-claude-bridge@0.12.0",

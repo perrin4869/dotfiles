@@ -14,6 +14,8 @@ pi defaults to local Ollama (`gemma4:12b`). Claude through `pi-claude-bridge` is
 
 Ollama Cloud comes from `pi-ollama-cloud` as the `ollama-cloud` provider, with its models discovered from the account and the key read from `OLLAMA_API_KEY` (or `/login`). Its web tools are off in `ollama-cloud.json`, since pi-web-access covers search and fetch.
 
+`modelThinkingLevels` raises thinking on the plan model (`ollama-cloud/deepseek-v4-pro:0813`) to `high`; every other model stays at the `medium` default.
+
 Per project, in `.pi/settings.json`:
 
 ```json
@@ -130,6 +132,24 @@ Allowances saved "for all projects" write through the stowed symlink into `home/
 * `.pi/extensions/pi-permission-system/config.json`: per-project rules, loaded only when pi trusts the project.
 
 `cc-safety-net` runs first and hard-blocks destructive commands; it has no per-project switch.
+
+---
+
+## Terminal
+
+`terminal.clearOnShrink` clears the rows left behind when rendered content shrinks. `terminal.showTerminalProgress` reports turn progress through OSC 9;4, which Ghostty shows on the tab.
+
+---
+
+## Interaction
+
+`steeringMode` and `followUpMode` are `all`: a message sent during a run, and a follow-up queued behind it, are delivered together rather than one at a time.
+
+---
+
+## Notices
+
+`showCacheMissNotices` reports cache misses, cache warming and compaction usage, which is where a session's token cost shows up. `collapseChangelog` shows one line per package after an update instead of the full changelog.
 
 ---
 

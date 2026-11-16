@@ -52,5 +52,16 @@
   },
   "pi-ide": {
     "autoconnect": false
+  },
+  "modelThinkingLevels": {
+    "ollama-cloud/deepseek-v4-pro:0813": "high"
+  },
+  "steeringMode": "all",
+  "followUpMode": "all",
+  "showCacheMissNotices": true,
+  "collapseChangelog": true,
+  "terminal": {
+    "clearOnShrink": true,
+    "showTerminalProgress": true
   }
 }

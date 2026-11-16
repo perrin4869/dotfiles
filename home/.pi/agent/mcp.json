@@ -1,0 +1,9 @@
+{
+	"mcpServers": {
+		"filesystem": {
+			"command": "npx",
+			"args": ["-y", "@modelcontextprotocol/server-filesystem@2.3.0", "--read-only", "~"],
+			"description": "Search and read files under the home directory, read-only."
+		}
+	}
+}

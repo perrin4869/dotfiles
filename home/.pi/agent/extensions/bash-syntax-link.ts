@@ -8,8 +8,9 @@
 //
 // What would retire this file is a change inside the package, one of two shapes:
 //   1. the enumerator stops emitting syntax-only units, or
-//   2. they gain a floor exemption, the way `time`, `timeout`, `nice`, `stdbuf` and `setsid` did in #963. FloorExemption
-//      in src/types.ts names core-reader, execution-modifier and no-command today; a syntax member would be this case.
+//   2. they gain a floor exemption, the way `time`, `timeout`, `nice`, `stdbuf` and `setsid` did in #963.
+//      FloorExemption in src/types.ts names core-reader, execution-modifier and no-command today; a syntax member would
+//      be this case.
 // Either way, delete this file, its test, and the "bash-syntax" entry in the authorizerChain.
 //
 // Adjacent upstream work that would NOT retire it on its own:
@@ -26,8 +27,8 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
 import { fileURLToPath } from 'node:url';
-// web-tree-sitter keeps one wasm runtime per module, and pi-permission-system's parsing breaks once anything else uses
-// its copy; web-tree-sitter-link is the same package installed under another name, so it loads as a module of its own
+// web-tree-sitter points every parser at one module-global runtime, which each init replaces, so a second user of
+// pi-permission-system's copy leaves one side's parsers on a dropped heap; this alias loads as a module of its own
 import { Language, type Node, Parser } from 'web-tree-sitter-link';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that

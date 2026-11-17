@@ -1,26 +1,18 @@
 import { fauxAssistantMessage, fauxToolCall } from '@earendil-works/pi-ai';
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempDisposableSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { mock, test } from 'node:test';
 import { extension, type NotifyListener, overrideEnv, packageExtension, startSession, toolResults } from './harness.ts';
 
 const permissionSystem = await packageExtension('@gotgenes/pi-permission-system');
 
-const CONFIG = {
-	authorizerChain: ['bash-syntax'],
-	permission: { bash: { '*': 'ask', 'mktemp *': 'allow', 'git add *': 'allow' } },
-};
+// `*` asks, `mktemp *` and `git add *` are allowed, and the review log is off so a run writes nothing into the fixture
+const AGENT_DIR = join(import.meta.dirname, 'fixtures', 'bash-syntax-agent');
 
 // Whether pi-permission-system let this bash command through. With no UI an ask that no link allows is denied, so
 // only the link can let an asking command run.
 async function passes(command: string) {
-	using agentDir = mkdtempDisposableSync(join(tmpdir(), 'bash-syntax-'));
-	const configDir = join(agentDir.path, 'extensions', 'pi-permission-system');
-	mkdirSync(configDir, { recursive: true });
-	writeFileSync(join(configDir, 'config.json'), JSON.stringify(CONFIG));
-	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: agentDir.path });
+	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: AGENT_DIR });
 	using harness = await startSession({ extensions: [permissionSystem, extension('bash-syntax-link')] });
 	harness.respond(
 		fauxAssistantMessage(fauxToolCall('bash', { command }), { stopReason: 'toolUse' }),
@@ -77,8 +69,6 @@ for (const command of [
 }
 
 test('says so when pi-permission-system published no service', async () => {
-	using agentDir = mkdtempDisposableSync(join(tmpdir(), 'bash-syntax-'));
-	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: agentDir.path });
 	const notify = mock.fn<NotifyListener>();
 	// the link alone: no extension publishes a service, so nothing registers it
 	using harness = await startSession({ extensions: [extension('bash-syntax-link')], onNotify: notify });

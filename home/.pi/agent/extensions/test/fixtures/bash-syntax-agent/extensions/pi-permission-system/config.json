@@ -1,0 +1,11 @@
+{
+	"authorizerChain": ["bash-syntax"],
+	"permissionReviewLog": false,
+	"permission": {
+		"bash": {
+			"*": "ask",
+			"mktemp *": "allow",
+			"git add *": "allow"
+		}
+	}
+}

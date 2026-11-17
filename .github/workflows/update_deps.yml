@@ -23,6 +23,7 @@ jobs:
           - emmylua_check
           - nerdfonts
           - pi
+          - rtk
 
     steps:
       - uses: actions/checkout@v7

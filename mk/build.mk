@@ -43,7 +43,13 @@ $(eval $(call git_submodule,xwinwrap,$(XWINWRAP_ROOT)))
 $(xwinwrap_target): $(xwinwrap_head_file)
 	$(call require,$(CC))
 	$(MAKE) -C $(XWINWRAP_ROOT)
-xwinwrap: $(xwinwrap_target)
+# unmaintained upstream ignores nothing, and git status run inside the submodule, as pi-rewind does, skips .gitmodules
+xwinwrap_excluded = .git/modules/$(XWINWRAP_ROOT)/info/xwinwrap-excluded
+# make sees files, not their contents, so this stamp beside info/exclude stands for the line in it
+$(xwinwrap_excluded): | $(xwinwrap_head_file)
+	grep -qxF /xwinwrap $(@D)/exclude 2>/dev/null || echo /xwinwrap >> $(@D)/exclude
+	touch $@
+xwinwrap: $(xwinwrap_target) $(xwinwrap_excluded)
 
 .PHONY: acpilight
 acpilight_target = $(ACPILIGHT_ROOT)/xbacklight

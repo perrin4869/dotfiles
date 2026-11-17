@@ -25,21 +25,31 @@
 
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
+import { fileURLToPath } from 'node:url';
+// web-tree-sitter keeps one wasm runtime per module, and pi-permission-system's parsing breaks once anything else uses
+// its copy; web-tree-sitter-link is the same package installed under another name, so it loads as a module of its own
+import { Language, type Node, Parser } from 'web-tree-sitter-link';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
 // runs no program itself. Commands nested in those units are units of their own, so one still asking keeps the ask.
 // Enable with `"authorizerChain": ["bash-syntax"]` in pi-permission-system's config.json.
 const LINK = 'bash-syntax';
 
-// words that start a compound statement, which runs only the commands inside it
-const COMPOUND = new Set(['for', 'while', 'until', 'if', 'case', 'select', '{', '(', '((', '[[', '!', 'function']);
+// statements that run only the commands inside them, which pi-permission-system gates as units of their own
+const COMPOUND = new Set([
+	'compound_statement', // { … } and (( … ))
+	'subshell',
+	'if_statement',
+	'while_statement', // while and until
+	'case_statement',
+	'c_style_for_statement',
+	'test_command', // [ … ] and [[ … ]]
+	'negated_command',
+	'function_definition', // binds a name; the body runs only when something calls it
+]);
 // builtins that run no program and only change the shell's own state
-const BUILTINS = new Set(['cd', 'pushd', 'popd', 'true', 'false', ':', 'test', '[', 'unset', 'shift', 'set']);
-// builtins that only assign or declare variables
-const DECLARATIONS = new Set(['export', 'local', 'declare', 'typeset', 'readonly']);
+const BUILTINS = new Set(['cd', 'pushd', 'popd', 'true', 'false', ':', 'test', 'shift', 'set']);
 
-const ASSIGNMENT = /^([A-Za-z_]\w*)(\[[^\]]*\])?\+?=/;
-const NAME = /^[A-Za-z_]\w*$/;
 // variables a later command reads to find or configure the program it runs, so setting one is as good as running it
 const PROGRAM_VARIABLES = new Set([
 	'PATH',
@@ -62,110 +72,129 @@ const PROGRAM_VARIABLES = new Set([
 // the same by family: the dynamic loader, git, npm, and the interpreters' startup code and module search paths
 const PROGRAM_PREFIX = /^(?:LD_|DYLD_|GIT_|npm_config_|LUA_|PYTHON|PERL5|RUBY)/;
 const isProgramVariable = (name: string) => PROGRAM_VARIABLES.has(name) || PROGRAM_PREFIX.test(name);
-// a function definition header, `foo()` or `foo ()`: it binds a name and runs nothing until something calls it
-const FUNCTION = /^\w+\s*\(\)/;
 
-// The top-level words of a command, with quotes and $(…), (…), ${…} and `…` kept inside their word; undefined when a
-// redirect or operator sits at the top level, since those may do more than the command's own words.
-function words(command: string): string[] | undefined {
-	const result: string[] = [];
-	let word = '';
-	let depth = 0;
-	let quote: string | undefined;
-	for (let i = 0; i < command.length; i++) {
-		const c = command[i];
-		if (quote) {
-			if (c === '\\' && quote !== "'") word += c + (command[++i] ?? '');
-			else {
-				if (c === quote) quote = undefined;
-				word += c;
-			}
-			continue;
-		}
-		if (c === '\\') word += c + (command[++i] ?? '');
-		else if (c === "'" || c === '"' || c === '`') {
-			quote = c;
-			word += c;
-		} else if (c === '(' || (c === '{' && command[i - 1] === '$')) {
-			depth++;
-			word += c;
-		} else if ((c === ')' || c === '}') && depth > 0) {
-			depth--;
-			word += c;
-		} else if (depth > 0) word += c;
-		else if (/\s/.test(c)) {
-			if (word) result.push(word);
-			word = '';
-		} else if ('<>|&;'.includes(c)) return undefined;
-		else word += c;
+const wasm = (specifier: string) => fileURLToPath(import.meta.resolve(specifier));
+
+// Parser's constructor needs the runtime, so it throws only before init
+function initialized() {
+	try {
+		new Parser().delete();
+		return true;
+	} catch {
+		return false;
 	}
-	if (quote || depth > 0) return undefined;
-	if (word) result.push(word);
-	return result;
+}
+
+// pi-permission-system cuts a command into units with this grammar, so the link reads each unit the same way
+async function loadParser() {
+	// the runtime outlives this module, which pi reloads every session, and init replaces it under the parser of a
+	// session still running, such as an in-process subagent's parent
+	if (!initialized()) await Parser.init({ locateFile: () => wasm('web-tree-sitter-link/web-tree-sitter.wasm') });
+	const parser = new Parser();
+	parser.setLanguage(await Language.load(wasm('tree-sitter-bash/tree-sitter-bash.wasm')));
+	return parser;
+}
+
+// the variable an assignment writes: `a` in `a=1`, `a+=1` and `a[1]=1`
+function assignedName(assignment: Node) {
+	const name = assignment.childForFieldName('name');
+	return name?.type === 'subscript' ? name.childForFieldName('name')?.text : name?.text;
 }
 
 // an assignment to a variable no program reads to decide what it runs
-function plainAssignment(word: string): boolean {
-	const name = ASSIGNMENT.exec(word)?.[1];
-	return name !== undefined && !isProgramVariable(name);
+function plainAssignment(assignment: Node | null) {
+	const name = assignment && assignedName(assignment);
+	return name !== undefined && name !== null && !isProgramVariable(name);
 }
 
 // one argument of export, local, declare, typeset or readonly
-function plainDeclaration(arg: string): boolean {
-	// -n makes a nameref, whose later plain-looking assignment writes whatever variable it names, PATH included
-	if (/^[-+]/.test(arg)) return !arg.includes('n');
-	return plainAssignment(arg) || (NAME.test(arg) && !isProgramVariable(arg));
+function plainDeclaration(arg: Node | null) {
+	switch (arg?.type) {
+		case 'variable_assignment':
+			return plainAssignment(arg);
+		case 'variable_name':
+			return !isProgramVariable(arg.text);
+		// -n makes a nameref, whose later plain-looking assignment writes whatever variable it names, PATH included
+		case 'word':
+			return /^[-+]/.test(arg.text) && !arg.text.includes('n');
+		default:
+			return false;
+	}
 }
 
-// whether a bash unit, as pi-permission-system reports it, runs no program of its own
-function runsNoProgram(command: string): boolean {
-	const [first, second] = command.trimStart().split(/\s+/, 2);
-	// for and select assign their loop variable, so `for PATH in …` sets PATH like an assignment does
-	if ((first === 'for' || first === 'select') && second !== undefined && isProgramVariable(second)) return false;
-	// reserved words open a compound statement only as the first word, so the text alone is enough
-	if (COMPOUND.has(first) || FUNCTION.test(command.trimStart())) return true;
-	const parts = words(command);
-	if (!parts || parts.length === 0) return false;
-	if (parts.every(plainAssignment)) return true;
-	const [name, ...args] = parts;
-	if (DECLARATIONS.has(name)) return args.every(plainDeclaration);
-	return BUILTINS.has(name);
+// whether a statement runs no program of its own
+function runsNoProgram(statement: Node): boolean {
+	switch (statement.type) {
+		case 'variable_assignment':
+			return plainAssignment(statement);
+		case 'variable_assignments':
+			return statement.namedChildren.every(plainAssignment);
+		case 'declaration_command':
+			return statement.namedChildren.every(plainDeclaration);
+		case 'unset_command':
+			return true;
+		// for and select assign their loop variable, so `for PATH in …` sets PATH like an assignment does
+		case 'for_statement': {
+			const variable = statement.childForFieldName('variable');
+			return variable !== null && !isProgramVariable(variable.text);
+		}
+		case 'command': {
+			const name = statement.childForFieldName('name');
+			const prefixes = statement.namedChildren.filter((child) => child?.type === 'variable_assignment');
+			return name !== null && BUILTINS.has(name.text) && prefixes.every(plainAssignment);
+		}
+		default:
+			return COMPOUND.has(statement.type);
+	}
+}
+
+// whether a bash unit, as pi-permission-system reports it, is one statement that runs no program of its own
+function unitRunsNoProgram(parser: Parser, unit: string) {
+	using trees = new DisposableStack();
+	const tree = trees.adopt(parser.parse(unit), (parsed) => parsed?.delete());
+	const root = tree?.rootNode;
+	const [statement, ...rest] = root?.namedChildren ?? [];
+	return root?.hasError === false && statement != null && rest.length === 0 && runsNoProgram(statement);
 }
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
-const authorize: Authorizer['authorize'] = async ({ accessIntent }) =>
-	accessIntent?.surface === 'bash' &&
-	accessIntent.askingUnits?.length &&
-	accessIntent.askingUnits.every(({ command }) => runsNoProgram(command))
-		? { kind: 'allow' }
-		: { kind: 'defer' };
+const authorizeWith =
+	(parser: Parser): Authorizer['authorize'] =>
+	async ({ accessIntent }) =>
+		accessIntent?.surface === 'bash' &&
+		accessIntent.askingUnits?.length &&
+		accessIntent.askingUnits.every(({ command }) => unitRunsNoProgram(parser, command))
+			? { kind: 'allow' }
+			: { kind: 'defer' };
 
 export default function (pi: ExtensionAPI) {
-	let dispose: (() => void) | undefined;
+	let registration: DisposableStack | undefined;
 	let warned = false;
 
 	// every extension has had its session_start by now, so the service is published and no tool can have asked yet
 	pi.on('before_agent_start', async (_event, ctx) => {
-		if (dispose) return;
-		try {
-			const { getPermissionsService } = await import('@gotgenes/pi-permission-system');
-			const service = getPermissionsService(ctx.sessionManager.getSessionId());
-			if (service) {
-				dispose = service.registerAuthorizer(LINK, authorize);
-				return;
-			}
-		} catch {
-			// an unreachable package is the other half of the same silence: no link, so no ask gets answered
-		}
-		// staying quiet here is what made a link that never registered look like a working one
-		if (warned) return;
-		warned = true;
-		ctx.ui.notify('bash-syntax: pi-permission-system published no service, so the link is not registered', 'warning');
+		if (registration) return;
+		// staying quiet about a link that never registered is what made one look like it worked
+		const warn = (why: string) => {
+			if (warned) return;
+			warned = true;
+			ctx.ui.notify(`bash-syntax: ${why}, so the link is not registered`, 'warning');
+		};
+		const service = await import('@gotgenes/pi-permission-system')
+			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
+			.catch(() => undefined);
+		if (!service) return warn('pi-permission-system published no service');
+		const parser = await loadParser().catch(() => undefined);
+		if (!parser) return warn('the bash grammar did not load');
+		const stack = new DisposableStack();
+		stack.adopt(parser, (loaded) => loaded.delete());
+		stack.defer(service.registerAuthorizer(LINK, authorizeWith(parser)));
+		registration = stack;
 	});
 
 	pi.on('session_shutdown', () => {
-		dispose?.();
-		dispose = undefined;
+		registration?.dispose();
+		registration = undefined;
 		warned = false;
 	});
 }

@@ -50,6 +50,21 @@ test('allows a declaration whose substitution is allowed', async () => {
 	assert.deepEqual(await resolutions('export T=$(mktemp -d)'), ['authorizer_allowed']);
 });
 
+// one per statement the link reads from the grammar, plus quotes inside a substitution, which a tokenizer splits on
+for (const command of [
+	'( git add a )',
+	'if true; then git add a; fi',
+	'[[ -f a ]]',
+	'foo() { git add a; }',
+	'unset T',
+	'cd a',
+	'T="$(mktemp -p "a b")"',
+]) {
+	test(`allows ${command}`, async () => {
+		assert.deepEqual(await resolutions(command), ['authorizer_allowed']);
+	});
+}
+
 test('keeps asking for a command nested in an assignment', async () => {
 	assert.deepEqual(await resolutions('T=$(curl example.com)'), ['user_denied']);
 });

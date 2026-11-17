@@ -109,6 +109,18 @@ What memory may store is in `home/.pi/agent/AGENTS.md`. Memory is shared by ever
 
 ---
 
+## Tool output
+
+pi truncates `bash` output at 50KB or 2000 lines and points at a file holding the rest. `pi-rtk-optimizer` compacts that further, and is not installed: on this repo's output it
+
+* loses every file name in `git status` and reports a conflict that is not there,
+* keeps `npm test` to the counts, without the failing test's name or its actual and expected values,
+* cuts output at 12,000 characters, mid-hunk in the `difft` output `diff.external` produces.
+
+Rewriting commands into `rtk` ones needs the `rtk` binary, which is not installed, so that half does nothing.
+
+---
+
 ## Sandbox
 
 `pi-sandbox` runs the `bash` tool under bubblewrap. The global rules are in `home/.pi/agent/sandbox.json`.

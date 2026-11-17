@@ -38,8 +38,30 @@ const BUILTINS = new Set(['cd', 'pushd', 'popd', 'true', 'false', ':', 'test', '
 // builtins that only assign or declare variables
 const DECLARATIONS = new Set(['export', 'local', 'declare', 'typeset', 'readonly']);
 
-const ASSIGNMENT = /^[A-Za-z_]\w*(\[[^\]]*\])?\+?=/;
+const ASSIGNMENT = /^([A-Za-z_]\w*)(\[[^\]]*\])?\+?=/;
 const NAME = /^[A-Za-z_]\w*$/;
+// variables a later command reads to find or configure the program it runs, so setting one is as good as running it
+const PROGRAM_VARIABLES = new Set([
+	'PATH',
+	'IFS',
+	'BASH_ENV',
+	'ENV',
+	'SHELLOPTS',
+	'BASHOPTS',
+	'SHELL',
+	'EDITOR',
+	'VISUAL',
+	'PAGER',
+	'HOME',
+	'XDG_CONFIG_HOME',
+	'SUDO_ASKPASS',
+	'SSH_ASKPASS',
+	'NODE_OPTIONS',
+	'NODE_PATH',
+]);
+// the same by family: the dynamic loader, git, npm, and the interpreters' startup code and module search paths
+const PROGRAM_PREFIX = /^(?:LD_|DYLD_|GIT_|npm_config_|LUA_|PYTHON|PERL5|RUBY)/;
+const isProgramVariable = (name: string) => PROGRAM_VARIABLES.has(name) || PROGRAM_PREFIX.test(name);
 // a function definition header, `foo()` or `foo ()`: it binds a name and runs nothing until something calls it
 const FUNCTION = /^\w+\s*\(\)/;
 
@@ -82,16 +104,31 @@ function words(command: string): string[] | undefined {
 	return result;
 }
 
+// an assignment to a variable no program reads to decide what it runs
+function plainAssignment(word: string): boolean {
+	const name = ASSIGNMENT.exec(word)?.[1];
+	return name !== undefined && !isProgramVariable(name);
+}
+
+// one argument of export, local, declare, typeset or readonly
+function plainDeclaration(arg: string): boolean {
+	// -n makes a nameref, whose later plain-looking assignment writes whatever variable it names, PATH included
+	if (/^[-+]/.test(arg)) return !arg.includes('n');
+	return plainAssignment(arg) || (NAME.test(arg) && !isProgramVariable(arg));
+}
+
 // whether a bash unit, as pi-permission-system reports it, runs no program of its own
 function runsNoProgram(command: string): boolean {
-	const first = command.trimStart().split(/\s/, 1)[0];
+	const [first, second] = command.trimStart().split(/\s+/, 2);
+	// for and select assign their loop variable, so `for PATH in …` sets PATH like an assignment does
+	if ((first === 'for' || first === 'select') && second !== undefined && isProgramVariable(second)) return false;
 	// reserved words open a compound statement only as the first word, so the text alone is enough
 	if (COMPOUND.has(first) || FUNCTION.test(command.trimStart())) return true;
 	const parts = words(command);
 	if (!parts || parts.length === 0) return false;
-	if (parts.every((part) => ASSIGNMENT.test(part))) return true;
+	if (parts.every(plainAssignment)) return true;
 	const [name, ...args] = parts;
-	if (DECLARATIONS.has(name)) return args.every((arg) => ASSIGNMENT.test(arg) || NAME.test(arg) || arg.startsWith('-'));
+	if (DECLARATIONS.has(name)) return args.every(plainDeclaration);
 	return BUILTINS.has(name);
 }
 

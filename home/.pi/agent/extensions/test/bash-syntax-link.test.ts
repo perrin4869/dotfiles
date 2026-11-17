@@ -60,6 +60,22 @@ test('keeps asking for a command a word only looks like an assignment in', async
 	assert.equal(await passes('curl --output=$(mktemp) example.com'), false);
 });
 
+// variables that pick the program a later command runs, set by an assignment, a declaration or a loop; paths stay
+// inside the project so the external-directory gate, which asks on its own, cannot be what makes these ask
+for (const command of [
+	'PATH=bin:$PATH',
+	'GIT_SSH_COMMAND=ssh',
+	'LD_PRELOAD=x.so',
+	'export LD_PRELOAD=x.so',
+	'export PATH',
+	'declare -n p=T',
+	'for PATH in bin; do git add a; done',
+]) {
+	test(`keeps asking for ${command}`, async () => {
+		assert.equal(await passes(command), false);
+	});
+}
+
 test('says so when pi-permission-system published no service', async () => {
 	using agentDir = mkdtempDisposableSync(join(tmpdir(), 'bash-syntax-'));
 	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: agentDir.path });

@@ -7,8 +7,9 @@ import { defineSettings } from './lib/settings.ts';
 const readSettings = defineSettings('advisor', Type.Object({ enabled: Type.Boolean({ default: false }) }));
 
 // pi hides declarations only through an active tool's prepareLoadout, which it recomputes on every prompt. Dropping
-// the tool from the active set in before_agent_start is simpler, but any later handler that makes rpiv-advisor re-add
-// it (a model switch does) puts it back in that run's prompt. Hiding leaves the tool callable, hence the block.
+// the tool from the active set instead is simpler, but rpiv-advisor re-adds it on a model switch (`restore.ts` does
+// `[...active, ADVISOR]`), which puts it back in that run's prompt; hiding survives regardless. Hiding leaves the tool
+// callable, hence the block.
 const GATE = 'advisor_gate';
 const ADVISOR = 'advisor';
 
@@ -22,9 +23,12 @@ export default function (pi: ExtensionAPI) {
 		name: GATE,
 		label: GATE,
 		description: 'Keeps the advisor out of projects that have not enabled it',
-		// always hides its own declaration, so it costs no context; it stays active, which is what runs this
+		// model-only means never callable, and it is active because prepareLoadout only runs for active tools
+		exposure: 'model-only',
+		// always hides its own declaration, so it costs no context
 		prepareLoadout: () => ({ hiddenDeclarations: enabled ? [GATE] : [ADVISOR, GATE] }),
 		parameters: Type.Object({}),
+		// unreachable while the exposure is model-only; ToolDefinition still requires it
 		execute: () => Promise.reject(new Error('the advisor gate takes no calls')),
 	});
 

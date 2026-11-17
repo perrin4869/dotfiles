@@ -1,5 +1,5 @@
 // ===================================================================================================================
-// DELETE THIS EXTENSION IF pi-permission-system STOPS ASKING ABOUT SHELL-SYNTAX UNITS. No upstream issue tracks that.
+// DELETE THIS EXTENSION IF pi-permission-system STOPS ASKING ABOUT SHELL-SYNTAX UNITS: gotgenes/pi-packages#1129.
 //
 // The gap: pi-permission-system enumerates an assignment (`T=$(mktemp -d)`) and a compound statement
 // (`for …; do …; done`) as command units of their own, besides the commands inside them. A wildcard pattern cannot say

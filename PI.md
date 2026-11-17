@@ -109,6 +109,19 @@ What memory may store is in `home/.pi/agent/AGENTS.md`. Memory is shared by ever
 
 ---
 
+## Tool output
+
+`pi-rtk-optimizer` rewrites the `bash` tool's commands into their `rtk` equivalents (`rtk git status`, `rtk ls`, `rtk git log`), with `rtk` itself from `make rtk`, which downloads it into `deps/rtk` for `~/.local/bin/rtk` to link to. On this checkout the rewrite takes `git status` from 883 to 393 characters, `git log -20` from 10,398 to 4,869, `ls -la` from 725 to 239, and `find` from 1,315 to 520.
+
+The package's own output compaction is off, in `home/.pi/agent/extensions/pi-rtk-optimizer/config.json`. Left on, it reads the long `git status` format as one conflict with no file names, reduces a failing `npm test` to its counts without the test name or the actual and expected values, and cuts output at 12,000 characters mid-hunk.
+
+`git diff` stays unrewritten (`exclude_commands` in `home/.config/rtk/config.toml`): `diff.external = difft` renders a side-by-side diff that `rtk git diff` cannot parse, so it prints the stat and drops every hunk. `suppress_hook_warning` keeps rtk's "no hook installed" line, which is about its own shell hooks, out of command output.
+
+* `/rtk` opens the extension's settings, from rewrite mode to the compaction switches above.
+* `rtk gain` shows rtk's savings history; it reads the database the extension points `RTK_DB_PATH` at, since rtk's default path is read-only under the sandbox.
+
+---
+
 ## Sandbox
 
 `pi-sandbox` runs the `bash` tool under bubblewrap. The global rules are in `home/.pi/agent/sandbox.json`.

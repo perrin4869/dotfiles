@@ -180,7 +180,9 @@ vim.api.nvim_create_autocmd('FileType', {
 			if not sidebar then
 				return
 			end
-			local input_winid = sidebar.containers.input.winid
+			local input = sidebar.containers.input
+			local input_winid = input and input.winid
+			---@cast input_winid integer?
 			sidebar:submit_input()
 			if input_winid and vim.api.nvim_win_is_valid(input_winid) then
 				vim.api.nvim_set_current_win(input_winid)

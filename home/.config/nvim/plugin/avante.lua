@@ -94,6 +94,13 @@ map(
 	'focus'
 )
 map(
+	prefix .. 't',
+	with(function()
+		require('avante.api').toggle()
+	end),
+	'toggle'
+)
+map(
 	prefix .. 'a',
 	with(function()
 		require('avante.api').ask()
@@ -120,14 +127,6 @@ map(
 		require('avante.api').add_buffer_files()
 	end),
 	'add_buffer_files'
-)
-
-map(
-	vim.g.toggle_prefix .. 'a',
-	with(function()
-		require('avante.api').toggle()
-	end),
-	'toggle'
 )
 
 map(

@@ -99,23 +99,16 @@ async function loadParser() {
 // parser keeps its own copy of the runtime alive, so it still parses after this module is evaluated again.
 const PARSER = Symbol.for('pi-extensions:bash-syntax-link:parser');
 
-type Grammar = { pending?: Promise<Parser> };
-
-function grammar(): Grammar {
-	const existing: Grammar | undefined = Reflect.get(globalThis, PARSER);
-	if (existing) return existing;
-	const created: Grammar = {};
-	Reflect.set(globalThis, PARSER, created);
-	return created;
-}
-
 // the promise rather than the parser: concurrent asks share one load, and a load that fails is retried, not remembered
 function getParser(): Promise<Parser> {
-	const slot = grammar();
-	return (slot.pending ??= loadParser().catch((error: unknown) => {
-		slot.pending = undefined;
+	const pending: Promise<Parser> | undefined = Reflect.get(globalThis, PARSER);
+	if (pending !== undefined) return pending;
+	const load = loadParser().catch((error: unknown) => {
+		Reflect.deleteProperty(globalThis, PARSER);
 		throw error;
-	}));
+	});
+	Reflect.set(globalThis, PARSER, load);
+	return load;
 }
 
 // the variable an assignment writes: `a` in `a=1`, `a+=1` and `a[1]=1`

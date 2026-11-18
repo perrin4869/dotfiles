@@ -1,12 +1,12 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "skill-creator": {
       "source": "anthropics/skills",
       "ref": "ca45fc496a3436251f191354091d557da31c15b5",
       "sourceType": "github",
       "skillPath": "skills/skill-creator/SKILL.md",
-      "computedHash": "5ea13a6d9f0d4bb694405d79acd00cadec0d21bb138c4dd10fcf3c500cb835c2"
+      "computedHash": "2d7f889e6ae93c6c27d699856942c336b5b8644537496987d5571043d059b1dc"
     }
   }
 }

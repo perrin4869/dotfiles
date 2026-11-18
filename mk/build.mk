@@ -209,6 +209,7 @@ node_modules: package-lock.json
 	@touch $@
 
 # skills that `npx skills add` (run from home/) locked; the restore skips present skills, so --force applies lock changes
+# a CLI upgrade that changes the lock format needs one --no-frozen-lockfile run to rewrite home/skills-lock.json
 .PHONY: skills
 skills_target := .skills.installed
 $(skills_target): home/skills-lock.json node_modules

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "tree-sitter-bash": "0.25.1",
-    "web-tree-sitter-link": "npm:web-tree-sitter@0.26.13"
+    "web-tree-sitter": "0.26.13"
   },
   "devDependencies": {
     "@earendil-works/pi-ai": "^1.5.2",

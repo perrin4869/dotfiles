@@ -27,9 +27,7 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
 import { fileURLToPath } from 'node:url';
-// web-tree-sitter points every parser at one module-global runtime, which each init replaces, so a second user of
-// pi-permission-system's copy leaves one side's parsers on a dropped heap; this alias loads as a module of its own
-import { Language, type Node, Parser } from 'web-tree-sitter-link';
+import { Language, type Node, Parser } from 'web-tree-sitter';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
 // runs no program itself. Commands nested in those units are units of their own, so one still asking keeps the ask.
@@ -86,11 +84,12 @@ function initialized() {
 	}
 }
 
-// pi-permission-system cuts a command into units with this grammar, so the link reads each unit the same way
+// pi-permission-system cuts a command into units with this grammar, so the link reads each unit the same way. pi
+// installs its packages in a tree of its own, so there this copy is the link's alone; where both resolve one copy, as in
+// the tests, pi-permission-system has initialized it by the time an ask arrives, and a second init would swap the
+// module-global runtime its parser runs on
 async function loadParser() {
-	// the runtime outlives this module, which pi reloads every session, and init replaces it under the parser of a
-	// session still running, such as an in-process subagent's parent
-	if (!initialized()) await Parser.init({ locateFile: () => wasm('web-tree-sitter-link/web-tree-sitter.wasm') });
+	if (!initialized()) await Parser.init({ locateFile: () => wasm('web-tree-sitter/web-tree-sitter.wasm') });
 	const parser = new Parser();
 	parser.setLanguage(await Language.load(wasm('tree-sitter-bash/tree-sitter-bash.wasm')));
 	return parser;
@@ -160,13 +159,19 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
 const authorizeWith =
-	(parser: Parser): Authorizer['authorize'] =>
-	async ({ accessIntent }) =>
-		accessIntent?.surface === 'bash' &&
-		accessIntent.askingUnits?.length &&
-		accessIntent.askingUnits.every(({ command }) => unitRunsNoProgram(parser, command))
+	(parser: () => Promise<Parser>): Authorizer['authorize'] =>
+	async ({ accessIntent }, _query, log) => {
+		const units = accessIntent?.surface === 'bash' ? accessIntent.askingUnits : undefined;
+		if (!units?.length) return { kind: 'defer' };
+		// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
+		const bash = await parser().catch((error: unknown) => {
+			log.review('bash_syntax_grammar_unavailable', { error: String(error) });
+			return undefined;
+		});
+		return bash && units.every(({ command }) => unitRunsNoProgram(bash, command))
 			? { kind: 'allow' }
 			: { kind: 'defer' };
+	};
 
 export default function (pi: ExtensionAPI) {
 	let registration: DisposableStack | undefined;
@@ -185,10 +190,16 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		const parser = await loadParser().catch(() => undefined);
-		if (!parser) return warn('the bash grammar did not load');
 		const stack = new DisposableStack();
-		stack.adopt(parser, (loaded) => loaded.delete());
+		// built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized
+		let loading: Promise<Parser> | undefined;
+		const parser = () =>
+			(loading ??= loadParser().catch((error: unknown) => {
+				// a load that fails is retried on the next ask rather than remembered
+				loading = undefined;
+				throw error;
+			}));
+		stack.defer(() => void loading?.then((loaded) => loaded.delete()));
 		stack.defer(service.registerAuthorizer(LINK, authorizeWith(parser)));
 		registration = stack;
 	});

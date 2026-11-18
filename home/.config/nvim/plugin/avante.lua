@@ -4,24 +4,6 @@ yall.pack('avante', 'avante.nvim')
 -- avante authenticates copilot itself now (:Avante copilot login), so copilot.lua is not one of its dependencies
 yall.deps('avante', { 'telescope', 'cmp', 'nui', 'mega.cmdparse' })
 local with = yall.with('avante')
--- acp providers run a CLI over the agent protocol, so they are not entries in `providers`
-local acp_providers = {
-	['gemini-cli'] = {
-		command = 'npx',
-		args = { '@google/gemini-cli', '--experimental-acp' },
-		env = {
-			NODE_NO_WARNINGS = '1',
-			GEMINI_API_KEY = os.getenv('GEMINI_API_KEY'),
-		},
-	},
-	pi = {
-		command = 'pi-acp',
-		env = {
-			NODE_NO_WARNINGS = '1',
-		},
-	},
-}
-local is_acp = acp_providers[provider] ~= nil
 local config = {
 	-- add any opts here
 	-- this file can contain specific instructions for your project
@@ -29,8 +11,6 @@ local config = {
 	behaviour = {
 		-- https://github.com/yetone/avante.nvim/issues/1048
 		auto_suggestions = provider ~= 'copilot',
-		-- suggestions look their provider up in `providers`, which an acp provider is not
-		auto_suggestions_provider = is_acp and 'ollama' or provider,
 		auto_set_keymaps = false,
 	},
 	-- submit always focuses the result window, so the real keys are mapped below to refocus the input
@@ -49,7 +29,25 @@ local config = {
 	},
 	-- for example
 	provider = provider or 'ollama',
-	acp_providers = acp_providers,
+	-- an acp chat provider cannot serve inline suggestions, so name the API provider to use for them
+	auto_suggestions_acp_provider = 'ollama',
+	-- acp providers run a CLI over the agent protocol, so they are not entries in `providers`
+	acp_providers = {
+		['gemini-cli'] = {
+			command = 'npx',
+			args = { '@google/gemini-cli', '--experimental-acp' },
+			env = {
+				NODE_NO_WARNINGS = '1',
+				GEMINI_API_KEY = os.getenv('GEMINI_API_KEY'),
+			},
+		},
+		pi = {
+			command = 'pi-acp',
+			env = {
+				NODE_NO_WARNINGS = '1',
+			},
+		},
+	},
 	providers = {
 		copilot = {
 			model = vim.g.avante_copilot_model or 'claude-sonnet-4.6',

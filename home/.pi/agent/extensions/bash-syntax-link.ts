@@ -18,10 +18,9 @@
 //        needs a unit to match, and a syntax-only unit matches nothing.
 //   #620 allow-capable adjudicator: builds a link for opaque commands (`bash -c`, `eval`, unparsed subtrees), a
 //        different gap. The chain seam it builds on (#599) is the seam this link uses.
-//   #1097 (open PR) asks each chain unit separately, so a mixed chain prompts about `curl` and not about the
-//        assignment around it. The wrapper still asks; this link answers that ask, now as its own prompt.
-//   #1101 names the unit a link accepted instead of the one still asking, and #1128 matches a floor-exempt wrapper's
-//        inner command without its spellings: visible symptoms of the same gap, unfixable from outside the package.
+//   #1101 tracks the verdict that would let a link accept part of a chain (`allow_units`). Until then this link can
+//        only allow a whole ask, so a chain that mixes syntax with a command still asking prompts for both.
+//   #1128 matches a floor-exempt wrapper's inner command without its spellings: the same gap, seen from `timeout`.
 // ===================================================================================================================
 
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
@@ -85,8 +84,8 @@ function initialized() {
 }
 
 // pi-permission-system cuts a command into units with this grammar, so the link reads each unit the same way. pi
-// installs its packages in a tree of its own, so there this copy is the link's alone; where both resolve one copy, as in
-// the tests, pi-permission-system has initialized it by the time an ask arrives, and a second init would swap the
+// installs its packages in a tree of its own, so there this copy is the link's alone; where both resolve one copy, as
+// in the tests, pi-permission-system has initialized it by the time an ask arrives, and a second init would swap the
 // module-global runtime its parser runs on
 async function loadParser() {
 	if (!initialized()) await Parser.init({ locateFile: () => wasm('web-tree-sitter/web-tree-sitter.wasm') });

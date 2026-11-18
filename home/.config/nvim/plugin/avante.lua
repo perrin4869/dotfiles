@@ -40,22 +40,6 @@ local config = {
 			insert = '<Plug>(avante-submit)',
 		},
 	},
-	-- the builtin /resume only lists avante's histories, even when the agent keeps its own sessions
-	slash_commands = {
-		{
-			name = 'resume',
-			description = 'Resume a previous session',
-			details = "Resume a previous session; lists the agent's sessions for ACP providers",
-			callback = function()
-				local avante_config = require('avante.config')
-				if avante_config.acp_providers[avante_config.provider] then
-					require('avante.api').select_acp_session()
-				else
-					require('avante.api').select_history()
-				end
-			end,
-		},
-	},
 	-- native picks via vim.ui.select, then asks open/delete/cancel through vim.ui.input
 	selector = {
 		provider = 'telescope',

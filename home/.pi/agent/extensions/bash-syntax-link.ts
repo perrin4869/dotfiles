@@ -190,7 +190,8 @@ export default function (pi: ExtensionAPI) {
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
 		const stack = new AsyncDisposableStack();
-		// built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized
+		// Built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized. Held as
+		// the promise, not the parser, because sibling tool calls run in parallel and two asks must share one load.
 		let loading: Promise<Parser> | undefined;
 		const parser = () =>
 			(loading ??= loadParser().catch((error: unknown) => {
@@ -199,7 +200,7 @@ export default function (pi: ExtensionAPI) {
 				throw error;
 			}));
 		// a load still in flight is awaited, since its parser would otherwise outlive the session; a failed load left nothing
-		stack.defer(async () => (await loading?.catch(() => undefined))?.delete());
+		stack.defer(() => loading?.catch(() => undefined).then((loaded) => loaded?.delete()));
 		stack.defer(service.registerAuthorizer(LINK, authorizeWith(parser)));
 		registration = stack;
 	});

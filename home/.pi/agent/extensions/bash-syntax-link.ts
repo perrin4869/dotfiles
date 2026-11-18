@@ -173,7 +173,7 @@ const authorizeWith =
 	};
 
 export default function (pi: ExtensionAPI) {
-	let registration: DisposableStack | undefined;
+	let registration: AsyncDisposableStack | undefined;
 	let warned = false;
 
 	// every extension has had its session_start by now, so the service is published and no tool can have asked yet
@@ -189,7 +189,7 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		const stack = new DisposableStack();
+		const stack = new AsyncDisposableStack();
 		// built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized
 		let loading: Promise<Parser> | undefined;
 		const parser = () =>
@@ -198,13 +198,14 @@ export default function (pi: ExtensionAPI) {
 				loading = undefined;
 				throw error;
 			}));
-		stack.defer(() => void loading?.then((loaded) => loaded.delete()));
+		// a load still in flight is awaited, since its parser would otherwise outlive the session; a failed load left nothing
+		stack.defer(async () => (await loading?.catch(() => undefined))?.delete());
 		stack.defer(service.registerAuthorizer(LINK, authorizeWith(parser)));
 		registration = stack;
 	});
 
-	pi.on('session_shutdown', () => {
-		registration?.dispose();
+	pi.on('session_shutdown', async () => {
+		await registration?.disposeAsync();
 		registration = undefined;
 		warned = false;
 	});

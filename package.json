@@ -10,10 +10,10 @@
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
-    "oxfmt": "^0.77.0",
-    "oxlint": "^1.92.0",
-    "oxlint-tsgolint": "^7.0.2006",
-    "skills": "1.7.6",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "oxlint-tsgolint": "^7.0.2007",
+    "skills": "1.8.1",
     "typescript": "^7.0.2"
   },
   "allowScripts": {

@@ -217,6 +217,11 @@ $(skills_target): home/skills-lock.json node_modules
 	@touch $@
 skills: $(skills_target)
 
+# the lock records the ref (main) and the commit it resolved to, so this moves the commit to the ref's head
+.PHONY: skills-update
+skills-update: node_modules
+	cd home && DISABLE_TELEMETRY=1 npx --no -- skills update -p -y
+
 .PHONY: atuin
 atuin_target = $(ATUIN_ROOT)/target/release/atuin
 $(eval $(call git_submodule,atuin,$(ATUIN_ROOT)))

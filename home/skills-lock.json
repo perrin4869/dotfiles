@@ -3,7 +3,8 @@
   "skills": {
     "skill-creator": {
       "source": "anthropics/skills",
-      "ref": "ca45fc496a3436251f191354091d557da31c15b5",
+      "ref": "main",
+      "commit": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba",
       "sourceType": "github",
       "skillPath": "skills/skill-creator/SKILL.md",
       "computedHash": "2d7f889e6ae93c6c27d699856942c336b5b8644537496987d5571043d059b1dc"

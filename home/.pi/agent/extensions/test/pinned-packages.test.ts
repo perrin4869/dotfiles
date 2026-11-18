@@ -19,7 +19,7 @@ test('installed pi packages match the versions pinned in settings.json', async (
 			return match ? [[match[1], match[2]] as const] : [];
 		}),
 	);
-	for (const name of Object.keys(extensions.devDependencies)) {
+	for (const name of Object.keys({ ...extensions.dependencies, ...extensions.devDependencies })) {
 		const manifest = await packageManifest(name);
 		if (Value.Check(PiPackage, manifest)) assert.equal(manifest.version, pinned.get(name), name);
 	}

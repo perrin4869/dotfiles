@@ -171,13 +171,15 @@ function runsNoProgram(statement: Node): boolean {
 	}
 }
 
-// whether a bash unit, as pi-permission-system reports it, is one statement that runs no program of its own
+// whether a bash unit, as pi-permission-system reports it, runs no program of its own. Every statement has to pass, not
+// just the first: the enumerator normally hands over a single unit, and one it could not split is still only safe if
+// each of its statements would be on its own.
 function unitRunsNoProgram(parser: Parser, unit: string) {
 	using trees = new DisposableStack();
 	const tree = trees.adopt(parser.parse(unit), (parsed) => parsed?.delete());
 	const root = tree?.rootNode;
-	const [statement, ...rest] = root?.namedChildren ?? [];
-	return root?.hasError === false && statement != null && rest.length === 0 && runsNoProgram(statement);
+	const statements = root?.namedChildren ?? [];
+	return root?.hasError === false && statements.length > 0 && statements.every(runsNoProgram);
 }
 
 // one verdict object, since the link defers on every path that is not a syntax-only bash ask

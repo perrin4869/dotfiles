@@ -158,12 +158,12 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
 const authorizeWith =
-	(parser: () => Promise<Parser>): Authorizer['authorize'] =>
+	(getParser: () => Promise<Parser>): Authorizer['authorize'] =>
 	async ({ accessIntent }, _query, log) => {
 		const units = accessIntent?.surface === 'bash' ? accessIntent.askingUnits : undefined;
 		if (!units?.length) return { kind: 'defer' };
 		// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
-		const bash = await parser().catch((error: unknown) => {
+		const bash = await getParser().catch((error: unknown) => {
 			log.review('bash_syntax_grammar_unavailable', { error: String(error) });
 			return undefined;
 		});
@@ -190,18 +190,11 @@ export default function (pi: ExtensionAPI) {
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
 		const stack = new AsyncDisposableStack();
-		// Built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized. Held as
-		// the promise, not the parser, because sibling tool calls run in parallel and two asks must share one load.
-		let loading: Promise<Parser> | undefined;
-		const parser = () =>
-			(loading ??= loadParser().catch((error: unknown) => {
-				// a load that fails is retried on the next ask rather than remembered
-				loading = undefined;
-				throw error;
-			}));
-		// a load still in flight is awaited, since its parser would otherwise outlive the session; a failed load left nothing
-		stack.defer(() => loading?.catch(() => undefined).then((loaded) => loaded?.delete()));
-		stack.defer(service.registerAuthorizer(LINK, authorizeWith(parser)));
+		// Built on the first ask rather than here: a parse has run by then, so a shared copy is already initialized
+		let parser: Parser | undefined;
+		const getParser = async () => (parser ??= await loadParser());
+		stack.defer(() => parser?.delete());
+		stack.defer(service.registerAuthorizer(LINK, authorizeWith(getParser)));
 		registration = stack;
 	});
 

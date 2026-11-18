@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "workspaces": [
+    "home/.local/share/mcp",
     "home/.pi/agent/extensions"
   ],
   "scripts": {
-    "check": "npm run check --workspaces",
+    "check": "npm run check --workspaces --if-present",
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {

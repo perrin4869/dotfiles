@@ -1,0 +1,7 @@
+{
+  "name": "mcp-servers",
+  "private": true,
+  "dependencies": {
+    "@modelcontextprotocol/server-filesystem": "2.4.0"
+  }
+}

@@ -18,8 +18,6 @@
 //        needs a unit to match, and a syntax-only unit matches nothing.
 //   #620 allow-capable adjudicator: builds a link for opaque commands (`bash -c`, `eval`, unparsed subtrees), a
 //        different gap. The chain seam it builds on (#599) is the seam this link uses.
-//   #1101 tracks the verdict that would let a link accept part of a chain (`allow_units`). Until then this link can
-//        only allow a whole ask, so a chain that mixes syntax with a command still asking prompts for both.
 //   #1128 matches a floor-exempt wrapper's inner command without its spellings: the same gap, seen from `timeout`.
 // ===================================================================================================================
 
@@ -176,7 +174,7 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 	return statements.length > 0 && statements.every(runsNoProgram);
 }
 
-// one verdict object, since the link defers on every path that is not a syntax-only bash ask
+// one verdict object, since no refusing path carries a reason
 const DEFER = { kind: 'defer' } as const;
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
@@ -192,7 +190,10 @@ const authorizeWith =
 			return undefined;
 		});
 		if (!bash) return DEFER;
-		return units.every(({ command }) => unitRunsNoProgram(bash, command)) ? { kind: 'allow' } : DEFER;
+		const syntax = units.filter(({ command }) => unitRunsNoProgram(bash, command)).map(({ command }) => command);
+		if (syntax.length === units.length) return { kind: 'allow' };
+		// naming the settled units leaves the prompt about the command that still asks, instead of about the assignment
+		return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
 	};
 
 export default function (pi: ExtensionAPI) {

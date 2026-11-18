@@ -119,20 +119,20 @@ function getParser(): Promise<Parser> {
 }
 
 // the variable an assignment writes: `a` in `a=1`, `a+=1` and `a[1]=1`
-function assignedName(assignment: Node) {
+function assignedName(assignment: Node): string | undefined {
 	const name = assignment.childForFieldName('name');
 	return name?.type === 'subscript' ? name.childForFieldName('name')?.text : name?.text;
 }
 
 // an assignment to a variable no program reads to decide what it runs
-function plainAssignment(assignment: Node | null) {
-	const name = assignment && assignedName(assignment);
-	return name !== undefined && name !== null && !isProgramVariable(name);
+function plainAssignment(assignment: Node): boolean {
+	const name = assignedName(assignment);
+	return name !== undefined && !isProgramVariable(name);
 }
 
 // one argument of export, local, declare, typeset or readonly
-function plainDeclaration(arg: Node | null) {
-	switch (arg?.type) {
+function plainDeclaration(arg: Node): boolean {
+	switch (arg.type) {
 		case 'variable_assignment':
 			return plainAssignment(arg);
 		case 'variable_name':
@@ -163,7 +163,7 @@ function runsNoProgram(statement: Node): boolean {
 		}
 		case 'command': {
 			const name = statement.childForFieldName('name');
-			const prefixes = statement.namedChildren.filter((child) => child?.type === 'variable_assignment');
+			const prefixes = statement.namedChildren.filter((child) => child.type === 'variable_assignment');
 			return name !== null && BUILTINS.has(name.text) && prefixes.every(plainAssignment);
 		}
 		default:

@@ -12,6 +12,7 @@
     "test": "node --test 'test/*.test.ts'"
   },
   "dependencies": {
+    "@gotgenes/pi-permission-system": "42.0.3",
     "tree-sitter-bash": "0.25.1",
     "web-tree-sitter": "0.26.13"
   },
@@ -19,7 +20,6 @@
     "@earendil-works/pi-ai": "^1.5.2",
     "@earendil-works/pi-coding-agent": "^1.5.2",
     "@earendil-works/pi-tui": "^1.5.0",
-    "@gotgenes/pi-permission-system": "42.0.3",
     "@juicesharp/rpiv-advisor": "2.15.0",
     "@narumitw/pi-plan-mode": "0.60.2",
     "@types/node": "^26.6.6",

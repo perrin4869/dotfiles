@@ -259,14 +259,15 @@ await writeFile(
 	JSON.stringify({ ...settings, packages, extensionChangelogVersions }, null, 2),
 );
 
-// the extension tests run against these packages' internals, so they follow the pinned versions
+// the extensions import these packages and the tests run against their internals, so they follow the pinned versions
+const installed = { ...extensions.dependencies, ...extensions.devDependencies };
 const tested = bumps
-	.filter(({ name }) => name in extensions.devDependencies)
+	.filter(({ name }) => name in installed)
 	.map(({ name, version }) => `${name}@${version}`);
 if (tested.length > 0) {
 	await execFileAsync(
 		'npm',
-		['install', '--workspace', 'home/.pi/agent/extensions', '--save-dev', '--save-exact', '--ignore-scripts', ...tested],
+		['install', '--workspace', 'home/.pi/agent/extensions', '--save-exact', '--ignore-scripts', ...tested],
 		// stdout is the PR body
 		{ cwd: new URL('..', import.meta.url), stdio: ['ignore', 'ignore', 'inherit'] },
 	);

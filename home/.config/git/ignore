@@ -39,3 +39,6 @@ kls_database.db
 **/.claude/settings.local.json
 **/.pi/settings.json
 **/.pi/sandbox.json
+
+# pi sandbox mounts /dev/null over a missing .env to deny writes, leaving an empty file behind
+.env

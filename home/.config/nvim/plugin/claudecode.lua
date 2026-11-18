@@ -56,10 +56,6 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
-map('n', vim.g.toggle_prefix .. 'c', function()
-	vim.cmd.ClaudeCode()
-end, 'toggle')
-
 -- a naive session restore recreates the claude terminal as a dumb shell
 -- buffer instead of a proper claudecode.nvim terminal, so close it and
 -- reopen it properly instead.

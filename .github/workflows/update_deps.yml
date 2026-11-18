@@ -148,8 +148,6 @@ jobs:
         run: |
           {
             echo 'body<<SKILLS_EOF'
-            echo '`make skills` replays the commit the lock records, so this only moves the pin:'
-            echo
             jq -rn --argjson old "$(git show HEAD:home/skills-lock.json)" --slurpfile new home/skills-lock.json '
               $new[0].skills | to_entries[]
               | ($old.skills[.key].commit // "") as $from

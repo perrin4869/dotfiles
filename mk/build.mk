@@ -184,6 +184,25 @@ $(pi_target): $(DEPS)/$(pi_archive)
 	@touch $@
 pi: $(pi_target)
 
+.PHONY: rtk
+rtk_version = $(call get_version,rtk)
+rtk_arch = $(shell case $$(uname -m) in \
+	x86_64$(CP) echo x86_64 ;; \
+	aarch64|arm64$(CP) echo aarch64 ;; \
+	*$(CP) echo unknown ;; \
+esac)
+# upstream asset name has no version, so add one to rebuild on bumps
+rtk_archive = rtk-$(rtk_version)-$(rtk_arch)-unknown-linux-musl.tar.gz
+$(DEPS)/$(rtk_archive):
+	$(call require,wget)
+	wget https://github.com/rtk-ai/rtk/releases/download/v$(rtk_version)/rtk-$(rtk_arch)-unknown-linux-musl.tar.gz -O $@
+rtk_target = $(DEPS)/rtk/rtk
+$(rtk_target): $(DEPS)/$(rtk_archive)
+	mkdir -p $(DEPS)/rtk
+	tar xvzf $< -C $(DEPS)/rtk
+	@touch $@
+rtk: $(rtk_target)
+
 # the skills CLI and dev tooling for the npm workspaces; keep pi-coding-agent at .external_versions/pi
 node_modules: package-lock.json
 	npm ci --ignore-scripts
@@ -423,6 +442,7 @@ TARGETS = \
 	emmylua_check \
 	yubikey-touch-detector \
 	pi \
+	rtk \
 	skills \
 	i3status \
 	treesitter \

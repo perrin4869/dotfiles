@@ -1,0 +1,5 @@
+[hooks]
+# difftastic renders git diff, which rtk can only turn into a stat, losing the hunks
+exclude_commands = ["git diff"]
+# the extension rewrites bash commands, so rtk's shell hook warning is noise in every command's output
+suppress_hook_warning = true

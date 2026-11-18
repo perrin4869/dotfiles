@@ -16,7 +16,6 @@
   branch = false
 [core]
   editor = vim
-  excludesfile = ~/.config/git/.gitignore_global
 [color]
   ui = true
 [merge]

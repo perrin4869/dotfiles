@@ -194,7 +194,8 @@ export default function (pi: ExtensionAPI) {
 		// shared with pi-permission-system, and nobody has explained why
 		let parser: Promise<Parser> | undefined;
 		const getParser = () => (parser ??= loadParser());
-		stack.defer(() => void parser?.then((p) => p.delete()).catch(() => {}));
+		// dispose does not await, so a load still in flight frees its parser whenever it lands
+		stack.defer(() => parser?.then((p) => p.delete()).catch(() => {}));
 		stack.defer(service.registerAuthorizer(LINK, authorizeWith(getParser)));
 		registration = stack;
 	});

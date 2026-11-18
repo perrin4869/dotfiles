@@ -106,7 +106,7 @@ home/.claude/*
 home/.npmrc
 home/.npmrc.local
 
-/node_modules
+node_modules/
 
 # luarocks init --local, for the nvim specs
 /.luarocks

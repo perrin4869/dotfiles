@@ -140,18 +140,7 @@ Allowances saved "for all projects" write through the stowed symlink into `home/
 
 ## MCP
 
-`home/.pi/agent/mcp.json` runs one server, the filesystem one, read-only:
-
-```json
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem@2.3.0", "--read-only", "~"]
-    }
-  }
-}
-```
+`home/.pi/agent/mcp.json` runs one server, the filesystem one, read-only: `npx --no -- @modelcontextprotocol/server-filesystem --read-only ~` from `~/.local/share/mcp`. That directory's `package.json` is an npm workspace of this repo, so the version comes from `package-lock.json` and Dependabot bumps it with the rest of npm.
 
 Its tools are `mcp__filesystem__*` (`search_files` for a ripgrep or glob search, plus the read and list tools), and they reach the model the way other undeclared tools do: through a `codemode` script or `tool_search`, so nothing is declared up front. `tool_search` is on, since it is what declares a server's tools on demand:
 

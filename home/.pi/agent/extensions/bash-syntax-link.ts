@@ -178,8 +178,9 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 	using trees = new DisposableStack();
 	const tree = trees.adopt(parser.parse(unit), (parsed) => parsed?.delete());
 	const root = tree?.rootNode;
-	const statements = root?.namedChildren ?? [];
-	return root?.hasError === false && statements.length > 0 && statements.every(runsNoProgram);
+	if (root === undefined || root.hasError) return false;
+	const statements = root.namedChildren;
+	return statements.length > 0 && statements.every(runsNoProgram);
 }
 
 // one verdict object, since the link defers on every path that is not a syntax-only bash ask

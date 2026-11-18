@@ -94,6 +94,30 @@ async function loadParser() {
 	return parser;
 }
 
+// The parser lives in a process-wide slot: pi re-evaluates this module on every reload and session replacement, and
+// each load instantiates the grammar wasm, about a megabyte that web-tree-sitter offers no way to free. The cached
+// parser keeps its own copy of the runtime alive, so it still parses after this module is evaluated again.
+const PARSER = Symbol.for('pi-extensions:bash-syntax-link:parser');
+
+type Grammar = { pending?: Promise<Parser> };
+
+function grammar(): Grammar {
+	const existing: Grammar | undefined = Reflect.get(globalThis, PARSER);
+	if (existing) return existing;
+	const created: Grammar = {};
+	Reflect.set(globalThis, PARSER, created);
+	return created;
+}
+
+// the promise rather than the parser: concurrent asks share one load, and a load that fails is retried, not remembered
+function getParser(): Promise<Parser> {
+	const slot = grammar();
+	return (slot.pending ??= loadParser().catch((error: unknown) => {
+		slot.pending = undefined;
+		throw error;
+	}));
+}
+
 // the variable an assignment writes: `a` in `a=1`, `a+=1` and `a[1]=1`
 function assignedName(assignment: Node) {
 	const name = assignment.childForFieldName('name');
@@ -173,12 +197,12 @@ const authorizeWith =
 	};
 
 export default function (pi: ExtensionAPI) {
-	let registration: DisposableStack | undefined;
+	let dispose: (() => void) | undefined;
 	let warned = false;
 
 	// every extension has had its session_start by now, so the service is published and no tool can have asked yet
 	pi.on('before_agent_start', async (_event, ctx) => {
-		if (registration) return;
+		if (dispose) return;
 		// staying quiet about a link that never registered is what made one look like it worked
 		const warn = (why: string) => {
 			if (warned) return;
@@ -189,20 +213,12 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		const stack = new DisposableStack();
-		// Built on the first ask rather than here: loading at before_agent_start fails the suite when the grammar copy is
-		// shared with pi-permission-system, and nobody has explained why
-		let parser: Promise<Parser> | undefined;
-		const getParser = () => (parser ??= loadParser());
-		// dispose does not await, so a load still in flight frees its parser whenever it lands
-		stack.defer(() => parser?.then((p) => p.delete()).catch(() => {}));
-		stack.defer(service.registerAuthorizer(LINK, authorizeWith(getParser)));
-		registration = stack;
+		dispose = service.registerAuthorizer(LINK, authorizeWith(getParser));
 	});
 
 	pi.on('session_shutdown', () => {
-		registration?.dispose();
-		registration = undefined;
+		dispose?.();
+		dispose = undefined;
 		warned = false;
 	});
 }

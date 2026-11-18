@@ -125,3 +125,56 @@ jobs:
         run: |
           gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/assignees" \
             -f "assignees[]=$GITHUB_REPOSITORY_OWNER" --silent
+
+  skills:
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+
+      # the CLI pinned in package.json, as `make skills` runs it; `make skills-update` would also clone every submodule
+      - name: Install the skills CLI
+        run: npm ci --ignore-scripts
+
+      - name: Move skill-creator to the head of its ref
+        run: cd home && DISABLE_TELEMETRY=1 npx --no -- skills update -p -y
+
+      - name: Describe the move
+        id: bump
+        run: |
+          {
+            echo 'body<<SKILLS_EOF'
+            echo '`make skills` replays the commit the lock records, so this only moves the pin:'
+            echo
+            jq -rn --argjson old "$(git show HEAD:home/skills-lock.json)" --slurpfile new home/skills-lock.json '
+              $new[0].skills | to_entries[]
+              | ($old.skills[.key].commit // "") as $from
+              | select(.value.commit != $from)
+              | "- `\(.key)`: [\($from[0:7])...\(.value.commit[0:7])](https://github.com/\(.value.source)/compare/\($from)...\(.value.commit))"
+            '
+            echo SKILLS_EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create PR
+        id: pr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: update/skills
+          delete-branch: true
+          title: "chore(deps): bump skills"
+          commit-message: "chore(deps): bump skills"
+          body: ${{ steps.bump.outputs.body }}
+          token: ${{ secrets.PAT }}
+
+      - name: Assign PR
+        if: steps.pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/$NUMBER/assignees" \
+            -f "assignees[]=$GITHUB_REPOSITORY_OWNER" --silent

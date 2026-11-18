@@ -180,20 +180,23 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 	return root?.hasError === false && statement != null && rest.length === 0 && runsNoProgram(statement);
 }
 
+// one verdict object, since the link defers on every path that is not a syntax-only bash ask
+const DEFER = { kind: 'defer' } as const;
+
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
 const authorizeWith =
 	(parser: () => Promise<Parser>): Authorizer['authorize'] =>
 	async ({ accessIntent }, _query, log) => {
-		const units = accessIntent?.surface === 'bash' ? accessIntent.askingUnits : undefined;
-		if (!units?.length) return { kind: 'defer' };
+		if (accessIntent?.surface !== 'bash') return DEFER;
+		const units = accessIntent.askingUnits;
+		if (!units?.length) return DEFER;
 		// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
 		const bash = await parser().catch((error: unknown) => {
 			log.review('bash_syntax_grammar_unavailable', { error: String(error) });
 			return undefined;
 		});
-		return bash && units.every(({ command }) => unitRunsNoProgram(bash, command))
-			? { kind: 'allow' }
-			: { kind: 'defer' };
+		if (!bash) return DEFER;
+		return units.every(({ command }) => unitRunsNoProgram(bash, command)) ? { kind: 'allow' } : DEFER;
 	};
 
 export default function (pi: ExtensionAPI) {

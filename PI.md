@@ -115,9 +115,9 @@ What memory may store is in `home/.pi/agent/AGENTS.md`. Memory is shared by ever
 
 The package's own output compaction is off, in `home/.pi/agent/extensions/pi-rtk-optimizer/config.json`. Left on, it reads the long `git status` format as one conflict with no file names, reduces a failing `npm test` to its counts without the test name or the actual and expected values, and cuts output at 12,000 characters mid-hunk.
 
-`git diff` stays unrewritten (`exclude_commands` in `home/.config/rtk/config.toml`): `diff.external = difft` renders a side-by-side diff that `rtk git diff` cannot parse, so it prints the stat and drops every hunk. `suppress_hook_warning` keeps rtk's "no hook installed" line, which is about its own shell hooks, out of command output.
+`git diff` stays unrewritten (`exclude_commands` in `home/.config/rtk/config.toml`): `diff.external = difft` renders a side-by-side diff that `rtk git diff` cannot parse, so it prints the stat and drops every hunk. `suppress_hook_warning` keeps rtk's "no hook installed" line, which is about its own shell hooks, out of command output. Both settings apply only because `sandbox.json` lets the sandbox read `~/.config/rtk`; without it rtk falls back to its defaults.
 
-* `/rtk` opens the extension's settings, from rewrite mode to the compaction switches above.
+* `/rtk` opens the extension's settings, from rewrite mode to the compaction switches above. `showRewriteNotifications` is off, so rewrites happen without a notice per command.
 * `rtk gain` shows rtk's savings history; it reads the database the extension points `RTK_DB_PATH` at, since rtk's default path is read-only under the sandbox.
 
 ---

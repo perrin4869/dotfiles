@@ -38,6 +38,7 @@
       "~/dotfiles/home/.local/bin",
       "~/dotfiles/deps",
       "~/.config/git",
+      "~/.config/rtk",
       "~/.cache",
       "~/.npm"
     ],

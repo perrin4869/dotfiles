@@ -2,7 +2,7 @@
 	"enabled": true,
 	"mode": "rewrite",
 	"guardWhenRtkMissing": true,
-	"showRewriteNotifications": true,
+	"showRewriteNotifications": false,
 	"outputCompaction": {
 		"enabled": false,
 		"stripAnsi": true,

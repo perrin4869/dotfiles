@@ -14,7 +14,7 @@
   "dependencies": {
     "@gotgenes/pi-permission-system": "42.0.3",
     "tree-sitter-bash": "0.25.1",
-    "web-tree-sitter": "0.26.13"
+    "web-tree-sitter": "0.27.2"
   },
   "devDependencies": {
     "@earendil-works/pi-ai": "^1.5.2",

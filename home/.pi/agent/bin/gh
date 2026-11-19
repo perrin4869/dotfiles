@@ -12,14 +12,11 @@ for dir in $PATH; do
 done
 real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exit 127; }
 
-agent=$HOME/.pi/agent
-[ -n "${PI_CODING_AGENT_DIR:-}" ] && agent=$PI_CODING_AGENT_DIR
-
-# the session writes the address it is reachable on from this machine, and the port, so nothing has to be resolved
+# the session names the file holding the address it is reachable on and its port, in the environment its commands
+# inherit, so nothing has to be resolved and no two sessions share it
+endpoint=${GH_APPROVAL_ADDR:-}
 verdict=
-endpoint=
-if [ -r "$agent/gh-approval.addr" ] && { IFS=' ' read -r host port; } < "$agent/gh-approval.addr" && [ -n "${host:-}" ] && [ -n "${port:-}" ]; then
-	endpoint=1
+if [ -n "$endpoint" ] && [ -r "$endpoint" ] && { IFS=' ' read -r host port; } < "$endpoint" && [ -n "${host:-}" ] && [ -n "${port:-}" ]; then
 	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
 	# leaves the shell running, where one on exec would end the script silently
 	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/$host/$port"; then
@@ -35,7 +32,7 @@ deny\ *)
 	;;
 esac
 
-# a session exists and did not answer: refusing is the point, where running unchecked would defeat the gate
+# pi named an endpoint and it did not answer: refusing is the point, where running unchecked would defeat the gate
 if [ -n "$endpoint" ]; then
 	echo "gh-approval: the session did not answer; nothing was sent" >&2
 	exit 1

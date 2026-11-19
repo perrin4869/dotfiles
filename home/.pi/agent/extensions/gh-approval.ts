@@ -177,34 +177,17 @@ async function originRepo(cwd: string): Promise<string | undefined> {
 		.join('/');
 }
 
-// the account the token belongs to, asked once; a lookup that cannot answer says why and throws, and the caller
-// treats the owner as unknown, which asks rather than assuming the post is mine
-const authenticated = memo(async (ctx: ExtensionContext) => {
-	const fail = (reason: string): never => {
-		ctx.ui.notify(
-			'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
-			'warning',
-		);
-		throw new Error(reason);
-	};
-	const gh = realGh();
-	if (gh === undefined) return fail('no gh on PATH');
-	const result = await execFileAsync(gh, ['api', 'user', '--jq', '.login'], { timeout: 10_000 }).catch(
-		(error: unknown) => fail(String(error)),
-	);
-	return result.stdout.trim() || fail('gh is not logged in');
-});
-
-async function verdict(ctx: ExtensionContext, ask: { cwd: string; ghRepo: string; argv: string[] }) {
+async function verdict(
+	ctx: ExtensionContext,
+	ask: { cwd: string; ghRepo: string; argv: string[] },
+	account: (ctx: ExtensionContext) => Promise<string>,
+) {
 	const post = postOf(ask.argv, ask.ghRepo || undefined, ask.cwd);
 	if (post === undefined) return 'allow';
 	// the origin of the directory and the account the token belongs to are independent lookups, so they run together
 	// a lookup that failed has already said why; the owner stays unknown, so the post asks
-	const [repo, account] = await Promise.all([
-		post.repo ?? originRepo(post.cwd),
-		authenticated(ctx).catch(() => undefined),
-	]);
-	const mine = account?.toLowerCase();
+	const [repo, owner] = await Promise.all([post.repo ?? originRepo(post.cwd), account(ctx).catch(() => undefined)]);
+	const mine = owner?.toLowerCase();
 	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
 	const allowed = await approved(ctx, repo, post).catch(() => false);
 	return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
@@ -212,6 +195,24 @@ async function verdict(ctx: ExtensionContext, ask: { cwd: string; ghRepo: string
 
 export default function (pi: ExtensionAPI) {
 	let server: Server | undefined;
+
+	// the account the token belongs to; the cache lives with the session, since a login or GH_TOKEN can change between
+	// them. A lookup that cannot answer says why and throws, and the caller treats the owner as unknown, which asks
+	const authenticated = memo(async (ctx: ExtensionContext) => {
+		const fail = (reason: string): never => {
+			ctx.ui.notify(
+				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
+				'warning',
+			);
+			throw new Error(reason);
+		};
+		const gh = realGh();
+		if (gh === undefined) return fail('no gh on PATH');
+		const result = await execFileAsync(gh, ['api', 'user', '--jq', '.login'], { timeout: 10_000 }).catch(
+			(error: unknown) => fail(String(error)),
+		);
+		return result.stdout.trim() || fail('gh is not logged in');
+	});
 
 	// the listener and the port exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
@@ -232,7 +233,7 @@ export default function (pi: ExtensionAPI) {
 						frames += chunk;
 						const ask = framesOf(frames);
 						if (ask === undefined) continue;
-						const answer = await verdict(ctx, ask).catch(
+						const answer = await verdict(ctx, ask, authenticated).catch(
 							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 						);
 						socket.end(answer + '\n');

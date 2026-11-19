@@ -172,7 +172,6 @@ async function originRepo(cwd: string): Promise<string | undefined> {
 
 export default function (pi: ExtensionAPI) {
 	let server: Server | undefined;
-	let session: ExtensionContext | undefined;
 
 	// the account the token belongs to, asked once; a lookup that cannot answer says why and throws, and the caller
 	// treats the owner as unknown, which asks rather than assuming the post is mine
@@ -209,7 +208,6 @@ export default function (pi: ExtensionAPI) {
 
 	// the listener and the port exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
-		session = ctx;
 		if (server === undefined) {
 			server = createServer(async (socket) => {
 				socket.setEncoding('utf8');
@@ -223,12 +221,9 @@ export default function (pi: ExtensionAPI) {
 						frames += chunk;
 						const ask = framesOf(frames);
 						if (ask === undefined) continue;
-						const answer =
-							session === undefined
-								? 'deny gh-approval has no session to ask; nothing was sent'
-								: await verdict(session, ask).catch(
-										(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
-									);
+						const answer = await verdict(ctx, ask).catch(
+							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+						);
 						socket.end(answer + '\n');
 						return;
 					}
@@ -264,7 +259,6 @@ export default function (pi: ExtensionAPI) {
 	pi.on('session_shutdown', () => {
 		server?.close();
 		server = undefined;
-		session = undefined;
 		rmSync(portPath(), { force: true });
 	});
 }

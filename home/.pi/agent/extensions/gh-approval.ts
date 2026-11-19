@@ -222,7 +222,8 @@ export default function (pi: ExtensionAPI) {
 						const answer = await verdict(ctx, call, authenticated).catch(
 							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 						);
-						socket.end(answer + '\n');
+						// the wrapper can go away while the dialog is open, and its answer then has nowhere to go
+						if (!socket.destroyed) socket.end(answer + '\n');
 						return;
 					}
 				} catch {

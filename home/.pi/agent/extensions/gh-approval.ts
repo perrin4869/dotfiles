@@ -233,8 +233,9 @@ export default function (pi: ExtensionAPI) {
 					// the client hung up mid-exchange; there is nobody left to answer
 				}
 			});
-			// the loopback this machine's localhost resolves to, on a port the OS picks; the session publishes both, so the
-			// wrapper dials the address that was bound rather than resolving the name again
+			// loopback, for security: bound anywhere else, the network could ask this session to post, and the protocol
+			// carries nothing that could tell a peer from the wrapper. The port is the OS's, and the session publishes it
+			// with the address so the wrapper dials what was bound
 			server.listen(0, 'localhost');
 			// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
 			// rejects rather than leaving the session waiting on a promise nothing will settle

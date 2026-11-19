@@ -34,13 +34,13 @@
     "npm:pi-token-speed@0.13.0",
     "npm:@spences10/pi-themes@0.0.11",
     "npm:pi-ollama-cloud@0.13.1",
-    "npm:pi-tidy@0.9.8",
+    "npm:pi-tidy@0.10.0",
     "npm:pi-rtk-optimizer@0.9.0"
   ],
   "theme": "gruvbox-dark",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-web-access@0.46.0\",\"scope\":\"user\"}": "0.46.0",
-    "{\"source\":\"npm:pi-tidy@0.9.8\",\"scope\":\"user\"}": "0.9.8"
+    "{\"source\":\"npm:pi-tidy@0.10.0\",\"scope\":\"user\"}": "0.10.0"
   },
   "rewind": {
     "retention": {

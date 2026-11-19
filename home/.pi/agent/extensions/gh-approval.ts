@@ -69,7 +69,8 @@ function commandLine(argv: string[]): string {
 // the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself. A missing gh
 // is not an answer but a reason the account cannot be read, so it throws like one.
 function realGh(): string {
-	for (const dir of (process.env.PATH ?? '').split(':').filter((entry) => entry !== shimDir())) {
+	for (const dir of (process.env.PATH ?? '').split(':')) {
+		if (dir === shimDir()) continue;
 		const candidate = join(dir, 'gh');
 		try {
 			accessSync(candidate, constants.X_OK);

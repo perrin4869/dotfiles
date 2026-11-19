@@ -2,11 +2,6 @@
 
 Only what every agent needs belongs here.
 
-## GitHub
-
-- Before posting to a repository outside my GitHub account (an issue, PR, comment or review), show me the exact title and body and wait for my approval. Approval covers that one post only.
-- Repositories owned by the account `gh` is authenticated as are mine: open issues and PRs and comment there without asking. Resolve that account with `gh api user --jq .login`; if it cannot be resolved, ask.
-
 ## Clipboard
 
 - When producing a chunk of multiline text whose purpose is for the user to paste it somewhere else (submission/PR notes, a message, a commit description draft, etc.), automatically copy it to the system clipboard as part of delivering it — don't wait to be asked. Still show the text in the response as normal; the clipboard copy is in addition, not instead.

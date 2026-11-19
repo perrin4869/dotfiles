@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# gh, gated: stowed to ~/.pi/agent/bin/gh, a directory pi puts first on the PATH of the commands it runs, so nothing
+# outside pi sees it. The real gh is whatever is left on PATH once this directory is dropped, so none is baked in.
+set -u
+
+self=$(cd -- "$(dirname -- "$0")" && pwd)
+rest=
+IFS=:
+for dir in $PATH; do
+	[ "$dir" = "$self" ] && continue
+	rest=${rest:+$rest:}$dir
+done
+real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exit 127; }
+
+agent=$HOME/.pi/agent
+[ -n "${PI_CODING_AGENT_DIR:-}" ] && agent=$PI_CODING_AGENT_DIR
+
+verdict=
+if [ -r "$agent/gh-approval.port" ]; then
+	port=$(cat -- "$agent/gh-approval.port")
+	# a redirection that fails on a group leaves the shell running, where one on exec would end the script silently
+	# stderr first: redirections apply left to right, so a connect failure is silenced before fd 3 is touched
+	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/127.0.0.1/$port"; then
+		verdict=
+	fi
+fi
+
+case $verdict in
+allow) exec "$real" "$@" ;;
+deny\ *)
+	echo "gh-approval: ${verdict#deny }" >&2
+	exit 1
+	;;
+esac
+
+echo "gh-approval: no pi session to ask, running gh unchecked" >&2
+exec "$real" "$@"

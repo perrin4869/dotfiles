@@ -1,6 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
 import { once } from 'node:events';
+import { memo } from './lib/memo.ts';
 import { accessSync, constants, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
@@ -172,37 +173,34 @@ async function originRepo(cwd: string): Promise<string | undefined> {
 export default function (pi: ExtensionAPI) {
 	let server: Server | undefined;
 	let session: ExtensionContext | undefined;
-	let login: string | undefined;
-	let notified = false;
 
-	// a gate that asks about everything looks broken, so the first lookup that fails says why and the rest stay quiet
-	function note(ctx: ExtensionContext, reason: string): undefined {
-		if (notified) return undefined;
-		notified = true;
-		ctx.ui.notify(
-			'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
-			'warning',
-		);
-		return undefined;
-	}
-
-	// empty when gh is missing, logged out, or unreachable, which asks rather than assuming the post is mine
-	async function authenticated(ctx: ExtensionContext): Promise<string | undefined> {
-		if (login !== undefined) return login || undefined;
+	// the account the token belongs to, asked once; a lookup that cannot answer says why and throws, and the caller
+	// treats the owner as unknown, which asks rather than assuming the post is mine
+	const authenticated = memo(async (ctx: ExtensionContext) => {
+		const fail = (reason: string): never => {
+			ctx.ui.notify(
+				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
+				'warning',
+			);
+			throw new Error(reason);
+		};
 		const gh = realGh();
-		if (gh === undefined) return note(ctx, 'no gh on PATH');
+		if (gh === undefined) return fail('no gh on PATH');
 		const result = await execFileAsync(gh, ['api', 'user', '--jq', '.login'], { timeout: 10_000 }).catch(
-			(error: unknown) => note(ctx, String(error)),
+			(error: unknown) => fail(String(error)),
 		);
-		login = result?.stdout.trim();
-		return login || note(ctx, 'gh is not logged in');
-	}
+		return result.stdout.trim() || fail('gh is not logged in');
+	});
 
 	async function verdict(ctx: ExtensionContext, ask: { cwd: string; ghRepo: string; argv: string[] }) {
 		const post = postOf(ask.argv, ask.ghRepo || undefined, ask.cwd);
 		if (post === undefined) return 'allow';
 		// the origin of the directory and the account the token belongs to are independent lookups, so they run together
-		const [repo, account] = await Promise.all([post.repo ?? originRepo(post.cwd), authenticated(ctx)]);
+		// a lookup that failed has already said why; the owner stays unknown, so the post asks
+		const [repo, account] = await Promise.all([
+			post.repo ?? originRepo(post.cwd),
+			authenticated(ctx).catch(() => undefined),
+		]);
 		const mine = account?.toLowerCase();
 		if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
 		const allowed = await approved(ctx, repo, post).catch(() => false);

@@ -138,23 +138,21 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 const DEFER = { kind: 'defer' } as const;
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
-const authorizeWith =
-	(parser: () => Promise<Parser>): Authorizer['authorize'] =>
-	async ({ accessIntent }, _query, log) => {
-		if (accessIntent?.surface !== 'bash') return DEFER;
-		const units = accessIntent.askingUnits;
-		if (!units?.length) return DEFER;
-		// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
-		const bash = await parser().catch((error: unknown) => {
-			log.review('bash_syntax_grammar_unavailable', { error: String(error) });
-			return undefined;
-		});
-		if (!bash) return DEFER;
-		const syntax = units.filter(({ command }) => unitRunsNoProgram(bash, command)).map(({ command }) => command);
-		if (syntax.length === units.length) return { kind: 'allow' };
-		// naming the settled units leaves the prompt about the command that still asks, instead of about the assignment
-		return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
-	};
+const authorizer: Authorizer['authorize'] = async ({ accessIntent }, _query, log) => {
+	if (accessIntent?.surface !== 'bash') return DEFER;
+	const units = accessIntent.askingUnits;
+	if (!units?.length) return DEFER;
+	// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
+	const bash = await getParser().catch((error: unknown) => {
+		log.review('bash_syntax_grammar_unavailable', { error: String(error) });
+		return undefined;
+	});
+	if (!bash) return DEFER;
+	const syntax = units.filter(({ command }) => unitRunsNoProgram(bash, command)).map(({ command }) => command);
+	if (syntax.length === units.length) return { kind: 'allow' };
+	// naming the settled units leaves the prompt about the command that still asks, instead of about the assignment
+	return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
+};
 
 export default function (pi: ExtensionAPI) {
 	let dispose: (() => void) | undefined;
@@ -173,7 +171,7 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		dispose = service.registerAuthorizer(LINK, authorizeWith(getParser));
+		dispose = service.registerAuthorizer(LINK, authorizer);
 	});
 
 	pi.on('session_shutdown', () => {

@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { Language, Parser } from 'web-tree-sitter';
+import { memoGlobal } from './memo.ts';
 
 const wasm = (specifier: string) => fileURLToPath(import.meta.resolve(specifier));
 
@@ -24,21 +25,5 @@ async function loadParser() {
 	return parser;
 }
 
-// The parser lives in a process-wide slot: pi re-evaluates extension modules on every reload and session
-// replacement, and each load instantiates the grammar wasm, about a megabyte that web-tree-sitter offers no way to
-// free. The cached parser keeps its own copy of the runtime alive, so it still parses after a module is evaluated
-// again, and the extensions that read bash share this one.
-const PARSER = Symbol.for('pi-extensions:tree-sitter-bash:parser');
-
-// the promise rather than the parser: concurrent callers share one load, and a load that fails is retried, not
-// remembered
-export function getParser(): Promise<Parser> {
-	const pending: Promise<Parser> | undefined = Reflect.get(globalThis, PARSER);
-	if (pending !== undefined) return pending;
-	const load = loadParser().catch((error: unknown) => {
-		Reflect.deleteProperty(globalThis, PARSER);
-		throw error;
-	});
-	Reflect.set(globalThis, PARSER, load);
-	return load;
-}
+// the grammar costs about a megabyte that web-tree-sitter offers no way to free, so one instance outlives a reload
+export const getParser = memoGlobal(loadParser, Symbol.for('pi-extensions:tree-sitter-bash:parser'));

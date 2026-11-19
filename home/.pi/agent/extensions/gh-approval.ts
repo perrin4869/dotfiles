@@ -16,11 +16,11 @@ const execFileAsync = promisify(execFile);
 // arrives here as its real argv, with no shell syntax left to guess at, and the dialog decides before gh runs.
 const RULE = 'posting outside my GitHub account needs the exact title and body shown and an approval for that one post';
 
-// the gh groups whose subcommands write something others can see, and the subcommands that do
+// the gh groups whose subcommands write something others can see, and the actions that do
 const GROUPS = new Set(['issue', 'pr', 'release', 'repo']);
-const WRITES = new Set(['create', 'edit', 'comment', 'close', 'reopen', 'delete', 'review', 'merge', 'upload']);
-// an api call with one of these methods or a field changes something; anything else reads
-const METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
+const WRITE_ACTIONS = new Set(['create', 'edit', 'comment', 'close', 'reopen', 'delete', 'review', 'merge', 'upload']);
+// an api call with one of these methods, or with a request body, changes something; anything else reads
+const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
 
 // gh reuses -F for --body-file on issue and pr and for --field on api, so the table holds both and the group picks
 const OPTIONS = {
@@ -110,27 +110,30 @@ function postOf(call: Call): Post | undefined {
 		strict: false,
 		tokens: true,
 	});
-	const flag = (...names: string[]) => {
+	// the value of the first of these flags the call carries, whatever spelling it used
+	const value = (...names: string[]) => {
 		for (const token of tokens) {
 			if (token.kind === 'option' && names.includes(token.name)) return token.value;
 		}
 		return undefined;
 	};
+	const carries = (...names: string[]) => value(...names) !== undefined;
 	const [group, action] = tokens.flatMap((token) => (token.kind === 'positional' ? [token.value] : []));
 	const api = group === 'api';
-	const method = flag('method');
-	const fielded = flag('field', 'raw-field', 'input') !== undefined;
-	// an api call writes when its method says so, or, with no method, when it carries a field
-	if (api && method !== undefined && !METHODS.has(method.toUpperCase())) return undefined;
+	const method = value('method');
+	// --field, --raw-field and --input are gh api's three ways to send a request body
+	const fielded = carries('field', 'raw-field', 'input');
+	// an api call writes when its method says so, or, with no method, when it sends a body
+	if (api && method !== undefined && !WRITE_METHODS.has(method.toUpperCase())) return undefined;
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
-	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase()))) return undefined;
+	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
 	return {
 		text: 'gh ' + commandLine(call.argv),
-		repo: flag('repo') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
-		title: flag('title'),
-		body: flag('body'),
-		bodyFile: api ? undefined : (flag('body-file') ?? flag('field')),
+		repo: value('repo') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
+		title: value('title'),
+		body: value('body'),
+		bodyFile: api ? undefined : (value('body-file') ?? value('field')),
 		cwd: call.cwd,
 	};
 }

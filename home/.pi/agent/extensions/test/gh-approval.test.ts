@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { existsSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { connect } from 'node:net';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -227,4 +227,24 @@ test('the wrapper stops a declined post before gh runs', async () => {
 	assert.equal(code, 1);
 	assert.equal(stdout, '');
 	assert.match(stderr, /nothing was sent/);
+});
+
+test('refuses when a session is there but does not answer', async () => {
+	using restore = overrideEnv({
+		PI_CODING_AGENT_DIR: AGENT_DIR,
+		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
+	});
+	using tidy = cleanup;
+	mkdirSync(AGENT_DIR, { recursive: true });
+	// port 1 is never a listener, so the endpoint file exists and the connect is refused
+	writeFileSync(join(AGENT_DIR, 'gh-approval.addr'), '127.0.0.1 1\n');
+	await assert.rejects(
+		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']),
+		(error: { code?: number; stdout?: string; stderr?: string }) => {
+			assert.equal(error.code, 1);
+			assert.equal(error.stdout, '');
+			assert.match(error.stderr ?? '', /the session did not answer/);
+			return true;
+		},
+	);
 });

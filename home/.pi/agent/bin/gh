@@ -17,7 +17,9 @@ agent=$HOME/.pi/agent
 
 # the session writes the address it is reachable on from this machine, and the port, so nothing has to be resolved
 verdict=
+endpoint=
 if [ -r "$agent/gh-approval.addr" ] && { IFS=' ' read -r host port; } < "$agent/gh-approval.addr" && [ -n "${host:-}" ] && [ -n "${port:-}" ]; then
+	endpoint=1
 	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
 	# leaves the shell running, where one on exec would end the script silently
 	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/$host/$port"; then
@@ -32,6 +34,12 @@ deny\ *)
 	exit 1
 	;;
 esac
+
+# a session exists and did not answer: refusing is the point, where running unchecked would defeat the gate
+if [ -n "$endpoint" ]; then
+	echo "gh-approval: the session did not answer; nothing was sent" >&2
+	exit 1
+fi
 
 echo "gh-approval: no pi session to ask, running gh unchecked" >&2
 exec "$real" "$@"

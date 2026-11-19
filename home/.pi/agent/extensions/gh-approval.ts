@@ -217,6 +217,8 @@ export default function (pi: ExtensionAPI) {
 						frames += chunk;
 						const call = framesOf(frames);
 						if (call === undefined) continue;
+						// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
+						socket.setTimeout(0);
 						const answer = await verdict(ctx, call, authenticated).catch(
 							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 						);

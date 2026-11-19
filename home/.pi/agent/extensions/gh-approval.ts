@@ -207,8 +207,8 @@ export default function (pi: ExtensionAPI) {
 		return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
 	}
 
-	// writes the port the stowed wrapper asks on; a session that cannot write it has no gate
-	async function install(ctx: ExtensionContext): Promise<void> {
+	// the listener and the port exist only while the session does
+	pi.on('session_start', async (_event, ctx) => {
 		session = ctx;
 		if (server === undefined) {
 			server = createServer(async (socket) => {
@@ -251,12 +251,14 @@ export default function (pi: ExtensionAPI) {
 		const address = server.address();
 		// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
 		if (address === null || typeof address === 'string') return;
-		mkdirSync(agentDir(), { recursive: true });
-		writeFileSync(portPath(), String(address.port));
-	}
-
-	// a session that cannot write its port file has no gate; say so rather than fail the session over it
-	pi.on('session_start', (_event, ctx) => install(ctx).catch(() => undefined));
+		// a session that cannot publish its port has no gate, and the wrapper reports that it has no session to ask
+		try {
+			mkdirSync(agentDir(), { recursive: true });
+			writeFileSync(portPath(), String(address.port));
+		} catch {
+			// nothing to gate with
+		}
+	});
 
 	// the port file goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
 	pi.on('session_shutdown', () => {

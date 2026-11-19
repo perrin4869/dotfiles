@@ -174,6 +174,25 @@ test('shows the repository, title and body it would post', async () => {
 	assert.match(prompts[0], /Every request rewrites the cache\./);
 });
 
+test('shows the file when a call gives both --body and --body-file', async () => {
+	// gh sends the file's contents and ignores the inline body
+	const { prompts } = await ask([
+		'issue',
+		'create',
+		'--repo',
+		'ldelossa/pi-ide',
+		'--title',
+		'T',
+		'--body',
+		'inline',
+		'--body-file',
+		join(FIXTURES, 'issue.md'),
+	]);
+	// the body block carries the file, whatever the command line also mentions
+	assert.match(prompts.join(''), /body:\n## What happens/);
+	assert.doesNotMatch(prompts.join(''), /body:\ninline/);
+});
+
 test('leaves reads alone', async () => {
 	for (const argv of [
 		['pr', 'view', '6926', '--repo', 'ldelossa/pi-ide'],

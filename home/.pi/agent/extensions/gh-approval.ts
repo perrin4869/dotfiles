@@ -138,15 +138,13 @@ function postOf(call: Call): Post | undefined {
 	};
 }
 
-/** the body a post would send, from --body or the file --body-file names */
-async function bodyOf(post: Post): Promise<string | undefined> {
-	if (post.body !== undefined) return post.body;
-	return post.bodyFile && (await readFile(resolve(post.cwd, post.bodyFile), 'utf8').catch(() => undefined));
-}
-
 async function approved(ctx: ExtensionContext, repo: string | undefined, post: Post): Promise<boolean> {
 	if (!ctx.hasUI) return false;
-	const body = await bodyOf(post);
+	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
+	const body =
+		post.bodyFile === undefined
+			? post.body
+			: await readFile(resolve(post.cwd, post.bodyFile), 'utf8').catch(() => undefined);
 	const shown =
 		body && body.length > 6000 ? body.slice(0, 6000) + '\n... ' + (body.length - 6000) + ' more characters' : body;
 	const details = [

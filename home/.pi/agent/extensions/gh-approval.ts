@@ -141,17 +141,12 @@ function postOf(call: Call): Post | undefined {
 async function approved(ctx: ExtensionContext, repo: string | undefined, post: Post): Promise<boolean> {
 	if (!ctx.hasUI) return false;
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
-	const body =
-		post.bodyFile === undefined
-			? post.body
-			: await readFile(resolve(post.cwd, post.bodyFile), 'utf8').catch(() => undefined);
-	const shown =
-		body && body.length > 6000 ? body.slice(0, 6000) + '\n... ' + (body.length - 6000) + ' more characters' : body;
+	const body = post.bodyFile === undefined ? post.body : await readFile(resolve(post.cwd, post.bodyFile), 'utf8');
 	const details = [
 		'repository: ' + (repo ?? 'unknown, the command names none'),
 		'command: ' + post.text,
 		post.title && 'title: ' + post.title,
-		shown && 'body:\n' + shown,
+		body && 'body:\n' + body,
 		'',
 		RULE,
 	].filter(Boolean);
@@ -183,7 +178,13 @@ async function verdict(ctx: ExtensionContext, call: Call, account: (ctx: Extensi
 	const [repo, owner] = await Promise.all([post.repo ?? originRepo(call.cwd), account(ctx).catch(() => undefined)]);
 	const mine = owner?.toLowerCase();
 	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
-	const allowed = await approved(ctx, repo, post).catch(() => false);
+	let allowed: boolean;
+	try {
+		allowed = await approved(ctx, repo, post);
+	} catch (error) {
+		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
+		return 'deny ' + (error instanceof Error ? error.message : String(error));
+	}
 	return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
 }
 
@@ -261,15 +262,14 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 		}
-		const address = server.address();
-		// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
-		if (address === null || typeof address === 'string') return;
-		// a session that cannot publish its endpoint has no gate, and the wrapper reports that it has no session to ask
 		try {
+			const address = server.address();
+			// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
+			if (address === null || typeof address === 'string') throw new Error('the listener has no address');
 			mkdirSync(agentDir(), { recursive: true });
 			writeFileSync(addrPath(), address.address + ' ' + address.port + '\n');
-		} catch {
-			// nothing to gate with
+		} catch (error) {
+			ctx.ui.notify('gh-approval: cannot publish its address, so gh runs ungated: ' + String(error), 'warning');
 		}
 	});
 

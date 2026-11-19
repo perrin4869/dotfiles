@@ -193,6 +193,22 @@ test('shows the file when a call gives both --body and --body-file', async () =>
 	assert.doesNotMatch(prompts.join(''), /body:\ninline/);
 });
 
+test('denies a call whose body file cannot be read, since gh would refuse it', async () => {
+	const { verdict, prompts } = await ask([
+		'issue',
+		'create',
+		'--repo',
+		'ldelossa/pi-ide',
+		'--title',
+		'T',
+		'--body-file',
+		join(AGENT_DIR, 'missing.md'),
+	]);
+	assert.deepEqual(prompts, []);
+	assert.match(verdict, /^deny /);
+	assert.match(verdict, /no such file/);
+});
+
 test('leaves reads alone', async () => {
 	for (const argv of [
 		['pr', 'view', '6926', '--repo', 'ldelossa/pi-ide'],

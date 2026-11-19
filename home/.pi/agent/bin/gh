@@ -15,12 +15,12 @@ real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exi
 agent=$HOME/.pi/agent
 [ -n "${PI_CODING_AGENT_DIR:-}" ] && agent=$PI_CODING_AGENT_DIR
 
+# the session writes the address it is reachable on from this machine, and the port, so nothing has to be resolved
 verdict=
-if [ -r "$agent/gh-approval.port" ]; then
-	port=$(cat -- "$agent/gh-approval.port")
+if [ -r "$agent/gh-approval.addr" ] && { IFS=' ' read -r host port; } < "$agent/gh-approval.addr" && [ -n "${host:-}" ] && [ -n "${port:-}" ]; then
 	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
 	# leaves the shell running, where one on exec would end the script silently
-	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/localhost/$port"; then
+	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/$host/$port"; then
 		verdict=
 	fi
 fi

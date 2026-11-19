@@ -47,7 +47,14 @@ type Post = {
 const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent');
 // pi puts the wrapper's directory first on the PATH of the commands it runs, and nothing else does
 const shimDir = () => join(agentDir(), 'bin');
-const portPath = () => join(agentDir(), 'gh-approval.port');
+const addrPath = () => join(agentDir(), 'gh-approval.addr');
+
+// a default listen binds every interface, and the address that reaches it from this machine is that family's loopback
+function loopback(bound: string): string {
+	if (bound === '::') return '::1';
+	if (bound === '0.0.0.0') return '127.0.0.1';
+	return bound;
+}
 
 /** argv joined into a command line a human can read, quoted where the shell would need it */
 function commandLine(argv: string[]): string {
@@ -259,19 +266,19 @@ export default function (pi: ExtensionAPI) {
 		const address = server.address();
 		// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
 		if (address === null || typeof address === 'string') return;
-		// a session that cannot publish its port has no gate, and the wrapper reports that it has no session to ask
+		// a session that cannot publish its endpoint has no gate, and the wrapper reports that it has no session to ask
 		try {
 			mkdirSync(agentDir(), { recursive: true });
-			writeFileSync(portPath(), String(address.port));
+			writeFileSync(addrPath(), loopback(address.address) + ' ' + address.port + '\n');
 		} catch {
 			// nothing to gate with
 		}
 	});
 
-	// the port file goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
+	// the endpoint file goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
 	pi.on('session_shutdown', () => {
 		server?.close();
 		server = undefined;
-		rmSync(portPath(), { force: true });
+		rmSync(addrPath(), { force: true });
 	});
 }

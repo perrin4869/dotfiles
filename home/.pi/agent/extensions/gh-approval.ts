@@ -6,7 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { promisify } from 'node:util';
+import { parseArgs, promisify } from 'node:util';
 import { memo } from './lib/memo.ts';
 
 const execFileAsync = promisify(execFile);
@@ -21,7 +21,18 @@ const GROUPS = new Set(['issue', 'pr', 'release', 'repo']);
 const WRITES = new Set(['create', 'edit', 'comment', 'close', 'reopen', 'delete', 'review', 'merge', 'upload']);
 // an api call with one of these methods or a field changes something; anything else reads
 const METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
-const FIELD = /^(?:-[fF]|--(?:field|raw-field|input)(?:=|$))/;
+
+// gh reuses -F for --body-file on issue and pr and for --field on api, so the table holds both and the group picks
+const OPTIONS = {
+	repo: { type: 'string', short: 'R' },
+	title: { type: 'string', short: 't' },
+	body: { type: 'string', short: 'b' },
+	'body-file': { type: 'string' },
+	method: { type: 'string', short: 'X' },
+	field: { type: 'string', short: 'F', multiple: true },
+	'raw-field': { type: 'string', short: 'f', multiple: true },
+	input: { type: 'string' },
+} as const;
 
 // nothing in the gate may hang the session: a bind that never settles and a client that never finishes its frames
 // both give up after this
@@ -71,30 +82,6 @@ function realGh(): string {
 	throw new Error('no gh on PATH');
 }
 
-function splitFlag(arg: string): [string, string | undefined] {
-	const equals = arg.indexOf('=');
-	return arg.startsWith('-') && equals > 1 ? [arg.slice(0, equals), arg.slice(equals + 1)] : [arg, undefined];
-}
-
-/** the value of a flag, given as `--flag value`, `--flag=value` or `-Xvalue` */
-function flag(args: string[], ...names: string[]): string | undefined {
-	for (const [index, arg] of args.entries()) {
-		const [name, inline] = splitFlag(arg);
-		if (names.includes(name)) return inline ?? args[index + 1];
-		// a short flag carries its value with no separator: -XPOST, -Rb/c
-		const short = names.find((candidate) => candidate.length === 2 && arg.startsWith(candidate) && arg.length > 2);
-		if (short !== undefined) return arg.slice(2);
-	}
-	return undefined;
-}
-
-/** whether an api call changes something, as opposed to reading it */
-function apiWrites(args: string[]): boolean {
-	const method = flag(args, '-X', '--method')?.toUpperCase();
-	if (method !== undefined) return METHODS.has(method);
-	return args.some((arg) => FIELD.test(arg));
-}
-
 /** the repository a URL in the call names */
 function urlRepo(args: string[]): string | undefined {
 	for (const arg of args) {
@@ -114,18 +101,36 @@ function apiRepo(args: string[]): string | undefined {
 }
 
 function postOf(call: Call): Post | undefined {
-	const [group, action] = call.argv;
-	const writes =
-		group === 'api'
-			? apiWrites(call.argv.slice(1))
-			: GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase());
-	if (!writes) return undefined;
+	// unknown flags are gh's own business; strict false keeps them out of the way, and a value one takes lands among the
+	// positionals, which nothing here reads past the second of
+	const { tokens } = parseArgs({
+		args: call.argv,
+		options: OPTIONS,
+		allowPositionals: true,
+		strict: false,
+		tokens: true,
+	});
+	const flag = (...names: string[]) => {
+		for (const token of tokens) {
+			if (token.kind === 'option' && names.includes(token.name)) return token.value;
+		}
+		return undefined;
+	};
+	const [group, action] = tokens.flatMap((token) => (token.kind === 'positional' ? [token.value] : []));
+	const api = group === 'api';
+	const method = flag('method');
+	const fielded = flag('field', 'raw-field', 'input') !== undefined;
+	// an api call writes when its method says so, or, with no method, when it carries a field
+	if (api && method !== undefined && !METHODS.has(method.toUpperCase())) return undefined;
+	if (api && method === undefined && !fielded) return undefined;
+	// the other groups write through the actions in the list
+	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase()))) return undefined;
 	return {
 		text: 'gh ' + commandLine(call.argv),
-		repo: flag(call.argv, '--repo', '-R') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
-		title: flag(call.argv, '--title', '-t'),
-		body: flag(call.argv, '--body', '-b'),
-		bodyFile: flag(call.argv, '--body-file', '-F'),
+		repo: flag('repo') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
+		title: flag('title'),
+		body: flag('body'),
+		bodyFile: api ? undefined : (flag('body-file') ?? flag('field')),
 		cwd: call.cwd,
 	};
 }

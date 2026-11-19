@@ -162,6 +162,12 @@ function framesOf(text: string): { cwd: string; ghRepo: string; argv: string[] }
 	return { cwd: parts[0], ghRepo: parts[1], argv: parts.slice(3, 3 + count) };
 }
 
+// a default listen is on every interface, so the gate answers the loopback addresses a local client can come from and
+// drops everything else; an IPv4 client of a "::" listener shows up as ::ffff:127.0.0.1
+function isLoopback(remote: string | undefined): boolean {
+	return remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1';
+}
+
 // the checkout's origin names the repository when the call does not, read in the directory the call runs in
 async function originRepo(cwd: string): Promise<string | undefined> {
 	const result = await execFileAsync('git', ['remote', 'get-url', 'origin'], { cwd }).catch(() => undefined);
@@ -211,6 +217,10 @@ export default function (pi: ExtensionAPI) {
 	pi.on('session_start', async (_event, ctx) => {
 		if (server === undefined) {
 			server = createServer(async (socket) => {
+				if (!isLoopback(socket.remoteAddress)) {
+					socket.destroy();
+					return;
+				}
 				socket.setEncoding('utf8');
 				socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
 				// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
@@ -232,7 +242,8 @@ export default function (pi: ExtensionAPI) {
 					// the client hung up mid-exchange; there is nobody left to answer
 				}
 			});
-			server.listen({ port: 0, host: '127.0.0.1' });
+			// a default listen takes an ephemeral port on every interface, which is the one the wrapper's localhost reaches
+			server.listen();
 			// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
 			// rejects rather than leaving the session waiting on a promise nothing will settle
 			try {

@@ -44,7 +44,10 @@ type Answer = {
 };
 
 // the wrapper's side of one call: send cwd, GH_REPO and argv over loopback, and return what came back
-async function ask(argv: string[], options: { ghRepo?: string; approve?: boolean; login?: string | null } = {}) {
+async function ask(
+	argv: string[],
+	options: { cwd?: string; ghRepo?: string; approve?: boolean; login?: string | null } = {},
+) {
 	using restore = overrideEnv({
 		PI_CODING_AGENT_DIR: AGENT_DIR,
 		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
@@ -64,7 +67,7 @@ async function ask(argv: string[], options: { ghRepo?: string; approve?: boolean
 		},
 	});
 	const socket = connect(await endpoint());
-	const frames = [CWD, options.ghRepo ?? '', String(argv.length), ...argv];
+	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
 	socket.write(frames.join('\0') + '\0');
 	for await (const chunk of socket) answer.verdict += chunk.toString();
 	return answer;
@@ -228,6 +231,16 @@ test('asks when a flag and a URL name different repositories', async () => {
 		'--body',
 		'hi',
 	]);
+	assert.equal(prompts.length, 1);
+	assert.match(prompts.join(''), /^repository: unknown/m);
+});
+
+test('does not let the checkout answer for a call whose sources disagree', async () => {
+	// run from a checkout whose origin is mine, which is where a session actually is
+	const { prompts } = await ask(
+		['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--repo', 'perrin4869/dotfiles', '--body', 'hi'],
+		{ cwd: process.cwd() },
+	);
 	assert.equal(prompts.length, 1);
 	assert.match(prompts.join(''), /^repository: unknown/m);
 });

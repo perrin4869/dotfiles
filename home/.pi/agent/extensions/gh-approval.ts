@@ -43,16 +43,17 @@ const API_PATH = /(?:^|\/)repos\/([^/\s]+)\/([^/\s?#]+)/;
 /** one gh call as the wrapper sends it: the directory it runs in, its argv, and the repository GH_REPO named */
 type Call = { cwd: string; argv: string[]; ghRepo?: string };
 
+/** the repositories a call names: one, none, or several that disagree */
+type Repository = { kind: 'named'; repo: string } | { kind: 'none' } | { kind: 'conflict' };
+
 type Post = {
-	/** the call joined back into a command line, for the prompt */
+	/** the call as a command line, for the prompt */
 	text: string;
-	/** the repository the call names itself, if it names one */
-	repo?: string;
+	repository: Repository;
 	title?: string;
 	body?: string;
+	/** the body file, resolved against the directory the call runs in */
 	bodyFile?: string;
-	/** the directory the call runs in, which is where the wrapper was */
-	cwd: string;
 };
 
 // the agent directory the wrapper reads from too, overridable the way pi is
@@ -60,11 +61,6 @@ const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi',
 // pi puts the wrapper's directory first on the PATH of the commands it runs, and nothing else does
 const shimDir = () => join(agentDir(), 'bin');
 const addrPath = () => join(agentDir(), 'gh-approval.addr');
-
-/** argv joined into a command line a human can read, quoted where the shell would need it */
-function commandLine(argv: string[]): string {
-	return argv.map((arg) => (/^[\w@%+=:,./-]+$/.test(arg) ? arg : "'" + arg.replaceAll("'", "'\\''") + "'")).join(' ');
-}
 
 // the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself. A missing gh
 // is not an answer but a reason the account cannot be read, so it throws like one.
@@ -133,22 +129,26 @@ function postOf(call: Call): Post | undefined {
 		(repo): repo is string => repo !== undefined,
 	);
 	const [first] = named;
-	const repo =
-		first !== undefined && named.every((entry) => entry.toLowerCase() === first.toLowerCase()) ? first : undefined;
+	const repository: Repository =
+		first === undefined
+			? { kind: 'none' }
+			: named.every((entry) => entry.toLowerCase() === first.toLowerCase())
+				? { kind: 'named', repo: first }
+				: { kind: 'conflict' };
+	const file = api ? undefined : (value('body-file') ?? value('field'));
 	return {
-		text: 'gh ' + commandLine(call.argv),
-		repo,
+		text: 'gh ' + call.argv.join(' '),
+		repository,
 		title: value('title'),
 		body: value('body'),
-		bodyFile: api ? undefined : (value('body-file') ?? value('field')),
-		cwd: call.cwd,
+		bodyFile: file === undefined ? undefined : resolve(call.cwd, file),
 	};
 }
 
 async function approved(ctx: ExtensionContext, repo: string | undefined, post: Post): Promise<boolean> {
 	if (!ctx.hasUI) return false;
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
-	const body = post.bodyFile === undefined ? post.body : await readFile(resolve(post.cwd, post.bodyFile), 'utf8');
+	const body = post.bodyFile === undefined ? post.body : await readFile(post.bodyFile, 'utf8');
 	const details = [
 		'repository: ' + (repo ?? 'unknown, the command names none'),
 		'command: ' + post.text,
@@ -168,6 +168,14 @@ function framesOf(text: string): Call | undefined {
 	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };
 }
 
+// the repository the post goes to: the one the call names, the checkout's origin when it names none, or none when its
+// sources disagree, which asks rather than letting the checkout answer for them
+function targetRepo(repository: Repository, cwd: string): Promise<string | undefined> | string | undefined {
+	if (repository.kind === 'named') return repository.repo;
+	if (repository.kind === 'none') return originRepo(cwd);
+	return undefined;
+}
+
 // the checkout's origin names the repository when the call does not, read in the directory the call runs in
 async function originRepo(cwd: string): Promise<string | undefined> {
 	const result = await execFileAsync('git', ['remote', 'get-url', 'origin'], { cwd }).catch(() => undefined);
@@ -182,7 +190,7 @@ async function verdict(ctx: ExtensionContext, call: Call, account: (ctx: Extensi
 	if (post === undefined) return 'allow';
 	// the origin of the directory and the account the token belongs to are independent lookups, so they run together
 	// a lookup that failed has already said why; the owner stays unknown, so the post asks
-	const [repo, owner] = await Promise.all([post.repo ?? originRepo(call.cwd), account(ctx).catch(() => undefined)]);
+	const [repo, owner] = await Promise.all([targetRepo(post.repository, call.cwd), account(ctx).catch(() => undefined)]);
 	const mine = owner?.toLowerCase();
 	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
 	let allowed: boolean;

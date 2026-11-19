@@ -11,9 +11,8 @@ import { memo } from './lib/memo.ts';
 
 const execFileAsync = promisify(execFile);
 
-// ~/.agents/AGENTS.md asks for the exact title and body of any post to a repository outside my GitHub account, and an
-// approval covering that one post. A rule in a prompt is advisory, so the wrapper on PATH asks instead: a gh call
-// arrives here as its real argv, with no shell syntax left to guess at, and the dialog decides before gh runs.
+// a post outside my GitHub account needs the exact title and body shown and an approval for that one post. A line of
+// AGENTS.md would be advisory, and the wrapper hands over gh's real argv, so the gate asks here instead
 const RULE = 'posting outside my GitHub account needs the exact title and body shown and an approval for that one post';
 
 // the gh groups whose subcommands write something others can see, and the actions that do

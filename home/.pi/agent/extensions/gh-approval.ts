@@ -227,9 +227,7 @@ export default function (pi: ExtensionAPI) {
 								verdict(ctx, call, authenticated).catch(
 									(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 								),
-								once(socket, 'close').then(() => {
-									throw new Error('the gh call ended before it was answered');
-								}),
+								once(socket, 'close').then(() => Promise.reject(new Error('the gh call ended before it was answered'))),
 							]);
 						} catch {
 							ctx.ui.notify('gh-approval: the gh call ended while the dialog was open, so nothing was sent', 'warning');

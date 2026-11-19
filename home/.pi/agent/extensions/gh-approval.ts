@@ -1,7 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
 import { once } from 'node:events';
-import { accessSync, constants, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { accessSync, constants } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
@@ -60,9 +60,6 @@ type Post = {
 const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent');
 // pi puts the wrapper's directory first on the PATH of the commands it runs, and nothing else does
 const shimDir = () => join(agentDir(), 'bin');
-// one file per pi process, and the environment it names it in is inherited by the commands that process runs, so two
-// sessions cannot reach each other's gate
-const addrPath = () => join(agentDir(), 'gh-approval-' + process.pid + '.addr');
 
 // the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself. A missing gh
 // is not an answer but a reason the account cannot be read, so it throws like one.
@@ -279,15 +276,14 @@ export default function (pi: ExtensionAPI) {
 				return;
 			}
 		}
-		process.env.GH_APPROVAL_ADDR = addrPath();
 		try {
 			const address = server.address();
 			// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
 			if (address === null || typeof address === 'string') throw new Error('the listener has no address');
-			mkdirSync(agentDir(), { recursive: true });
-			writeFileSync(addrPath(), address.address + ' ' + address.port + '\n');
+			// the commands this session runs inherit this, so the wrapper dials what was bound rather than resolving anything
+			process.env.GH_APPROVAL_ADDR = address.address + ' ' + address.port;
 		} catch (error) {
-			ctx.ui.notify('gh-approval: cannot publish its address, so gh runs ungated: ' + String(error), 'warning');
+			ctx.ui.notify('gh-approval: cannot announce its address, so gh runs ungated: ' + String(error), 'warning');
 		}
 	});
 
@@ -296,6 +292,5 @@ export default function (pi: ExtensionAPI) {
 		server?.close();
 		server = undefined;
 		delete process.env.GH_APPROVAL_ADDR;
-		rmSync(addrPath(), { force: true });
 	});
 }

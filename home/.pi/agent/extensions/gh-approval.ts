@@ -1,19 +1,19 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
 import { once } from 'node:events';
-import { memo } from './lib/memo.ts';
 import { accessSync, constants, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
+import { memo } from './lib/memo.ts';
 
 const execFileAsync = promisify(execFile);
 
 // ~/.agents/AGENTS.md asks for the exact title and body of any post to a repository outside my GitHub account, and an
-// approval covering that one post. A rule in a prompt is advisory, so the wrapper below asks instead: a gh call arrives
-// here as its real argv, with no shell syntax left to guess at, and the dialog decides before gh runs.
+// approval covering that one post. A rule in a prompt is advisory, so the wrapper on PATH asks instead: a gh call
+// arrives here as its real argv, with no shell syntax left to guess at, and the dialog decides before gh runs.
 const RULE = 'posting outside my GitHub account needs the exact title and body shown and an approval for that one post';
 
 // the gh groups whose subcommands write something others can see, and the subcommands that do
@@ -45,7 +45,8 @@ type Post = {
 
 // the agent directory the wrapper reads from too, overridable the way pi is
 const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent');
-const shimPath = () => join(agentDir(), 'bin', 'gh');
+// pi puts the wrapper's directory first on the PATH of the commands it runs, and nothing else does
+const shimDir = () => join(agentDir(), 'bin');
 const portPath = () => join(agentDir(), 'gh-approval.port');
 
 /** argv joined into a command line a human can read, quoted where the shell would need it */
@@ -57,7 +58,7 @@ function commandLine(argv: string[]): string {
 function realGh(): string | undefined {
 	const path = (process.env.PATH ?? '')
 		.split(':')
-		.filter((dir) => dir !== dirname(shimPath()))
+		.filter((dir) => dir !== shimDir())
 		.join(':');
 	for (const dir of path.split(':')) {
 		const candidate = join(dir, 'gh');
@@ -157,7 +158,7 @@ async function approved(ctx: ExtensionContext, repo: string | undefined, post: P
 function framesOf(text: string): { cwd: string; ghRepo: string; argv: string[] } | undefined {
 	const parts = text.split('\0');
 	const count = Number(parts[2]);
-	if (parts.length <= 3 + count) return undefined;
+	if (!Number.isInteger(count) || count < 0 || parts.length <= 3 + count) return undefined;
 	return { cwd: parts[0], ghRepo: parts[1], argv: parts.slice(3, 3 + count) };
 }
 

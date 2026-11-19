@@ -18,8 +18,8 @@ agent=$HOME/.pi/agent
 verdict=
 if [ -r "$agent/gh-approval.port" ]; then
 	port=$(cat -- "$agent/gh-approval.port")
-	# a redirection that fails on a group leaves the shell running, where one on exec would end the script silently
-	# stderr first: redirections apply left to right, so a connect failure is silenced before fd 3 is touched
+	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
+	# leaves the shell running, where one on exec would end the script silently
 	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/127.0.0.1/$port"; then
 		verdict=
 	fi

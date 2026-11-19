@@ -128,9 +128,16 @@ function postOf(call: Call): Post | undefined {
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
 	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
+	// gh resolves an argument that names the repository over GH_REPO, so two sources that disagree are no answer: ask
+	const named = [value('repo'), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
+		(repo): repo is string => repo !== undefined,
+	);
+	const [first] = named;
+	const repo =
+		first !== undefined && named.every((entry) => entry.toLowerCase() === first.toLowerCase()) ? first : undefined;
 	return {
 		text: 'gh ' + commandLine(call.argv),
-		repo: value('repo') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
+		repo,
 		title: value('title'),
 		body: value('body'),
 		bodyFile: api ? undefined : (value('body-file') ?? value('field')),

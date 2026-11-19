@@ -209,6 +209,38 @@ test('denies a call whose body file cannot be read, since gh would refuse it', a
 	assert.match(verdict, /no such file/);
 });
 
+test('asks about a URL even when GH_REPO names my own repository', async () => {
+	// gh acts on the URL, so reading GH_REPO here would skip the gate for another account's PR
+	const { prompts } = await ask(['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--body', 'hi'], {
+		ghRepo: 'perrin4869/dotfiles',
+	});
+	assert.equal(prompts.length, 1);
+	assert.match(prompts.join(''), /^repository: unknown/m);
+});
+
+test('asks when a flag and a URL name different repositories', async () => {
+	const { prompts } = await ask([
+		'pr',
+		'comment',
+		'https://github.com/ldelossa/pi-ide/pull/3',
+		'--repo',
+		'perrin4869/dotfiles',
+		'--body',
+		'hi',
+	]);
+	assert.equal(prompts.length, 1);
+	assert.match(prompts.join(''), /^repository: unknown/m);
+});
+
+test('allows a call whose sources agree on my repository', async () => {
+	const { verdict, prompts } = await ask(
+		['pr', 'comment', 'https://github.com/perrin4869/dotfiles/pull/1', '--body', 'hi'],
+		{ ghRepo: 'perrin4869/dotfiles' },
+	);
+	assert.deepEqual(prompts, []);
+	assert.equal(verdict.trim(), 'allow');
+});
+
 test('leaves reads alone', async () => {
 	for (const argv of [
 		['pr', 'view', '6926', '--repo', 'ldelossa/pi-ide'],

@@ -221,15 +221,16 @@ export default function (pi: ExtensionAPI) {
 						socket.setTimeout(0);
 						// a wrapper that gives up while the dialog is open leaves its answer with nowhere to go, and the command
 						// with no outcome, so this watches for that alongside the decision
-						const gone = once(socket, 'close').then(
-							() => undefined,
-							() => undefined,
-						);
 						const answer = await Promise.race([
 							verdict(ctx, call, authenticated).catch(
 								(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 							),
-							gone,
+							// once() rejects when the socket errors before closing, and resolves to the event's arguments,
+							// which are none for close, so both outcomes become the same "nothing to send"
+							once(socket, 'close').then(
+								() => undefined,
+								() => undefined,
+							),
 						]);
 						if (answer === undefined) {
 							ctx.ui.notify('gh-approval: the gh call ended while the dialog was open, so nothing was sent', 'warning');

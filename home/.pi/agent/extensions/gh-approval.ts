@@ -36,7 +36,6 @@ type Call = { cwd: string; argv: string[]; ghRepo?: string };
 type Post = {
 	/** the call joined back into a command line, for the prompt */
 	text: string;
-	api: boolean;
 	/** the repository the call names itself, if it names one */
 	repo?: string;
 	title?: string;
@@ -116,13 +115,13 @@ function apiRepo(args: string[]): string | undefined {
 
 function postOf(call: Call): Post | undefined {
 	const [group, action] = call.argv;
-	const api = group === 'api';
-	if (api ? !apiWrites(call.argv.slice(1)) : !(GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase()))) {
-		return undefined;
-	}
+	const writes =
+		group === 'api'
+			? apiWrites(call.argv.slice(1))
+			: GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase());
+	if (!writes) return undefined;
 	return {
 		text: 'gh ' + commandLine(call.argv),
-		api,
 		repo: flag(call.argv, '--repo', '-R') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
 		title: flag(call.argv, '--title', '-t'),
 		body: flag(call.argv, '--body', '-b'),
@@ -133,7 +132,6 @@ function postOf(call: Call): Post | undefined {
 
 /** the body a post would send, from --body or the file --body-file names */
 async function bodyOf(post: Post): Promise<string | undefined> {
-	if (post.api) return undefined;
 	if (post.body !== undefined) return post.body;
 	return post.bodyFile && (await readFile(resolve(post.cwd, post.bodyFile), 'utf8').catch(() => undefined));
 }

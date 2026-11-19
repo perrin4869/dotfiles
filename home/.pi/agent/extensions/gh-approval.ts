@@ -54,13 +54,10 @@ function commandLine(argv: string[]): string {
 	return argv.map((arg) => (/^[\w@%+=:,./-]+$/.test(arg) ? arg : "'" + arg.replaceAll("'", "'\\''") + "'")).join(' ');
 }
 
-// the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself
-function realGh(): string | undefined {
-	const path = (process.env.PATH ?? '')
-		.split(':')
-		.filter((dir) => dir !== shimDir())
-		.join(':');
-	for (const dir of path.split(':')) {
+// the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself. A missing gh
+// is not an answer but a reason the account cannot be read, so it throws like one.
+function realGh(): string {
+	for (const dir of (process.env.PATH ?? '').split(':').filter((entry) => entry !== shimDir())) {
 		const candidate = join(dir, 'gh');
 		try {
 			accessSync(candidate, constants.X_OK);
@@ -69,7 +66,7 @@ function realGh(): string | undefined {
 			// not here
 		}
 	}
-	return undefined;
+	throw new Error('no gh on PATH');
 }
 
 function splitFlag(arg: string): [string, string | undefined] {
@@ -193,19 +190,19 @@ export default function (pi: ExtensionAPI) {
 	// the account the token belongs to; the cache lives with the session, since a login or GH_TOKEN can change between
 	// them. A lookup that cannot answer says why and throws, and the caller treats the owner as unknown, which asks
 	const authenticated = memo(async (ctx: ExtensionContext) => {
-		const fail = (reason: string): never => {
+		try {
+			const result = await execFileAsync(realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
+			const login = result.stdout.trim();
+			if (!login) throw new Error('gh is not logged in');
+			return login;
+		} catch (error) {
+			const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
 			ctx.ui.notify(
 				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
 				'warning',
 			);
-			throw new Error(reason);
-		};
-		const gh = realGh();
-		if (gh === undefined) return fail('no gh on PATH');
-		const result = await execFileAsync(gh, ['api', 'user', '--jq', '.login'], { timeout: 10_000 }).catch(
-			(error: unknown) => fail(String(error)),
-		);
-		return result.stdout.trim() || fail('gh is not logged in');
+			throw error;
+		}
 	});
 
 	// the listener and the port exist only while the session does

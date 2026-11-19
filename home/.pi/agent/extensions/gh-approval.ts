@@ -30,6 +30,9 @@ const TIMEOUT_MS = 10_000;
 const GITHUB_URL = /github\.com[:/]([^/\s]+)\/([^/\s?#]+)/;
 const API_PATH = /(?:^|\/)repos\/([^/\s]+)\/([^/\s?#]+)/;
 
+/** one gh call as the wrapper sends it: the directory it runs in, its argv, and the repository GH_REPO named */
+type Call = { cwd: string; argv: string[]; ghRepo?: string };
+
 type Post = {
 	/** the call joined back into a command line, for the prompt */
 	text: string;
@@ -111,20 +114,20 @@ function apiRepo(args: string[]): string | undefined {
 	return undefined;
 }
 
-function postOf(argv: string[], ghRepo: string | undefined, cwd: string): Post | undefined {
-	const [group, action] = argv;
+function postOf(call: Call): Post | undefined {
+	const [group, action] = call.argv;
 	const api = group === 'api';
-	if (api ? !apiWrites(argv.slice(1)) : !(GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase()))) {
+	if (api ? !apiWrites(call.argv.slice(1)) : !(GROUPS.has(group?.toLowerCase()) && WRITES.has(action?.toLowerCase()))) {
 		return undefined;
 	}
 	return {
-		text: 'gh ' + commandLine(argv),
+		text: 'gh ' + commandLine(call.argv),
 		api,
-		repo: flag(argv, '--repo', '-R') ?? ghRepo ?? urlRepo(argv) ?? apiRepo(argv),
-		title: flag(argv, '--title', '-t'),
-		body: flag(argv, '--body', '-b'),
-		bodyFile: flag(argv, '--body-file', '-F'),
-		cwd,
+		repo: flag(call.argv, '--repo', '-R') ?? call.ghRepo ?? urlRepo(call.argv) ?? apiRepo(call.argv),
+		title: flag(call.argv, '--title', '-t'),
+		body: flag(call.argv, '--body', '-b'),
+		bodyFile: flag(call.argv, '--body-file', '-F'),
+		cwd: call.cwd,
 	};
 }
 
@@ -152,11 +155,11 @@ async function approved(ctx: ExtensionContext, repo: string | undefined, post: P
 }
 
 // the frames the wrapper sends: cwd, GH_REPO, the argument count, then each argument
-function framesOf(text: string): { cwd: string; ghRepo: string; argv: string[] } | undefined {
+function framesOf(text: string): Call | undefined {
 	const parts = text.split('\0');
 	const count = Number(parts[2]);
 	if (!Number.isInteger(count) || count < 0 || parts.length <= 3 + count) return undefined;
-	return { cwd: parts[0], ghRepo: parts[1], argv: parts.slice(3, 3 + count) };
+	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };
 }
 
 // the checkout's origin names the repository when the call does not, read in the directory the call runs in
@@ -168,16 +171,12 @@ async function originRepo(cwd: string): Promise<string | undefined> {
 		.join('/');
 }
 
-async function verdict(
-	ctx: ExtensionContext,
-	ask: { cwd: string; ghRepo: string; argv: string[] },
-	account: (ctx: ExtensionContext) => Promise<string>,
-) {
-	const post = postOf(ask.argv, ask.ghRepo || undefined, ask.cwd);
+async function verdict(ctx: ExtensionContext, call: Call, account: (ctx: ExtensionContext) => Promise<string>) {
+	const post = postOf(call);
 	if (post === undefined) return 'allow';
 	// the origin of the directory and the account the token belongs to are independent lookups, so they run together
 	// a lookup that failed has already said why; the owner stays unknown, so the post asks
-	const [repo, owner] = await Promise.all([post.repo ?? originRepo(post.cwd), account(ctx).catch(() => undefined)]);
+	const [repo, owner] = await Promise.all([post.repo ?? originRepo(call.cwd), account(ctx).catch(() => undefined)]);
 	const mine = owner?.toLowerCase();
 	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
 	const allowed = await approved(ctx, repo, post).catch(() => false);
@@ -218,9 +217,9 @@ export default function (pi: ExtensionAPI) {
 				try {
 					for await (const chunk of socket) {
 						frames += chunk;
-						const ask = framesOf(frames);
-						if (ask === undefined) continue;
-						const answer = await verdict(ctx, ask, authenticated).catch(
+						const call = framesOf(frames);
+						if (call === undefined) continue;
+						const answer = await verdict(ctx, call, authenticated).catch(
 							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
 						);
 						socket.end(answer + '\n');

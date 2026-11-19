@@ -219,11 +219,23 @@ export default function (pi: ExtensionAPI) {
 						if (call === undefined) continue;
 						// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
 						socket.setTimeout(0);
-						const answer = await verdict(ctx, call, authenticated).catch(
-							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+						// a wrapper that gives up while the dialog is open leaves its answer with nowhere to go, and the command
+						// with no outcome, so this watches for that alongside the decision
+						const gone = once(socket, 'close').then(
+							() => undefined,
+							() => undefined,
 						);
-						// the wrapper can go away while the dialog is open, and its answer then has nowhere to go
-						if (!socket.destroyed) socket.end(answer + '\n');
+						const answer = await Promise.race([
+							verdict(ctx, call, authenticated).catch(
+								(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+							),
+							gone,
+						]);
+						if (answer === undefined) {
+							ctx.ui.notify('gh-approval: the gh call ended while the dialog was open, so nothing was sent', 'warning');
+							return;
+						}
+						socket.end(answer + '\n');
 						return;
 					}
 				} catch {

@@ -166,6 +166,8 @@ jobs:
           title: "chore(deps): bump skills"
           commit-message: "chore(deps): bump skills"
           body: ${{ steps.bump.outputs.body }}
+          # the runner's $HOME has no ~/.claude, so the CLI deploys to Eve's agent/skills; commit only the lock
+          add-paths: home/skills-lock.json
           token: ${{ secrets.PAT }}
 
       - name: Assign PR

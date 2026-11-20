@@ -44,6 +44,9 @@ test('uses the first call arguments', async () => {
 
 test('a global memo is shared by every wrapper made for its key', async () => {
 	const key = Symbol.for('pi-extensions:test:memo-global');
+	// a registered key outlives the process, so the value has to go whoever leaves: a delete that fails would answer
+	// the next run of this test instead of its own load
+	using cleaned = { [Symbol.dispose]: () => assert.equal(Reflect.deleteProperty(globalThis, key), true) };
 	let loads = 0;
 	const load = async () => {
 		loads += 1;
@@ -51,5 +54,4 @@ test('a global memo is shared by every wrapper made for its key', async () => {
 	};
 	assert.deepEqual(await Promise.all([memoGlobal(load, key)(), memoGlobal(load, key)()]), ['value', 'value']);
 	assert.equal(loads, 1);
-	Reflect.deleteProperty(globalThis, key);
 });

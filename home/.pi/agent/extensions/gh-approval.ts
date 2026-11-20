@@ -7,6 +7,7 @@ import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { env } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
 import { memo } from './lib/memo.ts';
 
@@ -60,7 +61,7 @@ type Post = {
 };
 
 // the agent directory the wrapper reads from too, overridable the way pi is
-const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent');
+const agentDir = () => env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent');
 // pi puts the wrapper's directory first on the PATH of the commands it runs, and nothing else does
 const shimDir = () => join(agentDir(), 'bin');
 
@@ -68,7 +69,7 @@ const shimDir = () => join(agentDir(), 'bin');
 // is not an answer but a reason the account cannot be read, so it throws like one. The search runs once, in PATH order,
 // because the first entry is the one a shell would run.
 const realGh = memo(async (): Promise<string> => {
-	for (const dir of (process.env.PATH ?? '').split(':')) {
+	for (const dir of (env.PATH ?? '').split(':')) {
 		if (dir === shimDir()) continue;
 		const candidate = join(dir, 'gh');
 		try {
@@ -339,7 +340,7 @@ export default function (pi: ExtensionAPI) {
 			// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
 			if (address === null || typeof address === 'string') throw new Error('the listener has no address');
 			// the commands this session runs inherit this, so the wrapper dials what was bound rather than resolving anything
-			process.env.GH_APPROVAL_ADDR = address.address + ' ' + address.port;
+			env.GH_APPROVAL_ADDR = address.address + ' ' + address.port;
 		} catch (error) {
 			ctx.ui.notify('gh-approval: cannot announce its address, so gh runs ungated: ' + String(error), 'warning');
 		}
@@ -349,6 +350,6 @@ export default function (pi: ExtensionAPI) {
 	pi.on('session_shutdown', () => {
 		server?.close();
 		server = undefined;
-		delete process.env.GH_APPROVAL_ADDR;
+		delete env.GH_APPROVAL_ADDR;
 	});
 }

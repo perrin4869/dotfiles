@@ -5,6 +5,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { cwd, env } from 'node:process';
 import { test } from 'node:test';
 import { promisify } from 'node:util';
 import { extension, overrideEnv, startSession } from './harness.ts';
@@ -29,7 +30,7 @@ function checkout(remotes: Record<string, string>): Disposable & { path: string 
 // the session announces its gate while starting, which startSession waits for, in the environment its commands
 // inherit: this process's
 function endpoint(): { host: string; port: number } {
-	const [host, port] = (process.env.GH_APPROVAL_ADDR ?? '').split(' ');
+	const [host, port] = (env.GH_APPROVAL_ADDR ?? '').split(' ');
 	if (host === undefined || port === undefined) throw new Error('gh-approval announced no endpoint');
 	return { host, port: Number(port) };
 }
@@ -42,7 +43,7 @@ async function boot(options: { approve?: boolean; login?: string | null } = {}) 
 	using cleanup = new DisposableStack();
 	cleanup.use(
 		overrideEnv({
-			PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
+			PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
 			// unset stands in for a gh that is missing or logged out, which the fixture answers by failing
 			GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'alice'),
 		}),
@@ -314,8 +315,8 @@ test('reads an api placeholder path as the repository gh fills in', async () => 
 test('asks when the call names the repository by URL or GH_REPO', async () => {
 	const url = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi']);
 	assert.match(url.prompts.join(''), /^repository: bob\/widgets$/m);
-	const env = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { ghRepo: 'bob/widgets' });
-	assert.match(env.prompts.join(''), /^repository: bob\/widgets$/m);
+	const fromEnv = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { ghRepo: 'bob/widgets' });
+	assert.match(fromEnv.prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('drops a client that never finishes its frames', async () => {
@@ -337,8 +338,8 @@ test('the wrapper runs the real gh for my own repository', async () => {
 	using booted = await boot();
 	// a spawn needs a real directory, and every case here names its repository, so the origin there decides nothing
 	const { stdout } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
-		cwd: process.cwd(),
-		env: process.env,
+		cwd: cwd(),
+		env,
 	});
 	assert.equal(stdout.trim(), 'alice');
 	assert.deepEqual(booted.prompts, []);
@@ -349,14 +350,14 @@ test('answers each call of a session on its own', async () => {
 	// the read is allowed without a word; the post after it has to ask, so it would inherit the wrong answer if the frames
 	// of one call were still on hand for the next
 	const read = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
-		cwd: process.cwd(),
-		env: process.env,
+		cwd: cwd(),
+		env,
 	});
 	assert.equal(read.stdout.trim(), 'alice');
 	await assert.rejects(
 		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
-			cwd: process.cwd(),
-			env: process.env,
+			cwd: cwd(),
+			env,
 		}),
 		(error: { code?: number; stderr?: string }) => {
 			assert.equal(error.code, 1);
@@ -371,8 +372,8 @@ test('the wrapper stops a declined post before gh runs', async () => {
 	using booted = await boot();
 	await assert.rejects(
 		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
-			cwd: process.cwd(),
-			env: process.env,
+			cwd: cwd(),
+			env,
 		}),
 		(error: { code?: number; stdout?: string; stderr?: string }) => {
 			assert.equal(error.code, 1);
@@ -386,7 +387,7 @@ test('the wrapper stops a declined post before gh runs', async () => {
 
 test('refuses when a session is there but does not answer', async () => {
 	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
+		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
 		// port 1 is never a listener, so the session is named and cannot be reached
 		GH_APPROVAL_ADDR: '127.0.0.1 1',
 	});
@@ -416,7 +417,7 @@ test('refuses when the only gh on PATH is itself', async () => {
 
 test('runs gh with a warning when the session named no endpoint', async () => {
 	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
+		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
 		GH_APPROVAL_LOGIN: 'alice',
 		GH_APPROVAL_ADDR: undefined,
 	});

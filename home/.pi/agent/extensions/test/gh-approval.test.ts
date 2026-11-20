@@ -43,59 +43,45 @@ type Answer = {
 	code?: number;
 };
 
+// a started session that records what it shows, with the fixture gh on PATH and alice holding the token; the caller
+// owns both, which is what the wrapper tests need to be alive while they run it
+async function boot(options: { approve?: boolean; login?: string | null } = {}) {
+	const answer: Answer = { verdict: '', prompts: [], notices: [] };
+	using cleanup = new DisposableStack();
+	cleanup.use(
+		overrideEnv({
+			PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
+			// unset stands in for a gh that is missing or logged out, which the fixture answers by failing
+			GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'alice'),
+		}),
+	);
+	cleanup.use(
+		await startSession({
+			extensions: [extension('gh-approval')],
+			ui: {
+				confirm: (_title, message) => {
+					answer.prompts.push(message);
+					return Promise.resolve(options.approve ?? false);
+				},
+				notify: (message) => answer.notices.push(message),
+			},
+		}),
+	);
+	const owned = cleanup.move();
+	return { answer, [Symbol.dispose]: () => owned.dispose() };
+}
+
 // the wrapper's side of one call: send cwd, GH_REPO and argv over loopback, and return what came back
 async function ask(
 	argv: string[],
 	options: { cwd?: string; ghRepo?: string; approve?: boolean; login?: string | null } = {},
 ) {
-	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
-		// unset stands in for a gh that is missing or logged out, which the fixture answers by failing
-		GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'alice'),
-	});
-	const answer: Answer = { verdict: '', prompts: [], notices: [] };
-	using harness = await startSession({
-		extensions: [extension('gh-approval')],
-		ui: {
-			confirm: (_title, message) => {
-				answer.prompts.push(message);
-				return Promise.resolve(options.approve ?? false);
-			},
-			notify: (message) => answer.notices.push(message),
-		},
-	});
+	using booted = await boot(options);
 	const socket = connect(endpoint());
 	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
 	socket.write(frames.join('\0') + '\0');
-	for await (const chunk of socket) answer.verdict += chunk.toString();
-	return answer;
-}
-
-// the same call through the installed wrapper, which finds the real gh with its own directory dropped from PATH
-async function throughShim(argv: string[], options: { approve?: boolean } = {}) {
-	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
-		GH_APPROVAL_LOGIN: 'alice',
-	});
-	const answer: Answer = { verdict: '', prompts: [], notices: [] };
-	using harness = await startSession({
-		extensions: [extension('gh-approval')],
-		ui: {
-			confirm: (_title, message) => {
-				answer.prompts.push(message);
-				return Promise.resolve(options.approve ?? false);
-			},
-			notify: (message) => answer.notices.push(message),
-		},
-	});
-	const failed = (error: { stdout?: string; stderr?: string; code?: number }) => {
-		answer.code = error.code;
-		return { stdout: error.stdout ?? '', stderr: error.stderr ?? '' };
-	};
-	// the wrapper runs in a real directory, since a spawn needs one; every case here names its repository, so the
-	// origin there does not decide anything
-	const { stdout, stderr } = await execFileAsync(SHIM, argv, { cwd: process.cwd(), env: process.env }).catch(failed);
-	return { ...answer, stdout, stderr };
+	for await (const chunk of socket) booted.answer.verdict += chunk.toString();
+	return booted.answer;
 }
 
 test('allows a post to my own repository without asking', async () => {
@@ -311,26 +297,31 @@ test('asks when the call names the repository by URL or GH_REPO', async () => {
 });
 
 test('the wrapper runs the real gh for my own repository', async () => {
-	const { stdout, code, prompts } = await throughShim(['pr', 'view', '1', '--repo', 'alice/dotfiles']);
-	assert.equal(code, undefined);
+	using booted = await boot();
+	// a spawn needs a real directory, and every case here names its repository, so the origin there decides nothing
+	const { stdout } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
+		cwd: process.cwd(),
+		env: process.env,
+	});
 	assert.equal(stdout.trim(), 'alice');
-	assert.deepEqual(prompts, []);
+	assert.deepEqual(booted.answer.prompts, []);
 });
 
 test('the wrapper stops a declined post before gh runs', async () => {
-	const { stdout, stderr, code, prompts } = await throughShim([
-		'issue',
-		'comment',
-		'3',
-		'--repo',
-		'bob/widgets',
-		'--body',
-		'hi',
-	]);
-	assert.equal(prompts.length, 1);
-	assert.equal(code, 1);
-	assert.equal(stdout, '');
-	assert.match(stderr, /nothing was sent/);
+	using booted = await boot();
+	await assert.rejects(
+		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
+			cwd: process.cwd(),
+			env: process.env,
+		}),
+		(error: { code?: number; stdout?: string; stderr?: string }) => {
+			assert.equal(error.code, 1);
+			assert.equal(error.stdout, '');
+			assert.match(error.stderr ?? '', /nothing was sent/);
+			return true;
+		},
+	);
+	assert.equal(booted.answer.prompts.length, 1);
 });
 
 test('refuses when a session is there but does not answer', async () => {

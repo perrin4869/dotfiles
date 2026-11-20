@@ -353,8 +353,11 @@ test('answers each call of a session on its own', async () => {
 		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], { cwd: cwd(), env }),
 		{ code: 1 },
 	);
+	// the post is the one that asks
+	assert.equal(booted.prompts.length, 1);
 	const read = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], { cwd: cwd(), env });
 	assert.equal(read.stdout.trim(), 'alice');
+	// and the read after it asks nothing
 	assert.equal(booted.prompts.length, 1);
 });
 

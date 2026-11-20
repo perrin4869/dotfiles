@@ -51,7 +51,7 @@ async function ask(
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
 		// unset stands in for a gh that is missing or logged out, which the fixture answers by failing
-		GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'perrin4869'),
+		GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'alice'),
 	});
 	const answer: Answer = { verdict: '', prompts: [], notices: [] };
 	using harness = await startSession({
@@ -75,7 +75,7 @@ async function ask(
 async function throughShim(argv: string[], options: { approve?: boolean } = {}) {
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
-		GH_APPROVAL_LOGIN: 'perrin4869',
+		GH_APPROVAL_LOGIN: 'alice',
 	});
 	const answer: Answer = { verdict: '', prompts: [], notices: [] };
 	using harness = await startSession({
@@ -103,7 +103,7 @@ test('allows a post to my own repository without asking', async () => {
 		'issue',
 		'create',
 		'--repo',
-		'perrin4869/dotfiles',
+		'alice/dotfiles',
 		'--title',
 		'T',
 		'--body',
@@ -114,59 +114,38 @@ test('allows a post to my own repository without asking', async () => {
 });
 
 test('asks about another account, and a decline stops gh', async () => {
-	const { verdict, prompts } = await ask([
-		'issue',
-		'create',
-		'--repo',
-		'ldelossa/pi-ide',
-		'--title',
-		'T',
-		'--body',
-		'B',
-	]);
+	const { verdict, prompts } = await ask(['issue', 'create', '--repo', 'bob/widgets', '--title', 'T', '--body', 'B']);
 	assert.equal(prompts.length, 1);
 	assert.match(verdict, /^deny /);
 	assert.match(verdict, /nothing was sent/);
 });
 
 test('lets an approved post through', async () => {
-	const { verdict, prompts } = await ask(
-		['issue', 'create', '--repo', 'ldelossa/pi-ide', '--title', 'T', '--body', 'B'],
-		{
-			approve: true,
-		},
-	);
+	const { verdict, prompts } = await ask(['issue', 'create', '--repo', 'bob/widgets', '--title', 'T', '--body', 'B'], {
+		approve: true,
+	});
 	assert.equal(prompts.length, 1);
 	assert.equal(verdict.trim(), 'allow');
 });
 
 test('asks when the account cannot be resolved', async () => {
 	const { verdict, prompts } = await ask(
-		['issue', 'create', '--repo', 'perrin4869/dotfiles', '--title', 'T', '--body', 'B'],
+		['issue', 'create', '--repo', 'alice/dotfiles', '--title', 'T', '--body', 'B'],
 		{
 			login: null,
 		},
 	);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: perrin4869\/dotfiles$/m);
+	assert.match(prompts.join(''), /^repository: alice\/dotfiles$/m);
 	assert.match(verdict, /^deny /);
 });
 
 test('shows the repository, title and body it would post', async () => {
 	const { prompts } = await ask(
-		[
-			'issue',
-			'create',
-			'--repo',
-			'ldelossa/pi-ide',
-			'--title',
-			'Editor block',
-			'--body-file',
-			join(FIXTURES, 'issue.md'),
-		],
+		['issue', 'create', '--repo', 'bob/widgets', '--title', 'Editor block', '--body-file', join(FIXTURES, 'issue.md')],
 		{ approve: false },
 	);
-	assert.match(prompts[0], /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts[0], /^repository: bob\/widgets$/m);
 	assert.match(prompts[0], /^title: Editor block$/m);
 	assert.match(prompts[0], /^body:$/m);
 	assert.match(prompts[0], /Every request rewrites the cache\./);
@@ -178,7 +157,7 @@ test('shows the file when a call gives both --body and --body-file', async () =>
 		'issue',
 		'create',
 		'--repo',
-		'ldelossa/pi-ide',
+		'bob/widgets',
 		'--title',
 		'T',
 		'--body',
@@ -196,7 +175,7 @@ test('denies a call whose body file cannot be read, since gh would refuse it', a
 		'issue',
 		'create',
 		'--repo',
-		'ldelossa/pi-ide',
+		'bob/widgets',
 		'--title',
 		'T',
 		'--body-file',
@@ -209,35 +188,35 @@ test('denies a call whose body file cannot be read, since gh would refuse it', a
 
 test('asks about a URL even when GH_REPO names my own repository', async () => {
 	// gh acts on the URL, so reading GH_REPO here would skip the gate for another account's PR
-	const { prompts } = await ask(['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--body', 'hi'], {
-		ghRepo: 'perrin4869/dotfiles',
+	const { prompts } = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi'], {
+		ghRepo: 'alice/dotfiles',
 	});
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('takes the URL over a flag, which is what gh does', async () => {
 	const { prompts } = await ask([
 		'pr',
 		'comment',
-		'https://github.com/ldelossa/pi-ide/pull/3',
+		'https://github.com/bob/widgets/pull/3',
 		'--repo',
-		'perrin4869/dotfiles',
+		'alice/dotfiles',
 		'--body',
 		'hi',
 	]);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('takes the URL over the checkout it runs in', async () => {
-	// run from a checkout whose origin is mine, which is where a session actually is
-	const { prompts } = await ask(
-		['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--repo', 'perrin4869/dotfiles', '--body', 'hi'],
-		{ cwd: process.cwd() },
-	);
+	// the checkout names a repository of my own, which the URL would otherwise let this post to without asking
+	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	const { prompts } = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi'], {
+		cwd: here.path,
+	});
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('ignores a URL that is only the value of a flag', async () => {
@@ -245,21 +224,21 @@ test('ignores a URL that is only the value of a flag', async () => {
 		'issue',
 		'create',
 		'--repo',
-		'ldelossa/pi-ide',
+		'bob/widgets',
 		'--title',
 		'T',
 		'--body',
-		'https://github.com/perrin4869/dotfiles',
+		'https://github.com/alice/dotfiles',
 	]);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('takes the remote gh sorts first, upstream over origin', async () => {
 	// gh orders the names upstream, github, origin, and posts to the first, whatever the branch tracks
 	using here = checkout({
-		origin: 'https://github.com/ldelossa/pi-ide.git',
-		upstream: 'https://github.com/perrin4869/dotfiles.git',
+		origin: 'https://github.com/bob/widgets.git',
+		upstream: 'https://github.com/alice/dotfiles.git',
 	});
 	const { verdict, prompts } = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
 	assert.deepEqual(prompts, []);
@@ -268,12 +247,12 @@ test('takes the remote gh sorts first, upstream over origin', async () => {
 
 test('takes the remote gh repo set-default recorded over the name order', async () => {
 	using here = checkout({
-		origin: 'https://github.com/ldelossa/pi-ide.git',
-		upstream: 'https://github.com/ldelossa/pi-ide.git',
+		origin: 'https://github.com/bob/widgets.git',
+		upstream: 'https://github.com/bob/widgets.git',
 	});
 	const config = (...value: string[]) => execFileSync('git', ['-C', here.path, 'config', ...value]);
 	// set-default writes "base" on the remote it matched, and a full name on the first sorted remote when it matched none
-	config('remote.upstream.gh-resolved', 'perrin4869/dotfiles');
+	config('remote.upstream.gh-resolved', 'alice/dotfiles');
 	const typed = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
 	assert.deepEqual(typed.prompts, []);
 	assert.equal(typed.verdict.trim(), 'allow');
@@ -281,19 +260,19 @@ test('takes the remote gh repo set-default recorded over the name order', async 
 	config('--replace-all', 'remote.upstream.gh-resolved', 'base');
 	const based = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
 	assert.equal(based.prompts.length, 1);
-	assert.match(based.prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(based.prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('reads the repository a bare OWNER/REPO positional names', async () => {
-	const { prompts } = await ask(['repo', 'create', 'ldelossa/pi-ide', '--description', 'x']);
+	const { prompts } = await ask(['repo', 'create', 'bob/widgets', '--description', 'x']);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('allows a URL naming my own repository, whatever GH_REPO says', async () => {
 	const { verdict, prompts } = await ask(
-		['pr', 'comment', 'https://github.com/perrin4869/dotfiles/pull/1', '--body', 'hi'],
-		{ ghRepo: 'perrin4869/dotfiles' },
+		['pr', 'comment', 'https://github.com/alice/dotfiles/pull/1', '--body', 'hi'],
+		{ ghRepo: 'alice/dotfiles' },
 	);
 	assert.deepEqual(prompts, []);
 	assert.equal(verdict.trim(), 'allow');
@@ -301,9 +280,9 @@ test('allows a URL naming my own repository, whatever GH_REPO says', async () =>
 
 test('leaves reads alone', async () => {
 	for (const argv of [
-		['pr', 'view', '6926', '--repo', 'ldelossa/pi-ide'],
-		['issue', 'list', '--repo', 'ldelossa/pi-ide'],
-		['api', 'repos/ldelossa/pi-ide/issues', '--jq', 'length'],
+		['pr', 'view', '6926', '--repo', 'bob/widgets'],
+		['issue', 'list', '--repo', 'bob/widgets'],
+		['api', 'repos/bob/widgets/issues', '--jq', 'length'],
 		['api', 'user', '--jq', '.login'],
 	]) {
 		const { verdict, prompts } = await ask(argv);
@@ -313,9 +292,9 @@ test('leaves reads alone', async () => {
 });
 
 test('asks about an api call that writes', async () => {
-	const { prompts } = await ask(['api', 'repos/ldelossa/pi-ide/issues/3/comments', '-f', 'body=hello']);
+	const { prompts } = await ask(['api', 'repos/bob/widgets/issues/3/comments', '-f', 'body=hello']);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts[0], /^repository: ldelossa\/pi-ide$/m);
+	assert.match(prompts[0], /^repository: bob\/widgets$/m);
 });
 
 test('asks about a mutation whose repository it cannot name', async () => {
@@ -325,16 +304,16 @@ test('asks about a mutation whose repository it cannot name', async () => {
 });
 
 test('asks when the call names the repository by URL or GH_REPO', async () => {
-	const url = await ask(['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--body', 'hi']);
-	assert.match(url.prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
-	const env = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { ghRepo: 'ldelossa/pi-ide' });
-	assert.match(env.prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+	const url = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi']);
+	assert.match(url.prompts.join(''), /^repository: bob\/widgets$/m);
+	const env = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { ghRepo: 'bob/widgets' });
+	assert.match(env.prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
 test('the wrapper runs the real gh for my own repository', async () => {
-	const { stdout, code, prompts } = await throughShim(['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']);
+	const { stdout, code, prompts } = await throughShim(['pr', 'view', '1', '--repo', 'alice/dotfiles']);
 	assert.equal(code, undefined);
-	assert.equal(stdout.trim(), 'perrin4869');
+	assert.equal(stdout.trim(), 'alice');
 	assert.deepEqual(prompts, []);
 });
 
@@ -344,7 +323,7 @@ test('the wrapper stops a declined post before gh runs', async () => {
 		'comment',
 		'3',
 		'--repo',
-		'ldelossa/pi-ide',
+		'bob/widgets',
 		'--body',
 		'hi',
 	]);
@@ -361,7 +340,7 @@ test('refuses when a session is there but does not answer', async () => {
 		GH_APPROVAL_ADDR: '127.0.0.1 1',
 	});
 	await assert.rejects(
-		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']),
+		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']),
 		(error: { code?: number; stdout?: string; stderr?: string }) => {
 			assert.equal(error.code, 1);
 			assert.equal(error.stdout, '');
@@ -375,7 +354,7 @@ test('refuses when the only gh on PATH is itself', async () => {
 	// the link spells the wrapper's directory differently, so dropping it by path would miss this
 	using restore = overrideEnv({ PATH: join(FIXTURES, 'link') + ':/usr/bin:/bin' });
 	await assert.rejects(
-		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']),
+		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']),
 		(error: { code?: number; stderr?: string }) => {
 			assert.equal(error.code, 127);
 			assert.match(error.stderr ?? '', /the only gh on PATH is this wrapper/);
@@ -387,11 +366,11 @@ test('refuses when the only gh on PATH is itself', async () => {
 test('runs gh with a warning when the session named no endpoint', async () => {
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,
-		GH_APPROVAL_LOGIN: 'perrin4869',
+		GH_APPROVAL_LOGIN: 'alice',
 		GH_APPROVAL_ADDR: undefined,
 	});
-	const { stdout, stderr } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']);
-	assert.equal(stdout.trim(), 'perrin4869');
+	const { stdout, stderr } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']);
+	assert.equal(stdout.trim(), 'alice');
 	assert.match(stderr, /no pi session to ask/);
 });
 

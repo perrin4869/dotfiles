@@ -1,7 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
 import { once } from 'node:events';
-import { accessSync, constants } from 'node:fs';
+import { constants } from 'node:fs';
+import { access } from 'node:fs/promises';
 import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
@@ -62,20 +63,21 @@ const agentDir = () => process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi',
 const shimDir = () => join(agentDir(), 'bin');
 
 // the real gh, with the directory holding the wrapper dropped, so the gate never ends up calling itself. A missing gh
-// is not an answer but a reason the account cannot be read, so it throws like one.
-function realGh(): string {
+// is not an answer but a reason the account cannot be read, so it throws like one. The search runs once, in PATH order,
+// because the first entry is the one a shell would run.
+const realGh = memo(async (): Promise<string> => {
 	for (const dir of (process.env.PATH ?? '').split(':')) {
 		if (dir === shimDir()) continue;
 		const candidate = join(dir, 'gh');
 		try {
-			accessSync(candidate, constants.X_OK);
+			await access(candidate, constants.X_OK);
 			return candidate;
 		} catch {
 			// not here
 		}
 	}
 	throw new Error('no gh on PATH');
-}
+});
 
 /** owner and repository from a host and a path, when the host is github.com */
 function githubRepo(host: string, path: string): string | undefined {
@@ -237,7 +239,7 @@ export default function (pi: ExtensionAPI) {
 	// them. A lookup that cannot answer says why and throws, and the caller treats the owner as unknown, which asks
 	const authenticated = memo(async (ctx: ExtensionContext) => {
 		try {
-			const result = await execFileAsync(realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
+			const result = await execFileAsync(await realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
 			const login = result.stdout.trim();
 			if (!login) throw new Error('gh is not logged in');
 			return login;

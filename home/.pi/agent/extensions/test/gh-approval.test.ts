@@ -251,9 +251,10 @@ test('reads the repository a bare OWNER/REPO positional names', async () => {
 });
 
 test('allows a URL naming my own repository, whatever GH_REPO says', async () => {
+	// GH_REPO names another account, so it would have to ask if it answered for this call at all
 	const { verdict, prompts } = await ask(
 		['pr', 'comment', 'https://github.com/alice/dotfiles/pull/1', '--body', 'hi'],
-		{ ghRepo: 'alice/dotfiles' },
+		{ ghRepo: 'bob/widgets' },
 	);
 	assert.deepEqual(prompts, []);
 	assert.equal(verdict.trim(), 'allow');

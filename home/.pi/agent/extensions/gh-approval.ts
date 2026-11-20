@@ -166,19 +166,19 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	};
 }
 
-async function approved(ctx: ExtensionContext, repo: string | undefined, post: Post): Promise<boolean> {
+async function approved(ctx: ExtensionContext, post: Post): Promise<boolean> {
 	if (!ctx.hasUI) return false;
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
 	const body = post.bodyFile === undefined ? post.body : await readFile(post.bodyFile, 'utf8');
 	const details = [
-		'repository: ' + (repo ?? 'unknown, the command names none'),
+		'repository: ' + (post.repo ?? 'unknown, the command names none'),
 		'command: ' + post.text,
 		post.title && 'title: ' + post.title,
 		body && 'body:\n' + body,
 		'',
 		RULE,
 	].filter(Boolean);
-	return ctx.ui.confirm('Post to ' + (repo ?? 'GitHub') + '?', details.join('\n'));
+	return ctx.ui.confirm('Post to ' + (post.repo ?? 'GitHub') + '?', details.join('\n'));
 }
 
 // the frames the wrapper sends: cwd, GH_REPO, the argument count, then each argument
@@ -230,7 +230,7 @@ async function verdict(ctx: ExtensionContext, call: Call) {
 	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {
-		allowed = await approved(ctx, post.repo, post);
+		allowed = await approved(ctx, post);
 	} catch (error) {
 		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
 		return 'deny ' + (error instanceof Error ? error.message : String(error));

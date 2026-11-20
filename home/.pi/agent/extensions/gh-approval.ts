@@ -108,6 +108,15 @@ function urlRepo(args: string[]): string | undefined {
 	return undefined;
 }
 
+/** the repository a bare OWNER/REPO argument names, which is how gh repo names its target */
+function bareRepo(args: string[]): string | undefined {
+	for (const arg of args) {
+		const match = /^[^/:\s]+\/[^/:\s]+$/.exec(arg);
+		if (match) return arg;
+	}
+	return undefined;
+}
+
 /** the repository an api path names */
 function apiRepo(args: string[]): string | undefined {
 	for (const arg of args) {
@@ -117,19 +126,42 @@ function apiRepo(args: string[]): string | undefined {
 	return undefined;
 }
 
-// the repository this checkout would push to: gh reads the remote the current branch tracks, and origin when it tracks
-// none, so this asks git the same question
+// the names gh prefers a remote by, so the checkout answers with the one gh would post to
+const remoteScore = (name: string): number => ({ upstream: 3, github: 2, origin: 1 })[name.toLowerCase()] ?? 0;
+
+// gh lists the remotes, sorts them by that score and takes the first, unless `gh repo set-default` recorded a choice.
+// With no terminal it cannot ask a human, so it never gets as far as the remotes it can reach
 async function checkoutRepo(cwd: string): Promise<string | undefined> {
-	const tracked = await execFileAsync('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}'], {
-		cwd,
-	})
-		.then((result) => result.stdout.trim().split('/')[0])
-		.catch(() => '');
-	for (const remote of tracked === '' ? ['origin'] : [tracked, 'origin']) {
-		const url = await execFileAsync('git', ['remote', 'get-url', remote], { cwd }).catch(() => undefined);
-		if (url !== undefined) return remoteRepo(url.stdout.trim());
+	const git = (args: string[]) =>
+		execFileAsync('git', args, { cwd }).then(
+			(result) => result.stdout,
+			() => '',
+		);
+	const [listing, recorded] = await Promise.all([
+		git(['remote', '-v']),
+		git(['config', '--get-regexp', '^remote\\..*\\.gh-resolved$']),
+	]);
+	// git prints a fetch line and a push line for each remote; the fetch url is the one gh parses
+	const urls = new Map<string, string>();
+	for (const line of listing.split('\n')) {
+		const [name, url] = line.split(/\s+/);
+		if (name !== undefined && url !== undefined && !urls.has(name)) urls.set(name, url);
 	}
-	return undefined;
+	// set-default writes "base" on the remote it matched, and the name a human typed on one it did not
+	const chosen = new Map<string, string>();
+	for (const line of recorded.split('\n')) {
+		const [, name, choice] = /^remote\.(.*)\.gh-resolved (.+)$/.exec(line) ?? [];
+		if (name !== undefined && choice !== undefined) chosen.set(name, choice);
+	}
+	const names = [...urls.keys()].toSorted((a, b) => remoteScore(b) - remoteScore(a));
+	for (const name of names) {
+		const choice = chosen.get(name);
+		if (choice === undefined) continue;
+		if (choice === 'base') return remoteRepo(urls.get(name) ?? '');
+		return choice.split('/').slice(-2).join('/');
+	}
+	const [first] = names;
+	return first === undefined ? undefined : remoteRepo(urls.get(first) ?? '');
 }
 
 // strict false puts an option that takes no value into the parse result as a flag, so only a string carries one
@@ -154,9 +186,16 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
 	if (!api && (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
-	// gh reads the repository a URL positional names first, then -R, then GH_REPO, and asks git only when none names one
+	// gh repo names its target as a bare OWNER/REPO positional, and gh reads that before `-R`
+	const positional = group?.toLowerCase() === 'repo' ? bareRepo(positionals) : undefined;
+	// gh reads a URL positional first, then -R, then GH_REPO, and asks git only when none of them names one
 	const repo =
-		urlRepo(positionals) ?? apiRepo(positionals) ?? text(values.repo) ?? call.ghRepo ?? (await checkoutRepo(call.cwd));
+		urlRepo(positionals) ??
+		apiRepo(positionals) ??
+		positional ??
+		text(values.repo) ??
+		call.ghRepo ??
+		(await checkoutRepo(call.cwd));
 	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
 		text: 'gh ' + call.argv.join(' '),

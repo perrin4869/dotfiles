@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { connect } from 'node:net';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { promisify } from 'node:util';
@@ -15,6 +17,14 @@ const FIXTURES = join(import.meta.dirname, 'fixtures', 'gh-approval');
 const SHIM = join(import.meta.dirname, '../../bin/gh');
 // the session's working directory: not a checkout, so a call that names no repository has none to fall back on
 const CWD = '/nonexistent/pi-test/project';
+
+// a checkout carrying the given remotes, which is where gh looks when no argument names a repository
+function checkout(remotes: Record<string, string>): Disposable & { path: string } {
+	const path = mkdtempSync(join(tmpdir(), 'gh-approval-'));
+	execFileSync('git', ['init', '--quiet', path]);
+	for (const [name, url] of Object.entries(remotes)) execFileSync('git', ['-C', path, 'remote', 'add', name, url]);
+	return { path, [Symbol.dispose]: () => rmSync(path, { force: true, recursive: true }) };
+}
 
 // the session names its endpoint in the environment its commands inherit, and this process is where it runs
 async function endpoint(): Promise<{ host: string; port: number }> {
@@ -247,6 +257,41 @@ test('ignores a URL that is only the value of a flag', async () => {
 		'--body',
 		'https://github.com/perrin4869/dotfiles',
 	]);
+	assert.equal(prompts.length, 1);
+	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+});
+
+test('takes the remote gh sorts first, upstream over origin', async () => {
+	// gh orders the names upstream, github, origin, and posts to the first, whatever the branch tracks
+	using here = checkout({
+		origin: 'https://github.com/ldelossa/pi-ide.git',
+		upstream: 'https://github.com/perrin4869/dotfiles.git',
+	});
+	const { verdict, prompts } = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
+	assert.deepEqual(prompts, []);
+	assert.equal(verdict.trim(), 'allow');
+});
+
+test('takes the remote gh repo set-default recorded over the name order', async () => {
+	using here = checkout({
+		origin: 'https://github.com/ldelossa/pi-ide.git',
+		upstream: 'https://github.com/ldelossa/pi-ide.git',
+	});
+	const config = (...value: string[]) => execFileSync('git', ['-C', here.path, 'config', ...value]);
+	// set-default writes "base" on the remote it matched, and a full name on the first sorted remote when it matched none
+	config('remote.upstream.gh-resolved', 'perrin4869/dotfiles');
+	const typed = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
+	assert.deepEqual(typed.prompts, []);
+	assert.equal(typed.verdict.trim(), 'allow');
+
+	config('--replace-all', 'remote.upstream.gh-resolved', 'base');
+	const based = await ask(['issue', 'create', '--title', 'T', '--body', 'B'], { cwd: here.path });
+	assert.equal(based.prompts.length, 1);
+	assert.match(based.prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+});
+
+test('reads the repository a bare OWNER/REPO positional names', async () => {
+	const { prompts } = await ask(['repo', 'create', 'ldelossa/pi-ide', '--description', 'x']);
 	assert.equal(prompts.length, 1);
 	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
 });

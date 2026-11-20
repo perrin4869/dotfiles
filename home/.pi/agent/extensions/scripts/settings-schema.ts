@@ -1,5 +1,6 @@
 import { readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { env } from 'node:process';
 import { Type, type TObject } from 'typebox';
 import { definedSettings } from '../lib/settings.ts';
 
@@ -9,7 +10,7 @@ export const SCHEMA_FILE = join(ROOT, 'settings.schema.json');
 // pi's settings.json schema, extended with the sections our extensions read through defineSettings, as JSON
 export async function settingsSchema() {
 	// what makes defineSettings record its section, as the extensions load
-	process.env.PI_SETTINGS_RECORD = '1';
+	env.PI_SETTINGS_RECORD = '1';
 	for (const file of readdirSync(ROOT)
 		.filter((name) => name.endsWith('.ts'))
 		.toSorted()) {

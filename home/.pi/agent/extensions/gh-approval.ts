@@ -154,17 +154,9 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
 	if (!api && (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
-	// gh resolves an argument that names the repository over GH_REPO, so sources that disagree are no answer: ask
-	const named = [text(values.repo), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
-		(repo): repo is string => repo !== undefined,
-	);
-	const [first] = named;
-	let repo: string | undefined;
-	if (first !== undefined) {
-		repo = named.every((entry) => entry.toLowerCase() === first.toLowerCase()) ? first : undefined;
-	} else {
-		repo = await checkoutRepo(call.cwd);
-	}
+	// gh reads the repository a URL positional names first, then -R, then GH_REPO, and asks git only when none names one
+	const repo =
+		urlRepo(positionals) ?? apiRepo(positionals) ?? text(values.repo) ?? call.ghRepo ?? (await checkoutRepo(call.cwd));
 	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
 		text: 'gh ' + call.argv.join(' '),

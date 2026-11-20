@@ -209,10 +209,10 @@ test('asks about a URL even when GH_REPO names my own repository', async () => {
 		ghRepo: 'perrin4869/dotfiles',
 	});
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: unknown/m);
+	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
 });
 
-test('asks when a flag and a URL name different repositories', async () => {
+test('takes the URL over a flag, which is what gh does', async () => {
 	const { prompts } = await ask([
 		'pr',
 		'comment',
@@ -223,20 +223,35 @@ test('asks when a flag and a URL name different repositories', async () => {
 		'hi',
 	]);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: unknown/m);
+	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
 });
 
-test('does not let the checkout answer for a call whose sources disagree', async () => {
+test('takes the URL over the checkout it runs in', async () => {
 	// run from a checkout whose origin is mine, which is where a session actually is
 	const { prompts } = await ask(
 		['pr', 'comment', 'https://github.com/ldelossa/pi-ide/pull/3', '--repo', 'perrin4869/dotfiles', '--body', 'hi'],
 		{ cwd: process.cwd() },
 	);
 	assert.equal(prompts.length, 1);
-	assert.match(prompts.join(''), /^repository: unknown/m);
+	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
 });
 
-test('allows a call whose sources agree on my repository', async () => {
+test('ignores a URL that is only the value of a flag', async () => {
+	const { prompts } = await ask([
+		'issue',
+		'create',
+		'--repo',
+		'ldelossa/pi-ide',
+		'--title',
+		'T',
+		'--body',
+		'https://github.com/perrin4869/dotfiles',
+	]);
+	assert.equal(prompts.length, 1);
+	assert.match(prompts.join(''), /^repository: ldelossa\/pi-ide$/m);
+});
+
+test('allows a URL naming my own repository, whatever GH_REPO says', async () => {
 	const { verdict, prompts } = await ask(
 		['pr', 'comment', 'https://github.com/perrin4869/dotfiles/pull/1', '--body', 'hi'],
 		{ ghRepo: 'perrin4869/dotfiles' },

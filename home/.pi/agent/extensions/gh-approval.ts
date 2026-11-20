@@ -192,8 +192,10 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	// its own, and one a graphql mutation never is, since its subject sits in the query rather than in the arguments
 	const endpoint = api ? positionals[1] : undefined;
 	const asksGh = !api || /\{(?:owner|repo)\}/.test(endpoint ?? '');
-	// the repository gh resolves is the one it reads from -R, then GH_REPO, then this checkout's remotes
-	const repo = named ?? (asksGh ? (text(values.repo) ?? call.ghRepo ?? (await checkoutRepo(call.cwd))) : undefined);
+	// what the call declares is -R, then GH_REPO, except that api has no -R to declare; this checkout's remotes answer
+	// when neither does
+	const declared = api ? call.ghRepo : (text(values.repo) ?? call.ghRepo);
+	const repo = named ?? (asksGh ? (declared ?? (await checkoutRepo(call.cwd))) : undefined);
 	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
 		repo,

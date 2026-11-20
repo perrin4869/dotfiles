@@ -37,8 +37,8 @@ const OPTIONS = {
 // both give up after this
 const TIMEOUT_MS = 10_000;
 
-const GITHUB_URL = /github\.com[:/]([^/\s]+)\/([^/\s?#]+)/;
 const API_PATH = /(?:^|\/)repos\/([^/\s]+)\/([^/\s?#]+)/;
+const GITHUB_HOST = 'github.com';
 
 /** one gh call as the wrapper sends it: the directory it runs in, its argv, and the repository GH_REPO named */
 type Call = { cwd: string; argv: string[]; ghRepo?: string };
@@ -77,11 +77,33 @@ function realGh(): string {
 	throw new Error('no gh on PATH');
 }
 
-/** the repository a URL in the call names */
+/** owner and repository from a host and a path, when the host is github.com */
+function githubRepo(host: string, path: string): string | undefined {
+	if (host.toLowerCase() !== GITHUB_HOST) return undefined;
+	const [owner, repo] = path
+		.replace(/^\/+/, '')
+		.replace(/\.git$/, '')
+		.split('/');
+	return owner !== undefined && repo !== undefined ? owner + '/' + repo : undefined;
+}
+
+/** the repository a git remote names: `git@github.com:owner/repo`, or any URL with that host, port and all */
+function remoteRepo(remote: string): string | undefined {
+	const scp = /^(?:[^@/\s]+@)?([^:/\s]+):([^/\s]+)\/([^/\s]+?)(?:\.git)?$/.exec(remote);
+	if (scp !== null) return githubRepo(scp[1], scp[2] + '/' + scp[3]);
+	try {
+		const { hostname, pathname } = new URL(remote);
+		return githubRepo(hostname, pathname);
+	} catch {
+		return undefined;
+	}
+}
+
+/** the repository a URL in the call names, which may be a pull request or issue page under it */
 function urlRepo(args: string[]): string | undefined {
 	for (const arg of args) {
-		const match = GITHUB_URL.exec(arg);
-		if (match) return match[1] + '/' + match[2].replace(/\.git$/, '');
+		const repo = remoteRepo(arg);
+		if (repo !== undefined) return repo;
 	}
 	return undefined;
 }
@@ -178,10 +200,7 @@ function targetRepo(repository: Repository, cwd: string): Promise<string | undef
 // the checkout's origin names the repository when the call does not, read in the directory the call runs in
 async function originRepo(cwd: string): Promise<string | undefined> {
 	const result = await execFileAsync('git', ['remote', 'get-url', 'origin'], { cwd }).catch(() => undefined);
-	return /github\.com[/:]([^/\s]+\/[^/\s]+?)(?:\.git)?\s*$/
-		.exec(result?.stdout.trim() ?? '')
-		?.slice(1)
-		.join('/');
+	return remoteRepo(result?.stdout.trim() ?? '');
 }
 
 async function verdict(ctx: ExtensionContext, call: Call, account: (ctx: ExtensionContext) => Promise<string>) {

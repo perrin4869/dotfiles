@@ -1,4 +1,5 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
+import { env } from 'node:process';
 import type { Static, TObject, TSchema } from 'typebox';
 import { Value } from 'typebox/value';
 
@@ -37,7 +38,7 @@ export function definedSettings(): Map<string, TObject> {
 // A reader for a top-level key of pi's settings.json owned by one of our extensions, with a default for every field.
 // pi.getSettings() merges project settings over global ones, field by field, and only once the project is trusted.
 export function defineSettings<T extends TObject>(key: string, schema: T) {
-	if (process.env.PI_SETTINGS_RECORD !== undefined) definedSettings().set(key, schema);
+	if (env.PI_SETTINGS_RECORD !== undefined) definedSettings().set(key, schema);
 	// warn once per problem rather than on every read
 	const unreported = firstSeen();
 

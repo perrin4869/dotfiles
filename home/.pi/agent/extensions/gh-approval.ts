@@ -23,11 +23,17 @@ const WRITE_ACTIONS = new Set(['create', 'edit', 'comment', 'close', 'reopen', '
 const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
 
 // gh reuses -F for --body-file on issue and pr and for --field on api, so the table holds both and the group picks
-const OPTIONS = {
+// what the groups other than api send, and the file gh reads the body from
+const COMMAND_OPTIONS = {
 	repo: { type: 'string', short: 'R' },
 	title: { type: 'string', short: 't' },
 	body: { type: 'string', short: 'b' },
 	'body-file': { type: 'string' },
+	field: { type: 'string', short: 'F', multiple: true },
+} as const;
+
+// what gh api sends: the method, and the three ways it carries a request body
+const API_OPTIONS = {
 	method: { type: 'string', short: 'X' },
 	field: { type: 'string', short: 'F', multiple: true },
 	'raw-field': { type: 'string', short: 'f', multiple: true },
@@ -166,43 +172,53 @@ async function checkoutRepo(cwd: string): Promise<string | undefined> {
 // strict false puts an option that takes no value into the parse result as a flag, so only a string carries one
 const text = (value: unknown) => (typeof value === 'string' ? value : undefined);
 
-async function postOf(call: Call): Promise<Post | undefined> {
-	// unknown flags are gh's own business; strict false leaves a bare one in values, so a string is what carries a value
+async function apiPost(call: Call): Promise<Post | undefined> {
 	const { values, positionals } = parseArgs({
 		args: call.argv,
-		options: OPTIONS,
+		options: API_OPTIONS,
 		allowPositionals: true,
 		strict: false,
 	});
-	const fields = Array.isArray(values.field) ? values.field : [];
-	const [group, action] = positionals;
-	const api = group === 'api';
 	const method = text(values.method);
-	// --field, --raw-field and --input are gh api's three ways to send a request body
-	const fielded = fields.length > 0 || values['raw-field'] !== undefined || values.input !== undefined;
-	// an api call writes when its method says so, or, with no method, when it sends a body
-	if (api && method !== undefined && !WRITE_METHODS.has(method.toUpperCase())) return undefined;
-	if (api && method === undefined && !fielded) return undefined;
-	// the other groups write through the actions in the list
-	if (!api && (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
-	// gh repo names its target as a bare OWNER/REPO positional, and gh reads that before `-R`
-	const positional = group?.toLowerCase() === 'repo' ? bareRepo(positionals) : undefined;
-	const named = urlRepo(positionals) ?? apiRepo(positionals) ?? positional;
-	// gh fills {owner} and {repo} in an api path from the repository it resolved: the one api endpoint that does not name
-	// its own, and one a graphql mutation never is, since its subject sits in the query rather than in the arguments
-	const endpoint = api ? positionals[1] : undefined;
-	const asksGh = !api || /\{(?:owner|repo)\}/.test(endpoint ?? '');
-	// what the call declares is -R, then GH_REPO, except that api has no -R to declare; this checkout's remotes answer
-	// when neither does
-	const declared = api ? call.ghRepo : (text(values.repo) ?? call.ghRepo);
-	const repo = named ?? (asksGh ? (declared ?? (await checkoutRepo(call.cwd))) : undefined);
-	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
+	const fielded = values.field !== undefined || values['raw-field'] !== undefined || values.input !== undefined;
+	if (method === undefined ? !fielded : !WRITE_METHODS.has(method.toUpperCase())) return undefined;
+	// gh fills {owner} and {repo} in the path from the repository it resolved, and reaches one for no other endpoint: a
+	// graphql mutation carries its subject in the query, so what this checkout is says nothing about it
+	const fills = /\{(?:owner|repo)\}/.test(positionals[1] ?? '');
+	const repo =
+		urlRepo(positionals) ??
+		apiRepo(positionals) ??
+		(fills ? (call.ghRepo ?? (await checkoutRepo(call.cwd))) : undefined);
+	return { repo };
+}
+
+async function commandPost(call: Call): Promise<Post | undefined> {
+	const { values, positionals } = parseArgs({
+		args: call.argv,
+		options: COMMAND_OPTIONS,
+		allowPositionals: true,
+		strict: false,
+	});
+	const [group, action] = positionals;
+	if (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase())) return undefined;
+	// gh repo names its target as a bare OWNER/REPO, which gh reads before -R, then GH_REPO, then this checkout's remotes
+	const bare = group?.toLowerCase() === 'repo' ? bareRepo(positionals) : undefined;
+	const repo = urlRepo(positionals) ?? bare ?? text(values.repo) ?? call.ghRepo ?? (await checkoutRepo(call.cwd));
+	// the file -F names decides over the body, as it does for gh when both are given
+	const fields = Array.isArray(values.field) ? values.field : [];
+	const file = text(values['body-file']) ?? text(fields[0]);
 	return {
 		repo,
 		title: text(values.title),
 		body: text(values.body),
 		bodyFile: file === undefined ? undefined : resolve(call.cwd, file),
 	};
+}
+
+// gh api writes by its method or its body, and every other group by its action; a call that writes nothing has no post
+async function postOf(call: Call): Promise<Post | undefined> {
+	const { positionals } = parseArgs({ args: call.argv, options: {}, allowPositionals: true, strict: false });
+	return positionals[0] === 'api' ? apiPost(call) : commandPost(call);
 }
 
 async function approved(ctx: ExtensionContext, post: Post, command: string): Promise<boolean> {

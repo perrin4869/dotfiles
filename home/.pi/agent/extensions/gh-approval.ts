@@ -79,14 +79,6 @@ const realGh = memo(async (): Promise<string> => {
 	throw new Error('no gh on PATH');
 });
 
-/** the account the token belongs to: gh answers with the owner of the token it would use */
-async function lookupAccount(): Promise<string> {
-	const result = await execFileAsync(await realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
-	const login = result.stdout.trim();
-	if (!login) throw new Error('gh is not logged in');
-	return login;
-}
-
 /** owner and repository from a host and a path, when the host is github.com */
 function githubRepo(host: string, path: string): string | undefined {
 	if (host.toLowerCase() !== GITHUB_HOST) return undefined;
@@ -226,7 +218,10 @@ async function checkoutRepo(cwd: string): Promise<string | undefined> {
 // once, because the memo runs the lookup once; the caller then treats the owner as unknown, which asks
 const account = memo(async (ctx: ExtensionContext) => {
 	try {
-		return await lookupAccount();
+		const result = await execFileAsync(await realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
+		const login = result.stdout.trim();
+		if (!login) throw new Error('gh is not logged in');
+		return login;
 	} catch (error) {
 		const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
 		ctx.ui.notify(

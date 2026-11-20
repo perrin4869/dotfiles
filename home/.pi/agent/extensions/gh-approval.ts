@@ -193,14 +193,23 @@ function framesOf(text: string): Call | undefined {
 // sources disagree, which asks rather than letting the checkout answer for them
 function targetRepo(repository: Repository, cwd: string): Promise<string | undefined> | string | undefined {
 	if (repository.kind === 'named') return repository.repo;
-	if (repository.kind === 'none') return originRepo(cwd);
+	if (repository.kind === 'none') return checkoutRepo(cwd);
 	return undefined;
 }
 
-// the checkout's origin names the repository when the call does not, read in the directory the call runs in
-async function originRepo(cwd: string): Promise<string | undefined> {
-	const result = await execFileAsync('git', ['remote', 'get-url', 'origin'], { cwd }).catch(() => undefined);
-	return remoteRepo(result?.stdout.trim() ?? '');
+// the repository this checkout would push to: gh reads the remote the current branch tracks, and origin when it tracks
+// none, so this asks git the same question
+async function checkoutRepo(cwd: string): Promise<string | undefined> {
+	const tracked = await execFileAsync('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}'], {
+		cwd,
+	})
+		.then((result) => result.stdout.trim().split('/')[0])
+		.catch(() => '');
+	for (const remote of tracked === '' ? ['origin'] : [tracked, 'origin']) {
+		const url = await execFileAsync('git', ['remote', 'get-url', remote], { cwd }).catch(() => undefined);
+		if (url !== undefined) return remoteRepo(url.stdout.trim());
+	}
+	return undefined;
 }
 
 async function verdict(ctx: ExtensionContext, call: Call, account: (ctx: ExtensionContext) => Promise<string>) {

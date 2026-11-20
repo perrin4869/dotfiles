@@ -153,7 +153,7 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	if (api && method !== undefined && !WRITE_METHODS.has(method.toUpperCase())) return undefined;
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
-	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
+	if (!api && (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
 	// gh resolves an argument that names the repository over GH_REPO, so sources that disagree are no answer: ask
 	const named = [text(values.repo), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
 		(repo): repo is string => repo !== undefined,

@@ -206,27 +206,27 @@ async function checkoutRepo(cwd: string): Promise<string | undefined> {
 
 // the account is asked once per session, since a login or GH_TOKEN can change between them, and a failure says why
 // once, because the memo runs the lookup once; the caller then treats the owner as unknown, which asks
-const account = memo(async (ctx: ExtensionContext) => {
-	try {
-		const result = await execFileAsync(await realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
-		const login = result.stdout.trim();
-		if (!login) throw new Error('gh is not logged in');
-		return login;
-	} catch (error) {
-		const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
-		ctx.ui.notify(
-			'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
-			'warning',
-		);
-		throw error;
-	}
+// the account the token belongs to: gh answers with the owner of the token it would use, and the memo asks once
+const account = memo(async () => {
+	const result = await execFileAsync(await realGh(), ['api', 'user', '--jq', '.login'], { timeout: 10_000 });
+	const login = result.stdout.trim();
+	if (!login) throw new Error('gh is not logged in');
+	return login;
 });
 
 async function verdict(ctx: ExtensionContext, call: Call) {
 	const post = await postOf(call);
 	if (post === undefined) return 'allow';
-	// a lookup that failed has already said why; the owner stays unknown, so the post asks
-	const owner = (await account(ctx).catch(() => undefined))?.toLowerCase();
+	const owner = await account()
+		.then((login) => login.toLowerCase())
+		.catch((error: unknown) => {
+			const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
+			ctx.ui.notify(
+				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
+				'warning',
+			);
+			return undefined;
+		});
 	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {

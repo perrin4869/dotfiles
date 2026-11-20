@@ -34,19 +34,11 @@ function endpoint(): { host: string; port: number } {
 	return { host, port: Number(port) };
 }
 
-type Answer = {
-	verdict: string;
-	prompts: string[];
-	notices: string[];
-	stdout?: string;
-	stderr?: string;
-	code?: number;
-};
-
 // a started session that records what it shows, with the fixture gh on PATH and alice holding the token; the caller
 // owns both, which is what the wrapper tests need to be alive while they run it
 async function boot(options: { approve?: boolean; login?: string | null } = {}) {
-	const answer: Answer = { verdict: '', prompts: [], notices: [] };
+	const prompts: string[] = [];
+	const notices: string[] = [];
 	using cleanup = new DisposableStack();
 	cleanup.use(
 		overrideEnv({
@@ -60,18 +52,18 @@ async function boot(options: { approve?: boolean; login?: string | null } = {}) 
 			extensions: [extension('gh-approval')],
 			ui: {
 				confirm: (_title, message) => {
-					answer.prompts.push(message);
+					prompts.push(message);
 					return Promise.resolve(options.approve ?? false);
 				},
-				notify: (message) => answer.notices.push(message),
+				notify: (message) => notices.push(message),
 			},
 		}),
 	);
 	const owned = cleanup.move();
-	return { answer, [Symbol.dispose]: () => owned.dispose() };
+	return { prompts, notices, [Symbol.dispose]: () => owned.dispose() };
 }
 
-// the wrapper's side of one call: send cwd, GH_REPO and argv over loopback, and return what came back
+// the wrapper's side of one call: send cwd, GH_REPO and argv over loopback, and return the line that came back
 async function ask(
 	argv: string[],
 	options: { cwd?: string; ghRepo?: string; approve?: boolean; login?: string | null } = {},
@@ -80,8 +72,9 @@ async function ask(
 	const socket = connect(endpoint());
 	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
 	socket.write(frames.join('\0') + '\0');
-	for await (const chunk of socket) booted.answer.verdict += chunk.toString();
-	return booted.answer;
+	let verdict = '';
+	for await (const chunk of socket) verdict += chunk.toString();
+	return { prompts: booted.prompts, notices: booted.notices, verdict };
 }
 
 test('allows a post to my own repository without asking', async () => {
@@ -115,7 +108,7 @@ test('lets an approved post through', async () => {
 });
 
 test('asks when the account cannot be resolved', async () => {
-	const { verdict, prompts } = await ask(
+	const { verdict, prompts, notices } = await ask(
 		['issue', 'create', '--repo', 'alice/dotfiles', '--title', 'T', '--body', 'B'],
 		{
 			login: null,
@@ -123,6 +116,8 @@ test('asks when the account cannot be resolved', async () => {
 	);
 	assert.equal(prompts.length, 1);
 	assert.match(prompts.join(''), /^repository: alice\/dotfiles$/m);
+	// the lookup failed, so the dialog cannot say whether this is my repository, and the session says why
+	assert.match(notices.join(''), /cannot tell which account the token belongs to/);
 	assert.match(verdict, /^deny /);
 });
 
@@ -317,7 +312,7 @@ test('the wrapper runs the real gh for my own repository', async () => {
 		env: process.env,
 	});
 	assert.equal(stdout.trim(), 'alice');
-	assert.deepEqual(booted.answer.prompts, []);
+	assert.deepEqual(booted.prompts, []);
 });
 
 test('answers each call of a session on its own', async () => {
@@ -340,7 +335,7 @@ test('answers each call of a session on its own', async () => {
 			return true;
 		},
 	);
-	assert.equal(booted.answer.prompts.length, 1);
+	assert.equal(booted.prompts.length, 1);
 });
 
 test('the wrapper stops a declined post before gh runs', async () => {
@@ -357,7 +352,7 @@ test('the wrapper stops a declined post before gh runs', async () => {
 			return true;
 		},
 	);
-	assert.equal(booted.answer.prompts.length, 1);
+	assert.equal(booted.prompts.length, 1);
 });
 
 test('refuses when a session is there but does not answer', async () => {

@@ -96,7 +96,10 @@ export type Harness = Disposable & {
 
 // Everything lives in memory, so these paths are never created: pi only needs them to look for resources there.
 const agentDir = '/nonexistent/pi-test/agent';
-const cwd = '/nonexistent/pi-test/project';
+// pi keys its extension factory cache by cwd and clears it when the cwd changes, so each harness gets a directory of its
+// own and with it its own module instances, the way a session does
+let harnesses = 0;
+const cwdFor = () => '/nonexistent/pi-test/project/' + harnesses++;
 
 type SettingsStorage = Parameters<typeof SettingsManager.fromStorage>[0];
 
@@ -138,6 +141,7 @@ export function scriptedFaux(
 
 // a real in-process pi session, not yet started: extensions load from their files, the model is scripted
 export async function createHarness(options: HarnessOptions): Promise<Harness> {
+	const cwd = cwdFor();
 	const faux: HarnessFaux =
 		options.faux ?? fauxProvider({ provider: options.provider ?? 'faux', models: options.models });
 	const settingsManager = SettingsManager.fromStorage(

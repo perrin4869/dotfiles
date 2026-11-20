@@ -222,44 +222,41 @@ async function checkoutRepo(cwd: string): Promise<string | undefined> {
 	return undefined;
 }
 
+// the account is asked once per session, since a login or GH_TOKEN can change between them, and a failure says why
+// once, because the memo runs the lookup once; the caller then treats the owner as unknown, which asks
+const account = memo(async (ctx: ExtensionContext) => {
+	try {
+		return await lookupAccount();
+	} catch (error) {
+		const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
+		ctx.ui.notify(
+			'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
+			'warning',
+		);
+		throw error;
+	}
+});
+
+async function verdict(ctx: ExtensionContext, call: Call) {
+	const post = postOf(call);
+	if (post === undefined) return 'allow';
+	// the origin of the directory and the account the token belongs to are independent lookups, so they run together
+	// a lookup that failed has already said why; the owner stays unknown, so the post asks
+	const [repo, owner] = await Promise.all([targetRepo(post.repository, call.cwd), account(ctx).catch(() => undefined)]);
+	const mine = owner?.toLowerCase();
+	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
+	let allowed: boolean;
+	try {
+		allowed = await approved(ctx, repo, post);
+	} catch (error) {
+		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
+		return 'deny ' + (error instanceof Error ? error.message : String(error));
+	}
+	return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
+}
+
 export default function (pi: ExtensionAPI) {
 	let server: Server | undefined;
-
-	// the account is asked once per session, since a login or GH_TOKEN can change between them, and a failure says why
-	// once, because the memo runs the lookup once; the caller then treats the owner as unknown, which asks
-	const account = memo(async (ctx: ExtensionContext) => {
-		try {
-			return await lookupAccount();
-		} catch (error) {
-			const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
-			ctx.ui.notify(
-				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
-				'warning',
-			);
-			throw error;
-		}
-	});
-
-	async function verdict(ctx: ExtensionContext, call: Call) {
-		const post = postOf(call);
-		if (post === undefined) return 'allow';
-		// the origin of the directory and the account the token belongs to are independent lookups, so they run together
-		// a lookup that failed has already said why; the owner stays unknown, so the post asks
-		const [repo, owner] = await Promise.all([
-			targetRepo(post.repository, call.cwd),
-			account(ctx).catch(() => undefined),
-		]);
-		const mine = owner?.toLowerCase();
-		if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
-		let allowed: boolean;
-		try {
-			allowed = await approved(ctx, repo, post);
-		} catch (error) {
-			// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
-			return 'deny ' + (error instanceof Error ? error.message : String(error));
-		}
-		return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
-	}
 
 	// the listener and the port exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {

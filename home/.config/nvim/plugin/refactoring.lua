@@ -1,8 +1,6 @@
 local yall = require('yall')
-yall.pack('async', 'async.nvim')
 yall.setup('refactoring')
 yall.pack('refactoring', 'refactoring.nvim')
-yall.deps('refactoring', 'async')
 yall.cmd('Refactor', 'refactoring')
 local with = yall.with('refactoring')
 

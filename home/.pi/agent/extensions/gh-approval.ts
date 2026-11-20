@@ -132,36 +132,30 @@ async function checkoutRepo(cwd: string): Promise<string | undefined> {
 	return undefined;
 }
 
+// strict false puts an option that takes no value into the parse result as a flag, so only a string carries one
+const text = (value: unknown) => (typeof value === 'string' ? value : undefined);
+
 async function postOf(call: Call): Promise<Post | undefined> {
-	// unknown flags are gh's own business; strict false keeps them out of the way, and a value one takes lands among the
-	// positionals, which nothing here reads past the second of
-	const { tokens } = parseArgs({
+	// unknown flags are gh's own business; strict false leaves a bare one in values, so a string is what carries a value
+	const { values, positionals } = parseArgs({
 		args: call.argv,
 		options: OPTIONS,
 		allowPositionals: true,
 		strict: false,
-		tokens: true,
 	});
-	// the value of the first of these flags the call carries, whatever spelling it used
-	const value = (...names: string[]) => {
-		for (const token of tokens) {
-			if (token.kind === 'option' && names.includes(token.name)) return token.value;
-		}
-		return undefined;
-	};
-	const carries = (...names: string[]) => value(...names) !== undefined;
-	const [group, action] = tokens.flatMap((token) => (token.kind === 'positional' ? [token.value] : []));
+	const fields = Array.isArray(values.field) ? values.field : [];
+	const [group, action] = positionals;
 	const api = group === 'api';
-	const method = value('method');
+	const method = text(values.method);
 	// --field, --raw-field and --input are gh api's three ways to send a request body
-	const fielded = carries('field', 'raw-field', 'input');
+	const fielded = fields.length > 0 || values['raw-field'] !== undefined || values.input !== undefined;
 	// an api call writes when its method says so, or, with no method, when it sends a body
 	if (api && method !== undefined && !WRITE_METHODS.has(method.toUpperCase())) return undefined;
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
 	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
 	// gh resolves an argument that names the repository over GH_REPO, so sources that disagree are no answer: ask
-	const named = [value('repo'), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
+	const named = [text(values.repo), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
 		(repo): repo is string => repo !== undefined,
 	);
 	const [first] = named;
@@ -171,12 +165,12 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	} else {
 		repo = await checkoutRepo(call.cwd);
 	}
-	const file = api ? undefined : (value('body-file') ?? value('field'));
+	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
 		text: 'gh ' + call.argv.join(' '),
 		repo,
-		title: value('title'),
-		body: value('body'),
+		title: text(values.title),
+		body: text(values.body),
 		bodyFile: file === undefined ? undefined : resolve(call.cwd, file),
 	};
 }
@@ -197,8 +191,8 @@ async function approved(ctx: ExtensionContext, post: Post): Promise<boolean> {
 }
 
 // the frames the wrapper sends: cwd, GH_REPO, the argument count, then each argument
-function framesOf(text: string): Call | undefined {
-	const parts = text.split('\0');
+function framesOf(received: string): Call | undefined {
+	const parts = received.split('\0');
 	const count = Number(parts[2]);
 	if (!Number.isInteger(count) || count < 0 || parts.length <= 3 + count) return undefined;
 	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };

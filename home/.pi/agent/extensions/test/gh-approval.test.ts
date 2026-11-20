@@ -317,6 +317,19 @@ test('refuses when a session is there but does not answer', async () => {
 	);
 });
 
+test('refuses when the only gh on PATH is itself', async () => {
+	// the link spells the wrapper's directory differently, so dropping it by path would miss this
+	using restore = overrideEnv({ PATH: join(FIXTURES, 'link') + ':/usr/bin:/bin' });
+	await assert.rejects(
+		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'perrin4869/dotfiles']),
+		(error: { code?: number; stderr?: string }) => {
+			assert.equal(error.code, 127);
+			assert.match(error.stderr ?? '', /the only gh on PATH is this wrapper/);
+			return true;
+		},
+	);
+});
+
 test('runs gh with a warning when the session named no endpoint', async () => {
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + process.env.PATH,

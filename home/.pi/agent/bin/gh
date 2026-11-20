@@ -13,6 +13,9 @@ for dir in $PATH; do
 done
 IFS=$ifs
 real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exit 127; }
+# the directory is dropped above, but a symlinked or differently spelled entry would leave the wrapper here, and execing
+# itself would ask again and again
+[ "$real" -ef "$0" ] && { echo "gh-approval: the only gh on PATH is this wrapper" >&2; exit 127; }
 
 # pi names the address it is reachable on and its port, as "host port", in the environment its commands inherit, so
 # nothing has to be resolved and no two sessions share it

@@ -44,13 +44,11 @@ const GITHUB_HOST = 'github.com';
 /** one gh call as the wrapper sends it: the directory it runs in, its argv, and the repository GH_REPO named */
 type Call = { cwd: string; argv: string[]; ghRepo?: string };
 
-/** the repositories a call names: one, none, or several that disagree */
-type Repository = { kind: 'named'; repo: string } | { kind: 'none' } | { kind: 'conflict' };
-
 type Post = {
 	/** the call as a command line, for the prompt */
 	text: string;
-	repository: Repository;
+	/** the repository the post goes to: the one the call names, or the one this checkout would push to */
+	repo?: string;
 	title?: string;
 	body?: string;
 	/** the body file, resolved against the directory the call runs in */
@@ -119,7 +117,7 @@ function apiRepo(args: string[]): string | undefined {
 	return undefined;
 }
 
-function postOf(call: Call): Post | undefined {
+async function postOf(call: Call): Promise<Post | undefined> {
 	// unknown flags are gh's own business; strict false keeps them out of the way, and a value one takes lands among the
 	// positionals, which nothing here reads past the second of
 	const { tokens } = parseArgs({
@@ -147,21 +145,21 @@ function postOf(call: Call): Post | undefined {
 	if (api && method === undefined && !fielded) return undefined;
 	// the other groups write through the actions in the list
 	if (!api && !(GROUPS.has(group?.toLowerCase()) && WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
-	// gh resolves an argument that names the repository over GH_REPO, so two sources that disagree are no answer: ask
+	// gh resolves an argument that names the repository over GH_REPO, so sources that disagree are no answer: ask
 	const named = [value('repo'), urlRepo(call.argv), apiRepo(call.argv), call.ghRepo].filter(
 		(repo): repo is string => repo !== undefined,
 	);
 	const [first] = named;
-	const repository: Repository =
-		first === undefined
-			? { kind: 'none' }
-			: named.every((entry) => entry.toLowerCase() === first.toLowerCase())
-				? { kind: 'named', repo: first }
-				: { kind: 'conflict' };
+	let repo: string | undefined;
+	if (first !== undefined) {
+		repo = named.every((entry) => entry.toLowerCase() === first.toLowerCase()) ? first : undefined;
+	} else {
+		repo = await checkoutRepo(call.cwd);
+	}
 	const file = api ? undefined : (value('body-file') ?? value('field'));
 	return {
 		text: 'gh ' + call.argv.join(' '),
-		repository,
+		repo,
 		title: value('title'),
 		body: value('body'),
 		bodyFile: file === undefined ? undefined : resolve(call.cwd, file),
@@ -189,14 +187,6 @@ function framesOf(text: string): Call | undefined {
 	const count = Number(parts[2]);
 	if (!Number.isInteger(count) || count < 0 || parts.length <= 3 + count) return undefined;
 	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };
-}
-
-// the repository the post goes to: the one the call names, the checkout's origin when it names none, or none when its
-// sources disagree, which asks rather than letting the checkout answer for them
-function targetRepo(repository: Repository, cwd: string): Promise<string | undefined> | string | undefined {
-	if (repository.kind === 'named') return repository.repo;
-	if (repository.kind === 'none') return checkoutRepo(cwd);
-	return undefined;
 }
 
 // the repository this checkout would push to: gh reads the remote the current branch tracks, and origin when it tracks
@@ -233,16 +223,14 @@ const account = memo(async (ctx: ExtensionContext) => {
 });
 
 async function verdict(ctx: ExtensionContext, call: Call) {
-	const post = postOf(call);
+	const post = await postOf(call);
 	if (post === undefined) return 'allow';
-	// the origin of the directory and the account the token belongs to are independent lookups, so they run together
 	// a lookup that failed has already said why; the owner stays unknown, so the post asks
-	const [repo, owner] = await Promise.all([targetRepo(post.repository, call.cwd), account(ctx).catch(() => undefined)]);
-	const mine = owner?.toLowerCase();
-	if (repo !== undefined && repo.split('/')[0].toLowerCase() === mine) return 'allow';
+	const owner = (await account(ctx).catch(() => undefined))?.toLowerCase();
+	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {
-		allowed = await approved(ctx, repo, post);
+		allowed = await approved(ctx, post.repo, post);
 	} catch (error) {
 		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
 		return 'deny ' + (error instanceof Error ? error.message : String(error));

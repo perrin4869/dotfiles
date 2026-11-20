@@ -321,9 +321,11 @@ test('asks when the call names the repository by URL or GH_REPO', async () => {
 test('drops a client that never finishes its frames', async () => {
 	using harness = await startSession({ extensions: [extension('gh-approval')] });
 	const socket = connect(endpoint());
-	// the server's idle timeout is what closes this, so the wait is as long as TIMEOUT_MS
+	// the cwd and GH_REPO frames, with the count and the arguments still to come
+	socket.write([CWD, '', ''].join('\0'));
+	// the server's idle timeout is what ends this, so the wait lasts as long as TIMEOUT_MS, and no answer arrives
 	await once(socket, 'close', { signal: AbortSignal.timeout(15_000) });
-	assert.equal(socket.destroyed, true);
+	assert.equal(socket.read(), null);
 });
 
 // the wrapper is a bash script, so these spawn it the way git does: a child process, handed the environment the session

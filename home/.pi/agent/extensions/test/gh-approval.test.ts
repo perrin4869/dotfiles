@@ -307,6 +307,29 @@ test('the wrapper runs the real gh for my own repository', async () => {
 	assert.deepEqual(booted.answer.prompts, []);
 });
 
+test('answers each call of a session on its own', async () => {
+	using booted = await boot();
+	// the read is allowed without a word; the post after it has to ask, so it would inherit the wrong answer if the frames
+	// of one call were still on hand for the next
+	const read = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
+		cwd: process.cwd(),
+		env: process.env,
+	});
+	assert.equal(read.stdout.trim(), 'alice');
+	await assert.rejects(
+		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
+			cwd: process.cwd(),
+			env: process.env,
+		}),
+		(error: { code?: number; stderr?: string }) => {
+			assert.equal(error.code, 1);
+			assert.match(error.stderr ?? '', /nothing was sent/);
+			return true;
+		},
+	);
+	assert.equal(booted.answer.prompts.length, 1);
+});
+
 test('the wrapper stops a declined post before gh runs', async () => {
 	using booted = await boot();
 	await assert.rejects(

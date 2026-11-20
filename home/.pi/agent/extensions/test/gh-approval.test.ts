@@ -279,23 +279,19 @@ test('asks about an api call that writes', async () => {
 	assert.match(prompts[0], /^repository: bob\/widgets$/m);
 });
 
-test('asks about a mutation whose repository it cannot name', async () => {
-	const { prompts } = await ask(['api', 'graphql', '-f', 'query=mutation { addComment(input: {}) { id } }']);
-	assert.equal(prompts.length, 1);
-	assert.match(prompts[0], /^repository: unknown/m);
-});
-
 test('reads GH_REPO as the repository an api placeholder path fills in', async () => {
 	const { prompts } = await ask(['api', 'repos/{owner}/{repo}/issues', '-f', 'title=T'], { ghRepo: 'bob/widgets' });
 	assert.equal(prompts.length, 1);
 	assert.match(prompts[0], /^repository: bob\/widgets$/m);
 });
 
-test('asks about a mutation even in a checkout that names a repository', async () => {
-	// gh resolves nothing for a graphql endpoint, so a mutation's subject is only in its query
+test('asks about a mutation whatever is around it', async () => {
+	// gh resolves nothing for a graphql endpoint, since the mutation names its subject in the query, so neither GH_REPO
+	// nor the checkout this runs in answers for it
 	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
 	const { prompts } = await ask(['api', 'graphql', '-f', 'query=mutation { addComment(input: {}) { id } }'], {
 		cwd: here.path,
+		ghRepo: 'alice/dotfiles',
 	});
 	assert.equal(prompts.length, 1);
 	assert.match(prompts[0], /^repository: unknown/m);

@@ -26,17 +26,12 @@ function checkout(remotes: Record<string, string>): Disposable & { path: string 
 	return { path, [Symbol.dispose]: () => rmSync(path, { force: true, recursive: true }) };
 }
 
-// the session names its endpoint in the environment its commands inherit, and this process is where it runs
-async function endpoint(): Promise<{ host: string; port: number }> {
-	for (let attempt = 0; attempt < 100; attempt++) {
-		const announced = process.env.GH_APPROVAL_ADDR;
-		if (announced !== undefined) {
-			const [host, port] = announced.split(' ');
-			return { host, port: Number(port) };
-		}
-		await new Promise((tick) => setTimeout(tick, 10));
-	}
-	throw new Error('gh-approval never announced its endpoint');
+// the session announces its gate while starting, which startSession waits for, in the environment its commands
+// inherit: this process's
+function endpoint(): { host: string; port: number } {
+	const [host, port] = (process.env.GH_APPROVAL_ADDR ?? '').split(' ');
+	if (host === undefined || port === undefined) throw new Error('gh-approval announced no endpoint');
+	return { host, port: Number(port) };
 }
 
 type Answer = {
@@ -69,7 +64,7 @@ async function ask(
 			notify: (message) => answer.notices.push(message),
 		},
 	});
-	const socket = connect(await endpoint());
+	const socket = connect(endpoint());
 	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
 	socket.write(frames.join('\0') + '\0');
 	for await (const chunk of socket) answer.verdict += chunk.toString();
@@ -93,7 +88,6 @@ async function throughShim(argv: string[], options: { approve?: boolean } = {}) 
 			notify: (message) => answer.notices.push(message),
 		},
 	});
-	await endpoint();
 	const failed = (error: { stdout?: string; stderr?: string; code?: number }) => {
 		answer.code = error.code;
 		return { stdout: error.stdout ?? '', stderr: error.stderr ?? '' };
@@ -403,7 +397,7 @@ test('runs gh with a warning when the session named no endpoint', async () => {
 
 test('drops a client that never finishes its frames', async () => {
 	using harness = await startSession({ extensions: [extension('gh-approval')] });
-	const socket = connect(await endpoint());
+	const socket = connect(endpoint());
 	// the server's idle timeout is what closes this, so the wait is as long as TIMEOUT_MS
 	await once(socket, 'close', { signal: AbortSignal.timeout(15_000) });
 	assert.equal(socket.destroyed, true);

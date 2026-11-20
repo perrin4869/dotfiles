@@ -286,15 +286,22 @@ test('reads GH_REPO as the repository an api placeholder path fills in', async (
 });
 
 test('asks about a mutation whatever is around it', async () => {
-	// gh resolves nothing for a graphql endpoint, since the mutation names its subject in the query, so neither GH_REPO
-	// nor the checkout this runs in answers for it
+	// the subject is a node id inside the query, and gh resolves nothing for a graphql endpoint, so neither GH_REPO nor
+	// the checkout this runs in answers for it
 	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
-	const { prompts } = await ask(['api', 'graphql', '-f', 'query=mutation { addComment(input: {}) { id } }'], {
-		cwd: here.path,
-		ghRepo: 'alice/dotfiles',
-	});
+	const { prompts } = await ask(
+		[
+			'api',
+			'graphql',
+			'-f',
+			'query=mutation { addComment(input: {subjectId: "I_kwDOABCD1234", body: "hi"}) { clientMutationId } }',
+		],
+		{ cwd: here.path, ghRepo: 'alice/dotfiles' },
+	);
 	assert.equal(prompts.length, 1);
 	assert.match(prompts[0], /^repository: unknown/m);
+	// what the reader is shown, which is all the gate knows: the node id, with no repository to compare
+	assert.match(prompts[0], /subjectId: "I_kwDOABCD1234"/);
 });
 
 test('reads an api placeholder path as the repository gh fills in', async () => {

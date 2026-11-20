@@ -296,6 +296,19 @@ test('asks when the call names the repository by URL or GH_REPO', async () => {
 	assert.match(env.prompts.join(''), /^repository: bob\/widgets$/m);
 });
 
+test('drops a client that never finishes its frames', async () => {
+	using harness = await startSession({ extensions: [extension('gh-approval')] });
+	const socket = connect(endpoint());
+	// the server's idle timeout is what closes this, so the wait is as long as TIMEOUT_MS
+	await once(socket, 'close', { signal: AbortSignal.timeout(15_000) });
+	assert.equal(socket.destroyed, true);
+});
+
+// the wrapper is a bash script, so these spawn it the way git does: a child process, handed the environment the session
+// published, with none of the session in-process. What they can assert is what the script alone produces, which the
+// session-side tests above cannot see: the PATH walk, the exit code, stderr, and the stdout of the gh it execs. All but
+// the last boot a session for it to dial; the last one covers the branch where no session named an endpoint.
+
 test('the wrapper runs the real gh for my own repository', async () => {
 	using booted = await boot();
 	// a spawn needs a real directory, and every case here names its repository, so the origin there decides nothing
@@ -386,12 +399,4 @@ test('runs gh with a warning when the session named no endpoint', async () => {
 	const { stdout, stderr } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']);
 	assert.equal(stdout.trim(), 'alice');
 	assert.match(stderr, /no pi session to ask/);
-});
-
-test('drops a client that never finishes its frames', async () => {
-	using harness = await startSession({ extensions: [extension('gh-approval')] });
-	const socket = connect(endpoint());
-	// the server's idle timeout is what closes this, so the wait is as long as TIMEOUT_MS
-	await once(socket, 'close', { signal: AbortSignal.timeout(15_000) });
-	assert.equal(socket.destroyed, true);
 });

@@ -45,8 +45,6 @@ const GITHUB_HOST = 'github.com';
 type Call = { cwd: string; argv: string[]; ghRepo?: string };
 
 type Post = {
-	/** the call as a command line, for the prompt */
-	text: string;
 	/** the repository the post goes to: the one the call names, or the one this checkout would push to */
 	repo?: string;
 	title?: string;
@@ -198,7 +196,6 @@ async function postOf(call: Call): Promise<Post | undefined> {
 		(await checkoutRepo(call.cwd));
 	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
-		text: 'gh ' + call.argv.join(' '),
 		repo,
 		title: text(values.title),
 		body: text(values.body),
@@ -206,13 +203,13 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	};
 }
 
-async function approved(ctx: ExtensionContext, post: Post): Promise<boolean> {
+async function approved(ctx: ExtensionContext, post: Post, command: string): Promise<boolean> {
 	if (!ctx.hasUI) return false;
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
 	const body = post.bodyFile === undefined ? post.body : await readFile(post.bodyFile, 'utf8');
 	const details = [
 		'repository: ' + (post.repo ?? 'unknown, the command names none'),
-		'command: ' + post.text,
+		'command: ' + command,
 		post.title && 'title: ' + post.title,
 		body && 'body:\n' + body,
 		'',
@@ -255,7 +252,7 @@ async function verdict(ctx: ExtensionContext, call: Call) {
 	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {
-		allowed = await approved(ctx, post);
+		allowed = await approved(ctx, post, 'gh ' + call.argv.join(' '));
 	} catch (error) {
 		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
 		return 'deny ' + (error instanceof Error ? error.message : String(error));

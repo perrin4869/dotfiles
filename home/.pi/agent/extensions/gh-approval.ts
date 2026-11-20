@@ -117,6 +117,21 @@ function apiRepo(args: string[]): string | undefined {
 	return undefined;
 }
 
+// the repository this checkout would push to: gh reads the remote the current branch tracks, and origin when it tracks
+// none, so this asks git the same question
+async function checkoutRepo(cwd: string): Promise<string | undefined> {
+	const tracked = await execFileAsync('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}'], {
+		cwd,
+	})
+		.then((result) => result.stdout.trim().split('/')[0])
+		.catch(() => '');
+	for (const remote of tracked === '' ? ['origin'] : [tracked, 'origin']) {
+		const url = await execFileAsync('git', ['remote', 'get-url', remote], { cwd }).catch(() => undefined);
+		if (url !== undefined) return remoteRepo(url.stdout.trim());
+	}
+	return undefined;
+}
+
 async function postOf(call: Call): Promise<Post | undefined> {
 	// unknown flags are gh's own business; strict false keeps them out of the way, and a value one takes lands among the
 	// positionals, which nothing here reads past the second of
@@ -187,21 +202,6 @@ function framesOf(text: string): Call | undefined {
 	const count = Number(parts[2]);
 	if (!Number.isInteger(count) || count < 0 || parts.length <= 3 + count) return undefined;
 	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };
-}
-
-// the repository this checkout would push to: gh reads the remote the current branch tracks, and origin when it tracks
-// none, so this asks git the same question
-async function checkoutRepo(cwd: string): Promise<string | undefined> {
-	const tracked = await execFileAsync('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}'], {
-		cwd,
-	})
-		.then((result) => result.stdout.trim().split('/')[0])
-		.catch(() => '');
-	for (const remote of tracked === '' ? ['origin'] : [tracked, 'origin']) {
-		const url = await execFileAsync('git', ['remote', 'get-url', remote], { cwd }).catch(() => undefined);
-		if (url !== undefined) return remoteRepo(url.stdout.trim());
-	}
-	return undefined;
 }
 
 // the account is asked once per session, since a login or GH_TOKEN can change between them, and a failure says why

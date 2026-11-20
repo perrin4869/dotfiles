@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# gh, gated: stowed to ~/.pi/agent/bin/gh, a directory pi puts first on the PATH of the commands it runs, so nothing
+# outside pi sees it. The real gh is whatever is left on PATH once this directory is dropped, so none is baked in.
+set -u
+
+self=$(cd -- "$(dirname -- "$0")" && pwd)
+rest=
+ifs=$IFS
+IFS=:
+for dir in $PATH; do
+	[ "$dir" = "$self" ] && continue
+	rest=${rest:+$rest:}$dir
+done
+IFS=$ifs
+real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exit 127; }
+# the directory is dropped above, but a symlinked or differently spelled entry would leave the wrapper here, and execing
+# itself would ask again and again
+[ "$real" -ef "$0" ] && { echo "gh-approval: the only gh on PATH is this wrapper" >&2; exit 127; }
+
+# pi names the address it is reachable on and its port, as "host port", in the environment its commands inherit, so
+# nothing has to be resolved and no two sessions share it
+endpoint=${GH_APPROVAL_ADDR:-}
+verdict=
+if [ -n "$endpoint" ]; then
+	read -r host port <<< "$endpoint" || true
+	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
+	# leaves the shell running, where one on exec would end the script silently
+	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/$host/$port"; then
+		verdict=
+	fi
+fi
+
+case $verdict in
+allow) exec "$real" "$@" ;;
+deny\ *)
+	echo "gh-approval: ${verdict#deny }" >&2
+	exit 1
+	;;
+esac
+
+# pi named an endpoint and it did not answer: refusing is the point, where running unchecked would defeat the gate
+if [ -n "$endpoint" ]; then
+	echo "gh-approval: the session did not answer; nothing was sent" >&2
+	exit 1
+fi
+
+echo "gh-approval: no pi session to ask, running gh unchecked" >&2
+exec "$real" "$@"

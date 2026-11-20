@@ -23,8 +23,8 @@
 
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
-import { fileURLToPath } from 'node:url';
-import { Language, type Node, Parser } from 'web-tree-sitter';
+import type { Node, Parser } from 'web-tree-sitter';
+import { getParser } from './lib/tree-sitter.ts';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
 // runs no program itself. Commands nested in those units are units of their own, so one still asking keeps the ask.
@@ -68,46 +68,6 @@ const PROGRAM_VARIABLES = new Set([
 // the same by family: the dynamic loader, git, npm, and the interpreters' startup code and module search paths
 const PROGRAM_PREFIX = /^(?:LD_|DYLD_|GIT_|npm_config_|LUA_|PYTHON|PERL5|RUBY)/;
 const isProgramVariable = (name: string) => PROGRAM_VARIABLES.has(name) || PROGRAM_PREFIX.test(name);
-
-const wasm = (specifier: string) => fileURLToPath(import.meta.resolve(specifier));
-
-// Parser's constructor needs the runtime, so it throws only before init
-function initialized() {
-	try {
-		new Parser().delete();
-		return true;
-	} catch {
-		return false;
-	}
-}
-
-// pi-permission-system cuts a command into units with this grammar, so the link reads each unit the same way. pi
-// installs its packages in a tree of its own, so there this copy is the link's alone; where both resolve one copy, as
-// in the tests, pi-permission-system has initialized it by the time an ask arrives, and a second init would swap the
-// module-global runtime its parser runs on
-async function loadParser() {
-	if (!initialized()) await Parser.init({ locateFile: () => wasm('web-tree-sitter/web-tree-sitter.wasm') });
-	const parser = new Parser();
-	parser.setLanguage(await Language.load(wasm('tree-sitter-bash/tree-sitter-bash.wasm')));
-	return parser;
-}
-
-// The parser lives in a process-wide slot: pi re-evaluates this module on every reload and session replacement, and
-// each load instantiates the grammar wasm, about a megabyte that web-tree-sitter offers no way to free. The cached
-// parser keeps its own copy of the runtime alive, so it still parses after this module is evaluated again.
-const PARSER = Symbol.for('pi-extensions:bash-syntax-link:parser');
-
-// the promise rather than the parser: concurrent asks share one load, and a load that fails is retried, not remembered
-function getParser(): Promise<Parser> {
-	const pending: Promise<Parser> | undefined = Reflect.get(globalThis, PARSER);
-	if (pending !== undefined) return pending;
-	const load = loadParser().catch((error: unknown) => {
-		Reflect.deleteProperty(globalThis, PARSER);
-		throw error;
-	});
-	Reflect.set(globalThis, PARSER, load);
-	return load;
-}
 
 // the variable an assignment writes: `a` in `a=1`, `a+=1` and `a[1]=1`
 function assignedName(assignment: Node): string | undefined {
@@ -178,23 +138,21 @@ function unitRunsNoProgram(parser: Parser, unit: string) {
 const DEFER = { kind: 'defer' } as const;
 
 // path and external_directory asks are left to the user; pi-permission-system would not honor an allow there anyway
-const authorizeWith =
-	(parser: () => Promise<Parser>): Authorizer['authorize'] =>
-	async ({ accessIntent }, _query, log) => {
-		if (accessIntent?.surface !== 'bash') return DEFER;
-		const units = accessIntent.askingUnits;
-		if (!units?.length) return DEFER;
-		// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
-		const bash = await parser().catch((error: unknown) => {
-			log.review('bash_syntax_grammar_unavailable', { error: String(error) });
-			return undefined;
-		});
-		if (!bash) return DEFER;
-		const syntax = units.filter(({ command }) => unitRunsNoProgram(bash, command)).map(({ command }) => command);
-		if (syntax.length === units.length) return { kind: 'allow' };
-		// naming the settled units leaves the prompt about the command that still asks, instead of about the assignment
-		return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
-	};
+const authorizer: Authorizer['authorize'] = async ({ accessIntent }, _query, log) => {
+	if (accessIntent?.surface !== 'bash') return DEFER;
+	const units = accessIntent.askingUnits;
+	if (!units?.length) return DEFER;
+	// a link that throws is a gate_error, which blocks the call, so a grammar that will not load asks instead
+	const bash = await getParser().catch((error: unknown) => {
+		log.review('bash_syntax_grammar_unavailable', { error: String(error) });
+		return undefined;
+	});
+	if (!bash) return DEFER;
+	const syntax = units.filter(({ command }) => unitRunsNoProgram(bash, command)).map(({ command }) => command);
+	if (syntax.length === units.length) return { kind: 'allow' };
+	// naming the settled units leaves the prompt about the command that still asks, instead of about the assignment
+	return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
+};
 
 export default function (pi: ExtensionAPI) {
 	let dispose: (() => void) | undefined;
@@ -213,7 +171,7 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		dispose = service.registerAuthorizer(LINK, authorizeWith(getParser));
+		dispose = service.registerAuthorizer(LINK, authorizer);
 	});
 
 	pi.on('session_shutdown', () => {

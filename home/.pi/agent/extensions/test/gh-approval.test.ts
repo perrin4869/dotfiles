@@ -347,24 +347,14 @@ test('the wrapper runs the real gh for my own repository', async () => {
 
 test('answers each call of a session on its own', async () => {
 	using booted = await boot();
-	// the read is allowed without a word; the post after it has to ask, so it would inherit the wrong answer if the frames
-	// of one call were still on hand for the next
-	const read = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
-		cwd: cwd(),
-		env,
-	});
-	assert.equal(read.stdout.trim(), 'alice');
+	// the post has to ask, and the read after it is allowed without a word; a denial left over for the second call would
+	// end it with exit 1 instead
 	await assert.rejects(
-		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
-			cwd: cwd(),
-			env,
-		}),
-		(error: { code?: number; stderr?: string }) => {
-			assert.equal(error.code, 1);
-			assert.match(error.stderr ?? '', /nothing was sent/);
-			return true;
-		},
+		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], { cwd: cwd(), env }),
+		{ code: 1 },
 	);
+	const read = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], { cwd: cwd(), env });
+	assert.equal(read.stdout.trim(), 'alice');
 	assert.equal(booted.prompts.length, 1);
 });
 

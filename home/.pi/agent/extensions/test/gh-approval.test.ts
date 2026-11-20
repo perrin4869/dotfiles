@@ -285,6 +285,23 @@ test('asks about a mutation whose repository it cannot name', async () => {
 	assert.match(prompts[0], /^repository: unknown/m);
 });
 
+test('asks about a mutation even in a checkout that names a repository', async () => {
+	// gh resolves nothing for a graphql endpoint, so a mutation's subject is only in its query
+	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	const { prompts } = await ask(['api', 'graphql', '-f', 'query=mutation { addComment(input: {}) { id } }'], {
+		cwd: here.path,
+	});
+	assert.equal(prompts.length, 1);
+	assert.match(prompts[0], /^repository: unknown/m);
+});
+
+test('reads an api placeholder path as the repository gh fills in', async () => {
+	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	const { verdict, prompts } = await ask(['api', 'repos/{owner}/{repo}/issues', '-f', 'title=T'], { cwd: here.path });
+	assert.deepEqual(prompts, []);
+	assert.equal(verdict.trim(), 'allow');
+});
+
 test('asks when the call names the repository by URL or GH_REPO', async () => {
 	const url = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi']);
 	assert.match(url.prompts.join(''), /^repository: bob\/widgets$/m);

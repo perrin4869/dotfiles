@@ -119,7 +119,8 @@ function bareRepo(args: string[]): string | undefined {
 function apiRepo(args: string[]): string | undefined {
 	for (const arg of args) {
 		const match = API_PATH.exec(arg);
-		if (match) return match[1] + '/' + match[2];
+		// {owner} and {repo} are gh's placeholders, filled from the repository gh resolved, so they name no repository
+		if (match !== null && !match[0].includes('{')) return match[1] + '/' + match[2];
 	}
 	return undefined;
 }
@@ -186,14 +187,13 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	if (!api && (!GROUPS.has(group?.toLowerCase()) || !WRITE_ACTIONS.has(action?.toLowerCase()))) return undefined;
 	// gh repo names its target as a bare OWNER/REPO positional, and gh reads that before `-R`
 	const positional = group?.toLowerCase() === 'repo' ? bareRepo(positionals) : undefined;
-	// gh reads a URL positional first, then -R, then GH_REPO, and asks git only when none of them names one
-	const repo =
-		urlRepo(positionals) ??
-		apiRepo(positionals) ??
-		positional ??
-		text(values.repo) ??
-		call.ghRepo ??
-		(await checkoutRepo(call.cwd));
+	const named = urlRepo(positionals) ?? apiRepo(positionals) ?? positional;
+	// gh fills {owner} and {repo} in an api path from the repository it resolved: the one api endpoint that does not name
+	// its own, and one a graphql mutation never is, since its subject sits in the query rather than in the arguments
+	const endpoint = api ? positionals[1] : undefined;
+	const asksGh = !api || /\{(?:owner|repo)\}/.test(endpoint ?? '');
+	// the repository gh resolves is the one it reads from -R, then GH_REPO, then this checkout's remotes
+	const repo = named ?? (asksGh ? (text(values.repo) ?? call.ghRepo ?? (await checkoutRepo(call.cwd))) : undefined);
 	const file = api ? undefined : (text(values['body-file']) ?? text(fields[0]));
 	return {
 		repo,

@@ -1,0 +1,15 @@
+#!/bin/sh
+# usage: screenshot [-s]
+# saves the screen, or with -s a selected region, to ~/<date>.png
+
+file="$HOME/$(date +%Y-%m-%d_%H:%M:%S).png"
+
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+  if [ "${1:-}" = -s ]; then
+    region=$(slurp) || exit
+    exec grim -g "$region" "$file"
+  fi
+  exec grim "$file"
+fi
+
+exec maim "$@" "$file"

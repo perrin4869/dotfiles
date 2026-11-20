@@ -4,7 +4,12 @@ SYSD=$(command -v systemctl)
 ELOGIND=$(command -v loginctl)
 
 lock() {
-    i3lock
+    if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+        # -f forks once locked, like i3lock does, so "lock && suspend" waits for the lock
+        swaylock -f
+    else
+        i3lock
+    fi
 }
 
 suspend() {
@@ -53,7 +58,11 @@ run() {
             lock
             ;;
         logout)
-            i3-msg exit
+            if [ -n "${SWAYSOCK:-}" ]; then
+                swaymsg exit
+            else
+                i3-msg exit
+            fi
             ;;
         suspend)
             lock && suspend

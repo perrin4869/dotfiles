@@ -1,0 +1,6 @@
+#!/bin/bash
+# run by the sway config, since tray applets need WAYLAND_DISPLAY, which only exists once sway is up
+
+. "$HOME/.local/libexec/session"
+
+session_daemons

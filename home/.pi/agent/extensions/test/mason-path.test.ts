@@ -12,7 +12,7 @@ const MASON_BIN = join('/xdg', 'nvim', 'mason', 'bin');
 // PATH after a fresh session that starts with `path` runs these tools
 async function pathAfter(tools: string[], path = '/usr/bin') {
 	using restoreEnv = overrideEnv({ PATH: path });
-	using harness = await createHarness({
+	await using harness = await createHarness({
 		extensions: [extension('mason-path')],
 		// separate extensions: setToolSource relabels the one that registered lsp_hover
 		factories: [stubTools('lsp_hover'), stubTools('other')],

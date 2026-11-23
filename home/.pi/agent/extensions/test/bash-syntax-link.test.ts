@@ -33,7 +33,7 @@ type Ask = {
 async function ask(command: string): Promise<Ask> {
 	const asked: Ask = { resolutions: [], prompts: [] };
 	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: AGENT_DIR });
-	using harness = await startSession({
+	await using harness = await startSession({
 		extensions: [permissionSystem, extension('bash-syntax-link')],
 		factories: [
 			(pi) => {
@@ -129,7 +129,7 @@ for (const command of [
 test('says so when pi-permission-system published no service', async () => {
 	const notify = mock.fn<NotifyListener>();
 	// the link alone: no extension publishes a service, so nothing registers it
-	using harness = await startSession({ extensions: [extension('bash-syntax-link')], ui: { notify } });
+	await using harness = await startSession({ extensions: [extension('bash-syntax-link')], ui: { notify } });
 	harness.respond(fauxAssistantMessage('ok'));
 	await harness.session.prompt('go');
 	assert.deepEqual(

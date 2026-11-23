@@ -9,12 +9,12 @@ const ASKPASS = join(homedir(), '.local', 'bin', 'askpass');
 
 test('points sudo at the askpass helper', async () => {
 	using restore = overrideEnv({ SUDO_ASKPASS: undefined });
-	using h = await startSession({ extensions: [extension('sudo-askpass')] });
+	await using h = await startSession({ extensions: [extension('sudo-askpass')] });
 	assert.equal(env.SUDO_ASKPASS, ASKPASS);
 });
 
 test('keeps one that is already set', async () => {
 	using restore = overrideEnv({ SUDO_ASKPASS: '/somewhere/else' });
-	using h = await startSession({ extensions: [extension('sudo-askpass')] });
+	await using h = await startSession({ extensions: [extension('sudo-askpass')] });
 	assert.equal(env.SUDO_ASKPASS, '/somewhere/else');
 });

@@ -26,17 +26,17 @@ async function turn(h: Harness) {
 }
 
 test('does nothing unless enabled', async () => {
-	using h = await start();
+	await using h = await start();
 	assert.equal(await turn(h), 'start');
 });
 
 test('uses the execute model outside plan mode', async () => {
-	using h = await start({ projectSettings: ENABLED });
+	await using h = await start({ projectSettings: ENABLED });
 	assert.equal(await turn(h), 'execute');
 });
 
 test('switches with plan mode', async () => {
-	using h = await start({ projectSettings: ENABLED });
+	await using h = await start({ projectSettings: ENABLED });
 	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'plan');
 	await h.session.prompt('/plan exit');
@@ -44,19 +44,19 @@ test('switches with plan mode', async () => {
 });
 
 test('project settings override global ones per field', async () => {
-	using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { execute: 'faux/start' } } });
+	await using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { execute: 'faux/start' } } });
 	assert.equal(await turn(h), 'start');
 	await h.session.prompt('/plan start');
 	assert.equal(await turn(h), 'plan');
 });
 
 test('a project can disable a global enable', async () => {
-	using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { enabled: false } } });
+	await using h = await start({ globalSettings: ENABLED, projectSettings: { opusplan: { enabled: false } } });
 	assert.equal(await turn(h), 'start');
 });
 
 test('/opusplan enables it at once', async () => {
-	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
+	await using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
 	await h.session.prompt('/opusplan');
 	assert.equal(h.session.model?.id, 'execute');
 	await h.session.prompt('/plan start');
@@ -64,7 +64,7 @@ test('/opusplan enables it at once', async () => {
 });
 
 test('/opusplan twice keeps it enabled', async () => {
-	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
+	await using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
 	await h.session.prompt('/opusplan');
 	await h.session.prompt('/opusplan');
 	assert.equal(h.session.model?.id, 'execute');
@@ -73,7 +73,7 @@ test('/opusplan twice keeps it enabled', async () => {
 });
 
 test('/opusplan keeps an enable from the settings', async () => {
-	using h = await start({ projectSettings: ENABLED });
+	await using h = await start({ projectSettings: ENABLED });
 	await h.session.prompt('/opusplan');
 	assert.equal(await turn(h), 'execute');
 	await h.session.prompt('/plan start');
@@ -81,7 +81,7 @@ test('/opusplan keeps an enable from the settings', async () => {
 });
 
 test('switching models disables it', async () => {
-	using h = await start({ projectSettings: ENABLED });
+	await using h = await start({ projectSettings: ENABLED });
 	assert.equal(await turn(h), 'execute');
 	const model = h.session.modelRuntime.getModel('faux', 'start');
 	assert.ok(model);
@@ -91,7 +91,7 @@ test('switching models disables it', async () => {
 });
 
 test('a model switch survives /reload', async () => {
-	using h = await start({ projectSettings: ENABLED });
+	await using h = await start({ projectSettings: ENABLED });
 	assert.equal(await turn(h), 'execute');
 	const model = h.session.modelRuntime.getModel('faux', 'start');
 	assert.ok(model);
@@ -101,7 +101,7 @@ test('a model switch survives /reload', async () => {
 });
 
 test('/opusplan survives /reload', async () => {
-	using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
+	await using h = await start({ globalSettings: { opusplan: { plan: 'faux/plan', execute: 'faux/execute' } } });
 	await h.session.prompt('/opusplan');
 	await h.session.reload();
 	await h.session.prompt('/plan start');
@@ -110,7 +110,7 @@ test('/opusplan survives /reload', async () => {
 
 test('keeps the model and warns when the target is unavailable', async () => {
 	const notify = mock.fn<NotifyListener>();
-	using h = await start({
+	await using h = await start({
 		projectSettings: { opusplan: { enabled: true, plan: 'faux/plan', execute: 'faux/missing' } },
 		ui: { notify },
 	});
@@ -126,7 +126,7 @@ test('keeps the model and warns when the target is unavailable', async () => {
 
 test('warns about an unknown plan model when the session starts', async () => {
 	const notify = mock.fn<NotifyListener>();
-	using h = await start({
+	await using h = await start({
 		projectSettings: { opusplan: { enabled: true, plan: 'faux/missing', execute: 'faux/execute' } },
 		ui: { notify },
 	});
@@ -138,7 +138,7 @@ test('warns about an unknown plan model when the session starts', async () => {
 
 test('checks the models when /opusplan enables it', async () => {
 	const notify = mock.fn<NotifyListener>();
-	using h = await start({
+	await using h = await start({
 		globalSettings: { opusplan: { plan: 'faux/missing', execute: 'faux/execute' } },
 		ui: { notify },
 	});
@@ -154,13 +154,16 @@ test('checks the models when /opusplan enables it', async () => {
 });
 
 test('ignores an untrusted project', async () => {
-	using h = await start({ projectSettings: ENABLED, projectTrusted: false });
+	await using h = await start({ projectSettings: ENABLED, projectTrusted: false });
 	assert.equal(await turn(h), 'start');
 });
 
 test('warns once about invalid settings and falls back to the defaults', async () => {
 	const notify = mock.fn<NotifyListener>();
-	using h = await start({ projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } }, ui: { notify } });
+	await using h = await start({
+		projectSettings: { opusplan: { enabled: 'yes', plan: 'no-provider' } },
+		ui: { notify },
+	});
 	assert.equal(await turn(h), 'start');
 	assert.equal(await turn(h), 'start');
 	assert.equal(notify.mock.callCount(), 1);

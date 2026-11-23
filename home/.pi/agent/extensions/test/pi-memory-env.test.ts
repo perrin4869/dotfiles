@@ -41,7 +41,7 @@ async function summarized(
 ) {
 	rmSync(memoryDir, { recursive: true, force: true });
 	using restoreEnv = overrideEnv({ PI_MEMORY_EXIT_SUMMARY: options.explicit });
-	using h = await startSession({
+	await using h = await startSession({
 		extensions: [await packageExtension('pi-memory'), extension('pi-memory-env')],
 		faux,
 		factories: options.factories,

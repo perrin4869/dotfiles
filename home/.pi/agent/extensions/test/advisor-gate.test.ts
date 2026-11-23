@@ -48,7 +48,7 @@ async function offeredTools(h: Harness) {
 }
 
 const offersAdvisorIn = async (options?: Partial<HarnessOptions>) => {
-	using h = await start(options);
+	await using h = await start(options);
 	return (await offeredTools(h)).has('advisor');
 };
 
@@ -56,14 +56,14 @@ const ENABLED = { advisor: { enabled: true } };
 const DISABLED = { advisor: { enabled: false } };
 
 test('keeps the advisor and the gate out of the prompt by default', async () => {
-	using h = await start();
+	await using h = await start();
 	const offered = await offeredTools(h);
 	assert.ok(!offered.has('advisor') && !offered.has('advisor_gate'), [...offered].join());
 });
 
 // opusplan switches models while the run starts, which makes rpiv-advisor re-add its tool
 test('keeps the advisor out when another extension switches models', async () => {
-	using h = await startSession({
+	await using h = await startSession({
 		extensions: [await packageExtension('@juicesharp/rpiv-advisor'), extension('advisor-gate'), extension('opusplan')],
 		models: [{ id: 'executor' }, { id: 'reviewer' }, { id: 'target' }],
 		model: 'executor',
@@ -100,7 +100,7 @@ test('an untrusted project cannot enable the advisor', async () => {
 });
 
 test('stays hidden when the model changes', async () => {
-	using h = await start();
+	await using h = await start();
 	const model = h.session.modelRuntime.getModel('faux', 'reviewer');
 	assert.ok(model);
 	await h.session.setModel(model);
@@ -108,13 +108,13 @@ test('stays hidden when the model changes', async () => {
 });
 
 test('an advisor call in a disabled project fails', async () => {
-	using h = await start();
+	await using h = await start();
 	h.respond(fauxAssistantMessage(fauxToolCall('advisor', {}), { stopReason: 'toolUse' }), fauxAssistantMessage('done'));
 	await h.session.prompt('go');
 	assert.equal(toolResults(h.session)[0].isError, true);
 });
 
 test('leaves other tools alone', async () => {
-	using h = await start();
+	await using h = await start();
 	assert.ok((await offeredTools(h)).has('other'));
 });

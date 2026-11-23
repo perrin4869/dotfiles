@@ -28,7 +28,7 @@ test('PI.md shows every settings field in an example', async () => {
 	// the flag has to be set before the boot, which is what loads the extensions and runs their defineSettings
 	using records = overrideEnv({ PI_SETTINGS_RECORD: '1' });
 	// every extension pi would load from the directory, so a new one is covered without touching this test
-	using running = await startSession({
+	await using running = await startSession({
 		extensions: (await readdir(ROOT))
 			.filter((name) => name.endsWith('.ts'))
 			.toSorted()

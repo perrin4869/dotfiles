@@ -17,16 +17,13 @@ real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exi
 # itself would ask again and again
 [ "$real" -ef "$0" ] && { echo "gh-approval: the only gh on PATH is this wrapper" >&2; exit 127; }
 
-# pi names the unix socket its session listens on, in the environment its commands inherit, so nothing has to be
-# resolved and no two sessions share it. A socket rather than a loopback port because a sandboxed command has a network
-# namespace of its own, where the session's loopback does not exist, while the temp directory is shared
+# a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
 endpoint=${GH_APPROVAL_SOCKET:-}
 verdict=
 if [ -n "$endpoint" ]; then
 	command -v socat >/dev/null || { echo "gh-approval: socat is missing, so nothing was sent" >&2; exit 1; }
-	# the frames go in as the pipe's input and the answer comes out of it, so one socat does the whole exchange; a failed
-	# connect leaves no answer behind, and the gate refuses rather than running unchecked
-	if ! verdict=$(printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" | socat - UNIX-CONNECT:"$endpoint" 2>/dev/null); then
+	# socat stops waiting 0.5s after its input ends unless -t says otherwise, and a dialog has no time limit
+	if ! verdict=$(printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" | socat -t 86400 - UNIX-CONNECT:"$endpoint" 2>/dev/null); then
 		verdict=
 	fi
 fi

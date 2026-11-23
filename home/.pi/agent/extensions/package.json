@@ -21,10 +21,10 @@
     "@earendil-works/pi-coding-agent": "^1.5.2",
     "@earendil-works/pi-tui": "^1.5.0",
     "@juicesharp/rpiv-advisor": "2.15.0",
-    "@narumitw/pi-plan-mode": "0.60.3",
+    "@narumitw/pi-plan-mode": "0.61.0",
     "@types/node": "^26.6.6",
     "pi-memory": "0.4.2",
-    "pi-subagents": "0.89.1",
+    "pi-subagents": "0.90.0",
     "typebox": "^1.3.27"
   }
 }

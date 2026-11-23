@@ -274,6 +274,14 @@ test('leaves reads alone', async () => {
 	}
 });
 
+test('the announced endpoint is one bash can dial', async () => {
+	using harness = await startSession({ extensions: [extension('gh-approval')] });
+	const { host, port } = endpoint();
+	// /dev/tcp is how the wrapper reaches the session, so whichever address localhost resolved to on this host has to be
+	// one the shell itself can dial, and this is the shell the wrapper runs under
+	await execFileAsync('bash', ['-c', 'exec 3<>/dev/tcp/' + host + '/' + port]);
+});
+
 test('asks about an api call that writes', async () => {
 	const { prompts } = await ask(['api', 'repos/bob/widgets/issues/3/comments', '-f', 'body=hello']);
 	assert.equal(prompts.length, 1);

@@ -1,9 +1,10 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
-import { constants } from 'node:fs';
+import { constants, mkdirSync } from 'node:fs';
 import { access } from 'node:fs/promises';
-import { readFile } from 'node:fs/promises';
+import { chmod, readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -285,7 +286,9 @@ export default function (pi: ExtensionAPI) {
 	// the listener and the port exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
 		if (server === undefined) {
-			server = createServer(async (socket) => {
+			// a client that sends its frames and shuts its write side is done talking, not hanging up, and socat does exactly
+			// that: half-closing must not end the exchange before the answer is written
+			server = createServer({ allowHalfOpen: true }, async (socket) => {
 				socket.setEncoding('utf8');
 				socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
 				// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
@@ -320,36 +323,35 @@ export default function (pi: ExtensionAPI) {
 					// the client hung up mid-exchange; there is nobody left to answer
 				}
 			});
-			// loopback, for security: bound anywhere else, the network could ask this session to post, and the protocol
-			// carries nothing that could tell a peer from the wrapper. The port is the OS's, and the session publishes it
-			// with the address so the wrapper dials what was bound
-			server.listen(0, 'localhost');
-			// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
-			// rejects rather than leaving the session waiting on a promise nothing will settle
+			// a unix socket rather than a TCP port: a sandboxed command has a network namespace of its own, where the
+			// session's loopback does not exist. The cache home is where both sides of that boundary can write, unlike the
+			// agent directory, which the sandbox mounts read-only, and the name is unique to the session
+			const dir = env.XDG_CACHE_HOME ?? join(homedir(), '.cache');
+			mkdirSync(dir, { recursive: true });
+			const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
+			server.listen(path);
 			try {
+				// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
+				// rejects rather than leaving the session waiting on a promise nothing will settle
 				await once(server, 'listening', { signal: AbortSignal.timeout(TIMEOUT_MS) });
+				await chmod(path, 0o600);
 			} catch (error) {
-				server.close();
-				ctx.ui.notify('gh-approval: cannot listen on loopback, so gh runs ungated: ' + String(error), 'warning');
+				// a server that never bound has no name to remove, and closing it would raise an error nothing listens for
+				if (server.listening) server.close();
 				server = undefined;
+				ctx.ui.notify('gh-approval: cannot listen on a socket, so gh runs ungated: ' + String(error), 'warning');
 				return;
 			}
-		}
-		try {
-			const address = server.address();
-			// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
-			if (address === null || typeof address === 'string') throw new Error('the listener has no address');
-			// the commands this session runs inherit this, so the wrapper dials what was bound rather than resolving anything
-			env.GH_APPROVAL_ADDR = address.address + ' ' + address.port;
-		} catch (error) {
-			ctx.ui.notify('gh-approval: cannot announce its address, so gh runs ungated: ' + String(error), 'warning');
+			// the commands this session runs inherit this, so the wrapper dials what was bound rather than looking anything up
+			env.GH_APPROVAL_SOCKET = path;
 		}
 	});
 
-	// the endpoint file goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
+	// the socket goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
 	pi.on('session_shutdown', () => {
+		delete env.GH_APPROVAL_SOCKET;
+		// closing takes the socket's name with it, and a session never reuses one
 		server?.close();
 		server = undefined;
-		delete env.GH_APPROVAL_ADDR;
 	});
 }

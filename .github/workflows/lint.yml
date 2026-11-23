@@ -34,6 +34,8 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
+      - name: install socat # the gh wrapper dials its session's socket with it
+        run: sudo apt-get install -y socat
       - name: install
         run: npm ci --ignore-scripts
       - name: tsc, oxlint, oxfmt

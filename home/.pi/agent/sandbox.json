@@ -41,6 +41,7 @@
       "~/.gnupg/pubring.kbx",
       "~/.gnupg/trustdb.gpg",
       "~/.gnupg/gpg.conf",
+      "~/.ssh/known_hosts",
       "~/.Xauthority",
       "/run/user/*/gnupg",
       "/run/user/*/gh-approval-*.sock"

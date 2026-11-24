@@ -119,3 +119,6 @@ node_modules/
 
 # the pty child its listener socket leaves behind
 home/.config/nvim/spec/.nvim.sock
+
+# this repo is built around pi, so its project sandbox rules are tracked, unlike in other projects
+!/.pi/sandbox.json

@@ -3,6 +3,7 @@
   "enableAccessRequestTool": true,
   "sandboxUserShell": false,
   "network": {
+    "allowAllUnixSockets": true,
     "allowedDomains": [
       "npmjs.org",
       "*.npmjs.org",
@@ -25,22 +26,23 @@
   "filesystem": {
     "denyRead": [
       "/home",
-      "~/dotfiles/home/.gnupg",
-      "~/dotfiles/home/.npmrc",
-      "~/dotfiles/home/.npmrc.local",
-      "~/dotfiles/home/.vim/undo",
-      "~/dotfiles/home/.vim/backup",
-      "~/dotfiles/home/.local/share/nvim/undo"
+      "/run"
     ],
     "allowRead": [
       ".",
-      "~/.local/bin",
-      "~/dotfiles/home/.local/bin",
-      "~/dotfiles/deps",
+      "~/.local/bin/*",
+      "~/.local/share/pipx/venvs/pre-commit",
       "~/.config/git",
       "~/.config/rtk",
       "~/.cache",
       "~/.npm",
+      "~/.config/gh",
+      "~/.pi/agent/bin",
+      "~/.gnupg/pubring.kbx",
+      "~/.gnupg/trustdb.gpg",
+      "~/.gnupg/gpg.conf",
+      "~/.Xauthority",
+      "/run/user/*/gnupg",
       "/run/user/*/gh-approval-*.sock"
     ],
     "allowWrite": [

@@ -1,0 +1,16 @@
+{
+  "network": {
+    "allowedDomains": [
+      "gitlab.com"
+    ]
+  },
+  "filesystem": {
+    "denyRead": [
+      "./home/.npmrc",
+      "./home/.npmrc.local",
+      "./home/.vim/undo",
+      "./home/.vim/backup",
+      "./home/.local/share/nvim/undo"
+    ]
+  }
+}

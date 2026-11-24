@@ -91,13 +91,13 @@ function githubRepo(host: string, path: string): string | undefined {
 		.replace(/^\/+/, '')
 		.replace(/\.git$/, '')
 		.split('/');
-	return owner !== undefined && repo !== undefined ? owner + '/' + repo : undefined;
+	return owner !== undefined && repo !== undefined ? `${owner}/${repo}` : undefined;
 }
 
 /** the repository a git remote names: `git@github.com:owner/repo`, or any URL with that host, port and all */
 function remoteRepo(remote: string): string | undefined {
 	const scp = /^(?:[^@/\s]+@)?([^:/\s]+):([^/\s]+)\/([^/\s]+?)(?:\.git)?$/.exec(remote);
-	if (scp !== null) return githubRepo(scp[1], scp[2] + '/' + scp[3]);
+	if (scp !== null) return githubRepo(scp[1], `${scp[2]}/${scp[3]}`);
 	try {
 		const { hostname, pathname } = new URL(remote);
 		return githubRepo(hostname, pathname);
@@ -129,7 +129,7 @@ function apiRepo(args: string[]): string | undefined {
 	for (const arg of args) {
 		const match = API_PATH.exec(arg);
 		// {owner} and {repo} are gh's placeholders, filled from the repository gh resolved, so they name no repository
-		if (match !== null && !match[0].includes('{')) return match[1] + '/' + match[2];
+		if (match !== null && !match[0].includes('{')) return `${match[1]}/${match[2]}`;
 	}
 	return undefined;
 }
@@ -229,14 +229,14 @@ async function approved(ctx: ExtensionContext, post: Post, command: string, sign
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
 	const body = post.bodyFile === undefined ? post.body : await readFile(post.bodyFile, 'utf8');
 	const details = [
-		'repository: ' + (post.repo ?? 'unknown, the command names none'),
-		'command: ' + command,
-		post.title && 'title: ' + post.title,
-		body && 'body:\n' + body,
+		`repository: ${post.repo ?? 'unknown, the command names none'}`,
+		`command: ${command}`,
+		post.title && `title: ${post.title}`,
+		body && `body:\n${body}`,
 		'',
 		RULE,
 	].filter(Boolean);
-	return ctx.ui.confirm('Post to ' + (post.repo ?? 'GitHub') + '?', details.join('\n'), { signal });
+	return ctx.ui.confirm(`Post to ${post.repo ?? 'GitHub'}?`, details.join('\n'), { signal });
 }
 
 // the frames the wrapper sends: cwd, GH_REPO, the argument count, then each argument
@@ -286,7 +286,7 @@ async function verdict(ctx: ExtensionContext, call: Call, signal: AbortSignal) {
 		.catch((error: unknown) => {
 			const reason = (error instanceof Error ? error.message : String(error)).split('\n')[0];
 			ctx.ui.notify(
-				'gh-approval: cannot tell which account the token belongs to (' + reason + '), so every post asks',
+				`gh-approval: cannot tell which account the token belongs to (${reason}), so every post asks`,
 				'warning',
 			);
 			return undefined;
@@ -294,12 +294,12 @@ async function verdict(ctx: ExtensionContext, call: Call, signal: AbortSignal) {
 	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {
-		allowed = await approved(ctx, post, 'gh ' + call.argv.join(' '), signal);
+		allowed = await approved(ctx, post, `gh ${call.argv.join(' ')}`, signal);
 	} catch (error) {
 		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
-		return 'deny ' + (error instanceof Error ? error.message : String(error));
+		return `deny ${error instanceof Error ? error.message : String(error)}`;
 	}
-	return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
+	return allowed ? 'allow' : `deny ${RULE}; nothing was sent`;
 }
 
 export default scoped((pi, scope) => {
@@ -316,22 +316,22 @@ export default scoped((pi, scope) => {
 			const hangUp = new AbortController();
 			socket.once('close', () => hangUp.abort());
 			const answer = await verdict(ctx, call, hangUp.signal).catch(
-				(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+				(error: unknown) => `deny gh-approval failed: ${String(error)}; nothing was sent`,
 			);
 			if (hangUp.signal.aborted) {
 				ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
 				return;
 			}
-			socket.end(answer + '\n');
+			socket.end(`${answer}\n`);
 		});
 		// a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
 		const runtime = env.XDG_RUNTIME_DIR;
 		// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
 		const dir = runtime ?? starting.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-'))).path;
 		if (runtime === undefined) {
-			ctx.ui.notify('gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ' + dir, 'warning');
+			ctx.ui.notify(`gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ${dir}`, 'warning');
 		}
-		const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
+		const path = join(dir, `gh-approval-${randomBytes(8).toString('hex')}.sock`);
 		// close() removes the socket file itself
 		starting.defer(() => {
 			server.close();
@@ -342,7 +342,7 @@ export default scoped((pi, scope) => {
 		try {
 			await once(server, 'listening', { signal: AbortSignal.timeout(TIMEOUT_MS) });
 		} catch (error) {
-			ctx.ui.notify('gh-approval: cannot listen on a socket, so gh runs ungated: ' + String(error), 'warning');
+			ctx.ui.notify(`gh-approval: cannot listen on a socket, so gh runs ungated: ${String(error)}`, 'warning');
 			return;
 		}
 		// the commands this session runs inherit it; a wrapper left without one warns and runs gh unchecked

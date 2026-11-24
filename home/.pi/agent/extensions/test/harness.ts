@@ -98,7 +98,7 @@ const agentDir = '/nonexistent/pi-test/agent';
 // pi keys its extension factory cache by cwd and clears it when the cwd changes, so each harness gets a directory of its
 // own and with it its own module instances, the way a session does
 let harnesses = 0;
-const cwdFor = () => '/nonexistent/pi-test/project/' + harnesses++;
+const cwdFor = () => `/nonexistent/pi-test/project/${harnesses++}`;
 
 type SettingsStorage = Parameters<typeof SettingsManager.fromStorage>[0];
 

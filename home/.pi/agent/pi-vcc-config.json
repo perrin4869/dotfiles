@@ -7,5 +7,6 @@
     "claude-bridge"
   ],
   "skipCustomTypes": [],
-  "trackCommands": []
+  "trackCommands": [],
+  "summarizeBranches": true
 }

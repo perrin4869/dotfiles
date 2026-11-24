@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { Type } from 'typebox';
 import { parseModelRef } from '#lib/models';
-import { sessionScope } from '#lib/session-scope';
+import { scoped } from '#lib/session-scope';
 import { describeErrors } from '#lib/settings';
 import { startSession } from './harness.ts';
 
@@ -23,20 +23,18 @@ test('describeErrors is empty for valid settings', () => {
 	assert.equal(describeErrors('demo', Type.Object({ enabled: Type.Boolean() }), { enabled: true }), '');
 });
 
-test('sessionScope releases what a session holds when it ends, last first', async () => {
+test('scoped releases what a session holds when it ends, last first', async () => {
 	const released: string[] = [];
 	const release = (name: string) => () => {
 		released.push(name);
 	};
 	{
 		await using harness = await startSession({
-			extensions: [],
 			factories: [
-				(pi) => {
-					const scope = sessionScope(pi);
+				scoped((_pi, scope) => {
 					scope.defer(release('first'));
 					scope.defer(release('second'));
-				},
+				}),
 			],
 		});
 		assert.deepEqual(released, []);

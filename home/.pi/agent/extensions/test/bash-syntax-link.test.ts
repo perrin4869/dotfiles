@@ -127,6 +127,16 @@ for (const command of [
 	});
 }
 
+test('registers the link once for every prompt of a session', async () => {
+	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: AGENT_DIR });
+	// the registry throws on a second link under the same name, which the harness reports as a failed handler
+	await using harness = await startSession({ extensions: [permissionSystem, extension('bash-syntax-link')] });
+	for (let prompt = 0; prompt < 2; prompt++) {
+		harness.respond(fauxAssistantMessage('done'));
+		await harness.session.prompt('go');
+	}
+});
+
 test('says so when pi-permission-system published no service', async () => {
 	const notify = mock.fn<NotifyListener>();
 	// the link alone: no extension publishes a service, so nothing registers it

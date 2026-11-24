@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFile, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
 import { existsSync, statSync } from 'node:fs';
-import { mkdtempDisposable } from 'node:fs/promises';
+import { mkdtempDisposable, readdir } from 'node:fs/promises';
 import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
@@ -418,6 +418,24 @@ test('makes a private directory for its socket when there is no runtime director
 		assert.match(notices.join('\n'), /XDG_RUNTIME_DIR is not set/);
 	}
 	assert.equal(existsSync(dir), false);
+});
+
+test('releases a half-started gate at once when it cannot listen', async () => {
+	// a temp dir deep enough that the socket path outgrows what a unix socket allows, so the bind fails after the
+	// fallback directory exists
+	await using deep = await mkdtempDisposable(join(tmpdir(), 'x'.repeat(100)));
+	using restore = overrideEnv({ XDG_RUNTIME_DIR: undefined, TMPDIR: deep.path, GH_APPROVAL_SOCKET: undefined });
+	const notices: string[] = [];
+	await using harness = await startSession({
+		extensions: [extension('gh-approval')],
+		ui: { notify: (message) => notices.push(message) },
+	});
+	assert.match(notices.join('\n'), /cannot listen on a socket/);
+	// pi's loader keeps its cache there too, so only the gate's own directory counts
+	assert.deepEqual(
+		(await readdir(deep.path)).filter((name) => name.startsWith('gh-approval-')),
+		[],
+	);
 });
 
 test('takes the socket away with the session', async () => {

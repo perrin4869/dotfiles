@@ -1,17 +1,17 @@
-import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
+import type { ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
 import { constants } from 'node:fs';
 import { access, mkdtempDisposable, readFile } from 'node:fs/promises';
-import { createServer } from 'node:net';
+import { createServer, type Socket } from 'node:net';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { env } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
 import { overrideEnv } from '#lib/env';
 import { memo } from '#lib/memo';
-import { sessionScope } from '#lib/session-scope';
+import { scoped } from '#lib/session-scope';
 
 const execFileAsync = promisify(execFile);
 
@@ -247,6 +247,27 @@ function framesOf(received: string): Call | undefined {
 	return { cwd: parts[0], ghRepo: parts[1] || undefined, argv: parts.slice(3, 3 + count) };
 }
 
+// one call's frames, or undefined when the client leaves or stalls before sending them all
+async function callOf(socket: Socket): Promise<Call | undefined> {
+	socket.setEncoding('utf8');
+	// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
+	socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
+	let received = '';
+	try {
+		// leaving the loop must not destroy the socket, since the answer still goes out on it
+		for await (const chunk of socket.iterator({ destroyOnReturn: false })) {
+			received += chunk;
+			const call = framesOf(received);
+			if (call === undefined) continue;
+			socket.setTimeout(0);
+			return call;
+		}
+	} catch {
+		// the client hung up mid-exchange
+	}
+	return undefined;
+}
+
 // the account is asked once per session, since a login or GH_TOKEN can change between them, and a failure says why
 // once, because the memo runs the lookup once; the caller then treats the owner as unknown, which asks
 // the account the token belongs to: gh answers with the owner of the token it would use, and the memo asks once
@@ -281,49 +302,33 @@ async function verdict(ctx: ExtensionContext, call: Call, signal: AbortSignal) {
 	return allowed ? 'allow' : 'deny ' + RULE + '; nothing was sent';
 }
 
-export default function (pi: ExtensionAPI) {
-	const scope = sessionScope(pi);
-
+export default scoped((pi, scope) => {
 	// the listener and its socket exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
-		// released by itself if starting fails, and handed to the session once the gate listens
+		// released if starting fails, and kept for the session once the gate listens
 		await using starting = new AsyncDisposableStack();
 		const server = createServer(async (socket) => {
-			socket.setEncoding('utf8');
-			socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
 			// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
 			socket.on('error', () => socket.destroy());
-
-			let frames = '';
-			try {
-				for await (const chunk of socket) {
-					frames += chunk;
-					const call = framesOf(frames);
-					if (call === undefined) continue;
-					// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
-					socket.setTimeout(0);
-					// a dialog has nowhere to send its answer once the gh call is gone, so the call's end dismisses it
-					const hangUp = new AbortController();
-					socket.once('close', () => hangUp.abort());
-					const answer = await verdict(ctx, call, hangUp.signal).catch(
-						(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
-					);
-					if (hangUp.signal.aborted) {
-						ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
-						return;
-					}
-					socket.end(answer + '\n');
-					return;
-				}
-			} catch {
-				// the client hung up mid-exchange; there is nobody left to answer
+			const call = await callOf(socket);
+			if (call === undefined) return;
+			// a dialog has nowhere to send its answer once the gh call is gone, so the call's end dismisses it
+			const hangUp = new AbortController();
+			socket.once('close', () => hangUp.abort());
+			const answer = await verdict(ctx, call, hangUp.signal).catch(
+				(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+			);
+			if (hangUp.signal.aborted) {
+				ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
+				return;
 			}
+			socket.end(answer + '\n');
 		});
 		// a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
-		let dir = env.XDG_RUNTIME_DIR;
-		if (dir === undefined) {
-			// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
-			dir = starting.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-'))).path;
+		const runtime = env.XDG_RUNTIME_DIR;
+		// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
+		const dir = runtime ?? starting.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-'))).path;
+		if (runtime === undefined) {
 			ctx.ui.notify('gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ' + dir, 'warning');
 		}
 		const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
@@ -344,4 +349,4 @@ export default function (pi: ExtensionAPI) {
 		starting.use(overrideEnv({ GH_APPROVAL_SOCKET: path }));
 		scope.use(starting.move());
 	});
-}
+});

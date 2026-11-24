@@ -63,7 +63,7 @@ export type HarnessFaux = {
 };
 
 export type HarnessOptions = {
-	extensions: string[];
+	extensions?: string[];
 	factories?: ExtensionFactory[];
 	// the scripted model; defaults to pi-ai's fauxProvider built from provider/models; see scriptedFaux
 	faux?: HarnessFaux;
@@ -151,7 +151,7 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		cwd,
 		agentDir,
 		settingsManager,
-		additionalExtensionPaths: options.extensions,
+		additionalExtensionPaths: options.extensions ?? [],
 		extensionFactories: [(pi) => pi.registerProvider(faux.provider), ...(options.factories ?? [])],
 		noSkills: true,
 		noPromptTemplates: true,

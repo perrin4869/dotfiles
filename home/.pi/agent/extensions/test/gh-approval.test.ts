@@ -51,7 +51,7 @@ async function start(ui?: BindOptions['ui']) {
 	stack.use(
 		overrideEnv({
 			XDG_RUNTIME_DIR: dir.path,
-			PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
+			PATH: `${join(FIXTURES, 'bin')}:${env.PATH}`,
 			GH_APPROVAL_SOCKET: undefined,
 		}),
 	);
@@ -87,7 +87,7 @@ async function boot(options: { approve?: boolean; login?: string | null } = {}) 
 async function send(path: string, argv: string[], options: { cwd?: string; ghRepo?: string } = {}) {
 	const connection = connect(path);
 	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
-	connection.write(frames.join('\0') + '\0');
+	connection.write(`${frames.join('\0')}\0`);
 	let verdict = '';
 	for await (const chunk of connection) verdict += chunk.toString();
 	return verdict;
@@ -388,7 +388,7 @@ test('dismisses a dialog whose gh call went away', async () => {
 	});
 	const connection = connect(socket());
 	const argv = ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'];
-	connection.write([CWD, '', String(argv.length), ...argv].join('\0') + '\0');
+	connection.write(`${[CWD, '', String(argv.length), ...argv].join('\0')}\0`);
 	await opened.promise;
 	connection.destroy();
 	assert.match(await noticed.promise, /the gh call ended before it was answered/);
@@ -510,7 +510,7 @@ test('the wrapper waits for a dialog however long it takes', async () => {
 
 test('refuses when a session is there but does not answer', async () => {
 	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
+		PATH: `${join(FIXTURES, 'bin')}:${env.PATH}`,
 		// a path nothing listens on, so the session is named and cannot be reached
 		GH_APPROVAL_SOCKET: join(tmpdir(), 'gh-approval-nothing.sock'),
 	});
@@ -527,7 +527,7 @@ test('refuses when a session is there but does not answer', async () => {
 
 test('refuses when the only gh on PATH is itself', async () => {
 	// the link spells the wrapper's directory differently, so dropping it by path would miss this
-	using restore = overrideEnv({ PATH: join(FIXTURES, 'link') + ':/usr/bin:/bin' });
+	using restore = overrideEnv({ PATH: `${join(FIXTURES, 'link')}:/usr/bin:/bin` });
 	await assert.rejects(
 		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']),
 		(error: { code?: number; stderr?: string }) => {
@@ -540,7 +540,7 @@ test('refuses when the only gh on PATH is itself', async () => {
 
 test('runs gh with a warning when the session named no endpoint', async () => {
 	using restore = overrideEnv({
-		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
+		PATH: `${join(FIXTURES, 'bin')}:${env.PATH}`,
 		GH_APPROVAL_LOGIN: 'alice',
 		GH_APPROVAL_SOCKET: undefined,
 	});

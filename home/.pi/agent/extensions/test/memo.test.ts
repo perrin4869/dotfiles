@@ -37,7 +37,7 @@ test('caches an answer of undefined like any other', async () => {
 });
 
 test('uses the first call arguments', async () => {
-	const load = memo(async (name: string) => 'hello ' + name);
+	const load = memo(async (name: string) => `hello ${name}`);
 	assert.equal(await load('first'), 'hello first');
 	assert.equal(await load('second'), 'hello first');
 });

@@ -5,11 +5,11 @@ import { existsSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
+import { overrideEnv } from '#lib/env';
 import {
 	extension,
 	type Harness,
 	type HarnessFaux,
-	overrideEnv,
 	packageDir,
 	packageExtension,
 	scriptedFaux,

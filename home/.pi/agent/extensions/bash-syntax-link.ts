@@ -21,9 +21,9 @@
 //   #1128 matches a floor-exempt wrapper's inner command without its spellings: the same gap, seen from `timeout`.
 // ===================================================================================================================
 
-import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
 import type { Node, Parser } from 'web-tree-sitter';
+import { scoped } from '#lib/session-scope';
 import { getParser } from '#lib/tree-sitter';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
@@ -154,13 +154,11 @@ const authorizer: Authorizer['authorize'] = async ({ accessIntent }, _query, log
 	return syntax.length > 0 ? { kind: 'allow_units', units: syntax } : DEFER;
 };
 
-export default function (pi: ExtensionAPI) {
-	let dispose: (() => void) | undefined;
+export default scoped((pi, scope) => {
 	let warned = false;
 
 	// every extension has had its session_start by now, so the service is published and no tool can have asked yet
-	pi.on('before_agent_start', async (_event, ctx) => {
-		if (dispose) return;
+	const stop = pi.on('before_agent_start', async (_event, ctx) => {
 		// staying quiet about a link that never registered is what made one look like it worked
 		const warn = (why: string) => {
 			if (warned) return;
@@ -171,12 +169,8 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		dispose = service.registerAuthorizer(LINK, authorizer);
+		scope.defer(service.registerAuthorizer(LINK, authorizer));
+		// registered for the rest of the session
+		stop();
 	});
-
-	pi.on('session_shutdown', () => {
-		dispose?.();
-		dispose = undefined;
-		warned = false;
-	});
-}
+});

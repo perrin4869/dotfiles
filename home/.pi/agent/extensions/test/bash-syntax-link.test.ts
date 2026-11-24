@@ -4,7 +4,8 @@ import { join } from 'node:path';
 import { mock, test } from 'node:test';
 import { Type } from 'typebox';
 import { Value } from 'typebox/value';
-import { extension, type NotifyListener, overrideEnv, packageExtension, startSession } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { extension, type NotifyListener, packageExtension, startSession } from './harness.ts';
 
 const permissionSystem = await packageExtension('@gotgenes/pi-permission-system');
 
@@ -125,6 +126,16 @@ for (const command of [
 		assert.deepEqual((await ask(command)).resolutions, ['user_denied']);
 	});
 }
+
+test('registers the link once for every prompt of a session', async () => {
+	using restoreEnv = overrideEnv({ PI_CODING_AGENT_DIR: AGENT_DIR });
+	// the registry throws on a second link under the same name, which the harness reports as a failed handler
+	await using harness = await startSession({ extensions: [permissionSystem, extension('bash-syntax-link')] });
+	for (let prompt = 0; prompt < 2; prompt++) {
+		harness.respond(fauxAssistantMessage('done'));
+		await harness.session.prompt('go');
+	}
+});
 
 test('says so when pi-permission-system published no service', async () => {
 	const notify = mock.fn<NotifyListener>();

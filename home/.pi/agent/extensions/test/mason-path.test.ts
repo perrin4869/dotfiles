@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
-import { bindExtensions, createHarness, extension, overrideEnv, setToolSource, stubTools } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { bindExtensions, createHarness, extension, setToolSource, stubTools } from './harness.ts';
 
 // read when the extension loads; node --test runs each file in its own process
 env.XDG_DATA_HOME = '/xdg';

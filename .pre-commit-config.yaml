@@ -1,3 +1,6 @@
+# make prepare installs both; the checks below run on the commit, commitlint on its message
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
 repos:
   - repo: local
     hooks:
@@ -30,3 +33,8 @@ repos:
         language: system
         files: ^(home/\.pi/agent/extensions/|PI\.md$|package(-lock)?\.json$|\.ox(lint|fmt)rc\.json$)
         pass_filenames: false
+      - id: commitlint
+        name: commitlint (conventional commits)
+        entry: npx --no-install commitlint --edit
+        language: system
+        stages: [commit-msg]

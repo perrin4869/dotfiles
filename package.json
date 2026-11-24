@@ -11,6 +11,8 @@
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "oxfmt": "^0.78.0",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2007",

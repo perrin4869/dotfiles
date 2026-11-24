@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { extension, startSession, stubTools, toolResults } from './harness.ts';
 
 async function call(tool: string, input: Parameters<typeof fauxToolCall>[1]) {
-	using harness = await startSession({
+	await using harness = await startSession({
 		extensions: [extension('no-subagent-share')],
 		factories: [stubTools('subagent', 'other')],
 	});

@@ -89,7 +89,7 @@ export type BindOptions = {
 };
 
 // dispose with `using`, which disposes the session
-export type Harness = Disposable & {
+export type Harness = AsyncDisposable & {
 	session: AgentSession;
 	respond: (...steps: FauxResponseStep[]) => void;
 };
@@ -185,10 +185,10 @@ export async function createHarness(options: HarnessOptions): Promise<Harness> {
 		session,
 		respond: (...steps) => faux.setResponses(steps),
 		// the faux belongs to whoever built it, so a scriptedFaux is disposed where it was created
-		[Symbol.dispose]: () => {
-			// extensions stop their timers on session_shutdown, which session.dispose() does not fire; awaiting it is
-			// not an option either, since a handler that uses its ctx then runs after the session is gone
-			void session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' }).catch(() => {});
+		// session.dispose() does not fire session_shutdown, so this does what pi does when a session ends
+		[Symbol.asyncDispose]: async () => {
+			await session.abort();
+			await session.extensionRunner.emit({ type: 'session_shutdown', reason: 'quit' });
 			session.dispose();
 		},
 	};
@@ -222,7 +222,7 @@ function rethrow(error: ExtensionError): never {
 // a started session, for the tests that need nothing between creating and starting it
 export async function startSession(options: HarnessOptions & BindOptions) {
 	// disposes the session if starting it fails
-	using cleanup = new DisposableStack();
+	await using cleanup = new AsyncDisposableStack();
 	const harness = cleanup.use(await createHarness(options));
 	await bindExtensions(harness, options);
 	cleanup.move();

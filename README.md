@@ -51,6 +51,7 @@ In addition, the following third-party system dependencies are assumed to be pre
 - `zen`
 - `difftastic`
 - `gh` (used for git credential authentication over HTTPS)
+- `socat` (used by pi's `gh` wrapper to ask the session before a post)
 - `joystickwake` (optionally requires `python-dbus-fast` and `python-xlib` when running under X11)
 - `helvum`
 - `logrotate`

@@ -40,7 +40,8 @@
       "~/.config/git",
       "~/.config/rtk",
       "~/.cache",
-      "~/.npm"
+      "~/.npm",
+      "/run/user/*/gh-approval-*.sock"
     ],
     "allowWrite": [
       ".",

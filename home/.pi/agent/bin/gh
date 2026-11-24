@@ -17,15 +17,13 @@ real=$(PATH=$rest command -v gh) || { echo "gh-approval: no gh on PATH" >&2; exi
 # itself would ask again and again
 [ "$real" -ef "$0" ] && { echo "gh-approval: the only gh on PATH is this wrapper" >&2; exit 127; }
 
-# pi names the address it is reachable on and its port, as "host port", in the environment its commands inherit, so
-# nothing has to be resolved and no two sessions share it
-endpoint=${GH_APPROVAL_ADDR:-}
+# a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
+endpoint=${GH_APPROVAL_SOCKET:-}
 verdict=
 if [ -n "$endpoint" ]; then
-	read -r host port <<< "$endpoint" || true
-	# stderr first, since redirections apply left to right and a failed connect should not print; on a group the failure
-	# leaves the shell running, where one on exec would end the script silently
-	if ! { printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" >&3 && IFS= read -r verdict <&3; } 2>/dev/null 3<>"/dev/tcp/$host/$port"; then
+	command -v socat >/dev/null || { echo "gh-approval: socat is missing, so nothing was sent" >&2; exit 1; }
+	# socat stops waiting 0.5s after its input ends unless -t says otherwise, and a dialog has no time limit
+	if ! verdict=$(printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" | socat -t 86400 - UNIX-CONNECT:"$endpoint" 2>/dev/null); then
 		verdict=
 	fi
 fi

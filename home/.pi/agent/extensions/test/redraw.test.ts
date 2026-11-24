@@ -23,7 +23,7 @@ async function withTui(run: (probe: Probe) => Promise<void> | void) {
 	tui.start();
 	using stopTui = new DisposableStack();
 	stopTui.defer(() => tui.stop());
-	using harness = await startSession({ extensions: [extension('redraw')], tui });
+	await using harness = await startSession({ extensions: [extension('redraw')], tui });
 	tui.renderNow();
 	terminal.output = '';
 	await run({

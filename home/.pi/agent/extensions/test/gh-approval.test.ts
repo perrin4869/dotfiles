@@ -1,38 +1,55 @@
 import assert from 'node:assert/strict';
 import { execFile, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
+import { mkdtempDisposable } from 'node:fs/promises';
 import { connect } from 'node:net';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import { cwd, env } from 'node:process';
 import { test } from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 import { promisify } from 'node:util';
-import { extension, overrideEnv, startSession } from './harness.ts';
+import { type BindOptions, extension, overrideEnv, startSession } from './harness.ts';
 
 const execFileAsync = promisify(execFile);
 
 // the stand-in gh the fixture puts on PATH, which answers the login lookup with GH_APPROVAL_LOGIN
 const FIXTURES = join(import.meta.dirname, 'fixtures', 'gh-approval');
-// the wrapper as the repo holds it, stowed to <agent>/bin/gh by make; the port below is what the session writes
+// the wrapper as the repo holds it, stowed to <agent>/bin/gh by make
 const SHIM = join(import.meta.dirname, '../../bin/gh');
 // the session's working directory: not a checkout, so a call that names no repository has none to fall back on
 const CWD = '/nonexistent/pi-test/project';
 
 // a checkout carrying the given remotes, which is where gh looks when no argument names a repository
-function checkout(remotes: Record<string, string>): Disposable & { path: string } {
-	const path = mkdtempSync(join(tmpdir(), 'gh-approval-'));
-	execFileSync('git', ['init', '--quiet', path]);
-	for (const [name, url] of Object.entries(remotes)) execFileSync('git', ['-C', path, 'remote', 'add', name, url]);
-	return { path, [Symbol.dispose]: () => rmSync(path, { force: true, recursive: true }) };
+async function checkout(remotes: Record<string, string>) {
+	// removes the directory if setting it up fails
+	await using cleanup = new AsyncDisposableStack();
+	const dir = cleanup.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-')));
+	await execFileAsync('git', ['init', '--quiet', dir.path]);
+	// git holds config.lock while it writes and waits for one another holds, so the adds can overlap
+	await Promise.all(
+		Object.entries(remotes).map(([name, url]) => execFileAsync('git', ['-C', dir.path, 'remote', 'add', name, url])),
+	);
+	cleanup.move();
+	return dir;
 }
 
-// the session announces its gate while starting, which startSession waits for, in the environment its commands
-// inherit: this process's
-function endpoint(): { host: string; port: number } {
-	const [host, port] = (env.GH_APPROVAL_ADDR ?? '').split(' ');
-	if (host === undefined || port === undefined) throw new Error('gh-approval announced no endpoint');
-	return { host, port: Number(port) };
+// set while the session starts, which startSession waits for
+function socket(): string {
+	const path = env.GH_APPROVAL_SOCKET;
+	if (path === undefined) throw new Error('gh-approval announced no socket');
+	return path;
+}
+
+async function start(ui?: BindOptions['ui']) {
+	await using stack = new AsyncDisposableStack();
+	// a runtime directory per session, so the tests neither use the host's nor leave sockets in it
+	const dir = stack.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-runtime-')));
+	// the fixture gh answers the account lookup, so no test runs the real one with the host's token
+	stack.use(overrideEnv({ XDG_RUNTIME_DIR: dir.path, PATH: join(FIXTURES, 'bin') + ':' + env.PATH }));
+	stack.use(await startSession({ extensions: [extension('gh-approval')], ui }));
+	return stack.move();
 }
 
 // a started session that records what it shows, with the fixture gh on PATH and alice holding the token; the caller
@@ -40,42 +57,42 @@ function endpoint(): { host: string; port: number } {
 async function boot(options: { approve?: boolean; login?: string | null } = {}) {
 	const prompts: string[] = [];
 	const notices: string[] = [];
-	using cleanup = new DisposableStack();
+	await using cleanup = new AsyncDisposableStack();
 	cleanup.use(
 		overrideEnv({
-			PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
 			// unset stands in for a gh that is missing or logged out, which the fixture answers by failing
 			GH_APPROVAL_LOGIN: options.login === null ? undefined : (options.login ?? 'alice'),
 		}),
 	);
 	cleanup.use(
-		await startSession({
-			extensions: [extension('gh-approval')],
-			ui: {
-				confirm: (_title, message) => {
-					prompts.push(message);
-					return Promise.resolve(options.approve ?? false);
-				},
-				notify: (message) => notices.push(message),
+		await start({
+			confirm: (_title, message) => {
+				prompts.push(message);
+				return Promise.resolve(options.approve ?? false);
 			},
+			notify: (message) => notices.push(message),
 		}),
 	);
-	const owned = cleanup.move();
-	return { prompts, notices, [Symbol.dispose]: () => owned.dispose() };
+	return Object.assign(cleanup.move(), { prompts, notices });
 }
 
-// the wrapper's side of one call: send cwd, GH_REPO and argv over loopback, and return the line that came back
+// one call's frames to a socket, and the line that comes back
+async function send(path: string, argv: string[], options: { cwd?: string; ghRepo?: string } = {}) {
+	const connection = connect(path);
+	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
+	connection.write(frames.join('\0') + '\0');
+	let verdict = '';
+	for await (const chunk of connection) verdict += chunk.toString();
+	return verdict;
+}
+
+// the wrapper's side of one call, against the session's socket
 async function ask(
 	argv: string[],
 	options: { cwd?: string; ghRepo?: string; approve?: boolean; login?: string | null } = {},
 ) {
-	using booted = await boot(options);
-	const socket = connect(endpoint());
-	const frames = [options.cwd ?? CWD, options.ghRepo ?? '', String(argv.length), ...argv];
-	socket.write(frames.join('\0') + '\0');
-	let verdict = '';
-	for await (const chunk of socket) verdict += chunk.toString();
-	return { prompts: booted.prompts, notices: booted.notices, verdict };
+	await using booted = await boot(options);
+	return { prompts: booted.prompts, notices: booted.notices, verdict: await send(socket(), argv, options) };
 }
 
 test('allows a post to my own repository without asking', async () => {
@@ -193,7 +210,7 @@ test('takes the URL over a flag, which is what gh does', async () => {
 
 test('takes the URL over the checkout it runs in', async () => {
 	// the checkout names a repository of my own, which the URL would otherwise let this post to without asking
-	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	await using here = await checkout({ origin: 'https://github.com/alice/dotfiles.git' });
 	const { prompts } = await ask(['pr', 'comment', 'https://github.com/bob/widgets/pull/3', '--body', 'hi'], {
 		cwd: here.path,
 	});
@@ -218,7 +235,7 @@ test('ignores a URL that is only the value of a flag', async () => {
 
 test('takes the remote gh sorts first, upstream over origin', async () => {
 	// gh orders the names upstream, github, origin, and posts to the first, whatever the branch tracks
-	using here = checkout({
+	await using here = await checkout({
 		origin: 'https://github.com/bob/widgets.git',
 		upstream: 'https://github.com/alice/dotfiles.git',
 	});
@@ -228,7 +245,7 @@ test('takes the remote gh sorts first, upstream over origin', async () => {
 });
 
 test('takes the remote gh repo set-default recorded over the name order', async () => {
-	using here = checkout({
+	await using here = await checkout({
 		origin: 'https://github.com/bob/widgets.git',
 		upstream: 'https://github.com/bob/widgets.git',
 	});
@@ -289,7 +306,7 @@ test('reads GH_REPO as the repository an api placeholder path fills in', async (
 test('asks about a mutation whatever is around it', async () => {
 	// the subject is a node id inside the query, and gh resolves nothing for a graphql endpoint, so neither GH_REPO nor
 	// the checkout this runs in answers for it
-	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	await using here = await checkout({ origin: 'https://github.com/alice/dotfiles.git' });
 	const { prompts } = await ask(
 		[
 			'api',
@@ -306,7 +323,7 @@ test('asks about a mutation whatever is around it', async () => {
 });
 
 test('reads an api placeholder path as the repository gh fills in', async () => {
-	using here = checkout({ origin: 'https://github.com/alice/dotfiles.git' });
+	await using here = await checkout({ origin: 'https://github.com/alice/dotfiles.git' });
 	const { verdict, prompts } = await ask(['api', 'repos/{owner}/{repo}/issues', '-f', 'title=T'], { cwd: here.path });
 	assert.deepEqual(prompts, []);
 	assert.equal(verdict.trim(), 'allow');
@@ -320,13 +337,68 @@ test('asks when the call names the repository by URL or GH_REPO', async () => {
 });
 
 test('drops a client that never finishes its frames', async () => {
-	using harness = await startSession({ extensions: [extension('gh-approval')] });
-	const socket = connect(endpoint());
+	await using harness = await start();
+	const connection = connect(socket());
 	// the cwd and GH_REPO frames, with the count and the arguments still to come
-	socket.write([CWD, '', ''].join('\0'));
+	connection.write([CWD, '', ''].join('\0'));
 	// the server's idle timeout is what ends this, so the wait lasts as long as TIMEOUT_MS, and no answer arrives
-	await once(socket, 'close', { signal: AbortSignal.timeout(15_000) });
-	assert.equal(socket.read(), null);
+	await once(connection, 'close', { signal: AbortSignal.timeout(15_000) });
+	assert.equal(connection.read(), null);
+});
+
+test('answers one call while another waits on its dialog', async () => {
+	const opened = Promise.withResolvers<void>();
+	const answer = Promise.withResolvers<boolean>();
+	await using harness = await start({
+		confirm: () => {
+			opened.resolve();
+			return answer.promise;
+		},
+	});
+	// a failed assertion must not leave the dialog open: its connection would hold the run alive
+	using decided = { [Symbol.dispose]: () => answer.resolve(false) };
+	// a post whose dialog stays open until this test closes it, and a read that must not wait behind it
+	const asked = send(socket(), ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi']);
+	await opened.promise;
+	assert.equal((await send(socket(), ['pr', 'view', '1', '--repo', 'bob/widgets'])).trim(), 'allow');
+	answer.resolve(false);
+	assert.match(await asked, /^deny /);
+});
+
+test('gives each session a socket of its own', async () => {
+	await using first = await boot();
+	const one = socket();
+	await using second = await boot();
+	const two = socket();
+	// each session here has its own runtime directory, so compare the names, which must differ in a shared one
+	assert.notEqual(basename(one), basename(two));
+});
+
+test('makes a private directory for its socket when there is no runtime directory', async () => {
+	const notices: string[] = [];
+	let dir = '';
+	{
+		using restore = overrideEnv({ XDG_RUNTIME_DIR: undefined });
+		await using harness = await startSession({
+			extensions: [extension('gh-approval')],
+			ui: { notify: (message) => notices.push(message) },
+		});
+		dir = dirname(socket());
+		// only this user may connect: nothing in the protocol tells a peer from the wrapper
+		assert.equal(statSync(dir).mode & 0o777, 0o700);
+		assert.match(notices.join('\n'), /XDG_RUNTIME_DIR is not set/);
+	}
+	assert.equal(existsSync(dir), false);
+});
+
+test('takes the socket away with the session', async () => {
+	let path = '';
+	{
+		await using harness = await start();
+		path = socket();
+		assert.ok(existsSync(path));
+	}
+	assert.equal(existsSync(path), false);
 });
 
 // the wrapper is a bash script, so these spawn it the way git does: a child process, handed the environment the session
@@ -335,7 +407,7 @@ test('drops a client that never finishes its frames', async () => {
 // the last boot a session for it to dial; the last one covers the branch where no session named an endpoint.
 
 test('the wrapper runs the real gh for my own repository', async () => {
-	using booted = await boot();
+	await using booted = await boot();
 	// a spawn needs a real directory, and every case here names its repository, so the origin there decides nothing
 	const { stdout } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles'], {
 		cwd: cwd(),
@@ -346,7 +418,7 @@ test('the wrapper runs the real gh for my own repository', async () => {
 });
 
 test('answers each call of a session on its own', async () => {
-	using booted = await boot();
+	await using booted = await boot();
 	// the post has to ask, and the read after it is allowed without a word; a denial left over for the second call would
 	// end it with exit 1 instead
 	await assert.rejects(
@@ -362,7 +434,7 @@ test('answers each call of a session on its own', async () => {
 });
 
 test('the wrapper stops a declined post before gh runs', async () => {
-	using booted = await boot();
+	await using booted = await boot();
 	await assert.rejects(
 		execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
 			cwd: cwd(),
@@ -378,11 +450,22 @@ test('the wrapper stops a declined post before gh runs', async () => {
 	assert.equal(booted.prompts.length, 1);
 });
 
+test('the wrapper waits for a dialog however long it takes', async () => {
+	using restore = overrideEnv({ GH_APPROVAL_LOGIN: 'alice' });
+	// longer than socat's default half-second wait
+	await using harness = await start({ confirm: () => delay(1000, true) });
+	const { stdout } = await execFileAsync(SHIM, ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'], {
+		cwd: cwd(),
+		env,
+	});
+	assert.equal(stdout.trim(), 'alice');
+});
+
 test('refuses when a session is there but does not answer', async () => {
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
-		// port 1 is never a listener, so the session is named and cannot be reached
-		GH_APPROVAL_ADDR: '127.0.0.1 1',
+		// a path nothing listens on, so the session is named and cannot be reached
+		GH_APPROVAL_SOCKET: join(tmpdir(), 'gh-approval-nothing.sock'),
 	});
 	await assert.rejects(
 		execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']),
@@ -412,7 +495,7 @@ test('runs gh with a warning when the session named no endpoint', async () => {
 	using restore = overrideEnv({
 		PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
 		GH_APPROVAL_LOGIN: 'alice',
-		GH_APPROVAL_ADDR: undefined,
+		GH_APPROVAL_SOCKET: undefined,
 	});
 	const { stdout, stderr } = await execFileAsync(SHIM, ['pr', 'view', '1', '--repo', 'alice/dotfiles']);
 	assert.equal(stdout.trim(), 'alice');

@@ -1,11 +1,11 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { execFile } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
 import { constants } from 'node:fs';
-import { access } from 'node:fs/promises';
-import { readFile } from 'node:fs/promises';
+import { access, mkdtempDisposable, readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:net';
-import { homedir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { env } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
@@ -281,11 +281,22 @@ async function verdict(ctx: ExtensionContext, call: Call) {
 
 export default function (pi: ExtensionAPI) {
 	let server: Server | undefined;
+	// set when there is no runtime directory and the session made one for its socket
+	let createdDir: Awaited<ReturnType<typeof mkdtempDisposable>> | undefined;
+	// close() removes the socket file itself
+	const release = () => {
+		server?.close();
+		server = undefined;
+		const dir = createdDir;
+		createdDir = undefined;
+		return dir?.remove();
+	};
 
-	// the listener and the port exist only while the session does
+	// the listener and its socket exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
 		if (server === undefined) {
-			server = createServer(async (socket) => {
+			// socat shuts its write side once the frames are sent, which is not a hang-up
+			server = createServer({ allowHalfOpen: true }, async (socket) => {
 				socket.setEncoding('utf8');
 				socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
 				// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
@@ -320,36 +331,32 @@ export default function (pi: ExtensionAPI) {
 					// the client hung up mid-exchange; there is nobody left to answer
 				}
 			});
-			// loopback, for security: bound anywhere else, the network could ask this session to post, and the protocol
-			// carries nothing that could tell a peer from the wrapper. The port is the OS's, and the session publishes it
-			// with the address so the wrapper dials what was bound
-			server.listen(0, 'localhost');
+			// a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
+			let dir = env.XDG_RUNTIME_DIR;
+			if (dir === undefined) {
+				// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
+				createdDir = await mkdtempDisposable(join(tmpdir(), 'gh-approval-'));
+				dir = createdDir.path;
+				ctx.ui.notify('gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ' + dir, 'warning');
+			}
+			const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
+			server.listen(path);
 			// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
 			// rejects rather than leaving the session waiting on a promise nothing will settle
 			try {
 				await once(server, 'listening', { signal: AbortSignal.timeout(TIMEOUT_MS) });
 			} catch (error) {
-				server.close();
-				ctx.ui.notify('gh-approval: cannot listen on loopback, so gh runs ungated: ' + String(error), 'warning');
-				server = undefined;
-				return;
+				ctx.ui.notify('gh-approval: cannot listen on a socket, so gh runs ungated: ' + String(error), 'warning');
+				return release();
 			}
-		}
-		try {
-			const address = server.address();
-			// a listening TCP server answers with an AddressInfo; null is "not listening" and a string is a unix socket
-			if (address === null || typeof address === 'string') throw new Error('the listener has no address');
-			// the commands this session runs inherit this, so the wrapper dials what was bound rather than resolving anything
-			env.GH_APPROVAL_ADDR = address.address + ' ' + address.port;
-		} catch (error) {
-			ctx.ui.notify('gh-approval: cannot announce its address, so gh runs ungated: ' + String(error), 'warning');
+			// the commands this session runs inherit it
+			env.GH_APPROVAL_SOCKET = path;
 		}
 	});
 
-	// the endpoint file goes with the session; a wrapper left without one says so and runs gh, since the gate is gone
+	// a wrapper left without a socket warns and runs gh unchecked
 	pi.on('session_shutdown', () => {
-		server?.close();
-		server = undefined;
-		delete env.GH_APPROVAL_ADDR;
+		delete env.GH_APPROVAL_SOCKET;
+		return release();
 	});
 }

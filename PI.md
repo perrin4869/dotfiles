@@ -106,6 +106,7 @@ What memory may store is in `home/.pi/agent/AGENTS.md`. Memory is shared by ever
 
 * `/pi-vcc` compacts now.
 * To hand compaction back to pi, set `"overrideDefaultCompaction": false` in `pi-vcc-config.json`.
+* `/tree`'s plain Summarize is written by pi-vcc too, with no model call; set `"summarizeBranches": false` in `pi-vcc-config.json` to let pi's model write it.
 
 ---
 

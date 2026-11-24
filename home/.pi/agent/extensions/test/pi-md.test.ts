@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { findPackageJSON } from 'node:module';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
-import { definedSettings } from '../lib/settings.ts';
+import { definedSettings } from '#lib/settings';
 import { overrideEnv, startSession } from './harness.ts';
 
 const ROOT = join(import.meta.dirname, '..');

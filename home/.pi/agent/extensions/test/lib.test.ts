@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { Type } from 'typebox';
-import { parseModelRef } from '../lib/models.ts';
-import { describeErrors } from '../lib/settings.ts';
+import { parseModelRef } from '#lib/models';
+import { describeErrors } from '#lib/settings';
 
 test('parseModelRef splits at the first slash only', () => {
 	assert.deepEqual(parseModelRef('ollama/gemma4:12b'), ['ollama', 'gemma4:12b']);

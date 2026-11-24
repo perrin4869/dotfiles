@@ -1,6 +1,6 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { join } from 'node:path';
-import { appendToPath, xdgDataHome } from './lib/env.ts';
+import { appendToPath, xdgDataHome } from '#lib/env';
 
 const LSP_PACKAGE = /^npm:@narumitw\/pi-lsp(@|$)/;
 const MASON_BIN = join(xdgDataHome(), 'nvim', 'mason', 'bin');

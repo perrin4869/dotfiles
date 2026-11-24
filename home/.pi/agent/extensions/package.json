@@ -2,6 +2,10 @@
   "name": "pi-extensions",
   "private": true,
   "type": "module",
+  "imports": {
+    "#lib/*": "./lib/*.ts",
+    "#scripts/*": "./scripts/*.ts"
+  },
   "scripts": {
     "typecheck": "tsc -p .",
     "lint": "oxlint",

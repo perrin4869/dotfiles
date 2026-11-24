@@ -1,6 +1,6 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { defineSettings } from './lib/settings.ts';
+import { defineSettings } from '#lib/settings';
 
 // rpiv-advisor keeps one global reviewer for every session, so an Ollama project would send its whole
 // conversation to that reviewer too. Offer it only where a project opts in with `"advisor": { "enabled": true }`.

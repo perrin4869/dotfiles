@@ -132,7 +132,7 @@ The package's own output compaction is off, in `home/.pi/agent/extensions/pi-rtk
 * `/sandbox-allow domain <url>`, `/sandbox-allow read <path>`, `/sandbox-allow write <path>`: prompt to add an allowance.
 * `.pi/sandbox.json`: per-project rules, loaded only when pi trusts the project.
 
-Commands typed with `!` and `bg_run` (pi-background) are not sandboxed.
+Commands typed with `!` run outside the sandbox (`"sandboxUserShell": false` above). `bg_run` jobs (pi-background) go through the `bash` tool like any other command, so they stay inside it: a job that daemonizes and exits does not survive, since its namespace ends with the command.
 
 Allowances saved "for all projects" write through the stowed symlink into `home/.pi/agent/sandbox.json`, so they show up in this repo. Review them before committing.
 

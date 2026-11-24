@@ -46,8 +46,14 @@ async function start(ui?: BindOptions['ui']) {
 	await using stack = new AsyncDisposableStack();
 	// a runtime directory per session, so the tests neither use the host's nor leave sockets in it
 	const dir = stack.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-runtime-')));
-	// the fixture gh answers the account lookup, so no test runs the real one with the host's token
-	stack.use(overrideEnv({ XDG_RUNTIME_DIR: dir.path, PATH: join(FIXTURES, 'bin') + ':' + env.PATH }));
+	// the fixture gh answers the account lookup, and the socket this process inherited is the outer session's, not ours
+	stack.use(
+		overrideEnv({
+			XDG_RUNTIME_DIR: dir.path,
+			PATH: join(FIXTURES, 'bin') + ':' + env.PATH,
+			GH_APPROVAL_SOCKET: undefined,
+		}),
+	);
 	stack.use(await startSession({ extensions: [extension('gh-approval')], ui }));
 	return stack.move();
 }
@@ -363,6 +369,28 @@ test('answers one call while another waits on its dialog', async () => {
 	assert.equal((await send(socket(), ['pr', 'view', '1', '--repo', 'bob/widgets'])).trim(), 'allow');
 	answer.resolve(false);
 	assert.match(await asked, /^deny /);
+});
+
+test('dismisses a dialog whose gh call went away', async () => {
+	using restore = overrideEnv({ GH_APPROVAL_LOGIN: 'alice' });
+	const opened = Promise.withResolvers<void>();
+	const noticed = Promise.withResolvers<string>();
+	// bounded, so a dialog that is never dismissed fails the test instead of holding the session open
+	setTimeout(() => noticed.reject(new Error('the dialog was never dismissed')), 5_000).unref();
+	await using harness = await start({
+		confirm: (_title, _message, options) => {
+			opened.resolve();
+			// pi answers a dismissed dialog with no
+			return once(options!.signal!, 'abort').then(() => false);
+		},
+		notify: (message) => noticed.resolve(message),
+	});
+	const connection = connect(socket());
+	const argv = ['issue', 'comment', '3', '--repo', 'bob/widgets', '--body', 'hi'];
+	connection.write([CWD, '', String(argv.length), ...argv].join('\0') + '\0');
+	await opened.promise;
+	connection.destroy();
+	assert.match(await noticed.promise, /the gh call ended before it was answered/);
 });
 
 test('gives each session a socket of its own', async () => {

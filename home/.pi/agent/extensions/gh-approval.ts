@@ -222,7 +222,7 @@ async function postOf(call: Call): Promise<Post | undefined> {
 	return positionals[0] === 'api' ? apiPost(call) : commandPost(call);
 }
 
-async function approved(ctx: ExtensionContext, post: Post, command: string): Promise<boolean> {
+async function approved(ctx: ExtensionContext, post: Post, command: string, signal: AbortSignal): Promise<boolean> {
 	if (!ctx.hasUI) return false;
 	// gh sends the file when a call gives both --body and --body-file, and sends nothing at all when it cannot read it
 	const body = post.bodyFile === undefined ? post.body : await readFile(post.bodyFile, 'utf8');
@@ -234,7 +234,7 @@ async function approved(ctx: ExtensionContext, post: Post, command: string): Pro
 		'',
 		RULE,
 	].filter(Boolean);
-	return ctx.ui.confirm('Post to ' + (post.repo ?? 'GitHub') + '?', details.join('\n'));
+	return ctx.ui.confirm('Post to ' + (post.repo ?? 'GitHub') + '?', details.join('\n'), { signal });
 }
 
 // the frames the wrapper sends: cwd, GH_REPO, the argument count, then each argument
@@ -255,7 +255,7 @@ const account = memo(async () => {
 	return login;
 });
 
-async function verdict(ctx: ExtensionContext, call: Call) {
+async function verdict(ctx: ExtensionContext, call: Call, signal: AbortSignal) {
 	const post = await postOf(call);
 	if (post === undefined) return 'allow';
 	const owner = await account()
@@ -271,7 +271,7 @@ async function verdict(ctx: ExtensionContext, call: Call) {
 	if (post.repo !== undefined && post.repo.split('/')[0].toLowerCase() === owner) return 'allow';
 	let allowed: boolean;
 	try {
-		allowed = await approved(ctx, post, 'gh ' + call.argv.join(' '));
+		allowed = await approved(ctx, post, 'gh ' + call.argv.join(' '), signal);
 	} catch (error) {
 		// a body file gh cannot read is a call it refuses, and a dialog that fails leaves no answer either
 		return 'deny ' + (error instanceof Error ? error.message : String(error));
@@ -295,8 +295,7 @@ export default function (pi: ExtensionAPI) {
 	// the listener and its socket exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
 		if (server === undefined) {
-			// socat shuts its write side once the frames are sent, which is not a hang-up
-			server = createServer({ allowHalfOpen: true }, async (socket) => {
+			server = createServer(async (socket) => {
 				socket.setEncoding('utf8');
 				socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
 				// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
@@ -310,18 +309,14 @@ export default function (pi: ExtensionAPI) {
 						if (call === undefined) continue;
 						// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
 						socket.setTimeout(0);
-						// a dialog has nowhere to send its answer once the wrapper gave up, so a close rejects the race, as does an
-						// error before it, and only a decision resolves it
-						let answer: string;
-						try {
-							answer = await Promise.race([
-								verdict(ctx, call).catch(
-									(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
-								),
-								once(socket, 'close').then(() => Promise.reject(new Error('the gh call ended before it was answered'))),
-							]);
-						} catch {
-							ctx.ui.notify('gh-approval: the gh call ended while the dialog was open, so nothing was sent', 'warning');
+						// a dialog has nowhere to send its answer once the gh call is gone, so the call's end dismisses it
+						const hangUp = new AbortController();
+						socket.once('close', () => hangUp.abort());
+						const answer = await verdict(ctx, call, hangUp.signal).catch(
+							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+						);
+						if (hangUp.signal.aborted) {
+							ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
 							return;
 						}
 						socket.end(answer + '\n');

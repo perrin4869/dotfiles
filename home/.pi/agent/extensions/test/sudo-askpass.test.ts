@@ -3,7 +3,8 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { test } from 'node:test';
-import { extension, overrideEnv, startSession } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { extension, startSession } from './harness.ts';
 
 const ASKPASS = join(homedir(), '.local', 'bin', 'askpass');
 

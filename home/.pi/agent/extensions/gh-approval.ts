@@ -4,12 +4,14 @@ import { randomBytes } from 'node:crypto';
 import { once } from 'node:events';
 import { constants } from 'node:fs';
 import { access, mkdtempDisposable, readFile } from 'node:fs/promises';
-import { createServer, type Server } from 'node:net';
+import { createServer } from 'node:net';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { env } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
+import { overrideEnv } from '#lib/env';
 import { memo } from '#lib/memo';
+import { sessionScope } from '#lib/session-scope';
 
 const execFileAsync = promisify(execFile);
 
@@ -280,78 +282,66 @@ async function verdict(ctx: ExtensionContext, call: Call, signal: AbortSignal) {
 }
 
 export default function (pi: ExtensionAPI) {
-	let server: Server | undefined;
-	// set when there is no runtime directory and the session made one for its socket
-	let createdDir: Awaited<ReturnType<typeof mkdtempDisposable>> | undefined;
-	// close() removes the socket file itself
-	const release = () => {
-		server?.close();
-		server = undefined;
-		const dir = createdDir;
-		createdDir = undefined;
-		return dir?.remove();
-	};
+	const scope = sessionScope(pi);
 
 	// the listener and its socket exist only while the session does
 	pi.on('session_start', async (_event, ctx) => {
-		if (server === undefined) {
-			server = createServer(async (socket) => {
-				socket.setEncoding('utf8');
-				socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
-				// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
-				socket.on('error', () => socket.destroy());
+		// released by itself if starting fails, and handed to the session once the gate listens
+		await using starting = new AsyncDisposableStack();
+		const server = createServer(async (socket) => {
+			socket.setEncoding('utf8');
+			socket.setTimeout(TIMEOUT_MS, () => socket.destroy());
+			// an error on a socket with no listener is an uncaught exception, and a peer reset during end() raises one
+			socket.on('error', () => socket.destroy());
 
-				let frames = '';
-				try {
-					for await (const chunk of socket) {
-						frames += chunk;
-						const call = framesOf(frames);
-						if (call === undefined) continue;
-						// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
-						socket.setTimeout(0);
-						// a dialog has nowhere to send its answer once the gh call is gone, so the call's end dismisses it
-						const hangUp = new AbortController();
-						socket.once('close', () => hangUp.abort());
-						const answer = await verdict(ctx, call, hangUp.signal).catch(
-							(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
-						);
-						if (hangUp.signal.aborted) {
-							ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
-							return;
-						}
-						socket.end(answer + '\n');
+			let frames = '';
+			try {
+				for await (const chunk of socket) {
+					frames += chunk;
+					const call = framesOf(frames);
+					if (call === undefined) continue;
+					// the timeout is for a client that never finishes its frames; a dialog takes as long as it takes
+					socket.setTimeout(0);
+					// a dialog has nowhere to send its answer once the gh call is gone, so the call's end dismisses it
+					const hangUp = new AbortController();
+					socket.once('close', () => hangUp.abort());
+					const answer = await verdict(ctx, call, hangUp.signal).catch(
+						(error: unknown) => 'deny gh-approval failed: ' + String(error) + '; nothing was sent',
+					);
+					if (hangUp.signal.aborted) {
+						ctx.ui.notify('gh-approval: the gh call ended before it was answered, so nothing was sent', 'warning');
 						return;
 					}
-				} catch {
-					// the client hung up mid-exchange; there is nobody left to answer
+					socket.end(answer + '\n');
+					return;
 				}
-			});
-			// a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
-			let dir = env.XDG_RUNTIME_DIR;
-			if (dir === undefined) {
-				// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
-				createdDir = await mkdtempDisposable(join(tmpdir(), 'gh-approval-'));
-				dir = createdDir.path;
-				ctx.ui.notify('gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ' + dir, 'warning');
+			} catch {
+				// the client hung up mid-exchange; there is nobody left to answer
 			}
-			const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
-			server.listen(path);
-			// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
-			// rejects rather than leaving the session waiting on a promise nothing will settle
-			try {
-				await once(server, 'listening', { signal: AbortSignal.timeout(TIMEOUT_MS) });
-			} catch (error) {
-				ctx.ui.notify('gh-approval: cannot listen on a socket, so gh runs ungated: ' + String(error), 'warning');
-				return release();
-			}
-			// the commands this session runs inherit it
-			env.GH_APPROVAL_SOCKET = path;
+		});
+		// a unix socket rather than a loopback port: a sandboxed command has a network namespace of its own
+		let dir = env.XDG_RUNTIME_DIR;
+		if (dir === undefined) {
+			// the spec's fallback is a directory as private as the runtime one, which mkdtemp gives
+			dir = starting.use(await mkdtempDisposable(join(tmpdir(), 'gh-approval-'))).path;
+			ctx.ui.notify('gh-approval: XDG_RUNTIME_DIR is not set, so the socket lives in ' + dir, 'warning');
 		}
-	});
-
-	// a wrapper left without a socket warns and runs gh unchecked
-	pi.on('session_shutdown', () => {
-		delete env.GH_APPROVAL_SOCKET;
-		return release();
+		const path = join(dir, 'gh-approval-' + randomBytes(8).toString('hex') + '.sock');
+		// close() removes the socket file itself
+		starting.defer(() => {
+			server.close();
+		});
+		server.listen(path);
+		// a bind failure arrives as 'error' and a bind that never settles is cut off by the signal; either way this
+		// rejects rather than leaving the session waiting on a promise nothing will settle
+		try {
+			await once(server, 'listening', { signal: AbortSignal.timeout(TIMEOUT_MS) });
+		} catch (error) {
+			ctx.ui.notify('gh-approval: cannot listen on a socket, so gh runs ungated: ' + String(error), 'warning');
+			return;
+		}
+		// the commands this session runs inherit it; a wrapper left without one warns and runs gh unchecked
+		starting.use(overrideEnv({ GH_APPROVAL_SOCKET: path }));
+		scope.use(starting.move());
 	});
 }

@@ -24,6 +24,7 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
 import type { Node, Parser } from 'web-tree-sitter';
+import { sessionScope } from '#lib/session-scope';
 import { getParser } from '#lib/tree-sitter';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
@@ -155,12 +156,13 @@ const authorizer: Authorizer['authorize'] = async ({ accessIntent }, _query, log
 };
 
 export default function (pi: ExtensionAPI) {
-	let dispose: (() => void) | undefined;
+	const scope = sessionScope(pi);
+	let registered = false;
 	let warned = false;
 
 	// every extension has had its session_start by now, so the service is published and no tool can have asked yet
 	pi.on('before_agent_start', async (_event, ctx) => {
-		if (dispose) return;
+		if (registered) return;
 		// staying quiet about a link that never registered is what made one look like it worked
 		const warn = (why: string) => {
 			if (warned) return;
@@ -171,12 +173,7 @@ export default function (pi: ExtensionAPI) {
 			.then(({ getPermissionsService }) => getPermissionsService(ctx.sessionManager.getSessionId()))
 			.catch(() => undefined);
 		if (!service) return warn('pi-permission-system published no service');
-		dispose = service.registerAuthorizer(LINK, authorizer);
-	});
-
-	pi.on('session_shutdown', () => {
-		dispose?.();
-		dispose = undefined;
-		warned = false;
+		scope.defer(service.registerAuthorizer(LINK, authorizer));
+		registered = true;
 	});
 }

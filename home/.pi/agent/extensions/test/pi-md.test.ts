@@ -4,7 +4,8 @@ import { findPackageJSON } from 'node:module';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { definedSettings } from '#lib/settings';
-import { overrideEnv, startSession } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { startSession } from './harness.ts';
 
 const ROOT = join(import.meta.dirname, '..');
 

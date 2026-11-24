@@ -10,7 +10,8 @@ import { cwd, env } from 'node:process';
 import { test } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { promisify } from 'node:util';
-import { type BindOptions, extension, overrideEnv, startSession } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { type BindOptions, extension, startSession } from './harness.ts';
 
 const execFileAsync = promisify(execFile);
 

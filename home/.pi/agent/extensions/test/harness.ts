@@ -23,7 +23,6 @@ import {
 import { findPackageJSON } from 'node:module';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { env } from 'node:process';
 import { Type } from 'typebox';
 import { Value } from 'typebox/value';
 
@@ -236,23 +235,6 @@ export function setToolSource(session: AgentSession, name: string, source: strin
 	const tool = session.extensionRunner.getAllRegisteredTools().find(({ definition }) => definition.name === name);
 	if (tool === undefined) throw new Error(`no extension registered ${name}`);
 	tool.sourceInfo.source = source;
-}
-
-type EnvValues = Record<string, string | undefined>;
-
-// undefined unsets a variable, which assigning undefined to process.env would not
-function assignEnv(values: EnvValues) {
-	for (const [name, value] of Object.entries(values)) {
-		if (value === undefined) delete env[name];
-		else env[name] = value;
-	}
-}
-
-// sets environment variables until disposed, then restores them
-export function overrideEnv(vars: EnvValues): Disposable {
-	const saved = Object.fromEntries(Object.keys(vars).map((name) => [name, env[name]]));
-	assignEnv(vars);
-	return { [Symbol.dispose]: () => assignEnv(saved) };
 }
 
 // stand-ins for other packages' tools, accepting any input

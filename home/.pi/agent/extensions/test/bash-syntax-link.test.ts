@@ -4,7 +4,8 @@ import { join } from 'node:path';
 import { mock, test } from 'node:test';
 import { Type } from 'typebox';
 import { Value } from 'typebox/value';
-import { extension, type NotifyListener, overrideEnv, packageExtension, startSession } from './harness.ts';
+import { overrideEnv } from '#lib/env';
+import { extension, type NotifyListener, packageExtension, startSession } from './harness.ts';
 
 const permissionSystem = await packageExtension('@gotgenes/pi-permission-system');
 

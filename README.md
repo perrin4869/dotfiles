@@ -80,7 +80,7 @@ Install [`pre-commit`](https://pre-commit.com/) (`pipx install pre-commit`), the
 make prepare
 ```
 
-It runs `luacheck` and `stylua --check` on staged Lua files, the same checks as the `lint` job in CI.
+It runs `luacheck` and `stylua --check` on staged Lua files, the same checks as the `lint` job in CI. It also checks each commit message against [Conventional Commits](https://www.conventionalcommits.org), as the `commits` job does for a PR's commits and title.
 
 ## Zen Browser Configuration
 

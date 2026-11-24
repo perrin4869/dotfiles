@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { memo, memoGlobal } from '../lib/memo.ts';
+import { memo, memoGlobal } from '#lib/memo';
 
 test('asks its loader once, and shares a load still in flight', async () => {
 	let loads = 0;

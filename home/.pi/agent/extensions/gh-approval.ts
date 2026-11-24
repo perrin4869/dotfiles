@@ -9,7 +9,7 @@ import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { env } from 'node:process';
 import { parseArgs, promisify } from 'node:util';
-import { memo } from './lib/memo.ts';
+import { memo } from '#lib/memo';
 
 const execFileAsync = promisify(execFile);
 

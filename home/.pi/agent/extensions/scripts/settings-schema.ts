@@ -2,7 +2,7 @@ import { readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { env } from 'node:process';
 import { Type, type TObject } from 'typebox';
-import { definedSettings } from '../lib/settings.ts';
+import { definedSettings } from '#lib/settings';
 
 const ROOT = join(import.meta.dirname, '..');
 export const SCHEMA_FILE = join(ROOT, 'settings.schema.json');

@@ -24,7 +24,7 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 import type { Authorizer } from '@gotgenes/pi-permission-system';
 import type { Node, Parser } from 'web-tree-sitter';
-import { getParser } from './lib/tree-sitter.ts';
+import { getParser } from '#lib/tree-sitter';
 
 // An authorizer link for pi-permission-system: allows a bash ask when every unit still asking is shell syntax that
 // runs no program itself. Commands nested in those units are units of their own, so one still asking keeps the ask.

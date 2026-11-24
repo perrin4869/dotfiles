@@ -1,8 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import { Type } from 'typebox';
-import { findModel, ModelRef, modelRef } from './lib/models.ts';
-import { latestEntry } from './lib/session.ts';
-import { defineSettings } from './lib/settings.ts';
+import { findModel, ModelRef, modelRef } from '#lib/models';
+import { latestEntry } from '#lib/session';
+import { defineSettings } from '#lib/settings';
 
 // Claude Code's opusplan for pi-plan-mode: one model while planning, another otherwise.
 // Enable per project with `"opusplan": { "enabled": true }` in .pi/settings.json, or with /opusplan; switching models

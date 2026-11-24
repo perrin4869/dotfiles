@@ -134,7 +134,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.x
+          node-version: 26.x
 
       # the CLI pinned in package.json, as `make skills` runs it; `make skills-update` would also clone every submodule
       - name: Install the skills CLI

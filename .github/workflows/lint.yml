@@ -32,7 +32,7 @@ jobs:
       - name: install node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 24.x
+          node-version: 26.x
           cache: npm
       - name: install socat # the gh wrapper dials its session's socket with it
         run: sudo apt-get install -y socat

@@ -22,8 +22,8 @@ endpoint=${GH_APPROVAL_SOCKET:-}
 verdict=
 if [ -n "$endpoint" ]; then
 	command -v socat >/dev/null || { echo "gh-approval: socat is missing, so nothing was sent" >&2; exit 1; }
-	# socat stops waiting 0.5s after its input ends unless -t says otherwise, and a dialog has no time limit
-	if ! verdict=$(printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" | socat -t 86400 - UNIX-CONNECT:"$endpoint" 2>/dev/null); then
+	# without shut-none socat half-closes once its input ends, which looks like a hang-up; and it stops waiting 0.5s later
+	if ! verdict=$(printf '%s\0' "$PWD" "${GH_REPO:-}" "$#" "$@" | socat -t 86400 - UNIX-CONNECT:"$endpoint",shut-none 2>/dev/null); then
 		verdict=
 	fi
 fi

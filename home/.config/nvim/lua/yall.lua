@@ -250,9 +250,16 @@ function M.cmd(name, module)
 
 	vim.api.nvim_create_user_command(name, function(opts)
 		M.ensure(module)
-		local bang = opts.bang and '!' or ''
-		local args = (opts.args and opts.args ~= '') and (' ' .. opts.args) or ''
-		vim.cmd(name .. bang .. args)
+		local real = vim.api.nvim_get_commands({})[name]
+		if real == nil or real.callback == nil then
+			local bang = opts.bang and '!' or ''
+			local args = opts.args ~= '' and (' ' .. opts.args) or ''
+			return vim.cmd(name .. bang .. args)
+		end
+		-- the placeholder splits arguments as nargs '*' does; a command taking one argument expects them whole
+		local whole = real.nargs == '1' or real.nargs == '?'
+		-- called directly, the command's error messages stay messages, where vim.cmd would turn them into an exception
+		real.callback(whole and vim.tbl_extend('force', opts, { fargs = opts.args == '' and {} or { opts.args } }) or opts)
 	end, {
 		nargs = '*',
 		range = true,

@@ -131,9 +131,11 @@ The package's own output compaction is off, in `home/.pi/agent/extensions/pi-rtk
 * `/sandbox`: show the configuration and this session's allowances.
 * `/sandbox-enable`, `/sandbox-disable`: toggle for the session.
 * `/sandbox-allow domain <url>`, `/sandbox-allow read <path>`, `/sandbox-allow write <path>`: prompt to add an allowance.
-* `.pi/sandbox.json`: per-project rules, loaded only when pi trusts the project.
+* `.pi/sandbox.json`: per-project rules, loaded only when pi trusts the project. Ignored globally, but tracked in this repo, which keeps the denies for its untracked files there.
 
 Commands typed with `!` run outside the sandbox (`"sandboxUserShell": false` above). `bg_run` jobs (pi-background) go through the `bash` tool like any other command, so they stay inside it: a job that daemonizes and exits does not survive, since its namespace ends with the command.
+
+Commands in `~/.local/bin` are allowed one by one (`~/.local/bin/*`): the links point into the repo, so the sandbox binds each target at the link's own path. A script that loads files next to its real path, such as `eslint_d`, does not run sandboxed (#7043).
 
 Allowances saved "for all projects" write through the stowed symlink into `home/.pi/agent/sandbox.json`, so they show up in this repo. Review them before committing.
 

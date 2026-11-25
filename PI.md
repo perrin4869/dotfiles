@@ -163,6 +163,7 @@ Its tools are `mcp__filesystem__*` (`search_files` for a ripgrep or glob search,
 
 * `/permission-system`: configure logging and yolo mode (no prompts).
 * `.pi/extensions/pi-permission-system/config.json`: per-project rules, loaded only when pi trusts the project.
+* The review log, at `~/.pi/agent/extensions/pi-permission-system/logs/`, records every decision with what decided it, yolo included (`auto_approved`), which is how to see what would have asked with yolo off; it holds command text, so it stays out of the sandbox and out of git.
 
 `cc-safety-net` runs first and hard-blocks destructive commands; it has no per-project switch.
 

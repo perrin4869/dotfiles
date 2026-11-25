@@ -1,5 +1,6 @@
 {
 	"yoloMode": true,
+	"reviewLogFieldMaxWidth": 4000,
 	"authorizerChain": ["bash-syntax"],
 	"shellTools": {
 		"bg_run": {

@@ -1,5 +1,5 @@
 {
-	"yoloMode": true,
+	"yoloMode": false,
 	"reviewLogFieldMaxWidth": 4000,
 	"authorizerChain": ["bash-syntax"],
 	"shellTools": {
@@ -40,6 +40,14 @@
 			"git diff*": "allow",
 			"git log*": "allow",
 			"git show*": "allow",
+			"cd": "allow",
+			"cd *": "allow",
+			"export *": "allow",
+			"set *": "allow",
+			"command -v *": "allow",
+			"echo *": "allow",
+			"sleep *": "allow",
+			"true": "allow",
 			"rm -rf *": "deny",
 			"gh auth token*": "deny",
 			"gh auth status --show-token*": "deny",

@@ -20,6 +20,7 @@
 			"~/.gnupg/*": "deny",
 			"~/.password-store/*": "deny",
 			"~/.pi/agent/auth.json": "deny",
+			"~/.config/gh/hosts.yml": "deny",
 			"~/.claude/.credentials.json": "deny"
 		},
 		"bash": {
@@ -39,6 +40,8 @@
 			"git log*": "allow",
 			"git show*": "allow",
 			"rm -rf *": "deny",
+			"gh auth token*": "deny",
+			"gh auth status --show-token*": "deny",
 			"find * -delete*": "ask",
 			"find * -exec*": "ask"
 		},

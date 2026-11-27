@@ -58,6 +58,17 @@ $(eval $(call git_submodule,acpilight,$(ACPILIGHT_ROOT)))
 $(acpilight_target): $(acpilight_head_file)
 acpilight: $(acpilight_target)
 
+.PHONY: x11cp
+x11cp_target = $(BINDIR)/clipboard-get $(BINDIR)/clipboard-put
+# the keeper calls them by name, so they are installed rather than left in the submodule
+$(BINDIR)/clipboard-get: $(X11CP_ROOT)/get.c | dirs
+	$(call require,$(CC))
+	$(CC) -O2 -Wall -o $@ $< -lX11
+$(BINDIR)/clipboard-put: $(X11CP_ROOT)/put.c | dirs
+	$(call require,$(CC))
+	$(CC) -O2 -Wall -o $@ $< -lX11
+x11cp: $(x11cp_target)
+
 i3status-config-template := home/.config/i3status/config.template
 i3status-config          := home/.config/i3status/config
 amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
@@ -460,6 +471,7 @@ TARGETS = \
 	logrotate \
 	claude_settings \
 	npmrc \
+	x11cp \
 	$(lsps)
 
 .PHONY: build

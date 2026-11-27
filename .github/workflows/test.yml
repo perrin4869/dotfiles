@@ -62,6 +62,8 @@ jobs:
           # libclang-22-dev - ccls
           # libgpgme-dev - yubikey-touch-detector
           version: 1.0
+      - name: install x11 headers # clipboard-keep compiles against libX11
+        run: sudo apt-get install -y libx11-dev
       - name: install yq # needed for the mason registry to work locally (https://github.com/williamboman/mason.nvim/pull/1457)
         uses: mikefarah/yq@master
       - name: install neovim

@@ -1,17 +1,48 @@
 #!/bin/sh
 # A copy only lives as long as the process that owns the selection, and a sandboxed command takes its
-# processes with it, so an app that closes would otherwise take the text away. This owns the selection
-# permanently instead: every copy has to take it from us, which unblocks the xclip holding it, and what
-# the copier left behind becomes the one slot we hold. No event source, no polling, nothing on disk.
+# processes with it, so an app that closes would otherwise take the copy away. This owns the selection
+# permanently instead: putcp serves every target the copier offered until another client takes the
+# selection, so a file list stays a file list and a cut stays a cut, and what the copier left behind
+# becomes the one slot we hold.
+#
+# xclip cannot do this: it holds one target, so taking a file copy over leaves only the text, which is
+# why copying or cutting a file in Thunar used to leave nothing to paste.
 #
 # A client that takes the selection and dies before we read it leaves nothing to read, and the slot is
 # emptied rather than restored: restoring would revert the newest copy to the previous one, and an empty
 # clipboard is the safer failure.
-held=
+for exe in clipboard-get clipboard-put; do
+	command -v "$exe" >/dev/null || { echo "clipboard-keep: missing $exe" >&2; exit 1; }
+done
+# an orphaned putcp would keep serving stale data, so it dies with us and takes its files along
+cleanup() {
+	kill "$child" 2>/dev/null
+	[ -n "$dir" ] && { rm -f "$dir"/* && rmdir "$dir" 2>/dev/null; }
+}
+trap cleanup EXIT
+trap exit INT TERM
 while :; do
-	# Hold the slot; xclip returns as soon as some other client takes the selection.
-	printf '%s' "$held" | xclip -quiet -selection clipboard -in
-	# Whatever is there now is the newest copy, including an explicit clear; unreadable means the copier
-	# went away, so drop to empty.
-	held=$(xclip -selection clipboard -o 2>/dev/null) || held=
+	# the previous slot is only removed once its putcp has handed the selection over
+	[ -n "$dir" ] && { rm -f "$dir"/* && rmdir "$dir" 2>/dev/null; }
+	dir=$(mktemp -d "${XDG_RUNTIME_DIR:-/dev/shm}/clipboard-keep.XXXXXX") || exit
+	# putcp reads a source only when its target is asked for, so these live until the next copy; both
+	# candidate dirs are tmpfs, keeping the snapshot in RAM rather than on disk
+	: > "$dir/empty"
+	args=
+	n=0
+	for target in $(clipboard-get TARGETS 2>/dev/null); do
+		case $target in
+		TARGETS|TIMESTAMP|MULTIPLE|INCR|SAVE_TARGETS|LENGTH|DELETE|INSERT_SELECTION|INSERT_PROPERTY)
+			continue
+			;;
+		esac
+		n=$((n + 1))
+		clipboard-get "$target" > "$dir/$n" 2>/dev/null || { rm -f "$dir/$n"; n=$((n - 1)); continue; }
+		args="$args $target $dir/$n"
+	done
+	[ "$n" -eq 0 ] && args="UTF8_STRING $dir/empty"
+	# serves until another client takes the selection, which is the next copy
+	clipboard-put $args &
+	child=$!
+	wait $child
 done

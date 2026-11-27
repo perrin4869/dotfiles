@@ -58,6 +58,15 @@ $(eval $(call git_submodule,acpilight,$(ACPILIGHT_ROOT)))
 $(acpilight_target): $(acpilight_head_file)
 acpilight: $(acpilight_target)
 
+.PHONY: clipboard-keep
+clipboard-keep_target = $(BINDIR)/clipboard-keep
+$(clipboard-keep_target): src/clipboard-keep.c | dirs
+	$(call require,$(CC))
+	@# stow leaves the removed script's symlink dangling, and the compiler would write through it
+	rm -f $@
+	$(CC) -std=c99 -O2 -Wall -Wextra -o $@ $< -lX11
+clipboard-keep: $(clipboard-keep_target)
+
 i3status-config-template := home/.config/i3status/config.template
 i3status-config          := home/.config/i3status/config
 amd-cpu-temperature-path := /sys/class/hwmon/hwmon2/temp1_input
@@ -460,6 +469,7 @@ TARGETS = \
 	logrotate \
 	claude_settings \
 	npmrc \
+	clipboard-keep \
 	$(lsps)
 
 .PHONY: build

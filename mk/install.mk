@@ -121,4 +121,4 @@ prepare:
 	fi
 
 .PHONY: install
-install: home fonts dconf cron
+install: home fonts dconf cron clipboard-keep

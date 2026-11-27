@@ -1,7 +1,19 @@
+local root_markers = require('root_markers')
 local yall = require('yall')
 
 local function explicitly_disabled(linter_name)
 	return vim.g['lint_enable_' .. linter_name] == false
+end
+
+local project_markers = {
+	eslint_d = root_markers.markers.eslint,
+	oxlint = root_markers.markers.oxlint,
+}
+
+-- nvim-lint has no notion of a project: it runs every linter listed for a filetype, configured here or not
+local function configured(linter)
+	local markers = project_markers[linter.name]
+	return not markers or vim.fs.root(vim.api.nvim_get_current_buf(), markers()) ~= nil
 end
 
 local function add_disable(original_lint_fn)
@@ -46,7 +58,7 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'TextChanged' }, {
 			buffer = args.buf,
 			callback = yall.with('lint')(function()
-				require('lint').try_lint()
+				require('lint').try_lint(nil, { filter = configured })
 			end),
 		})
 	end,

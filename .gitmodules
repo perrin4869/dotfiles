@@ -682,3 +682,6 @@
 [submodule "home/.local/share/nvim/site/pack/default/opt/codecompanion.nvim"]
 	path = home/.local/share/nvim/site/pack/default/opt/codecompanion.nvim
 	url = https://github.com/olimorris/codecompanion.nvim
+[submodule "deps/x11cp"]
+	path = deps/x11cp
+	url = https://github.com/porridgewithraisins/x11cp

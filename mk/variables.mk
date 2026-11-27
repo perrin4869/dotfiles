@@ -21,6 +21,7 @@ FONTS = home/.local/share/fonts
 
 MPV_MPRIS_ROOT = $(DEPS)/mpv-mpris
 XWINWRAP_ROOT = $(DEPS)/xwinwrap
+X11CP_ROOT = $(DEPS)/x11cp
 ACPILIGHT_ROOT = $(DEPS)/acpilight
 CCLS_ROOT = $(DEPS)/ccls
 ATUIN_ROOT = $(DEPS)/atuin
